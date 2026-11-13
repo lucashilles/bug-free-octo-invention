@@ -1,6 +1,6 @@
 # Domain 3 — Configuring and Deploying Applications
 
-80 questions. Answers are collapsed — try each question before expanding it.
+104 questions. Answers are collapsed — try each question before expanding it.
 
 ## Questions
 
@@ -3244,6 +3244,1128 @@ requests:
 storage: 100Gi # Update to new size
 
 Kubernetes will handle the rest, especially if the StorageClass has `allowVolumeExpansion: true`.
+
+</details>
+
+---
+
+### Exam 5 · Q5
+
+**Your team is utilizing Cloud Build to facilitate the promotion of a Node.js application deployed on App Engine from the staging environment to production. The application relies on several directories of photos stored in a Cloud Storage bucket named `webphotos-staging` in the staging environment. Post-promotion, these photos need to be accessible in a Cloud Storage bucket named `webphotos-prod` in the production environment. You aim to automate this process where feasible. What action should you take?**
+
+- A. Perform a manual copy of the photos to `webphotos-prod`.
+- C. Insert a build step in the `cloudbuild.yaml` file before the promotion step with the arguments:
+    name: gcr.io/cloud-builders/gsutil
+    args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']
+    waitFor: ['-']
+- B. Introduce a startup script in the application's `app.yaml` file to transfer the photos from `webphotos-staging` to `webphotos-prod`.
+- D. Include a build step in the `cloudbuild.yaml` file before the promotion step with the arguments:
+    name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '-a', 'gs://webphotos-staging', 'gs://webphotos-prod']
+    waitFor: ['-']
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Insert a build step in the `cloudbuild.yaml` file before the promotion step with the arguments:
+
+**Correct Answer:**
+
+  * **C. Insert a build step in the**`**cloudbuild.yaml**`**file before the promotion step with the arguments:...**
+
+1.  name: gcr.io/cloud-builders/gsutil
+      2. args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']
+      3. waitFor: ['-']
+
+**Justification:**
+
+  * **Automation within the Build Pipeline:** Integrating the photo transfer into your Cloud Build pipeline ensures it happens automatically during the promotion process. This aligns with the goal of automating where feasible.
+
+  * **The 'gsutil' Cloud Builder:** The `gcr.io/cloud-builders/gsutil` image provides tools for efficient Cloud Storage operations.
+
+  * **Recursive Copy (**`**-r**`**):** Ensures all photos and subdirectories within `webphotos-staging` are copied.
+
+  * `**waitFor: ['-']**`**:** Prevents subsequent build steps from running until the copy operation successfully completes.
+
+**Incorrect Answers:**
+
+  * **A. Perform a manual copy of the photos to**`**webphotos-prod**`**.**
+
+    * **Reasoning:** This breaks the desired automation and introduces the potential for errors or missed steps in the promotion process.
+
+  * **B. Introduce a startup script in the application's**`**app.yaml**`**file...**
+
+    * **Reasoning:** While possible, this mixes concerns. Deployment and data transfer are better separated; keeping the transfer in Cloud Build makes the process more independent and reusable.
+
+  * **D. Include a build step... `args: ['cp', '-a', 'gs://webphotos-staging', 'gs://webphotos-prod']...**
+
+    * **Reasoning:** The `-a` flag (archive mode) is usually for preserving file attributes. While it would work, the simpler `-r` (recursive) flag is more direct for this use case.
+
+</details>
+
+---
+
+### Exam 5 · Q8
+
+**You're attempting to utilize kubectl from Cloud Shell to connect to your Google Kubernetes Engine (GKE) cluster. After deploying the GKE cluster with a public endpoint, you execute the following command from Cloud Shell:**
+
+**```**
+
+**gcloud container clusters get-credentials <cluster-name> \**
+
+**\--zone <zone> \--project <project-name>**
+
+**```**
+
+**However, you observe that the kubectl commands are timing out without providing any error message. What is the most probable cause of this issue?**
+
+- A. Your user account lacks the necessary privileges to interact with the cluster using kubectl.
+- D. A VPC firewall is obstructing access to the cluster's endpoint.
+- C. Cloud Shell is not part of the same VPC as the GKE cluster.
+- B. The Cloud Shell's external IP address is not included in the authorized networks of the cluster.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. The Cloud Shell's external IP address is not included in the authorized networks of the cluster.
+
+**Correct Answer:**
+
+  * **B. The Cloud Shell's external IP address is not included in the authorized networks of the cluster.**
+
+**Justification:**
+
+  * **Authorized Networks for Public Clusters:** Even though your GKE cluster has a public endpoint, by default, access is restricted to a set of authorized IP addresses. Cloud Shell has a dynamic, ephemeral IP address that changes, making it likely it's not included in the allowed list. (GCP Documentation: [invalid URL removed])
+
+  * **Timeout Behavior:** The lack of an explicit error message and a timeout is consistent with traffic simply being blocked without rejection at the network level.
+
+**Incorrect Answers:**
+
+  * **A. Your user account lacks the necessary privileges...**
+
+    * **Reasoning:** If this were the case, the `gcloud container clusters get-credentials` command itself would have likely failed with a permission-related error.
+
+  * **C. Cloud Shell is not part of the same VPC as the GKE cluster.**
+
+    * **Reasoning:** While VPC network boundaries _can_ affect connectivity, a public endpoint with proper authorization should be accessible even if Cloud Shell is in a different VPC.
+
+  * **D. A VPC firewall is obstructing access to the cluster's endpoint**
+
+    * **Reasoning:** While possible, VPC firewalls would usually result in a more explicit connection failure rather than a silent timeout.
+
+</details>
+
+---
+
+### Exam 5 · Q10
+
+**You oversee an application governed by a managed instance group. In the event of deploying a new version of the application, your objective is to minimize costs and maintain a consistent number of instances. It's imperative that each new instance created during deployment is deemed healthy before the deployment proceeds.**
+
+**Which approach should you employ to achieve this?**
+
+- III. Implement a rolling-action with a limit on the maximum number of healthy instances set to 1, and the maximum number of unhealthy instances set to 0.
+- I. Execute a rolling-action with a maximum surge set to 1 and maximum unavailable instances set to 0.
+- II. Conduct a rolling-action with a maximum surge set to 0 and a maximum number of instances deemed unavailable set to 1.
+- IV. Engage in a rolling-action with a restriction on the maximum number of healthy instances set to 0, and the maximum number of unhealthy instances set to 1.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Conduct a rolling-action with a maximum surge set to 0 and a maximum number of instances deemed unavailable set to 1.
+
+**The correct option for this scenario is:**
+
+**II. Conduct a rolling-action with a maximum surge set to 0 and a maximum number of instances deemed unavailable set to 1.**
+
+**Justification:** In this scenario, the objective is to minimize costs and maintain a consistent number of instances while ensuring that each new instance created during deployment is considered healthy before the deployment proceeds. Using a rolling update strategy with a maximum surge set to 0 ensures that no additional instances are created beyond the current capacity, thereby helping to minimize costs. Setting the maximum number of instances deemed unavailable to 1 ensures that only one instance can be considered unhealthy at any given time during the deployment process, maintaining consistency and reducing the risk of service disruption.
+
+**Why the other options are not suitable:**
+
+I. Executing a rolling-action with a maximum surge set to 1 and maximum unavailable instances set to 0: This option allows for one additional instance (surge) to be created during the deployment process, which may not align with the objective of minimizing costs and maintaining a consistent number of instances. Additionally, setting the maximum unavailable instances to 0 does not provide flexibility in handling instances that may temporarily become unhealthy during the deployment.
+
+III. Implementing a rolling-action with a limit on the maximum number of healthy instances set to 1, and the maximum number of unhealthy instances set to 0: This option restricts the number of healthy instances to 1, which may not be desirable as it limits the deployment process and may lead to service disruption if the existing healthy instance experiences issues during deployment. It's also not optimal for maintaining consistency in the number of instances.
+
+IV. Engaging in a rolling-action with a restriction on the maximum number of healthy instances set to 0, and the maximum number of unhealthy instances set to 1: Similarly to option III, this approach imposes unnecessary constraints on the deployment process and may increase the risk of service disruption by disallowing any healthy instances during deployment.
+
+**Documentation Link:** You can find more information about managing instance groups and rolling updates in the official documentation here: [Rolling out updates](https://cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups)
+
+</details>
+
+---
+
+### Exam 5 · Q11
+
+**You are creating a public-facing web application on Cloud Run, making it accessible through its public IP address. To test its ability to handle high traffic, you conduct a load test. While the app works fine under light traffic, you observe slower responses and error messages when the load is high. What is the best way to investigate and resolve this performance issue?**
+
+- D. Verify if your Cloud Run service has reached the set maximum instances. If so, increase the maximum instance count to allow for more scaling during high demand.
+- A. Review the network traffic to your Cloud Run service using Cloud Monitoring to confirm if there's a spike in demand. If needed, use traffic splitting on the Cloud Run service to redirect some requests to a previous revision.
+- B. Check the minimum instances setting for your Cloud Run service. If required, increase the minimum number of instances to align with the maximum virtual users in your load test.
+- C. Investigate if Cloud Armor is detecting and blocking potential DDoS attacks before traffic reaches your Cloud Run service. Disable any Cloud Armor policies if they are restricting legitimate traffic.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** D. Verify if your Cloud Run service has reached the set maximum instances. If so, increase the maximum instance count to allow for more scaling during high demand.
+
+The correct answer is 
+
+**D. Verify if your Cloud Run service has reached the set maximum instances. If so, increase the maximum instance count to allow for more scaling during high demand.**
+
+Explanation:
+
+In **Cloud Run** , the maximum instances setting controls the upper limit for concurrent instances that can be started in response to incoming traffic. If your application is experiencing slower responses and errors under high load, it is likely that the maximum instance limit has been reached, preventing Cloud Run from scaling further to handle the increased demand. By increasing the **maximum instance count** , you allow Cloud Run to start more instances, which can handle additional traffic and improve performance during peak loads.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Use Cloud Monitoring and traffic splitting**  
+While Cloud Monitoring can help monitor traffic spikes, **traffic splitting** is not relevant for handling high demand. Splitting traffic to a previous revision would not improve scalability or performance under load.
+
+  * **Option B: Check the minimum instances setting**  
+The **minimum instances setting** determines the baseline number of instances to keep warm, which helps reduce cold start latency but does not impact the ability to scale up. Increasing this setting would result in unnecessary costs without improving the maximum scaling capacity.
+
+  * **Option C: Investigate Cloud Armor for DDoS blocking**  
+Cloud Armor provides protection against DDoS attacks, but it is unlikely that it is blocking legitimate traffic without specific configurations. Disabling Cloud Armor would not address performance issues caused by scaling limits in Cloud Run.
+
+</details>
+
+---
+
+### Exam 5 · Q13
+
+**Your team oversees a Google Kubernetes Engine (GKE) cluster hosting an application. Another team intends to integrate with this application. Before commencing the integration, you must ensure that the other team cannot modify your application but can deploy their integration on GKE. What is the appropriate action to take?**
+
+- I. Grant the Viewer IAM role on the cluster project to the other team using Identity and Access Management (IAM).
+- II. Create a new GKE cluster and grant the Editor role on the cluster project to the other team using Identity and Access Management (IAM).
+- IV. Create a new namespace within the existing cluster and grant the Admin role on the new namespace to the other team using Kubernetes role-based access control (RBAC).
+- III. Establish a new namespace within the existing cluster and grant the Editor role on the cluster project to the other team using Identity and Access Management (IAM).
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** IV. Create a new namespace within the existing cluster and grant the Admin role on the new namespace to the other team using Kubernetes role-based access control (RBAC).
+
+**IV. Create a new namespace within the existing cluster and grant the Admin role on the new namespace to the other team using Kubernetes role-based access control (RBAC).**
+
+Here's why this is the best approach:
+
+  * **Resource Isolation:** Namespaces provide logical separation within a GKE cluster, ensuring the other team's work doesn't interfere with your application's resources.
+
+  * **Principle of Least Privilege:** Granting the Admin role within the namespace gives the other team the necessary permissions to deploy and manage their integration, but limits their access to only that namespace.
+
+  * **Separation of Concerns:** This approach maintains clear ownership boundaries between your application and the other team's integration.
+
+**Why other options are less suitable:**
+
+  * **I. Grant the Viewer IAM role on the cluster project to the other team using Identity and Access Management (IAM).** The Viewer role is too restrictive, preventing the other team from deploying their integration components.
+
+  * **II. Create a new GKE cluster and grant the Editor role on the cluster project to the other team using Identity and Access Management (IAM).** A separate cluster adds unnecessary management overhead and may increase costs.
+
+  * **III. Establish a new namespace within the existing cluster and grant the Editor role on the cluster project to the other team using Identity and Access Management (IAM).** Cluster-wide Editor permissions are too broad and could allow the other team to interfere with resources outside their designated namespace.
+
+**References:**  
+[https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control](https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control  https://cloud.google.com/kubernetes-engine/docs/concepts/access-control#rbac   https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control)
+
+[https://cloud.google.com/kubernetes-engine/docs/concepts/access-control#rbac https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control](https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control  https://cloud.google.com/kubernetes-engine/docs/concepts/access-control#rbac   https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control)
+
+</details>
+
+---
+
+### Exam 5 · Q18
+
+**As part of your workflow utilizing Cloud Build, you're tasked with promoting a Docker image across Development, Test, and Production environments. It's imperative to ensure consistency by deploying the same Docker image to each environment.**
+
+**How should you designate the Docker image within your build?**
+
+- III. Utilize the digest of the Docker image for precise identification.
+- II. Employ a unique Docker image name for differentiation.
+- IV. Utilize a semantic version Docker image tag for version control.
+- I. Employ the latest Docker image tag for identification.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** III. Utilize the digest of the Docker image for precise identification.
+
+**Correct Choice:**
+
+  * **III. Utilize the digest of the Docker image for precise identification.**
+
+**Explanation:**
+
+  * **Immutability:** A Docker image digest is a unique, content-based hash (e.g., sha256:abcd1234...). This guarantees that if you reference a specific digest, you are always referring to the exact, unchanging image contents. This is crucial for ensuring the same image gets deployed across environments.
+
+**Why Other Options Can Be Problematic:**
+
+  * **I. Employ the latest Docker image tag for identification.**
+
+    * **Ambiguity:** The "latest" tag is mutable, meaning it could be reassigned to a different image over time. This introduces uncertainty and undermines reliable promotion across environments.
+
+  * **II. Employ a unique Docker image name for differentiation.**
+
+    * **Insufficent Specificity:** While unique names can help, they don't ensure content hasn't changed. Developers could rebuild an image with the same name but with different contents.
+
+  * **IV. Utilize a semantic version Docker image tag for version control.**
+
+    * **Potential for Human Error:** Semantic versioning (e.g., 1.0.2) is useful for tracking changes. However, a developer could accidentally increment a minor version without intending major changes, leading to unexpected inconsistencies.
+
+**Reference:**  
+<https://cloud.google.com/architecture/using-container-images>
+
+</details>
+
+---
+
+### Exam 5 · Q20
+
+**You're preparing to deploy your application in a Google Kubernetes Engine (GKE) cluster. The application offers an HTTP-based health check accessible at /healthz. You aim to utilize this health check endpoint for determining whether traffic should be directed to the pod by the load balancer. Which code snippet should you include in your Pod configuration?**
+
+- D.
+      
+            1. healthCheck:
+        2.   httpGet:
+        3.     path: /healthz
+        4.     port: 80
+- A.
+      
+            1. livenessProbe:
+        2.   httpGet:
+        3.     path: /healthz
+        4.     port: 80
+- C.
+      
+            1. loadbalancerHealthCheck:
+        2.   httpGet:
+        3.     path: /healthz
+        4.     port: 80
+- B.
+      
+            1. readinessProbe:
+        2.   httpGet:
+        3.     path: /healthz
+        4.     port: 80
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B.
+
+**Correct Answer**
+
+  * **B. readinessProbe: httpGet: path: /healthz port: 80**
+
+**Justification:**
+
+  * **Readiness Probes:** In Kubernetes, readiness probes tell the system when a container is ready to start receiving traffic from a service. A pod only becomes part of a service's endpoints when its readiness probe succeeds. (Kubernetes Documentation: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/>)
+
+  * **HTTP Health Checks:** The `httpGet` probe type is used to perform HTTP GET requests on a configured path and port. A successful response indicates the container is healthy. (Kubernetes Documentation: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/>)
+
+**Incorrect Answers**
+
+  * **A. livenessProbe: httpGet: path: /healthz port: 80**
+
+    * **Reasoning:** Liveness probes determine if a container is still running and should be restarted if not. While important, liveness probes don't directly handle traffic routing.
+
+  * **C. loadbalancerHealthCheck: httpGet: path: /healthz port: 80**
+
+    * **Reasoning:** There's no concept of a `loadBalancerHealthCheck` in Kubernetes pod specifications. Health checks are defined using readiness and liveness probes.
+
+  * **D. healthCheck: httpGet: path: /healthz port: 80**
+
+    * **Reasoning:** The `healthCheck` field is too generic; Kubernetes needs a specific probe type (`readinessProbe` or `livenessProbe`) to function correctly.
+
+</details>
+
+---
+
+### Exam 5 · Q25
+
+**You are employed by a company managing an ecommerce platform. Your task involves testing a new product recommendation algorithm through A/B testing to assess its impact on sales in a randomized manner. What is the recommended approach for testing this feature?**
+
+- IV. Utilize HTTP header-based routing.
+- I. Distribute traffic between versions using weights.
+- III. Mirror traffic to the new version of your application.
+- II. Activate the new recommendation feature flag on a single instance.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Distribute traffic between versions using weights.
+
+**The recommended approach for testing a new product recommendation algorithm through A/B testing to assess its impact on sales in a randomized manner is:**
+
+**I. Distribute traffic between versions using weights.**
+
+**Explanation:**
+
+  * **A/B testing involves splitting traffic between different versions of the application to compare their performance.**
+
+  * **By distributing traffic between versions using weights, you can control the proportion of users exposed to each version. For example, you might allocate 50% of the traffic to the current version and 50% to the version with the new recommendation algorithm.**
+
+  * **This approach allows for a randomized and controlled comparison between the two versions, enabling you to measure the impact of the new recommendation algorithm on sales in a statistically valid manner.**
+
+The other options can be explained as follows:
+
+II. Activating the new recommendation feature flag on a single instance (Option II) would not provide a randomized comparison between different versions. It also does not allow for statistical analysis of the impact on sales across a diverse user base.
+
+III. Mirroring traffic to the new version of your application (Option III) involves sending a copy of traffic to the new version without impacting the primary traffic flow. While this approach can be useful for testing in a non-disruptive manner, it does not inherently provide a randomized comparison between different versions.
+
+IV. Utilizing HTTP header-based routing (Option IV) can be a part of the implementation for directing traffic to different versions of the application, but it alone does not ensure randomized distribution or controlled comparison between versions. It's more about routing traffic based on specific conditions rather than conducting A/B testing.
+
+**References:**  
+[https://cloud.google.com/traffic-director/docs/advanced-traffic-management#weight-based_traffic_splitting_for_safer_deployments](https://cloud.google.com/traffic-director/docs/advanced-traffic-management#weight-based_traffic_splitting_for_safer_deployments  https://cloud.google.com/load-balancing/docs/https/traffic-management-global)
+
+[https://cloud.google.com/load-balancing/docs/](https://cloud.google.com/traffic-director/docs/advanced-traffic-management#weight-based_traffic_splitting_for_safer_deployments  https://cloud.google.com/load-balancing/docs/https/traffic-management-global)
+
+[https/traffic-management-global](https://cloud.google.com/traffic-director/docs/advanced-traffic-management#weight-based_traffic_splitting_for_safer_deployments  https://cloud.google.com/load-balancing/docs/https/traffic-management-global)
+
+</details>
+
+---
+
+### Exam 5 · Q27
+
+**While creating a Google Kubernetes Engine (GKE) cluster using the command `gcloud container clusters create large-cluster --num-nodes 200`, you encounter an error:**
+
+**insufficient regional quota to satisfy request: resource "CPUS": request requires '200.0' and is short '176.0'. project has a quota of '24.0' with '24.0' available**
+
+**To resolve this issue, what should you do?**
+
+- D. Modify services in the cluster to function with fewer cores, and rewrite new clusters accordingly.
+- C. Raise a support case to request additional GKE quota.
+- B. Increase the Compute Engine quota in the GCP Console.
+- A. Increase the GKE quota in the GCP Console.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Increase the Compute Engine quota in the GCP Console.
+
+**Correct Answer:**
+
+  * **B. Increase the Compute Engine quota in the GCP Console.**
+
+**Justification:**
+
+  * **Quota Limits:** Google Kubernetes Engine (GKE) clusters fundamentally consist of Compute Engine virtual machines (nodes). The "CPUs" quota directly corresponds to the number of virtual CPUs available to your project in the region you're attempting to create the cluster (GCP Documentation: <https://cloud.google.com/compute/quotas>).
+
+**Incorrect Answers:**
+
+  * **A. Increase the GKE quota in the GCP Console.**
+
+    * **Reasoning:** While some regions have specific GKE quotas, the error message indicates a CPU limitation. Often, increasing the underlying Compute Engine quota automatically adjusts the connected GKE quota (if one exists).
+
+  * **C. Raise a support case to request additional GKE quota.**
+
+    * **Reasoning:** While support could eventually help, it's usually faster to directly increase the Compute Engine CPU quota yourself (if your project permissions allow it).
+
+  * **D. Modify services in the cluster to function with fewer cores...**
+
+    * **Reasoning:** Resource optimization is good practice, but it doesn't address the core problem - the project-level limitation on the number of CPUs you can use in the region.
+
+</details>
+
+---
+
+### Exam 5 · Q28
+
+**Your application is deployed across multiple Google Kubernetes Engine clusters, each managed by a Deployment. Within each cluster, the Deployment has spawned multiple replicas of your Pod. Your aim is to inspect the logs transmitted to stdout for all replicas within your Deployment across all clusters. Which command should you employ?**
+
+- III. Run `**kubectl exec -it [PARAM] journalctl**`.
+- I. Execute `**kubectl logs [PARAM]**`.
+- IV. Access logs via `**gcloud compute ssh [PARAM] --command="sudo journalctl"**`.
+- II. Utilize `**gcloud logging read [PARAM]**`.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Utilize `**gcloud logging read [PARAM]**`.
+
+**Best Approach (assuming centralized logging):**
+
+  * **II. Utilize gcloud logging read [PARAM]**
+
+    * **Explanation:** Centralized logging offers the ability to aggregate logs from all your clusters and pods, and `gcloud logging read` lets you access and filter these logs effectively.
+
+    * **Documentation:** <https://cloud.google.com/logging/docs/reference/tools/gcloud-logging>
+
+**If centralized logging is NOT set up:**
+
+In the absence of a centralized logging solution, the task becomes more cumbersome. You _could_ technically achieve the goal with a combination of the following, but it's less than ideal:
+
+  * **I. Execute kubectl logs [PARAM].**
+
+    * **Explanation:** You'd need to iterate through each cluster, retrieve a list of Pods within your Deployment, and then run `kubectl logs` against each Pod individually.
+
+    * **Documentation:** <https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/>
+
+**Why the other options are NEVER suitable**
+
+  * **III. Run kubectl exec -it [PARAM] journalctl.**
+
+    * **Incorrect:** `journalctl` provides system-level logs, not necessarily the application logs sent to stdout.
+
+  * **IV. Access logs via gcloud compute ssh [PARAM] --command="sudo journalctl".**
+
+    * **Incorrect and Inefficient:** Same limitations as option III, and it introduces the unnecessary overhead of SSH-ing into each node of your clusters.
+
+</details>
+
+---
+
+### Exam 5 · Q29
+
+**Your production application runs on Compute Engine virtual machine instances managed by a managed instance group, with traffic directed through an HTTP(s) load balancer. Despite this setup, users are currently unable to access the application. Your goal is to establish a monitoring mechanism to alert you when the application becomes inaccessible.**
+
+**Which method should you select?**
+
+- I. Functional tests
+- III. Cloud Load Balancing - health probes
+- IV. Managed instance group - health evaluations
+- II. Stackdriver availability checks
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Stackdriver availability checks
+
+The correct option for this scenario is:
+
+**II. Stackdriver availability checks**
+
+**Justification:** Stackdriver availability checks allow you to monitor the availability of your application from various locations globally. By configuring Stackdriver availability checks, you can receive alerts when your application becomes inaccessible, ensuring you're promptly notified of any issues affecting user access. This method directly addresses the goal of establishing a monitoring mechanism to detect when the application becomes inaccessible.
+
+**Why the other options are not suitable:**
+
+I. Functional tests: Functional tests typically involve testing specific functionalities or workflows within your application. While functional tests are valuable for ensuring the correctness of your application's behavior, they may not directly address the need to monitor the overall accessibility of your application from an external perspective.
+
+III. Cloud Load Balancing - health probes: Cloud Load Balancing health probes monitor the health of backend instances within a load balancer's target pool. While health probes are essential for load balancer management and ensuring traffic is directed only to healthy instances, they may not directly alert you when the application as a whole becomes inaccessible from an external perspective.
+
+IV. Managed instance group - health evaluations: Managed instance group health evaluations assess the health of individual instances within the group. While it's crucial to monitor the health of your instances, especially in a managed instance group scenario, this method may not provide direct alerts about the overall accessibility of your application from an external perspective.
+
+</details>
+
+---
+
+### Exam 5 · Q31
+
+**In maintaining a .NET legacy application, your aim is to ensure consistent results during the CI/CD pipeline while minimizing deployment costs and mitigating external factors and dependencies between hosting environments, as containers are not yet sanctioned in your organization. What should be your approach?**
+
+- III. Deploy the application utilizing MS Web Deploy, ensuring utilization of the latest, patched MS Windows Server base image in Compute Engine.
+- I. Rewrite the application utilizing .NET Core and deploy it to Cloud Run, employing revisions for environment separation.
+- IV. Utilize Cloud Build to package the application and deploy it to a Google Kubernetes Engine cluster, utilizing namespaces for environment separation.
+- II. Utilize Cloud Build to deploy the application as a new Compute Engine image for each build, utilizing the same image across all environments.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Utilize Cloud Build to deploy the application as a new Compute Engine image for each build, utilizing the same image across all environments.
+
+**Best Choice:**
+
+  * **II. Utilize Cloud Build to deploy the application as a new Compute Engine image for each build, utilizing the same image across all environments.**
+
+**Explanation:**
+
+  * **Consistency:** Creating a golden image with the application pre-installed and baking it into each environment ensures maximal consistency and minimizes external dependencies.
+
+  * **CI/CD Integration:** Cloud Build simplifies image creation and management with automation.
+
+  * **Cost Considerations:** While not as cost-efficient as containers, Compute Engine instances allow better control over costs compared to always-on Kubernetes nodes.
+
+**Why Other Options Are Unsuitableable:**
+
+  * **I. Rewrite the application utilizing .NET Core and deploy it to Cloud Run...**
+
+    * **Major Rewrite:** Rewriting a legacy .NET application for .NET Core could be a significant undertaking that violates your current constraints.
+
+  * **III. Deploy the application utilizing MS Web Deploy...**
+
+    * **Image Management:** Web Deploy is good for quick updates, but doesn't address the image consistency issue for full deployments across environments.
+
+  * **IV. Utilize Cloud Build to package the application and deploy it to a Google Kubernetes Engine cluster...**
+
+    * **Container Requirement:** You explicitly stated that containers are not currently an option in your organization.
+
+**References:**  
+[https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#take_advantage_of_compute_engine](https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#take_advantage_of_compute_engine  https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#phase_1_rehost_in_the_cloud  https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud)
+
+[https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#phase_1_rehost_in_the_cloud](https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#take_advantage_of_compute_engine  https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#phase_1_rehost_in_the_cloud  https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud)
+
+[https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud](https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#take_advantage_of_compute_engine  https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud#phase_1_rehost_in_the_cloud  https://cloud.google.com/architecture/modernization-path-dotnet-applications-google-cloud)
+
+</details>
+
+---
+
+### Exam 5 · Q32
+
+**You're developing a new application with specific design requirements:**
+
+**Ensure versioning and auditability of the application infrastructure changes.**
+
+**Optimize the use of Google-managed services for both the application and deployment infrastructure.**
+
+**Utilize a serverless compute platform for the application.**
+
+**Which architecture design should you choose?**
+
+- I.
+    I. Maintain the application and infrastructure source code in a Git repository.
+    II. Utilize Cloud Build to deploy the application infrastructure using Terraform.
+    III. Deploy the application to Cloud Functions within a pipeline step.
+- IV.
+    I. Deploy the application infrastructure using gcloud commands.
+    II. Define a continuous integration pipeline for application source code changes using Cloud Build.
+    III. Implement a pipeline step to fetch the application source code from a Git repository, containerize it.
+    IV. Deploy the new container on Cloud Run within the pipeline.
+- II.
+    I. Deploy Jenkins from the Google Cloud Marketplace and establish a continuous integration pipeline.
+    II. Configure a pipeline step in Jenkins to fetch the application source code from a Git repository.
+    III. Deploy the application source code to App Engine within the pipeline.
+- III.
+    I. Set up a continuous integration pipeline on Cloud Build and deploy the application infrastructure using Deployment Manager templates.
+    II. Implement a pipeline step to create a container with the latest application source code.
+    III. Deploy the container to a Compute Engine instance within the pipeline.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I.
+
+**Best Choice:**
+
+  * **I. Maintain the application and infrastructure source code in a Git repository. Utilize Cloud Build to deploy the application infrastructure using Terraform. Deploy the application to Cloud Functions within a pipeline step.**
+
+**Explanation:**
+
+  * **Versioning & Auditability:** Git provides inherent versioning and change tracking for both application code and Infrastructure as Code (IaC) defined in Terraform.
+
+  * **Google-Managed Services:** Cloud Build and Cloud Functions are fully-managed, easing operational burden. Terraform has excellent integration with GCP.
+
+  * **Serverless Alignment:** Cloud Functions is the ideal serverless compute choice for the application tier.
+
+**Why Other Options Are Less Ideal:**
+
+  * **II. Deploy Jenkins ... Deploy the application to App Engine ...**
+
+    * **Operational Overhead:** Jenkins introduces self-management of a VM compared to Cloud Build. App Engine is also less serverless than Cloud Functions.
+
+  * **III. Set up a continuous integration pipeline on Cloud Build ... Deploy the container to a Compute Engine instance ...**
+
+    * **Serverless Mismatch:** While valid for some use cases, deploying a container to a Compute Engine instance misses out on the benefits of serverless compute.
+
+  * **IV. Deploy the application infrastructure using gcloud commands ... Deploy the new container on Cloud Run ...**
+
+    * **Manual Infrastructure:** `gcloud` commands lack the versioning and automation features of IaC tools like Terraform.
+
+**Reference:**
+
+<https://cloud.google.com/docs/ci-cd/products#featured-products-for-cicd>
+
+</details>
+
+---
+
+### Exam 5 · Q33
+
+**You’re setting up a container build pipeline for an application hosted on GKE. The requirements are:**
+
+  * **Only images created by your build pipeline should be deployed on the GKE cluster.**
+
+  * **All code and build artifacts must stay within your environment and be protected from data exfiltration.**
+
+**How should you design the pipeline?**
+
+- D. Use Cloud Build with the default worker pool to create the build pipeline.
+    Configure the pipeline to build container images and store them in Artifact Registry.
+    Configure the GKE cluster to accept only container images signed by Binary Authorization.
+- A. Use Cloud Build with the default worker pool to create the build pipeline.
+    Deploy container images to a private container registry in your VPC.
+    Create a VPC firewall policy that denies all egress and ingress traffic to public networks.
+- B. Use Cloud Build with a private worker pool to create the build pipeline.
+    Use VPC Service Controls to include all CI/CD components and services within a security perimeter.
+    Configure the GKE cluster to accept only container images signed by Binary Authorization.
+- C. Use Cloud Build with a private worker pool to create the build pipeline.
+    Configure the pipeline to build container images and store them in Artifact Registry.
+    Set up Artifact Registry to use customer-managed encryption keys (CMEK) to encrypt container images.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Use Cloud Build with a private worker pool to create the build pipeline.
+
+The correct answer is **B**.
+
+Explanation:
+
+To meet the requirements of ensuring that only images created by the build pipeline are deployed on the GKE cluster and to protect code and artifacts from data exfiltration, you should:
+
+  1. **Use Cloud Build with a private worker pool** : This ensures that the build process remains within your private network, isolating it from the public internet and providing additional security for code and build artifacts.
+
+  2. **Use VPC Service Controls** : By configuring a security perimeter around your CI/CD components and services, including Cloud Build, GKE, and Artifact Registry, VPC Service Controls help prevent data exfiltration and enforce strict boundary protection for sensitive data.
+
+  3. **Configure Binary Authorization on GKE** : Binary Authorization allows you to enforce policies that only permit images with the required attestations (e.g., signed images from your build pipeline) to be deployed to the GKE cluster, ensuring that only verified images are used.
+
+Justifications for Incorrect Options:
+
+  * **Option A** : Using the default worker pool in Cloud Build does not provide isolation from the public internet. VPC firewall policies alone do not offer the same level of data exfiltration protection as VPC Service Controls.
+
+  * **Option C** : Although using a private worker pool and customer-managed encryption keys (CMEK) provides some security, it does not fully address the need to prevent data exfiltration without VPC Service Controls. CMEK encrypts stored data but does not provide the comprehensive perimeter protection that VPC Service Controls offer.
+
+  * **Option D** : Using the default worker pool exposes the build pipeline to the public internet, and while Binary Authorization helps secure deployments, it does not address data exfiltration concerns without a private worker pool and VPC Service Controls.
+
+**Relevant Documentation:**
+
+For more information, refer to:
+
+  * [VPC Service Controls](https://cloud.google.com/vpc-service-controls/docs/overview)
+
+  * [Binary Authorization Overview](https://cloud.google.com/binary-authorization/docs/overview)
+
+</details>
+
+---
+
+### Exam 5 · Q36
+
+**You are pushing container images to Artifact Registry and deploying a containerized microservices application on GKE. After deployment, you notice unexpected behavior in the services. Upon inspecting the Pods with kubectl get pods, you see that one Pod is in a CrashLoopBackoff state. How should you troubleshoot this Pod?**
+
+- C. Use kubectl logs POD_NAME, where POD_NAME is the problematic Pod’s name, to review logs from previous runs and identify the cause of failed start attempts.
+- A. Connect to the Pod with kubectl exec -it POD_NAME -- /bin/bash, where POD_NAME is the problematic Pod’s name. Check logs in the /var/log/messages folder to identify the issue.
+- B. Run gcloud projects get-iam-policy PROJECT_ID, where PROJECT_ID is the project’s ID for the Artifact Registry. Check IAM bindings of the node pool’s service account to ensure it has roles/artifactregistry.reader permissions.
+- D. In the Google Cloud Console, go to Cloud Logging for the cluster’s VPC project. Filter for denied egress traffic to the Private Google Access CIDR range and verify if egress from the GKE cluster to this range is blocked.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Use kubectl logs POD_NAME, where POD_NAME is the problematic Pod’s name, to review logs from previous runs and identify the cause of failed start attempts.
+
+**The correct answer is**
+
+**C. Use kubectl logs POD_NAME, where POD_NAME is the problematic Pod’s name, to review logs from previous runs and identify the cause of failed start attempts.**
+
+Explanation:
+
+When a Pod is in a **CrashLoopBackoff** state, it means the container inside the Pod repeatedly fails to start, causing Kubernetes to restart it. The first step in troubleshooting is to inspect the **Pod’s logs** to understand why the container is crashing. Using `kubectl logs POD_NAME` allows you to view logs for the most recent attempt and any previous failures (`kubectl logs POD_NAME --previous`). These logs often provide direct clues as to why the container is failing to start, such as missing environment variables, incorrect configurations, or application errors.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Connect to the Pod with kubectl exec**  
+Since the Pod is in a CrashLoopBackoff state, the container is likely not running long enough to establish a shell connection. Additionally, Kubernetes Pods don’t typically log to `/var/log/messages`, as application logs are usually written to stdout and stderr, which `kubectl logs` retrieves.
+
+  * **Option B: Check IAM permissions for Artifact Registry access**  
+While incorrect IAM permissions could prevent access to Artifact Registry, this would cause an `ImagePullBackOff` error, not a CrashLoopBackoff. If the container was deployed successfully, the issue is likely related to the application or its configuration within the container.
+
+  * **Option D: Check Cloud Logging for denied egress traffic to the Private Google Access CIDR range**  
+This option is relevant if there are network issues affecting access to external resources; however, a CrashLoopBackoff is typically caused by container-specific errors rather than network configurations. Network issues would more likely prevent the application from functioning properly after starting, rather than causing repeated crashes at startup.
+
+</details>
+
+---
+
+### Exam 5 · Q38
+
+**You’re using Cloud Build to build and test container images before deploying them to Cloud Run. The images are stored in Artifact Registry, and you need to ensure that only images that have passed testing are deployed, with minimal operational overhead. What should you do?**
+
+- **A.** Deploy a new revision to a **Cloud Run** service and assign it a tag that provides access at a specific URL without serving traffic. Test this revision, and once confirmed, migrate traffic to the new revision.
+- **D.** Configure **build provenance** on your **Cloud Build** pipeline, confirm all tests have passed, and deploy the image to a **Cloud Run** service.
+- **C.** Set up a **GKE cluster** , verify that all tests have passed, and deploy the image to the **GKE cluster**.
+- **B.** Enable **Binary Authorization** on your **Cloud Run** service. Create an attestation for images that pass all tests, and configure **Binary Authorization** to allow only images with valid attestations to be deployed.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** **B.** Enable **Binary Authorization** on your **Cloud Run** service. Create an attestation for images that pass all tests, and configure **Binary Authorization** to allow only images with valid attestations to be deployed.
+
+**The correct answer is**
+
+**B. Enable Binary Authorization on your Cloud Run service. Create an attestation for images that pass all tests, and configure Binary Authorization to allow only images with valid attestations to be deployed.**
+
+Explanation:
+
+**Binary Authorization** provides a security layer that ensures only container images meeting specific criteria, such as passing all tests, are deployed to production environments like **Cloud Run**. By configuring Binary Authorization with attestations, you can require that only images that pass testing (and have corresponding attestations) are allowed to be deployed. This approach automates enforcement of deployment policies with minimal operational overhead, as Binary Authorization will automatically block any unapproved images.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Deploy a new revision and assign it a tag**  
+This option requires manual steps to test and shift traffic to the new revision. Although it provides a mechanism for testing, it does not enforce strict control over which images can be deployed, nor does it prevent untested images from being deployed.
+
+  * **Option C: Set up a GKE cluster and deploy the image**  
+Deploying to GKE introduces additional complexity, as Cloud Run is the intended deployment environment in this scenario. This option does not address the requirement for controlled deployment based on testing results, nor does it leverage Binary Authorization.
+
+  * **Option D: Configure build provenance on your Cloud Build pipeline**  
+Build provenance tracks the source and build process of an artifact but does not enforce deployment rules based on test results. Provenance alone does not restrict deployments to tested images, nor does it automatically prevent untested images from being deployed.
+
+**Relevant Documentation:**
+
+For more on Binary Authorization and using attestations to control deployments, refer to:
+
+  * [Binary Authorization Overview](https://cloud.google.com/binary-authorization/docs/overview)
+
+  * [Binary Authorization with Cloud Run](https://cloud.google.com/binary-authorization/docs/run/enabling-binauthz-cloud-run)
+
+</details>
+
+---
+
+### Exam 5 · Q42
+
+**You are migrating a containerized application to Cloud Run and plan to use Cloud Build to build and push your container image to Artifact Registry. For deployment, you’ll use Cloud Deploy to move the image to production. To ensure that only secure images are deployed, what should you do?**
+
+- **C.** Store the encrypted image in **Secret Manager** and deploy it to production.
+- **B.** Enable **Artifact Analysis** to scan the image for vulnerabilities, and use **Cloud Key Management Service** (KMS) to encrypt the image before deployment to production.
+- **A.** Use **Cloud Armor** in front of **Cloud Run** to protect the container image from threats.
+- **D.** Use **Binary Authorization** to enforce a policy allowing only images signed with a trusted key to be deployed to production.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** **D.** Use **Binary Authorization** to enforce a policy allowing only images signed with a trusted key to be deployed to production.
+
+The correct answer is 
+
+**D. Use Binary Authorization to enforce a policy allowing only images signed with a trusted key to be deployed to production.**
+
+Explanation:
+
+**Binary Authorization** is a security feature that allows you to define and enforce policies to ensure that only trusted and verified container images are deployed to production. By configuring Binary Authorization to require a signed attestation, you can enforce that only images that have passed security checks (such as vulnerability scans) and are signed with a trusted key are deployed. This approach is directly aligned with best practices for securing container deployments on Google Cloud.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Use Cloud Armor in front of Cloud Run to protect the container image from threats**  
+Cloud Armor provides network-level protection by filtering incoming requests based on rules but does not control or verify container images. It does not enforce security on the images themselves.
+
+  * **Option B: Enable Artifact Analysis and use Cloud Key Management Service (KMS) to encrypt the image**  
+While Artifact Analysis is useful for vulnerability scanning, encrypting the image with KMS is unnecessary for deployment. The critical step is using Binary Authorization to enforce deployment policies based on the security of the image.
+
+  * **Option C: Store the encrypted image in Secret Manager and deploy it to production**  
+Secret Manager is designed to store sensitive configuration data, not container images. Artifact Registry is the appropriate place for storing container images, with Binary Authorization used to enforce deployment security.
+
+**Relevant Documentation:**
+
+For more information on Binary Authorization and Artifact Analysis, refer to:
+
+  * [Binary Authorization Overview](https://cloud.google.com/binary-authorization/docs/overview)
+
+</details>
+
+---
+
+### Exam 5 · Q44
+
+**Which approach should you take to efficiently configure an application deployed on Compute Engine instances across multiple projects, each representing a different environment in your software development process (development, QA, staging, and production)?**
+
+- III. Deploy your chosen deployment tool on an instance within each project. Utilize a deployment job to fetch the relevant configuration file from your version control system and apply it during application deployment on each instance.
+- II. Configure a metadata key within each project named "environment" and set its value to reflect the environment served by the instance. Use a deployment tool to access instance metadata and configure the application based on the "environment" value.
+- IV. Configure an instance custom-metadata key named "environment" with the appropriate environment value during each instance launch. Use your deployment tool to access instance metadata and configure the application based on the "environment" value.
+- I. Utilize a startup script with the gcloud command when creating instances, which determines the project name indicating the environment, to configure the application accordingly.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Configure a metadata key within each project named "environment" and set its value to reflect the environment served by the instance. Use a deployment tool to access instance metadata and configure the application based on the "environment" value.
+
+**The most efficient approach to configure an application deployed on Compute Engine instances across multiple projects, each representing a different environment, would be:**
+
+**II. Configure a metadata key within each project named "environment" and set its value to reflect the environment served by the instance. Use a deployment tool to access instance metadata and configure the application based on the "environment" value.**
+
+**Justification:**
+
+Option II allows for centralizing the configuration management by utilizing project metadata. By setting a metadata key named "environment" within each project and assigning values corresponding to the environment (e.g., development, QA, staging, production), you can easily identify and manage the environment of each instance.
+
+Using a deployment tool to access instance metadata simplifies the configuration process. The deployment tool can retrieve the "environment" metadata value and configure the application accordingly during deployment. This approach promotes consistency and reduces the complexity of managing configurations across multiple environments.
+
+**Why the other options are not as efficient:**
+
+I. Utilizing a startup script with the gcloud command when creating instances may introduce complexity and potential inconsistencies, especially when dealing with multiple projects and environments. Managing configuration directly within the startup script could lead to maintenance challenges and difficulties in ensuring uniformity across environments.
+
+III. Deploying a deployment tool on an instance within each project and fetching configuration files from a version control system adds unnecessary overhead. It requires additional resources and introduces dependencies on the instance running the deployment tool. This approach may also complicate the configuration management process, especially in large-scale deployments.
+
+IV. Configuring instance custom-metadata keys named "environment" during instance launch introduces manual steps and potential errors. It requires ensuring that the correct metadata keys and values are set for each instance, which could lead to inconsistencies or misconfigurations across environments. Additionally, relying solely on instance metadata for configuration may not be as robust or scalable as leveraging a dedicated deployment tool.
+
+**References:**
+
+[https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom-project-wide-metadata](https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom-project-wide-metadata  https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom)
+
+[https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom](https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom-project-wide-metadata  https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom)
+
+</details>
+
+---
+
+### Exam 5 · Q45
+
+**You aim to restrict your App Engine standard configuration to a maximum of 5 instances while using the following setup:**
+
+**Which code snippet should be integrated into your configuration to achieve this?**
+
+- I. Utilize manual scaling with a set number of instances and a minimum pending latency of 30ms.
+- III. Opt for basic scaling with a designated number of instances set at 5 and a minimum pending latency of 30ms.
+- II. Employ manual scaling with a maximum instance limit of 5 and an idle timeout of 10 minutes.
+- IV. Choose basic scaling with a cap on the maximum instances set to 5 and an idle timeout of 10 minutes.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** IV. Choose basic scaling with a cap on the maximum instances set to 5 and an idle timeout of 10 minutes.
+
+**Correct Choice:**
+
+  * **IV. Choose basic scaling with a cap on the maximum instances set to 5 and an idle timeout of 10 minutes.**
+
+**Explanation:**
+
+  * **Basic Scaling:** App Engine standard environment offers two scaling types: basic and automatic. Basic scaling allows you to directly control the maximum number of instances.
+
+  * **Maximum Instances:** The `max_instances` setting within your configuration file enables you to explicitly limit the number of instances to 5.
+
+  * **Idle Timeout:** The `idle_timeout` setting is relevant for basic scaling, ensuring that instances that remain inactive for 10 minutes are shutdown, thus conserving resources.
+
+**Incorrect Options:**
+
+  * **I. Utilize manual scaling with a set number of instances and a minimum pending latency of 30ms.**
+
+    * **Manual Scaling Limitation:** Manual scaling is used to set a fixed number of instances, not a maximum. It doesn't allow you to cap the instances dynamically based on traffic.
+
+  * **II. Employ manual scaling with a maximum instance limit of 5 and an idle timeout of 10 minutes.**
+
+    * **No Such Setting:** Manual scaling in App Engine doesn't have a `max_instances` setting.
+
+  * **III. Opt for basic scaling with a designated number of instances set at 5 and a minimum pending latency of 30ms.**
+
+    * **Basic Scaling Limitation:** With basic scaling, you control the maximum, not a fixed number of instances. Your app could still run fewer instances.
+
+**References:**  
+[https://cloud.google.com/appengine/docs/legacy/standard/python/how-instances-are-managed#scaling_types](https://cloud.google.com/appengine/docs/legacy/standard/python/how-instances-are-managed#scaling_types  https://cloud.google.com/appengine/docs/standard/reference/app-yaml?tab=python#manual_scaling)
+
+[https://cloud.google.com/appengine/docs/standard/reference/app-yaml?tab=python#manual_scaling](https://cloud.google.com/appengine/docs/legacy/standard/python/how-instances-are-managed#scaling_types  https://cloud.google.com/appengine/docs/standard/reference/app-yaml?tab=python#manual_scaling)
+
+</details>
+
+---
+
+### Exam 5 · Q47
+
+**You are setting up monitoring for your application deployed on a Compute Engine virtual machine instance equipped with the Stackdriver Monitoring Agent. The application functions as a Unix process on the instance. Your objective is to receive alerts if the Unix process remains inactive for at least 5 minutes. Given the limitation that you cannot modify the application to produce metrics or logs, what alert condition should you establish?**
+
+- II. Process status evaluation
+- IV. Metric level benchmark
+- III. Metric nonexistence detection
+- I. System availability assessment
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Process status evaluation
+
+**Correct Option: II. Process status evaluation**
+
+**Justification:**
+
+  * **Process Status Evaluation Focus:** Process status checks directly monitor whether a particular process is running or not, aligning precisely with the goal of detecting inactivity.
+
+  * **Monitoring Agent Capability:** The Stackdriver Monitoring Agent can track system-level metrics, including the existence and state of Unix processes. This makes process status evaluation a readily achievable monitoring method with the existing setup.
+
+**Reasons Why Other Options Are Incorrect:**
+
+  * **I. System Availability Assessment:** While useful for overall system health, this is too broad. A system could be available, but the specific application process might be inactive.
+
+  * **III. Metric Nonexistence Detection:** This is relevant when a process _should_ produce metrics. This approach would fail to signal if the process is expected to be inactive for periods and thus naturally produce no metrics.
+
+  * **IV. Metric Level Benchmark:** This involves comparing metrics to thresholds, which is not suitable when the goal is to detect the very absence of activity and the implied lack of any metrics.
+
+**References:**  
+[https://cloud.google.com/monitoring/alerts/policies-in-json#json-process-health](https://cloud.google.com/monitoring/alerts/policies-in-json#json-process-health  https://cloud.google.com/monitoring/alerts/types-of-conditions#metric-threshold)
+
+[https://cloud.google.com/monitoring/alerts/types-of-conditions#metric-threshold](https://cloud.google.com/monitoring/alerts/policies-in-json#json-process-health  https://cloud.google.com/monitoring/alerts/types-of-conditions#metric-threshold)
+
+</details>
+
+---
+
+### Exam 5 · Q49
+
+**You have a container deployed on Google Kubernetes Engine. Occasionally, the container experiences delays in launching, leading to failures in the liveness probe. What is the recommended action to address this issue?**
+
+- I. Implement a startup probe.
+- III. Raise the CPU limit for the container.
+- II. Extend the initial delay for the liveness probe.
+- IV. Introduce a readiness probe.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Implement a startup probe.
+
+**The recommended action to address the issue of occasional delays in container launching, leading to failures in the liveness probe, is:**
+
+**I. Implement a startup probe.**
+
+**Explanation:**
+
+  * **A startup probe is specifically designed to determine if a container has started successfully before the liveness probe is activated.**
+
+  * **By implementing a startup probe, you can delay the execution of the liveness probe until the container has had sufficient time to start up and initialize properly.**
+
+  * **This helps prevent false-positive liveness probe failures caused by temporary delays during container startup, allowing the container to become ready and available for handling traffic only after it has fully initialized and is able to respond to requests properly.**
+
+The other options can be explained as follows:
+
+II. Extending the initial delay for the liveness probe may provide some temporary relief by giving the container more time to start up before the probe starts checking its health. However, this approach does not address the root cause of the issue and may result in longer detection times for actual liveness failures.
+
+III. Raising the CPU limit for the container might improve its performance but is unlikely to directly resolve delays in container startup. CPU limits are more relevant for managing resource allocation and preventing resource contention, rather than addressing startup delays.
+
+IV. Introducing a readiness probe is also a good practice, but it specifically checks if the container is ready to handle traffic. While it helps ensure that only healthy containers receive traffic, it does not directly address delays in container startup, which is the primary concern in this scenario.
+
+**Reference:**
+
+<https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes>
+
+</details>
+
+---
+
+### Exam 5 · Q57
+
+**Your application is deployed within a Google Kubernetes Engine (GKE) cluster. Whenever a new version of your application is released, your CI/CD tool updates the `spec.template.spec.containers[0].image` value to point to the Docker image of the new application version. Upon applying the change, you aim to deploy a minimum of 1 replica of the new version while ensuring that the previous replicas are retained until the new replica is deemed healthy.**
+
+**Which modification should you apply to the GKE Deployment object shown below?**
+
+**apiVersion: apps/v1**
+
+**kind: Deployment**
+
+**metadata:**
+
+**name: ecommerce-frontend-deployment**
+
+**spec:**
+
+**replicas: 3**
+
+**selector:**
+
+**matchLabels:**
+
+**app: ecommerce-frontend**
+
+**template:**
+
+**metadata:**
+
+**labels:**
+
+**app: ecommerce-frontend**
+
+**spec:**
+
+**containers:**
+
+**\- name: ecommerce-frontend-webapp**
+
+**image: ecommerce-frontend-webapp:1.7.9**
+
+**ports:**
+
+**\- containerPort: 80**
+
+- A. Configure the Deployment strategy as RollingUpdate with `maxSurge` set to 0 and `maxUnavailable` set to 1.
+- C. Configure the Deployment strategy as Recreate with `maxSurge` set to 0 and `maxUnavailable` set to 1.
+- D. Configure the Deployment strategy as Recreate with `maxSurge` set to 1 and `maxUnavailable` set to 0.
+- B. Configure the Deployment strategy as RollingUpdate with `maxSurge` set to 1 and `maxUnavailable` set to 0.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Configure the Deployment strategy as RollingUpdate with `maxSurge` set to 1 and `maxUnavailable` set to 0.
+
+**Correct Answer:**
+
+  * **B. Configure the Deployment strategy as RollingUpdate with**`**maxSurge**`**set to 1 and**`**maxUnavailable**`**set to 0.**
+
+**Justification:**
+
+  * **RollingUpdate:** This strategy gracefully replaces existing pods with new ones, ensuring service availability throughout the update. (Kubernetes Documentation: <https://kubernetes.io/docs/concepts/workloads/controllers/deployment/>)
+
+  * **maxSurge: 1** This allows the creation of one additional pod beyond the desired replica count (`replicas: 3`). This ensures the new replica starts and becomes healthy before proceeding.
+
+  * **maxUnavailable: 0** Ensures at least 3 pods (the original `replicas` count) remain available, maintaining service uptime.
+
+**Incorrect Answers**
+
+  * **A. ...maxSurge**`**set to 0 and**`**maxUnavailable` set to 1.**
+
+    * **Reasoning:** This setup would prevent a new pod from being created until an old one is terminated, hindering the requirement for a temporary overlap of a new and old versions.
+
+  * **C. Configure the Deployment strategy as Recreate...**
+
+    * **Reasoning:** The Recreate strategy terminates all existing pods before starting new ones. This would introduce downtime which conflicts with the goal of maintaining service availability.
+
+  * **D. Configure the Deployment strategy as Recreate...**
+
+    * **Reasoning:** Same as C – the Recreate strategy would lead to service unavailability.
+
+</details>
+
+---
+
+### Exam 5 · Q58
+
+**As the lead developer responsible for a financial risk calculation API hosted on Cloud Run with a gRPC interface, you continuously work on enhancing the risk analysis features. You want to make these optimizations available first to a select group of customers who signed up to test the improvements before releasing them more broadly. Your CI/CD pipeline has created a new version of the API as a container image, which is now stored in the Artifact Registry.**
+
+**Which rollout strategy should you use to manage this controlled release?**
+
+- A. Use Cloud Run’s traffic splitting to direct a specific percentage of traffic from registered test users to the updated service.
+- C. Control access to the new service using a feature flag for customers registered to test the updates.
+- B. Implement a blue/green deployment to transition traffic to the new version of the service.
+- D. Migrate traffic to the updated service and activate session affinity for Cloud Run.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Control access to the new service using a feature flag for customers registered to test the updates.
+
+The correct answer is 
+
+**C. Control access to the new service using a feature flag for customers registered to test the updates.**
+
+Explanation:
+
+Using a **feature flag** is the most effective strategy for selectively enabling new optimizations for a specific group of customers who have opted to test them. Feature flags allow you to control access to the updated features based on specific user criteria, such as registration for testing. This approach enables you to:
+
+  * **Precisely target** only the selected group of customers without affecting others.
+
+  * **Gradually roll out and monitor** the new features for feedback before a full release.
+
+Feature flags offer flexibility and reduce the risk of potential issues affecting all users by isolating changes to only a controlled group.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Traffic splitting based on a percentage**  
+Traffic splitting in Cloud Run distributes traffic based on percentage rather than user-specific criteria, making it unsuitable for selectively targeting specific registered customers.
+
+  * **Option B: Blue/green deployment**  
+Blue/green deployments are designed for swapping all traffic between two service versions and do not allow selective feature access for a specific user group. This approach is better suited for general rollouts or quick rollbacks, not for limited testing.
+
+  * **Option D: Session affinity for Cloud Run**  
+Session affinity ensures that a user’s requests are directed to the same instance, but it does not allow you to control which users see the new features. Session affinity is not relevant for user-specific feature testing.
+
+</details>
+
+---
+
+### Exam 5 · Q59
+
+**In the process of replatforming legacy applications onto Google Kubernetes Engine, your organization aims to decompose a monolithic application into microservices without rewriting the application code. There are multiple instances with read and write access to a configuration file stored on a shared file system. How can you minimize the effort required to manage this transition?**
+
+- IV. Implement a new ConfigMap and volumeMount to store the contents of the configuration file.
+- I. Utilize a new Cloud Storage bucket and mount it within the container using FUSE.
+- II. Establish a new persistent disk and mount the volume as a shared PersistentVolume.
+- III. Deploy a new Filestore instance and mount the volume as an NFS PersistentVolume.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** III. Deploy a new Filestore instance and mount the volume as an NFS PersistentVolume.
+
+**III. Deploy a new Filestore instance and mount the volume as an NFS PersistentVolume.**
+
+Here's why:
+
+  * **Supports Shared Access:** Filestore provides a network file system (NFS) solution that natively supports multiple instances reading and writing to the same shared storage. This aligns well with the legacy application's requirements.
+
+  * **Manageability:** Filestore is a fully managed service, significantly reducing the administrative overhead compared to manually managing a persistent disk or self-hosting an NFS solution.
+
+**Why other options are less suitable:**
+
+  * **I. Utilize a new Cloud Storage bucket and mount it within the container using FUSE.** Cloud Storage is object storage, not a file system. While FUSE could be used, it adds complexity and might introduce performance or consistency issues.
+
+  * **II. Establish a new persistent disk and mount the volume as a shared PersistentVolume.** Most persistent disk types in Kubernetes don't support simultaneous mounting from multiple pods, making this unsuitable for the shared file system requirement.
+
+  * **IV. Implement a new ConfigMap and volumeMount to store the contents of the configuration file.** ConfigMaps are designed for storing configuration data, not large shared files, and they might have size limitations.
+
+**References:**
+
+[https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes https://cloud.google.com/filestore/docs/accessing-fileshares](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes   https://cloud.google.com/filestore/docs/accessing-fileshares  https://cloud.google.com/storage/docs/gcs-fuse)
+
+[https://cloud.google.com/storage/docs/gcs-fuse](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes   https://cloud.google.com/filestore/docs/accessing-fileshares  https://cloud.google.com/storage/docs/gcs-fuse)
 
 </details>
 

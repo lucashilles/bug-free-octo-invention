@@ -28,7 +28,8 @@
         "An agent on every node means DaemonSet.",
         "Per-microservice replica counts plus uniform addressing means Deployment + Service + Service DNS name.",
         "Internal-only access means ClusterIP; NodePort exposes the service outside the cluster.",
-        "A new Ingress or LoadBalancer Service gets a new IP; edit the existing Ingress to keep the same one."
+        "A new Ingress or LoadBalancer Service gets a new IP; edit the existing Ingress to keep the same one.",
+        "Another team must deploy into your cluster without touching your app: new namespace + Kubernetes RBAC Admin on it, not project-level IAM."
       ]
     },
     "3": {
@@ -43,7 +44,9 @@
         "Abrupt DB disconnects during rollout: handle SIGTERM; a longer grace period alone does nothing.",
         "PodDisruptionBudgets and preStop hooks don't replace SIGTERM handling in the app.",
         "Continuous check plus shutdown script: probe + preStop, not initContainer or PostStart.",
-        "Preemptible VM: shutdown script sends a Linux signal to the app; file polling is too slow."
+        "Preemptible VM: shutdown script sends a Linux signal to the app; file polling is too slow.",
+        "Gate LB/Service traffic with a readinessProbe; fix liveness failures caused by slow starts with a startupProbe.",
+        "CrashLoopBackOff: read the container's logs (kubectl logs --previous); registry IAM problems show as ImagePullBackOff."
       ]
     },
     "4": {
@@ -58,7 +61,8 @@
         "Same image, different environments on Compute Engine: metadata key read from the metadata server, not an env var.",
         "Different config per MIG: put values in each instance template's metadata.",
         "Many Pods need read/write access to one file without code changes: Filestore NFS PV.",
-        "Volume grown but Pods don't see it: edit spec.resources.requests.storage on the PVC, not the PV."
+        "Volume grown but Pods don't see it: edit spec.resources.requests.storage on the PVC, not the PV.",
+        "One project per environment: a project-wide metadata key such as 'environment', read from the metadata server."
       ]
     },
     "5": {
@@ -88,7 +92,9 @@
         "Swift complete rollback: blue/green.",
         "Test against full production load before launch without user impact: traffic mirroring.",
         "Cloud Run gradual release: deploy with 'Serve this revision immediately' off, then shift percentages.",
-        "Segment users by OS or user-agent: GKE + Anthos Service Mesh routing rules."
+        "Segment users by OS or user-agent: GKE + Anthos Service Mesh routing rules.",
+        "Keep old Pods until the new one is healthy: RollingUpdate with maxSurge 1, maxUnavailable 0; MIG with no extra cost: maxSurge 0, maxUnavailable 1.",
+        "Hand-picked tester group: feature flag; randomized A/B test: weighted traffic split."
       ]
     },
     "7": {
@@ -104,7 +110,8 @@
         "Pub/Sub backlog drives load: HPA on an external metric such as num_undelivered_messages.",
         "Pods and nodes must both scale: Cluster Autoscaler + HPA.",
         "MIG latency while scaling: lower the CPU target and shorten the cooldown.",
-        "Spanner cost cuts: watch CPU utilization and reduce processing units gradually."
+        "Spanner cost cuts: watch CPU utilization and reduce processing units gradually.",
+        "Cloud Run errors only at peak load: raise max instances; App Engine standard cap: basic_scaling max_instances."
       ]
     },
     "8": {
@@ -120,7 +127,8 @@
         "Deploy on every push to a branch: a Cloud Build branch trigger running the existing build file.",
         "Functions deploy fails right after validation: grant the Cloud Build service account Cloud Functions Developer.",
         "Cloud Deploy events come from clouddeploy-operations, not cloud-builds.",
-        "Isolated system tests: Cloud Build runs Terraform to create a new project."
+        "Isolated system tests: Cloud Build runs Terraform to create a new project.",
+        "Promote the same container image everywhere by digest; for VMs, bake one Compute Engine image per build and reuse it."
       ]
     },
     "9": {
@@ -135,7 +143,8 @@
         "Only pipeline-built images on GKE: Cloud Build + Artifact Registry + Binary Authorization.",
         "Only images that passed tests: attestor + policy + attestation step in Cloud Build.",
         "Only UAT-passed images in prod: KMS-signed attestation + cluster-specific rule in the production project.",
-        "Block critical CVEs: scan programmatically, attest clean images, enforce with Binary Authorization."
+        "Block critical CVEs: scan programmatically, attest clean images, enforce with Binary Authorization.",
+        "Prevent exfiltration too: Cloud Build private worker pool + VPC Service Controls; Binary Authorization also guards Cloud Run."
       ]
     },
     "10": {
@@ -179,9 +188,10 @@
       ],
       "takeaways": [
         "Any 'alert when X' with minimal development: Cloud Monitoring alerting policy, never a scheduled function.",
-        "App unreachable for users: uptime check; process stopped without app changes: metric absence.",
+        "App unreachable for users: uptime check; process stopped without app changes: process health (the bank also keys metric absence).",
         "VM memory needs the monitoring agent; log files need the logging agent with a custom source.",
-        "Count /api/alpha/* requests: logs-based counter metric with a wildcard."
+        "Count /api/alpha/* requests: logs-based counter metric with a wildcard.",
+        "Logs from every replica in every cluster: Cloud Logging via gcloud logging read, not kubectl logs or journalctl."
       ]
     }
   },
@@ -226,6 +236,12 @@
       "term": "AuthorizationPolicy",
       "definition": "An Istio resource that allows or denies requests based on attributes such as HTTP method and path.",
       "exam_context": "The cause when only certain URLs fail between two Pods that otherwise communicate.",
+      "lesson": 10
+    },
+    {
+      "term": "Authorized networks",
+      "definition": "A GKE control-plane allowlist of CIDR ranges allowed to reach a cluster's public endpoint.",
+      "exam_context": "kubectl from Cloud Shell times out with no error: Cloud Shell's external IP isn't on the list.",
       "lesson": 10
     },
     {
@@ -295,6 +311,12 @@
       "lesson": 9
     },
     {
+      "term": "CrashLoopBackOff",
+      "definition": "A Pod status meaning the container keeps starting and exiting, with growing back-off between restarts.",
+      "exam_context": "Troubleshoot with kubectl logs (--previous), not IAM checks; image pull problems show as ImagePullBackOff instead.",
+      "lesson": 3
+    },
+    {
       "term": "DaemonSet",
       "definition": "A Kubernetes workload that runs one copy of a Pod on every node.",
       "exam_context": "The way to install a third-party logging or monitoring agent on each GKE node.",
@@ -305,6 +327,12 @@
       "definition": "A Kubernetes workload that manages a replicated set of stateless Pods and their rolling updates.",
       "exam_context": "Use one per microservice to control replica counts; bare Pods are the distractor.",
       "lesson": 2
+    },
+    {
+      "term": "Feature flag",
+      "definition": "A runtime switch in code that enables new behavior for chosen users without a new deployment.",
+      "exam_context": "Wins when only customers who signed up should see a change; percentage traffic splitting can't target named users.",
+      "lesson": 6
     },
     {
       "term": "Filestore",
@@ -331,6 +359,12 @@
       "lesson": 7
     },
     {
+      "term": "Image digest",
+      "definition": "The immutable sha256 content hash that identifies a container image (image@sha256:...).",
+      "exam_context": "Use it to promote exactly the same image through Dev, Test and Prod; tags like latest or 1.2.3 can move.",
+      "lesson": 8
+    },
+    {
       "term": "Ingress",
       "definition": "A Kubernetes resource that routes external HTTP(S) traffic to Services; on GKE it provisions an HTTP(S) load balancer.",
       "exam_context": "Add a host rule to the existing Ingress to serve a new domain on the same IP; never use it for in-cluster calls.",
@@ -339,7 +373,7 @@
     {
       "term": "Instance metadata",
       "definition": "Key-value data attached to a Compute Engine instance or instance template, readable from the metadata server.",
-      "exam_context": "The built-in way to pass per-environment config to a golden image or per-MIG values to one custom image.",
+      "exam_context": "The built-in way to pass per-environment config to a golden image or per-MIG values to one custom image; use project-wide metadata when each environment is its own project.",
       "lesson": 4
     },
     {
@@ -347,6 +381,12 @@
       "definition": "Access to a Compute Engine VM's serial port that works even when the OS or network isn't up.",
       "exam_context": "Used to read boot logs and fix a VM that won't boot or accept SSH.",
       "lesson": 11
+    },
+    {
+      "term": "Kubernetes RBAC",
+      "definition": "Kubernetes role-based access control: Roles/ClusterRoles bound to users or groups, optionally scoped to a namespace.",
+      "exam_context": "Grant another team Admin on its own namespace so it can deploy without modifying your app; project IAM roles are cluster-wide.",
+      "lesson": 2
     },
     {
       "term": "Liveness probe",
@@ -361,9 +401,15 @@
       "lesson": 12
     },
     {
+      "term": "maxSurge / maxUnavailable",
+      "definition": "Rolling-update limits on how many extra instances may be created and how many may be unavailable during an update (GKE Deployments and MIGs).",
+      "exam_context": "Surge 1 / unavailable 0 keeps old Pods until the new one is healthy; surge 0 / unavailable 1 avoids extra MIG cost.",
+      "lesson": 6
+    },
+    {
       "term": "Metric absence condition",
       "definition": "A Cloud Monitoring alert condition that fires when a metric stops reporting for a set duration.",
-      "exam_context": "The answer for 'alert if a process hasn't run for 5 minutes' when the app can't be changed.",
+      "exam_context": "Keyed once for 'alert if a process hasn't run for 5 minutes' (Exam 4); another exam keys process health for the same stem, which fits better.",
       "lesson": 12
     },
     {
@@ -391,6 +437,24 @@
       "lesson": 3
     },
     {
+      "term": "Private worker pool",
+      "definition": "A Cloud Build pool of dedicated workers running in a Google-managed network peered to your VPC.",
+      "exam_context": "Paired with VPC Service Controls when build artifacts must be protected from exfiltration.",
+      "lesson": 9
+    },
+    {
+      "term": "Process-health condition",
+      "definition": "A Cloud Monitoring alert condition that counts processes matching a name or command line, using the agent's process metrics.",
+      "exam_context": "Alert when a Unix process hasn't run for 5 minutes and the app can't be changed.",
+      "lesson": 12
+    },
+    {
+      "term": "Readiness probe",
+      "definition": "A container check that decides whether the Pod is added to Service endpoints and so receives traffic.",
+      "exam_context": "Use it on /healthz to control whether the load balancer routes to the Pod; liveness only restarts containers.",
+      "lesson": 3
+    },
+    {
       "term": "Secret Manager",
       "definition": "Google Cloud's managed service for storing, versioning and accessing secrets.",
       "exam_context": "With Workload Identity, the recommended way to give GKE Pods secrets without exposing them through the Kubernetes API.",
@@ -406,6 +470,12 @@
       "term": "SIGTERM",
       "definition": "The termination signal Kubernetes sends to a container before killing it.",
       "exam_context": "Handling it in code is the fix for DB connections dropped during a Deployment update.",
+      "lesson": 3
+    },
+    {
+      "term": "Startup probe",
+      "definition": "A container check that suspends liveness and readiness probes until the app reports it has started.",
+      "exam_context": "The fix for slow-starting containers that fail their liveness probe, instead of a longer initial delay.",
       "lesson": 3
     },
     {
@@ -431,6 +501,12 @@
       "definition": "A Kubernetes controller that adjusts Pods' CPU and memory requests and limits.",
       "exam_context": "A distractor for bursty or rapid scaling needs, where HPA is the answer.",
       "lesson": 7
+    },
+    {
+      "term": "VPC Service Controls",
+      "definition": "Security perimeters around Google Cloud services that block data from moving to resources outside the perimeter.",
+      "exam_context": "With a Cloud Build private pool and Binary Authorization, meets 'only pipeline images' plus 'no data exfiltration'.",
+      "lesson": 9
     },
     {
       "term": "Workload Identity",

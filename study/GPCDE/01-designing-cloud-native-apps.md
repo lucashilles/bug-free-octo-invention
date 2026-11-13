@@ -1,6 +1,6 @@
 # Domain 1 — Designing Highly Scalable, Secure, and Reliable Cloud-Native Applications
 
-63 questions. Answers are collapsed — try each question before expanding it.
+76 questions. Answers are collapsed — try each question before expanding it.
 
 ## Questions
 
@@ -2406,6 +2406,648 @@ The best choice for your scenario is
   * **II. Cloud SQL:** Provides managed MySQL instances but lacks Spanner's global consistency and extreme uptime guarantees. (<https://cloud.google.com/sql>)
 
   * **IV. Cloud Bigtable:** Bigtable is a NoSQL wide-column store; its eventual consistency model might introduce discrepancies in point balances, and the different data model from MySQL complicates the migration. (<https://cloud.google.com/bigtable>)
+
+</details>
+
+---
+
+### Exam 5 · Q3
+
+**You're designing an architecture for a system that needs to handle streaming data from thousands of devices. The workflow involves ingesting data into a pipeline, storing it, and analyzing it using SQL statements. Which combination of Google Cloud services should you use for steps 1, 2, 3, and 4?**
+
+**
+
+**
+
+- A. 1. App Engine
+    2\. Pub/Sub
+    3\. BigQuery
+    4\. Firestore
+- B. 1. Dataflow
+    2\. Pub/Sub
+    3\. Firestore
+    4\. BigQuery
+- D. 1. Pub/Sub
+    2\. Dataflow
+    3\. Firestore
+    4\. BigQuery
+- C. 1. Pub/Sub
+    2\. Dataflow
+    3\. BigQuery
+    4\. Firestore
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** D. 1. Pub/Sub
+
+**The correct combination of Google Cloud services for handling streaming data from thousands of devices and performing SQL analysis on it would be:**
+
+**D.**
+
+  1. **Pub/Sub: Used for ingesting and processing real-time streaming data from thousands of devices. Pub/Sub can handle large volumes of data and distribute it to downstream services efficiently.**
+
+  2. **Dataflow: Provides a fully managed, serverless stream processing service for transforming and enriching data in real time. Dataflow can process data from Pub/Sub and perform complex transformations before storing it or analyzing it further.**
+
+  3. **Firestore: A flexible, scalable database for storing and querying semi-structured data. Firestore is suitable for storing metadata, configurations, or other relevant information related to the streaming data.**
+
+  4. **BigQuery: A fully managed, serverless data warehouse for performing fast SQL queries on large datasets. BigQuery can be used to analyze the streaming data stored in Firestore or directly ingest data from Dataflow for analysis.**
+
+Justification:
+
+  * Pub/Sub is ideal for ingesting streaming data from devices due to its scalability and real-time capabilities.
+
+  * Dataflow is suitable for processing and transforming streaming data before storing it or performing further analysis.
+
+  * Firestore provides a flexible and scalable database for storing semi-structured data, which can complement the structured data stored in BigQuery.
+
+  * BigQuery is a powerful tool for performing SQL analysis on large datasets, making it suitable for analyzing streaming data.
+
+Option A is incorrect because App Engine is a platform for building and deploying web applications and does not provide stream processing capabilities like Dataflow or Pub/Sub.
+
+Option B is incorrect because Firestore is not typically used for storing streaming data, as it is designed more for document-oriented databases rather than real-time streaming data.
+
+Option C is incorrect because Dataflow is better suited for stream processing before analysis, rather than BigQuery, which is optimized for performing SQL queries on stored data. Additionally, Firestore is not typically used for storing streaming data.
+
+</details>
+
+---
+
+### Exam 5 · Q9
+
+**You are building a web application to be deployed on Cloud Run in production. This application is composed of multiple microservices: some need to be publicly accessible, while others should only be accessible after authenticating with Google identities. Your goal is to allow unrestricted access to public services but restrict access to certain services for authenticated users only. You want to implement the most secure solution while keeping management simple and minimizing overhead. How should you set up access?**
+
+- C. Set up **Cloud Endpoints** with **Firebase Authentication** for all microservices. Configure **Firebase rules** to manage access control lists (ACLs) for each service, allowing public access where needed.
+- A. Enable **Identity-Aware Proxy (IAP)** for all microservices, and create a new microservice that verifies the authentication requirements for each service and controls access accordingly.
+- B. Enable **Identity-Aware Proxy (IAP)** for all microservices. Use **access control lists (ACLs)** to restrict access to specific services and grant **allAuthenticatedUsers** access to public services.
+- D. Set up separate **Cloud Run services** for public and restricted microservices. Enable **IAP** only for restricted services, and set the Cloud Run **ingress settings** to **‘Internal and Cloud Load Balancing’** for these services.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Enable **Identity-Aware Proxy (IAP)** for all microservices. Use **access control lists (ACLs)** to restrict access to specific services and grant **allAuthenticatedUsers** access to public services.
+
+The correct answer is
+
+**B. Enable Identity-Aware Proxy (IAP) for all microservices. Manage access control lists (ACLs) for the restricted services, and configure allAuthenticatedUsers access to the public services.**
+
+Explanation:
+
+**Identity-Aware Proxy (IAP)** is the recommended way to secure access to applications running on Google Cloud by controlling access based on Google identity. Enabling IAP for all microservices allows you to easily manage access control for each service using **Access Control Lists (ACLs)** :
+
+  1. **Restricted Services** : Use ACLs to grant access only to specific, authenticated Google identities for services that require authentication.
+
+  2. **Public Services** : Configure `allAuthenticatedUsers` to allow access to users who have authenticated with any Google account, or alternatively, you can configure these services with `allUsers` if truly unrestricted access is required.
+
+This approach provides **secure, identity-based access** for the restricted services and easy configuration for public services, while avoiding additional infrastructure or complex access control implementations.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Develop a new microservice to manage access**  
+Creating a custom access management microservice introduces unnecessary complexity and management overhead, especially when IAP natively supports Google identity-based access control.
+
+  * **Option C: Use Cloud Endpoints with Firebase Authentication**  
+Cloud Endpoints and Firebase Authentication can control access, but they add complexity and require more setup than IAP. IAP provides a simpler, built-in approach for managing identity-based access for Google Cloud services.
+
+  * **Option D: Configure separate Cloud Run services with IAP and ‘Internal and Cloud Load Balancing’ ingress**  
+Using `Internal and Cloud Load Balancing` ingress restricts access to only internal Google Cloud traffic, which doesn’t meet the requirement for public access. IAP provides a more flexible solution, allowing both public and restricted access within the same framework.
+
+**Relevant Documentation:**
+
+For more details, refer to:
+
+  * [Identity-Aware Proxy (IAP) Overview](https://cloud.google.com/iap/docs/concepts-overview)
+
+</details>
+
+---
+
+### Exam 5 · Q12
+
+**You're tasked with migrating your corporate intranet web application to Google Cloud while ensuring accessibility for company employees, even while traveling. The migration should prioritize security and minimize application changes. What's the best approach to achieve this?**
+
+- I. Implement authentication credential checks for each HTTP(S) request to the application to ensure authorized access.
+- III. Set up a Compute Engine instance requiring users to log in with their corporate accounts. Direct the web application's DNS to this proxy Compute Engine instance. After authentication, the Compute Engine facilitates requests between users and the web application.
+- IV. Set up a Compute Engine instance requiring users to log in with their corporate accounts. Point the web application's DNS to this proxy Compute Engine instance. Upon authentication, the Compute Engine issues an HTTP redirect to a public IP address hosting the web application, ensuring accessibility.
+- II. Configure Identity-Aware Proxy to grant employees access to the application via its public IP address while maintaining security measures.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Configure Identity-Aware Proxy to grant employees access to the application via its public IP address while maintaining security measures.
+
+**Best Choice:**
+
+  * **II. Configure Identity-Aware Proxy (IAP) to grant employees access to the application via its public IP address while maintaining security measures.**
+
+**Explanation:**
+
+  * **Seamless User Experience:** IAP integrates with your existing corporate identities (likely G Suite or other SSO provider), minimizing the need for separate logins on the application itself.
+
+  * **Strong Security:** IAP offers robust authentication and authorization at the load balancer level, protecting your intranet even with a public IP address.
+
+  * **Minimal Changes:** Assuming the application isn't tightly coupled to internal IP addresses, IAP requires the least disruptive modifications to your application.
+
+**Why Other Options Are Less Ideal:**
+
+  * **I. Implement authentication credential checks for each HTTP(S) request to the application to ensure authorized access.**
+
+    * **Reinventing the Wheel:** Implementing your own authentication and authorization logic alongside a corporate system is extra work and adds potential security risks.
+
+  * **III. Set up a Compute Engine instance ...**
+
+    * **Increased Complexity:** Introducing a Compute Engine instance as a proxy adds another component to manage and can become a performance/availability bottleneck.
+
+  * **IV. Set up a Compute Engine instance ...**
+
+    * **Same Issues as III + Security Risk:** In addition to drawbacks of III, redirecting users away from the secure IAP domain weakens the security model.
+
+**Reference:**
+
+<https://cloud.google.com/blog/topics/developers-practitioners/control-access-your-web-sites-identity-aware-proxy>
+
+</details>
+
+---
+
+### Exam 5 · Q19
+
+**You are developing a highly available and globally accessible application to deliver static content to users. What configuration should you implement for the storage and serving components to minimize management overhead, reduce latency, and maximize reliability for users?**
+
+- IV. 1. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.
+    2\. Reserve an external IP address and set up an external HTTP(S) load balancer.
+    Enable Cloud CDN and direct traffic to the backend bucket.
+    3\. Set up an external HTTP(S) load balancer.
+    Enable Cloud CDN and route traffic to the unmanaged instance group.
+- II. 1. Create an unmanaged instance group and replicate the static content across the VMs.
+    2\. Set up an external HTTP(S) load balancer.
+    Enable Cloud CDN and route traffic to the unmanaged instance group.
+- I. 1. Establish a managed instance group and replicate the static content across the virtual machines (VMs).
+    2\. Create an external HTTP(S) load balancer.
+    Enable Cloud CDN and direct traffic to the managed instance group.
+- III. 1. Deploy a Standard storage class, regional Cloud Storage bucket and store the static content in the bucket.
+    2\. Reserve an external IP address and configure an external HTTP(S) load balancer.
+    Enable Cloud CDN and direct traffic to the backend bucket.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** IV. 1. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.
+
+The most suitable configuration for this scenario is **IV** :
+
+  * **1\. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.** Multi-regional Cloud Storage provides the highest level of availability and geographic redundancy for your content. This ensures reliability even if a single region experiences issues.
+
+  * **2\. Reserve an external IP address and set up an external HTTP(S) load balancer. Enable Cloud CDN and direct traffic to the backend bucket.** The load balancer distributes traffic for global reach, and Cloud CDN optimizes for low-latency content delivery.
+
+**Here's why this combination is the best:**
+
+  * **Maximizes reliability:** Multi-regional storage and load balancing mitigate the risk of regional outages impacting content availability.
+
+  * **Minimizes latency:** Cloud CDN caches the content at edge locations worldwide, placing it closer to users for faster delivery.
+
+  * **Reduces management overhead:** Using fully managed services like multi-regional Cloud Storage and Cloud CDN eliminates the need to manage infrastructure like VMs.
+
+**Why other options are less ideal:**
+
+  * **I & II**: Using instance groups (managed or unmanaged) introduces the overhead of managing VM infrastructure, patching, and scaling. This is less efficient for static content.
+
+  * **III:** A regional Cloud Storage bucket offers less redundancy than a multi-regional one, increasing the risk of downtime if a regional issue occurs.
+
+</details>
+
+---
+
+### Exam 5 · Q30
+
+**Your team is developing an application for a financial institution. The application's frontend operates on Compute Engine, while the data is stored in Cloud SQL and a Cloud Storage bucket. This application will gather data containing Personally Identifiable Information (PII), which will be stored in both the Cloud SQL database and the Cloud Storage bucket. How can you ensure the security of the PII data?**
+
+- I. 1. Establish specific firewall rules to permit only the frontend to communicate with the Cloud SQL database.
+    2\. Utilize IAM to grant access solely to the frontend service account for the Cloud Storage bucket.
+- IV. 1. Configure a private IP address for Cloud SQL.
+    2\. Utilize VPC Service Controls (VPC-SC) to create a service perimeter.
+    Assign the Cloud SQL database and the Cloud Storage bucket to different service perimeters.
+- II. 1. Implement tailored firewall rules to authorize only the frontend to interact with the Cloud SQL database.
+    2\. Enable private access to allow the frontend to securely access the Cloud Storage bucket.
+- III. 1. Set up a private IP address for Cloud SQL.
+    2\. Utilize VPC Service Controls (VPC-SC) to establish a service perimeter.
+    Include both the Cloud SQL database and the Cloud Storage bucket within the same service perimeter.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** III. 1. Set up a private IP address for Cloud SQL.
+
+**The most suitable option is III:**
+
+  * **1\. Set up a private IP address for Cloud SQL.** This prevents direct access to the database from the public internet, enhancing security.
+
+  * **2\. Utilize VPC Service Controls (VPC-SC) to establish a service perimeter. Include both the Cloud SQL database and the Cloud Storage bucket within the same service perimeter.** VPC-SC provides granular control over access between Google Cloud services. Placing both the database and the bucket within a perimeter defends against data exfiltration even if other parts of your project are compromised.
+
+**Why other options are less suitable:**
+
+  * **I.** While firewall rules and IAM are essential security measures, they are not as robust as using private IP addresses and VPC-SC for this sensitive data scenario.
+
+  * **II.** Private Google Access for Cloud Storage is a useful feature, but it's less comprehensive than VPC-SC, which provides more granular, context-aware perimeter protection.
+
+  * **IV.** Separating Cloud SQL and Cloud Storage into different service perimeters introduces additional complexity and could weaken your overall security posture in this scenario.
+
+**Reference:**
+
+<https://cloud.google.com/vpc-service-controls/docs/service-perimeters>
+
+</details>
+
+---
+
+### Exam 5 · Q39
+
+**As a developer at an ecommerce company, you manage a website that stores customer order data in a Cloud SQL for PostgreSQL database. Data scientists on the marketing team access this data to generate reports, which negatively impacts website performance. You need to provide access to up-to-date customer order datasets without affecting website performance. What should you do?**
+
+- C. Create a BigQuery dataset for the data science team and configure Datastream to replicate relevant Cloud SQL tables in BigQuery.
+- B. Set up a Bigtable table for the data science team, and configure the application to write to both Cloud SQL and Bigtable simultaneously.
+- D. Create a clone of the PostgreSQL database instance for the data science team, and schedule a job to update the clone every 15 minutes.
+- A. Use Cloud Scheduler to run an hourly Cloud Function that exports data from Cloud SQL into CSV format and stores it in a Cloud Storage bucket.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Create a BigQuery dataset for the data science team and configure Datastream to replicate relevant Cloud SQL tables in BigQuery.
+
+The correct answer is 
+
+**C. Create a BigQuery dataset for the data science team and configure Datastream to replicate relevant Cloud SQL tables in BigQuery.**
+
+Explanation:
+
+This approach provides the **data scientists with access to up-to-date customer order data** in **BigQuery** , a platform designed for large-scale data analysis, without impacting the performance of the primary Cloud SQL database used by the website. **Datastream** can replicate data from Cloud SQL to BigQuery in near-real time, ensuring the data is current and readily available for analysis. BigQuery’s scalability and analytics capabilities make it an ideal choice for data science and reporting workloads.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Use Cloud Scheduler with Cloud Function to export data to Cloud Storage**  
+While this method would provide access to up-to-date data in Cloud Storage, the exported data would not be in a format that is optimal for querying and analysis. This setup also introduces delays depending on the frequency of exports and lacks the powerful querying capabilities of BigQuery.
+
+  * **Option B: Set up a Bigtable table and configure the application to write to both Cloud SQL and Bigtable**  
+Writing to two databases simultaneously increases the application’s complexity and operational burden. Additionally, Bigtable is designed for high-throughput analytical data, not transactional data, and would not be ideal for ad hoc data science queries.
+
+  * **Option D: Create a clone of the PostgreSQL database and schedule updates**  
+Regularly updating a cloned database adds overhead and may not reflect real-time data, especially if updates are only every 15 minutes. This approach is less efficient and scalable compared to using BigQuery with Datastream.
+
+**Relevant Documentation:**
+
+For more on real-time data replication from Cloud SQL to BigQuery, refer to:
+
+  * [Datastream for BigQuery Integration](https://cloud.google.com/datastream-for-bigquery?hl=en)
+
+</details>
+
+---
+
+### Exam 5 · Q41
+
+**Your organization is preparing to transfer its on-premises Hadoop ecosystem to the cloud due to mounting concerns regarding the escalating expenses and upkeep associated with storing data in HDFS. Minimizing alterations to existing data analytics processes and infrastructure is a priority.**
+
+**What is the recommended approach for executing the migration?**
+
+- IV. Deploy a Cloud Dataproc cluster on Google Cloud Platform (GCP), migrate your Hadoop code artifacts to this cluster, and transfer your data to Cloud Storage. Utilize the Cloud Dataproc connector to execute jobs on this data.
+- III. Establish a Cloud Dataproc cluster on Google Cloud Platform (GCP), then transfer your Hadoop environment to this new cluster. Transition your HDFS data to larger HDD disks to mitigate storage expenditures.
+- I. Shift your Hadoop data to BigQuery and adapt your data analytics workflows to access data directly from BigQuery, eliminating reliance on the on-premises Hadoop environment.
+- II. Create Compute Engine instances equipped with HDD (Hard Disk Drive) technology instead of SSD (Solid State Drive) to curtail costs, followed by a comprehensive migration of your current environment onto these instances.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** IV. Deploy a Cloud Dataproc cluster on Google Cloud Platform (GCP), migrate your Hadoop code artifacts to this cluster, and transfer your data to Cloud Storage. Utilize the Cloud Dataproc connector to execute jobs on this data.
+
+**Best Choice:**
+
+  * **IV. Deploy a Cloud Dataproc cluster on Google Cloud Platform (GCP), migrate your Hadoop code artifacts to this cluster, and transfer your data to Cloud Storage. Utilize the Cloud Dataproc connector to execute jobs on this data.**
+
+**Reasons:**
+
+  * **Minimal Disruption:** Cloud Dataproc provides a managed Hadoop environment on GCP, offering the smoothest migration path for your existing Hadoop setup. This minimizes the need for significant code changes to your data analytics jobs.
+
+  * **Optimized and Scalable Storage:** Separating storage from compute by using Cloud Storage gives you greater flexibility. It allows you to store data cost-effectively with independent scaling of storage and compute resources.
+
+  * **Seamless Integration:** Cloud Dataproc's built-in connector to Cloud Storage enables your existing Hadoop jobs to work with Cloud Storage as if it were an extension of HDFS.
+
+**Why Other Options Are Less Ideal**
+
+  * **I. Shift your Hadoop data to BigQuery and adapt your data analytics workflows to access data directly from BigQuery, eliminating reliance on the on-premises Hadoop environment.**
+
+    * **Tool Mismatch:** BigQuery is a powerful data warehouse but it's optimized for structured data analysis using SQL-like queries. If your analytics workflows are heavily dependent on general-purpose Hadoop tools and processing, significant rewrites might be necessary.
+
+  * **II. Create Compute Engine instances equipped with HDD (Hard Disk Drive) technology instead of SSD (Solid State Drive) to curtail costs, followed by a comprehensive migration of your current environment onto these instances.**
+
+    * **Limited Benefits:** This approach reduces costs but essentially replicates your on-premises setup in the cloud. It doesn't fully leverage cloud-native storage solutions for the scalability and cost benefits you're aiming for.
+
+  * **III. Establish a Cloud Dataproc cluster on Google Cloud Platform (GCP), then transfer your Hadoop environment to this new cluster. Transition your HDFS data to larger HDD disks to mitigate storage expenditures.**
+
+    * **Storage Coupling:** While Cloud Dataproc provides benefits, keeping data within its HDFS system still couples storage with compute. This is less flexible than using Cloud Storage for independent scaling.
+
+**References:**
+
+<https://cloud.google.com/architecture/hadoop/hadoop-gcp-migration-overview>
+
+</details>
+
+---
+
+### Exam 5 · Q43
+
+**You are building a scalable web application for internal users in an organization that uses Google Workspace. You need to set up user authentication for the application and deploy it on Google Cloud. You aim to leverage cloud-native features and minimize infrastructure management. What should you do? (Choose two.)**
+
+- C. Set up a Cloud SQL database with a table containing users and password hashes. Add an authentication screen to restrict access to internal users only.
+- D. Configure Identity-Aware Proxy (IAP) and assign the roles/iap.httpsResourceAccessor IAM role to users needing access.
+- B. Containerize the application and deploy it as a Cloud Run service.
+- E. Configure Identity-Aware Proxy (IAP) and assign the roles/iap.tunnelResourceAccessor IAM role to users needing access.
+- A. Create a Compute Engine VM, set up a web server, and deploy the application in a VPC.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** D. Configure Identity-Aware Proxy (IAP) and assign the roles/iap.httpsResourceAccessor IAM role to users needing access. **|** B. Containerize the application and deploy it as a Cloud Run service.
+
+The correct answers are
+
+**B. Containerize the application and deploy it as a Cloud Run service** and 
+
+**D. Configure Identity-Aware Proxy (IAP) and assign the roles/iap.httpsResourceAccessor IAM role to users needing access.**
+
+Explanation:
+
+  1. **Containerize the application and deploy it as a Cloud Run service (Option B):**
+
+     * **Cloud Run** is a fully managed serverless platform that automatically scales applications based on demand, making it ideal for minimizing infrastructure management.
+
+     * Deploying on Cloud Run enables cloud-native features, such as autoscaling and integration with Google Cloud services, while reducing the operational burden on infrastructure management.
+
+  2. **Configure Identity-Aware Proxy (IAP) and assign the**`**roles/iap.httpsResourceAccessor**`**IAM role (Option D):**
+
+     * **Identity-Aware Proxy (IAP)** provides a secure way to control access to your application by integrating with Google Workspace. IAP authenticates users via their Google Workspace credentials, restricting access to only internal users within the organization.
+
+     * The `roles/iap.httpsResourceAccessor` role allows users to access HTTPS resources protected by IAP, making it the appropriate role for securing a web application deployed on Cloud Run.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Create a Compute Engine VM and deploy the application in a VPC**
+
+    * Deploying on Compute Engine would require significant infrastructure management, including managing VM instances, web server configurations, and scaling. This approach does not align with the goal of minimizing infrastructure management.
+
+  * **Option C: Set up a Cloud SQL database with a table containing users and password hashes**
+
+    * Using a custom authentication mechanism with Cloud SQL and password hashes would require building and maintaining user authentication infrastructure. It is less secure and more complex than using Google Workspace and IAP for user authentication.
+
+  * **Option E: Configure IAP and assign the**`**roles/iap.tunnelResourceAccessor**`**IAM role**
+
+    * The `roles/iap.tunnelResourceAccessor` role is used for TCP forwarding and is not relevant for protecting HTTPS web applications. The correct role for HTTPS access is `roles/iap.httpsResourceAccessor`.
+
+**Relevant Documentation:**
+
+For further details, refer to:
+
+  * [Deploying to Cloud Run](https://cloud.google.com/run/docs/deploying)
+
+  * [Identity-Aware Proxy Overview](https://cloud.google.com/iap/docs/concepts-overview)
+
+</details>
+
+---
+
+### Exam 5 · Q46
+
+**Which compute platform would be most suitable for optimizing costs while efficiently handling unpredictable traffic patterns in a single-player mobile game backend?**
+
+- I. Cloud Run
+- IV. Google Kubernetes Engine using cluster autoscaling
+- II. Compute Engine with managed instance groups
+- III. Compute Engine with unmanaged instance groups
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Cloud Run
+
+**Best Choice:**
+
+  * **I. Cloud Run**
+
+**Explanation:**
+
+  * **True Serverless:** Cloud Run enables scaling down to zero instances when there's no traffic, perfect for unpredictable workloads. This directly minimizes costs during idle periods.
+
+  * **Autoscaling:** Cloud Run rapidly scales up to handle sudden traffic bursts, ensuring your game backend remains responsive even with unexpected activity.
+
+  * **Focus on Application:** Cloud Run abstracts away infrastructure management, letting you focus on your game's logic.
+
+**Why Other Options Are Less Ideal:**
+
+  * **II. Compute Engine with managed instance groups**
+
+    * **Cost of Idling Instances:** Managed instance groups help with scaling, but there's still a baseline cost associated with running VMs even when they're not handling traffic.
+
+  * **III. Compute Engine with unmanaged instance groups**
+
+    * **Operational Overhead:** Unmanaged instance groups offer more control but introduce the significant burden of manual scaling and infrastructure management.
+
+  * **IV. Google Kubernetes Engine using cluster autoscaling**
+
+    * **Overhead and Complexity:** While GKE is powerful, it introduces a degree of Kubernetes cluster management that might be unnecessary for a single-player game's backend, especially if your team is not already well-versed in Kubernetes.
+
+</details>
+
+---
+
+### Exam 5 · Q48
+
+**In designing a schema for a table transitioning from MySQL to Cloud Bigtable, consider the following MySQL table:**
+
+**Account_Activity**
+
+**(**
+
+**Account_id int,**
+
+**Event_timestamp datetime,**
+
+**Transaction_type string,**
+
+**Amount numeric (18,4)**
+
+**)**
+
+**primary key (Account_id, Event_timestamp)**
+
+**What should be the appropriate row key for Cloud Bigtable?**
+
+- D. Use Event_timestamp as the key.
+- C. Use Event_timestamp_Account_id as the key.
+- B. Use Account_id_Event_timestamp as the key.
+- A. Use Account_id as the key.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Use Account_id_Event_timestamp as the key.
+
+Here's a breakdown of why option **B (Use Account_id_Event_timestamp as the key)** is the most suitable row key design for transitioning your MySQL table to Cloud Bigtable, along with explanations about why the other options aren't as ideal.
+
+**Correct Answer:**
+
+  * **B. Use Account_id_Event_timestamp as the key.**
+
+**Justification:**
+
+  * **Bigtable Row Key Importance:** In Bigtable, rows are sorted lexicographically by row key; therefore, row key design heavily impacts how your data is stored and how efficiently it can be queried (Bigtable Documentation: <https://cloud.google.com/bigtable/docs/schema-design>).
+
+  * **Uniqueness and Distribution:** Composing the row key as `Account_id_Event_timestamp` achieves the following:
+
+    * **Uniqueness:** Ensures each row is unique, reflecting the original MySQL primary key constraint.
+
+    * **Distribution:** Helps distribute data across Bigtable nodes for better scalability. Using just `Account_id` could lead to hot spotting (too much data on one node) if some accounts have far more activity than others.
+
+**Incorrect Answers:**
+
+  * **A. Use Account_id as the key.**
+
+    * **Reasoning:** While simple, this risks hot spotting; all rows for a single account would be stored together. If some accounts have vastly more activity than others, this could overload a part of the cluster, impacting performance.
+
+  * **C. Use Event_timestamp_Account_id as the key.**
+
+    * **Reasoning:** This primarily sorts by time. If you need to query based on accounts frequently, it would require less efficient table scans.
+
+  * **D. Use Event_timestamp as the key.**
+
+    * **Reasoning:** This fails to ensure uniqueness by itself, as multiple transactions could occur at the same timestamp for different accounts.
+
+</details>
+
+---
+
+### Exam 5 · Q52
+
+**You're designing a chat room application with Firestore as the database. Application will host multiple rooms and retain the message history for each room. How should you structure the data in Firestore?**
+
+- C. Create a collection for the rooms. Each room's document will contain a subcollection for messages, with each message stored as a document.
+- D. Create a collection for the rooms. Each room will have a document, and a separate collection for messages will be created, with one document per message. Each room's document will contain references to the messages.
+- B. Create a collection for the rooms. Each room will have a collection containing a document for each message.
+- A. Create a collection for the rooms. Each room will have a document listing the contents of its messages.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Create a collection for the rooms. Each room's document will contain a subcollection for messages, with each message stored as a document.
+
+**Correct Answer:**
+
+  * **C. Create a collection for the rooms. Each room's document will contain a subcollection for messages, with each message stored as a document.**
+
+**Justification:**
+
+  * **Hierarchical Structure:** Subcollections naturally model the one-to-many relationship between rooms and messages. This structure aligns with how chat data is organized.
+
+  * **Scalability:** Firestore reads are efficient within a collection or subcollection. Storing messages within their respective room subcollections allows for efficient retrieval of a room's message history.
+
+  * **Data Consistency:** Subcollections support atomic operations, making it easier to reliably add a message while updating the corresponding room.
+
+**Incorrect Answers:**
+
+  * **A. ...Each room will have a document listing the contents of its messages.**
+
+    * **Reasoning:** Storing all messages in a single document limits scalability. Large message volumes could make reads inefficient and exceed Firestore's document size limits.
+
+  * **B. ...Each room will have a collection containing a document for each message.**
+
+    * **Reasoning:** While workable, using a top-level collection for each message isn't as efficient or scalable as the nested subcollection approach.
+
+  * **D. ...Each room's document will contain references to the messages.**
+
+    * **Reasoning:** This introduces extra read overhead. Every message fetch would require reading the room document and then separate reads for each message, impacting responsiveness, especially in busy rooms.
+
+</details>
+
+---
+
+### Exam 5 · Q54
+
+**To enhance user experience during traffic spikes on your Cloud Run-hosted website,**
+
+**what action should you take?**
+
+- IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to exit swiftly, facilitating the initiation of a replacement instance.
+- III. Execute as much work as feasible in the background after the response has been delivered to the user.
+- I. Retrieve application configuration and static data from the database on application startup.
+- II. Embed application configuration and static data into the application image during build time.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Embed application configuration and static data into the application image during build time.
+
+**The action that should be taken to enhance user experience during traffic spikes on a Cloud Run-hosted website is:**
+
+**II. Embed application configuration and static data into the application image during build time.**
+
+**Explanation:**
+
+  * Embedding application configuration and static data into the application image during build time ensures that the application starts up quickly without needing to retrieve data from external sources like a database on each startup.
+
+  * By including configuration and static data within the application image, the application instances on Cloud Run can scale up rapidly to handle increased traffic without being bottlenecked by database or external resource dependencies during startup.
+
+  * This approach optimizes the startup time of new instances, allowing the service to efficiently handle traffic spikes and provide a better user experience.
+
+The other options can be explained as follows:
+
+I. Retrieve application configuration and static data from the database on application startup.
+
+  * Retrieving application configuration and static data from the database on application startup can introduce delays, especially during traffic spikes when database resources might be overwhelmed. This approach can lead to slower response times and degrade user experience during peak loads.
+
+III. Execute as much work as feasible in the background after the response has been delivered to the user.
+
+  * While executing background tasks after the response has been delivered can help offload some processing from the request handling phase, it might not directly address the issue of enhancing user experience during traffic spikes. Additionally, this approach might not be suitable for all types of tasks and could introduce complexity into the application architecture.
+
+IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to exit swiftly, facilitating the initiation of a replacement instance.
+
+  * Swiftly exiting instances in response to timeout exceptions and errors can help with resource management but may not directly enhance user experience during traffic spikes. Additionally, rapidly replacing instances might not address the underlying issue of slow startup times caused by external dependencies like database retrieval.
+
+**Reference:**  
+<https://cloud.google.com/blog/topics/developers-practitioners/3-ways-optimize-cloud-run-response-times>
+
+</details>
+
+---
+
+### Exam 5 · Q55
+
+**As you develop a corporate tool on Compute Engine for the finance department, requiring user authentication and verification that they belong to the finance department, which approach should you adopt considering that all company employees utilize G Suite?**
+
+- III. Configure Cloud Armor Security Policies to restrict access exclusively to corporate IP address ranges. Validate the provided JSON Web Token within the application.
+- IV. Set up Cloud Armor Security Policies to limit access solely to corporate IP address ranges. Issue client-side certificates to all finance team members and verify these certificates within the application.
+- I. Implement Cloud Identity-Aware Proxy on the HTTP(s) load balancer and limit access to a Google Group containing finance department users. Validate the provided JSON Web Token within the application.
+- II. Implement Cloud Identity-Aware Proxy on the HTTP(s) load balancer and restrict access to a Google Group containing finance department users. Distribute client-side certificates to all members of the finance team and authenticate these certificates within the application.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Implement Cloud Identity-Aware Proxy on the HTTP(s) load balancer and limit access to a Google Group containing finance department users. Validate the provided JSON Web Token within the application.
+
+**Correct Choice:**
+
+  * **I. Implement Cloud Identity-Aware Proxy (IAP) on the HTTP(s) load balancer and limit access to a Google Group containing finance department users. Validate the provided JSON Web Token (JWT) within the application.**
+
+**Explanation:**
+
+  * **IAP Integration:** IAP leverages your existing G Suite user identities and groups, providing seamless, secure authentication and authorization directly at the load balancer level.
+
+  * **Group Authorization:** Restricting access to the finance Google Group is a straightforward way to ensure only authorized users can access the tool.
+
+  * **JWT Validation:** JWTs from IAP carry G Suite user information. Validating these tokens in your application lets you verify user identity and potentially extract any needed info from the JWT.
+
+**Why Other Options Are Unsuitable:**
+
+  * **II. ...Distribute client-side certificates to all members of the finance team and authenticate these certificates within the application.**
+
+    * **Unnecessary Complexity:** Managing client-side certificates introduces significant overhead compared to IAP's G Suite integration, especially for internal tools.
+
+  * **III. Configure Cloud Armor Security Policies to restrict access exclusively to corporate IP address ranges...**
+
+    * **Insufficient Security:** IP-based restrictions are easily spoofed and don't guarantee user identity. This approach is inherently less secure than user-based authentication.
+
+  * **IV. ...Issue client-side certificates to all finance team members and verify these certificates within the application.**
+
+    * **Combines Inadequacies:** Same issues with unnecessary certificate management (as option II) and insufficient security of IP filtering alone (as option III).
+
+**References:**  
+[https://cloud.google.com/endpoints/docs/openapi/authenticating-users-google-id](https://cloud.google.com/endpoints/docs/openapi/authenticating-users-google-id  https://cloud.google.com/iap/docs/signed-headers-howto#securing_iap_headers)
+
+[https://cloud.google.com/iap/docs/signed-headers-howto#securing_iap_headers](https://cloud.google.com/endpoints/docs/openapi/authenticating-users-google-id  https://cloud.google.com/iap/docs/signed-headers-howto#securing_iap_headers)
 
 </details>
 

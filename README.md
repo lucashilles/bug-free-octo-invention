@@ -5,7 +5,7 @@ Study materials and a static study site for Google Cloud certifications, built f
 | Code | Certification | Questions |
 |---|---|---|
 | GPCDOE | Professional Cloud DevOps Engineer | 305 from 5 practice exams |
-| GPCDE | Professional Cloud Developer | 255 from 5 practice exams |
+| GPCDE | Professional Cloud Developer | 315 from 6 practice exams |
 
 ## The site (`docs/`)
 

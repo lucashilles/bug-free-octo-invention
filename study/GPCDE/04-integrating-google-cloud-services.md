@@ -1,6 +1,6 @@
 # Domain 4 — Integrating Applications with Google Cloud Services
 
-63 questions. Answers are collapsed — try each question before expanding it.
+78 questions. Answers are collapsed — try each question before expanding it.
 
 ## Questions
 
@@ -2476,6 +2476,686 @@ E. is incorrect. This will allow the system to scale, however it will require ea
   * **OAuth 2.0 for Web Server Applications:** <https://developers.google.com/identity/protocols/oauth2/web-server>
 
   * **Google Drive API - Scopes:** <https://developers.google.com/drive/api/v3/about-auth>
+
+</details>
+
+---
+
+### Exam 5 · Q1
+
+**Your application stores customer content in a Cloud Storage bucket, encrypting each object with the respective customer's encryption key. However, an HTTP 4xx error occurs while attempting to read an object from Cloud Storage. What could be a potential reason for this error?**
+
+- IV. The read operation utilized the base64-encoded SHA256 hash of the customer's encryption key for accessing the object.
+- III. The encryption algorithm specified by the customer was not accurately applied during the read operation.
+- II. The read operation lacked the inclusion of the base64-encoded SHA256 hash of the encryption key.
+- I. The read operation was performed using the customer's encryption key encoded in base64.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. The read operation lacked the inclusion of the base64-encoded SHA256 hash of the encryption key.
+
+**Most Likely Cause:**
+
+  * **II. The read operation lacked the inclusion of the base64-encoded SHA256 hash of the encryption key.** When using Customer-Supplied Encryption Keys (CSEK) with Cloud Storage, you must provide the SHA256 hash of the encryption key along with the base64-encoded key itself to read the object. This hash serves as an integrity check.
+
+**Other Potential (But Less Likely) Causes:**
+
+  * **III. The encryption algorithm specified by the customer was not accurately applied during the read operation.** If the wrong algorithm is used during the decryption attempt, this could lead to errors. It's essential to verify that the correct algorithm is being used.
+
+**Why the other options are unlikely:**
+
+  * **I. The read operation was performed using the customer's encryption key encoded in base64.** Base64 encoding is a standard way to represent binary data in text format, and it's necessary for using CSEK with Cloud Storage. This is unlikely to be the sole cause of the error.
+
+  * **IV. The read operation utilized the base64-encoded SHA256 hash of the customer's encryption key for accessing the object.** While utilizing the SHA256 hash is crucial, you also need the base64-encoded key itself to decrypt the content.
+
+**References:**  
+[https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object](https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response   https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object)
+
+</details>
+
+---
+
+### Exam 5 · Q4
+
+**Your colleague has shared the code snippet below, which aims to add a credit to an account balance in Cloud Datastore.**
+
+**public Entity creditAccount (long accountId, long creditAmount) {**
+
+**Entity account = Entity.builder(account)**
+
+**.set("creditAmount", creditAmount)**
+
+**.build();**
+
+**datastore.put(account);**
+
+**return account;**
+
+**}**
+
+**What suggestion should you offer for improving this code?**
+
+- C. Utilize a strongly consistent transactional database.
+- D. Refrain from returning the account entity from the function.
+- B. Perform the entity retrieval and update within a transaction.
+- A. Retrieve the entity with an ancestor query.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Perform the entity retrieval and update within a transaction.
+
+**Correct Answer:**
+
+  * **B. Perform the entity retrieval and update within a transaction.**
+
+**Justification:**
+
+  * **Data Consistency:** Transactions ensure that either all operations within a transaction succeed, or none do. This is crucial when updating something like an account balance to prevent potential corruption due to concurrent updates (Cloud Datastore Transactions Documentation: <https://cloud.google.com/datastore/docs/concepts/transactions>).
+
+  * **How to Implement:** Wrap your entity retrieval, balance calculation, and the `datastore.put` call within a Datastore transaction to ensure the credit update happens atomically.
+
+**Incorrect Answers:**
+
+  * **A. Retrieve the entity with an ancestor query**
+
+    * **Reasoning:** Ancestor queries are helpful for maintaining hierarchical relationships but don't directly resolve the consistency issue during concurrent updates.
+
+  * **C. Utilize a strongly consistent transactional database**
+
+    * **Reasoning:** While Cloud Datastore does support strong consistency, transactions are still the primary mechanism for ensuring updates happen atomically.
+
+  * **D. Refrain from returning the account entity from the function.**
+
+    * **Reasoning:** This is a minor point about function design, but unrelated to the core consistency issue.
+
+</details>
+
+---
+
+### Exam 5 · Q14
+
+**Within your company's BigQuery data mart, which serves analytics insights to numerous employees, a specific user wishes to execute jobs without disrupting critical workloads. Time efficiency is not a priority for this user. Your objective is to accommodate this request while minimizing expenses for the company and the administrative effort required. What action should you take?**
+
+- IV. Permit the user to execute jobs during periods when critical workloads are not active.
+- III. Grant the user the job.user role within the existing project.
+- II. Establish a separate project specifically for the user to execute jobs.
+- I. Advise the user to execute the jobs as batch processes.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Advise the user to execute the jobs as batch processes.
+
+**Correct Option: I. Advise the user to execute the jobs as batch processes.**
+
+**Justification:**
+
+  * **Cost-Effectiveness:** In BigQuery, batch queries are significantly more cost-effective compared to on-demand queries. They are the best option if time efficiency is not a concern.
+
+  * **Workload Prioritization:** Batch jobs run when there is available BigQuery capacity, ensuring they won't disrupt critical workloads.
+
+  * **Minimal Administrative Overhead:** Batch jobs require minimal setup and ongoing management.
+
+**Why Other Options Are Less Suitable:**
+
+  * **II. Establish a separate project:** Creates unnecessary overhead of managing another project and could even increase costs since project-level resources have associated expenses.
+
+  * **III. Grant the user the job.user role:** Only gives the user the ability to execute jobs, but doesn't address workload prioritization and cost optimization.
+
+  * **IV. Permit the user at non-active periods:** This is difficult to manage reliably, as critical workload schedules might change. It also requires ongoing monitoring effort.
+
+**Relevant Documentation:**
+
+  * **BigQuery Batch Queries:** <https://cloud.google.com/bigquery/docs/running-queries#batch>
+
+  * **BigQuery Pricing Overview:** <https://cloud.google.com/bigquery/pricing>
+
+</details>
+
+---
+
+### Exam 5 · Q15
+
+**Your team uses Cloud Storage for a video and image application recently migrated to Google Cloud. Following a surge in popularity, users are experiencing instability, and you notice a 10x increase in HTTP 429 errors from Cloud Storage APIs. You need a solution to resolve the current errors and ensure stability if the load increases again. What should you do?**
+
+- C. Migrate all image and video data to Firestore and replace Cloud Storage APIs in the application code with Firestore access.
+- B. Compress video and image files to reduce size, minimize storage costs, and reduce bandwidth usage. Implement a custom throttling mechanism in the application to limit concurrent API calls.
+- D. Implement a retry strategy with exponential backoff for requests that encounter HTTP 429 errors.
+- A. Optimize the application code to reduce unnecessary Cloud Storage API calls and prevent HTTP 429 errors.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** D. Implement a retry strategy with exponential backoff for requests that encounter HTTP 429 errors.
+
+The correct answer is 
+
+**D. Implement a retry strategy with exponential backoff for requests that encounter HTTP 429 errors.**
+
+Explanation:
+
+**HTTP 429 errors** indicate that the application has exceeded the rate limits for Cloud Storage API requests. The recommended approach for handling these errors is to implement a **retry strategy with exponential backoff**. This strategy adjusts the wait time between retries, gradually increasing it after each failed attempt, which helps avoid overwhelming the API and allows requests to succeed as the rate limit resets. This approach addresses the immediate issue and provides resilience if the load increases further.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Optimize the application code to reduce unnecessary Cloud Storage API calls**  
+While optimizing the code to reduce unnecessary calls can help, it may not fully resolve HTTP 429 errors if traffic continues to grow. Exponential backoff is more effective in managing rate limits dynamically.
+
+  * **Option B: Compress video and image files and implement custom throttling**  
+Compressing files may reduce bandwidth usage and storage costs, but it won’t address the HTTP 429 error rate directly. Custom throttling adds complexity and is less efficient than exponential backoff, which adapts based on API response.
+
+  * **Option C: Migrate all data to Firestore**  
+Firestore is not optimized for storing large files like videos and images, and migration would add unnecessary complexity. Cloud Storage is designed for these file types and should be retained with a retry strategy.
+
+**Relevant Documentation:**
+
+For more information on handling HTTP 429 errors and implementing exponential backoff, refer to:
+
+  * [Cloud Storage Best Practices](https://cloud.google.com/storage/docs/best-practices)
+
+</details>
+
+---
+
+### Exam 5 · Q16
+
+**You are building an image processing application that will perform tasks like resizing, cropping, and adding watermarks to images. You also need to monitor the workflow and ensure the system scales efficiently for high image volumes. Your goal is to automate both the image processing tasks and workflow monitoring with minimal setup effort. What approach should you take?**
+
+- D. Configure Cloud Build to trigger Cloud Functions for each image processing task and manage monitoring with Cloud Logging.
+- C. Set up Workflows to orchestrate the image processing tasks, and use Cloud Logging to keep track of workflow performance.
+- B. Deploy the image processing functions on Cloud Run, make them accessible via an API using Apigee, and set up Cloud Logging to monitor the workflow.
+- A. Use Cloud Composer to manage the workflows for image processing, and utilize Dataproc for monitoring and analytics of the workflow.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Set up Workflows to orchestrate the image processing tasks, and use Cloud Logging to keep track of workflow performance.
+
+The correct answer is 
+
+**C. Set up Workflows to orchestrate the image processing tasks, and use Cloud Logging to keep track of workflow performance.**
+
+Explanation:
+
+**Google Cloud Workflows** is a fully managed service designed for orchestrating complex, multi-step workflows, making it ideal for coordinating sequential image processing tasks like resizing, cropping, and watermarking. Workflows provide the necessary automation with minimal setup, allowing you to focus on task logic rather than managing infrastructure. **Cloud Logging** can be integrated with Workflows to monitor performance and track workflow executions, giving visibility into the system’s status and scalability.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Use Cloud Composer and Dataproc**  
+**Cloud Composer** (based on Apache Airflow) is primarily used for complex ETL workflows rather than straightforward task automation, which would add unnecessary overhead for this use case. **Dataproc** is intended for big data processing with Spark and Hadoop, which is not required for basic image processing tasks.
+
+  * **Option B: Deploy on Cloud Run and use Apigee**  
+Deploying individual image processing functions on **Cloud Run** is possible, but using **Apigee** for API management adds complexity and is unnecessary for internal workflow automation. Cloud Run and Apigee are better suited for external-facing APIs rather than orchestrating internal tasks.
+
+  * **Option D: Use Cloud Build to trigger Cloud Functions**  
+**Cloud Build** is designed for CI/CD tasks rather than ongoing automation for a multi-step image processing workflow. It lacks native support for orchestrating workflows and managing interdependencies between tasks, which Workflows handles more efficiently.
+
+**Relevant Documentation:**
+
+For more information, refer to:
+
+  * [Google Cloud Workflows Overview](https://cloud.google.com/workflows/docs/overview)
+
+</details>
+
+---
+
+### Exam 5 · Q17
+
+**You're tasked with constructing a public API that manages authentication, enforces usage quotas, and tracks metrics for API consumers. Which tool is the most suitable for implementing this architecture?**
+
+**
+
+**
+
+- A. App Engine
+- C. Identity-Aware Proxy
+- B. Cloud Endpoints
+- D. GKE Ingress for HTTP(S) Load Balancing
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Cloud Endpoints
+
+**B. Cloud Endpoints**
+
+Here's why Cloud Endpoints is a good fit for your requirements:
+
+  * **Authentication Management:** Cloud Endpoints integrates with Cloud Identity and Access Management (IAM) to handle user authentication and authorization for your API.
+
+  * **Usage Quotas:** Cloud Endpoints allows you to define and enforce quotas on API calls based on various metrics like request rate, project, or API method.
+
+  * **Metrics Tracking:** Cloud Endpoints provides built-in monitoring and logging capabilities that you can use to track API usage metrics and analyze API performance.
+
+Let's analyze the other options and why they are not ideal:
+
+  * **A. App Engine:** While App Engine can host your API backend, it doesn't offer built-in features for authentication, quota management, and API metrics tracking at the granularity you need.
+
+  * **C. Identity-Aware Proxy (IAP):** IAP focuses primarily on securing access to your backend applications at the network layer. It doesn't provide functionalities for API quota and metric tracking.
+
+  * **D. GKE Ingress for HTTP(S) Load Balancing:** GKE Ingress can be used to route traffic to your API backend, but it doesn't offer functionalities for authentication, quota management, and metric tracking out of the box.
+
+**Reference:**
+
+<https://cloud.google.com/kubernetes-engine/docs/concepts/ingress>
+
+</details>
+
+---
+
+### Exam 5 · Q21
+
+**To handle messages from a Pub/Sub topic and store them in Google Cloud cost-effectively and efficiently, ensuring each message is processed only once, what should you do?**
+
+- I. Utilize a Dataproc job to process the messages and save the output to storage.
+- II. Process messages with a Dataflow streaming pipeline using Apache Beam's PubSubIO package and save the output to storage.
+- III. Deploy a Cloud Function to process messages and store results in a BigQuery location, where data deduplication can be performed.
+- IV. Fetch messages with a Dataflow streaming pipeline, store them in Cloud Bigtable, and utilize another Dataflow streaming pipeline to remove duplicates.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Process messages with a Dataflow streaming pipeline using Apache Beam's PubSubIO package and save the output to storage.
+
+**The most suitable option for handling messages from a Pub/Sub topic efficiently, ensuring each message is processed only once, and storing them in Google Cloud cost-effectively is:**
+
+**II. Process messages with a Dataflow streaming pipeline using Apache Beam's PubSubIO package and save the output to storage.**
+
+**Explanation:**
+
+  * **Dataflow is a fully managed, serverless stream and batch processing service provided by Google Cloud Platform.**
+
+  * **Apache Beam is an open-source unified programming model for defining both batch and streaming data-parallel processing pipelines.**
+
+  * **PubSubIO is a component of Apache Beam that allows for seamless integration with Pub/Sub for message ingestion.**
+
+  * **Using Dataflow with Apache Beam's PubSubIO package ensures efficient processing of messages from the Pub/Sub topic in a streaming fashion.**
+
+  * **Dataflow automatically handles aspects like scaling, fault tolerance, and data deduplication, ensuring that each message is processed only once without the need for manual intervention.**
+
+  * **Dataflow also integrates seamlessly with various storage options provided by Google Cloud Platform, allowing you to save the output to storage in a cost-effective manner.**
+
+The other options can be explained as follows:
+
+I. Utilize a Dataproc job to process the messages and save the output to storage.
+
+  * Dataproc is a managed Spark and Hadoop service provided by Google Cloud Platform. While it can be used for processing messages, it might not be the most efficient or cost-effective solution for real-time stream processing, especially when dealing with Pub/Sub messages.
+
+III. Deploy a Cloud Function to process messages and store results in a BigQuery location, where data deduplication can be performed.
+
+  * While Cloud Functions can be used for processing Pub/Sub messages, they are more suitable for event-driven, lightweight tasks rather than processing large volumes of streaming data. Additionally, BigQuery might not be the most efficient storage option for stream processing, especially when considering data deduplication requirements.
+
+IV. Fetch messages with a Dataflow streaming pipeline, store them in Cloud Bigtable, and utilize another Dataflow streaming pipeline to remove duplicates.
+
+  * While this option involves Dataflow for stream processing and Cloud Bigtable for storage, it introduces unnecessary complexity by using two separate Dataflow pipelines for processing and deduplication. Additionally, Dataflow itself provides built-in mechanisms for handling data deduplication without the need for additional pipelines.
+
+**References:**  
+[https://cloud.google.com/pubsub/docs/stream-messages-dataflow https://cloud.google.com/community/tutorials/pubsub-spring-dedup-messages https://cloud.google.com/blog/products/data-analytics/handling-duplicate-data-in-streaming-pipeline-using-pubsub-dataflow](https://cloud.google.com/pubsub/docs/stream-messages-dataflow   https://cloud.google.com/community/tutorials/pubsub-spring-dedup-messages   https://cloud.google.com/blog/products/data-analytics/handling-duplicate-data-in-streaming-pipeline-using-pubsub-dataflow)
+
+</details>
+
+---
+
+### Exam 5 · Q22
+
+**What is the probable reason behind the failure of requests from the application to access objects in the Cloud Storage bucket, resulting in a 403 Permission Denied error code?**
+
+- IV. A temporary outage is occurring in the Interconnect link from the on-premises data center to Google Cloud.
+- III. The service account key has been rotated but not refreshed on the application server.
+- I. Changes have been made to the folder structure inside the bucket and object paths.
+- II. Alterations have occurred in the permissions of the service account’s predefined role.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Alterations have occurred in the permissions of the service account’s predefined role.
+
+**The probable reason behind the failure of requests from the application to access objects in the Cloud Storage bucket, resulting in a 403 Permission Denied error code is:**
+
+**II. Alterations have occurred in the permissions of the service account’s predefined role.**
+
+**Explanation:**
+
+  * **The 403 Permission Denied error typically indicates that the request lacks the necessary permissions to access the resource.**
+
+  * **If alterations have occurred in the permissions of the service account's predefined role, it could result in the service account not having sufficient permissions to access the Cloud Storage bucket.**
+
+  * **Permissions can be modified inadvertently by users or administrators, leading to access issues for service accounts.**
+
+  * **Reviewing and ensuring that the service account has the appropriate permissions assigned to its predefined role can resolve the 403 Permission Denied error.**
+
+The other options can be explained as follows:
+
+I. Changes have been made to the folder structure inside the bucket and object paths.
+
+  * Changes to the folder structure or object paths within the Cloud Storage bucket would not typically result in a 403 Permission Denied error. Instead, it might lead to 404 Not Found errors if the requested object path does not exist.
+
+III. The service account key has been rotated but not refreshed on the application server.
+
+  * Rotating the service account key without refreshing it on the application server could lead to authentication failures, but it would not directly result in a 403 Permission Denied error. Instead, it might lead to authentication errors such as 401 Unauthorized.
+
+IV. A temporary outage is occurring in the Interconnect link from the on-premises data center to Google Cloud.
+
+  * An outage in the Interconnect link would affect connectivity between the on-premises data center and Google Cloud services, potentially resulting in connection timeouts or errors related to network connectivity. However, it would not specifically cause a 403 Permission Denied error related to Cloud Storage access permissions.
+
+**References:**  
+[https://cloud.google.com/storage/docs/troubleshooting#access-permission https://cloud.google.com/appengine/docs/legacy/standard/python/googlecloudstorageclient/errors https://cloud.google.com/storage/docs/xml-api/reference-status#403%E2%80%94forbidden](https://cloud.google.com/storage/docs/troubleshooting#access-permission   https://cloud.google.com/appengine/docs/legacy/standard/python/googlecloudstorageclient/errors   https://cloud.google.com/storage/docs/xml-api/reference-status#403%E2%80%94forbidden)
+
+</details>
+
+---
+
+### Exam 5 · Q26
+
+**In order to enhance the application's resilience to errors, what adjustments should be implemented considering that occasional uploads fail, resulting in an HTTP 504 Gateway Timeout error when using the Cloud Client Library to upload an image to Cloud Storage?**
+
+- I. Implement an exponential backoff process around the client library call.
+- II. Implement a one-second wait time backoff process around the client library call.
+- III. Incorporate a retry button within the application and prompt users to click it in case of errors.
+- IV. Establish a queue for the object and notify users that the application will attempt the upload again in 10 minutes.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Implement an exponential backoff process around the client library call.
+
+**The adjustments that should be implemented to enhance the application's resilience to errors, specifically occasional uploads failures resulting in an HTTP 504 Gateway Timeout error when using the Cloud Client Library to upload an image to Cloud Storage, are:**
+
+**I. Implement an exponential backoff process around the client library call.**
+
+**Explanation:**
+
+  * **Exponential backoff is a technique used to handle retries in distributed computing systems by exponentially increasing the waiting time between retries.**
+
+  * **Implementing exponential backoff around the client library call allows the application to gracefully handle transient failures, such as HTTP 504 errors, by backing off and retrying the upload after waiting for a progressively increasing amount of time.**
+
+  * **This approach helps prevent overwhelming the service with retries and reduces the likelihood of continued errors due to transient issues.**
+
+**The other options can be explained as follows:**
+
+II. Implement a one-second wait time backoff process around the client library call.
+
+  * Implementing a fixed one-second wait time backoff process might not be sufficient to handle transient failures effectively, especially if the underlying issue causing the HTTP 504 error persists. It could lead to unnecessary retries and increased load on the service.
+
+III. Incorporate a retry button within the application and prompt users to click it in case of errors.
+
+  * While incorporating a retry button can be helpful for user interaction and providing control over retries, it might not be the most effective approach for automated retries, especially for background tasks like uploads. Relying solely on user intervention might not be practical for handling occasional upload failures.
+
+IV. Establish a queue for the object and notify users that the application will attempt the upload again in 10 minutes.
+
+  * While establishing a queue and notifying users about upload retries can be useful for managing failed uploads, it might not address the immediate need for handling transient errors like HTTP 504 Gateway Timeout. Additionally, a fixed 10-minute delay might not be optimal for handling transient failures, as it could lead to prolonged delays in processing uploads.
+
+**References:**  
+[https://cloud.google.com/storage/docs/retry-strategy#exponential-backoff](https://cloud.google.com/storage/docs/retry-strategy#exponential-backoff  https://cloud.google.com/storage/docs/json_api/v1/status-codes#504_Gateway_Timeout)
+
+[https://cloud.google.com/storage/docs/json_api/v1/status-codes#504_Gateway_Timeout ](https://cloud.google.com/storage/docs/retry-strategy#exponential-backoff  https://cloud.google.com/storage/docs/json_api/v1/status-codes#504_Gateway_Timeout)
+
+</details>
+
+---
+
+### Exam 5 · Q34
+
+**You're developing a web application that operates within a Compute Engine instance and is designed to save files to any user's Google Drive. To enable the application to authenticate with the Google Drive API, what course of action should you take?**
+
+- IV. Employ the App Engine service account with delegated domain-wide authority.
+- III. Employ the App Engine service account along with the https://www.googleapis.com/auth/drive.file scope to generate a signed JSON Web Token (JWT).
+- II. Implement an OAuth Client ID with delegated domain-wide authority.
+- I. Utilize an OAuth Client ID configured with the https://www.googleapis.com/auth/drive.file scope to acquire an access token for each user.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Utilize an OAuth Client ID configured with the https://www.googleapis.com/auth/drive.file scope to acquire an access token for each user.
+
+**Correct Option:** **I. Utilize an OAuth Client ID configured with the**<https://www.googleapis.com/auth/drive.file> scope to acquire an access token for each user.
+
+**Justification:**
+
+  * **User-Specific Authorization:** OAuth 2.0 is the standard for handling authorization when an application needs to access a user's data on another service (in this case, Google Drive). It gives users granular control over what data your application can access.
+
+  * **Appropriate Scope:** The `https://www.googleapis.com/auth/drive.file` scope grants the necessary permissions to work with files within a user's Drive without providing excessive access.
+
+**Why Other Options Are Less Suitable:**
+
+  * **II. Implement an OAuth Client ID with delegated domain-wide authority:** This provides app-level access to all Drive data within a G Suite domain. Not suitable for user-specific file access, and grants too much power to the application.
+
+  * **III. Employ the App Engine service account with signed JWT:** Service accounts are for server-to-server communication. This option can be used if your app needs its own Drive access, but not for accessing a user's Drive.
+
+  * **IV. Employ the App Engine service account with delegated domain-wide authority:** Again, this would grant the app access to all Drive data within the domain, violating the principle of user-specific permissions.
+
+**Relevant Documentation:**
+
+  * **Google OAuth 2.0 Authorization:** <https://developers.google.com/identity/protocols/oauth2>
+
+  * **Google Drive API - OAuth 2.0 Scopes:** <https://developers.google.com/drive/api/v3/about-auth>
+
+</details>
+
+---
+
+### Exam 5 · Q35
+
+**You are managing multiple APIs for an ecommerce company, and the operations team needs to review traffic patterns in the orders-prod and users-prod environments, which are the only environments within the store-prod environment group. You want to follow Google-recommended practices. What should you do?**
+
+- B. Assign the Apigee Analytics Viewer IAM role to the operations team for both environments, then use Apigee API Analytics to review traffic patterns.
+- C. Assign the Apigee API Reader IAM role to each operations team member for both environments, then use Cloud Monitoring to review traffic patterns.
+- D. Assign the Apigee API Reader IAM role to each operations team member for both environments, then use Apigee API Analytics to review traffic patterns.
+- A. Assign the Apigee Analytics Viewer IAM role to the operations team for both environments, then use Cloud Monitoring to review traffic patterns.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Assign the Apigee Analytics Viewer IAM role to the operations team for both environments, then use Apigee API Analytics to review traffic patterns.
+
+The correct answer is 
+
+**B. Assign the Apigee Analytics Viewer IAM role to the operations team for both environments, then use Apigee API Analytics to review traffic patterns.**
+
+Explanation:
+
+The **Apigee Analytics Viewer IAM role** provides access to Apigee Analytics, which is specifically designed for monitoring and analyzing API traffic patterns. By assigning this role to the operations team, they gain the permissions needed to access detailed analytics on traffic, latency, and errors for the APIs within the `orders-prod` and `users-prod` environments in the Apigee **store-prod** environment group.
+
+Using **Apigee API Analytics** is the recommended approach for reviewing traffic patterns, as it offers API-specific insights that are more relevant and detailed than those available in Cloud Monitoring. Apigee API Analytics provides built-in features like tracking traffic trends, identifying popular API methods, and viewing latency metrics, which are essential for managing and optimizing API performance.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Assign Apigee Analytics Viewer role and use Cloud Monitoring**  
+Cloud Monitoring provides general infrastructure metrics, but it lacks the detailed API-specific analytics found in Apigee API Analytics. Apigee Analytics Viewer with Apigee API Analytics is a more focused solution for reviewing API traffic.
+
+  * **Option C: Assign Apigee API Reader role and use Cloud Monitoring**  
+The Apigee API Reader role grants read-only access to API proxies and configurations but does not provide access to analytics data. Additionally, Cloud Monitoring is not optimized for API-specific traffic analysis.
+
+  * **Option D: Assign Apigee API Reader role and use Apigee API Analytics**  
+The Apigee API Reader role does not include permissions for viewing analytics data. The **Apigee Analytics Viewer** role is necessary to access Apigee’s analytics features.
+
+**Relevant Documentation:**
+
+For more details, refer to:
+
+  * [Apigee Analytics Overview](https://cloud.google.com/apigee/docs/api-platform/analytics/analytics-services-overview)
+
+  * [Apigee IAM Roles and Permissions](https://cloud.google.com/apigee/docs/apihub/iam-roles)
+
+</details>
+
+---
+
+### Exam 5 · Q40
+
+**You have two Google Cloud projects, Project A and Project B. Your objective is to create a Cloud Function in Project A that stores its output in a Cloud Storage bucket located in Project B while ensuring the principle of least privilege. What actions should you take?**
+
+- III. 1. Identify the default App Engine service account (PROJECT_ID@appspot.gserviceaccount.com) within Project A.
+    2\. Deploy the Cloud Function in Project A with the default App Engine service account.
+    Allocate the roles/storage.objectCreator role to the default App Engine service account for the storage bucket in Project B.
+- I. 1. Generate a Google service account within Project B.
+    2\. Deploy the Cloud Function in Project A using this service account.
+    Grant the roles/storage.objectCreator role to this service account for the storage bucket in Project B.
+- II. 1. Create a Google service account within Project A.
+    2\. Deploy the Cloud Function in Project A with this service account.
+    Assign the roles/storage.objectCreator role to this service account for the storage bucket in Project B.
+- IV. 1. Identify the default App Engine service account (PROJECT_ID@appspot.gserviceaccount.com) within Project B.
+    2\. Deploy the Cloud Function in Project A with the default App Engine service account.
+    Delegate the roles/storage.objectCreator role to the default App Engine service account for the storage bucket in Project B.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. 1. Create a Google service account within Project A.
+
+**II. 1. Create a Google service account within Project A. 2. Deploy the Cloud Function in Project A with this service account. Assign the roles/storage.objectCreator role to this service account for the storage bucket in Project B.****
+
+Here's why this is the most secure and adheres to best practices:
+
+  * **Project Isolation:** Creating the service account in Project A keeps permissions contained within the project where the function originates.
+
+  * **Least Privilege:** The `roles/storage.objectCreator` role grants the function only the permission to create objects in the bucket, preventing unnecessary access to other resources in Project B.
+
+  * **Specific Service Account:** Using a dedicated service account for the Cloud Function limits the impact if the key is compromised.
+
+**Why other options are less ideal:**
+
+  * **I.** While similar to the recommended approach, creating the service account in Project B gives that project an unnecessary level of control over the Cloud Function.
+
+  * **III & IV.** Using the default App Engine service account has broader permissions than necessary, violating the principle of least privilege.
+
+**Reference:**  
+<https://articles.wesionary.team/multi-project-account-service-account-in-gcp-ba8f8821347e>
+
+</details>
+
+---
+
+### Exam 5 · Q50
+
+**Your colleague has requested your input on the following code snippet, which aims to efficiently add a substantial number of small rows to a BigQuery table.**
+
+**BigQuery service = BigQueryOptions.newBuilder().build().getService();**
+
+**for (Map <String, String> row : rows) {**
+
+**public void writeToBigQuery(Collection <Map<String, String>> rows) {**
+
+**InsertAllRequest insertRequest = InsertAllRequest.newBuilder(**
+
+**"datasetId", "tableId",**
+
+**InsertAllRequest.RowToInsert.of(row)).build();**
+
+**service.insertAll(insertRequest);**
+
+**}**
+
+**}**
+
+**What improvement should you suggest to your colleague?**
+
+- B. Execute the inserts concurrently by employing multiple threads.
+- A. Batch multiple rows with each request.
+- C. Direct each row to a Cloud Storage object, then ingest into BigQuery.
+- D. Parallelize the process by directing each row to a Cloud Storage object, then ingest into BigQuery.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** A. Batch multiple rows with each request.
+
+The most suitable improvement to suggest to your colleague is:
+
+**A. Batch multiple rows with each request.**
+
+Justification:
+
+  * Batching multiple rows with each request reduces the overhead of making individual API calls to BigQuery for each row, resulting in improved performance and efficiency.
+
+  * BigQuery supports batch inserts through the `**InsertAllRequest**` object, allowing multiple rows to be inserted in a single API call.
+
+  * This approach minimizes network latency and API overhead compared to making separate API calls for each row, which is crucial when adding a substantial number of small rows to a BigQuery table.
+
+Why other options are not as suitable:
+
+B. Executing inserts concurrently by employing multiple threads might introduce complexity and potential issues related to thread safety and resource contention. While it could potentially improve throughput, it might not be as straightforward to implement and could lead to diminishing returns or even performance degradation due to contention for shared resources.
+
+C. Directing each row to a Cloud Storage object and then ingesting into BigQuery adds unnecessary complexity to the process. This approach involves additional steps of writing data to Cloud Storage, managing Cloud Storage objects, and then ingesting the data into BigQuery, which may not be required for the given scenario.
+
+D. Parallelizing the process by directing each row to a Cloud Storage object and then ingesting into BigQuery suffers from similar drawbacks as option C. Additionally, it introduces additional complexity without clear benefits compared to simply batching multiple rows with each request.
+
+</details>
+
+---
+
+### Exam 5 · Q53
+
+**Your team is developing a Google Cloud application where user identities are managed by Cloud Identity. Each user of the application will have their own Pub/Sub topic for publishing messages and a corresponding Pub/Sub subscription for retrieving messages. You need to ensure that only authorized users can publish and subscribe to their respective Pub/Sub topic and subscription. What should you do?**
+
+**
+
+**
+
+- B. Assign the pubsub.publisher and pubsub.subscriber roles to the user identity at the project level.
+- D. Configure the application to operate as a service account with the pubsub.publisher and pubsub.subscriber roles.
+- A. Associate the user identity with the pubsub.publisher and pubsub.subscriber roles at the resource level.
+- C. Create a custom role for the user identity containing the pubsub.topics.create and pubsub.subscriptions.create permissions.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** A. Associate the user identity with the pubsub.publisher and pubsub.subscriber roles at the resource level.
+
+**Correct Answer:**
+
+  * **A. Associate the user identity with the pubsub.publisher and pubsub.subscriber roles at the resource level.**
+
+**Justification:**
+
+  * **Principle of Least Privilege:** Granting permissions at the resource (topic/subscription) level adheres to security best practices, minimizing the scope of access for each user identity.
+
+  * **Cloud Identity Integration:** Pub/Sub supports IAM, allowing you to directly associate Cloud Identity users with the necessary roles on specific Pub/Sub resources. (Documentation: <https://cloud.google.com/pubsub/docs/access-control>)
+
+**Incorrect Answers:**
+
+  * **B. Assign the pubsub.publisher and pubsub.subscriber roles to the user identity at the project level.**
+
+    * **Reasoning:** This is overly broad, granting these permissions to the user across _all_ Pub/Sub topics and subscriptions in the project, violating the principle of least privilege.
+
+  * **C. Create a custom role for the user identity containing the pubsub.topics.create and pubsub.subscriptions.create permissions.**
+
+    * **Reasoning:** While custom roles are valuable, this focuses on creation rights, not the core need for publish/subscribe permissions on user-specific resources.
+
+  * **D. Configure the application to operate as a service account...**
+
+    * **Reasoning:** Using a single service account for all users removes the granular identity management made possible with Cloud Identity and IAM integration.
+
+</details>
+
+---
+
+### Exam 5 · Q60
+
+**Your organization relies on Cloud Logging to manage large volumes of log data. You are tasked with designing a real-time log analysis architecture to push logs to a third-party application for processing. What is the recommended approach?**
+
+- IV. Develop a Cloud Function to extract Cloud Logging log entries and transmit them to the third-party application.
+- I. Set up a Cloud Logging log export to Pub/Sub.
+- II. Configure a Cloud Logging log export to BigQuery.
+- III. Implement a Cloud Logging log export to Cloud Storage.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Set up a Cloud Logging log export to Pub/Sub.
+
+**I. Set up a Cloud Logging log export to Pub/Sub.**
+
+  * **Pros:**
+
+    * **Real-time streaming:** Pub/Sub is designed for ingesting and delivering events in real-time.
+
+    * **Scalability:** Pub/Sub can handle large volumes of log data without bottlenecks.
+
+    * **Integration:** Many third-party applications have built-in connectors to Pub/Sub for easy consumption.
+
+  * **Cons:**
+
+    * **Might require some setup on the third-party side** to subscribe to the Pub/Sub topic and process the messages.
+
+**Why other options aren't as suitable:**
+
+  * **II. Configure a Cloud Logging log export to BigQuery.** BigQuery is primarily for batch analytics, not ideal for immediate, real-time processing.
+
+  * **III. Implement a Cloud Logging log export to Cloud Storage.** Cloud Storage is an object store. While logs can be exported there, you'd still need an additional mechanism to pull and process them in real-time.
+
+  * **IV. Develop a Cloud Function to extract Cloud Logging log entries and transmit them to the third-party application.** This option adds development overhead and potential points of failure compared to the more streamlined Pub/Sub approach.
+
+**Reference:**  
+[https://cloud.google.com/logging/docs/export/configure_export_v2#overview https://cloud.google.com/logging/docs/export/pubsub](https://cloud.google.com/logging/docs/export/configure_export_v2#overview   https://cloud.google.com/logging/docs/export/pubsub)
 
 </details>
 

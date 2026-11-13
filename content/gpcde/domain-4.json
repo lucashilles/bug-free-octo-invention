@@ -9,11 +9,12 @@
         "Choose the minimal BigQuery roles needed to run queries from a script"
       ],
       "takeaways": [
-        "On a 403, grant the narrowest role on the target resource to the identity the code runs as.",
+        "On a 403, grant the narrowest role on the target resource to the identity the code runs as, using a dedicated service account from the home project, never a default one.",
         "Use the attached service account with ADC. Key files, P12 files and API keys are always distractors.",
         "No client library? Fetch a token from the metadata server and send it in the Authorization header.",
         "The metadata server lives at metadata.google.internal and requires the Metadata-Flavor: Google header.",
-        "Running BigQuery queries needs Data Viewer plus Job User."
+        "Running BigQuery queries needs Data Viewer plus Job User.",
+        "403 means the identity lacks permission. A rotated or stale key fails authentication with 401 instead."
       ]
     },
     "2": {
@@ -70,7 +71,8 @@
         "Auth, quota and metrics for API callers point to API management (Cloud Endpoints or Apigee).",
         "Daily request limits per tier use the Apigee Quota policy. SpikeArrest only smooths bursts.",
         "Hostnames attach to Apigee environment groups, with one group per environment for isolation.",
-        "For a breaking change, keep v1, deploy v2 separately and version through the gateway."
+        "For a breaking change, keep v1, deploy v2 separately and version through the gateway.",
+        "To review API traffic, grant Apigee Analytics Viewer and use Apigee API Analytics, not API Reader or Cloud Monitoring."
       ]
     },
     "6": {
@@ -86,7 +88,8 @@
         "Per-key ordering means a pull subscription with message ordering and an ordering key such as the stock symbol.",
         "To stop losing emails or events, publish to Pub/Sub and let the consumer read from it.",
         "Pay only when messages arrive by using a function with a Pub/Sub trigger.",
-        "Multiple real-time log consumers read from a Logging sink to Pub/Sub."
+        "Multiple real-time log consumers, including third-party tools, read from a Logging sink to Pub/Sub.",
+        "Restrict each user to their own topic and subscription with publisher and subscriber roles granted on those resources, not on the project."
       ]
     },
     "7": {
@@ -101,7 +104,7 @@
         "Minimal-effort bucket change to topic means Cloud Storage Pub/Sub notifications.",
         "Flexible event routing to Cloud Run means Eventarc. Cloud Build is not a runtime.",
         "Auto-fix newly created resources with an audit-log trigger and a function, not a periodic poller.",
-        "Low-latency branching between function steps means Workflows, not Composer."
+        "Low-latency branching or multi-step processing with minimal setup means Workflows, not Composer or Cloud Build."
       ]
     },
     "8": {
@@ -114,7 +117,8 @@
       ],
       "takeaways": [
         "Limited time, outside users or large direct uploads all point to signed URLs.",
-        "429 or 503 means retry with truncated exponential backoff at increasing intervals.",
+        "429, 503 or 504 means retry with truncated exponential backoff at increasing intervals.",
+        "Reading a CSEK-encrypted object needs both the base64 key and the base64 SHA256 hash of the key.",
         "A cold bucket hit by a sudden spike needs a gradual ramp-up of request rate.",
         "allUsers, IAP or IP allowlists are wrong for private objects served to anonymous users.",
         "Partial metadata uses the fields parameter. An empty folder is a zero-byte object ending in /."
@@ -133,6 +137,7 @@
         "Use Cloud Client Libraries rather than generic API clients or custom gRPC.",
         "Large Firestore result sets need cursors. Offsets still scan the skipped entities.",
         "Firestore 429 calls for fewer reads and writes plus exponential backoff, never fixed backoff.",
+        "Read-modify-write updates such as account credits belong in a Datastore transaction.",
         "UNION removes duplicates. UNION ALL keeps them."
       ]
     },
@@ -148,7 +153,8 @@
         "Analysts, SQL and aggregation mean landing the data in BigQuery.",
         "High-volume streams with transformations or counts use Pub/Sub, Dataflow and BigQuery.",
         "Use a committed-type write stream to prevent duplicates with the Storage Write API.",
-        "Queries where duration doesn't matter should run at batch priority."
+        "Queries where duration doesn't matter should run at batch priority.",
+        "Process Pub/Sub messages once with Dataflow and PubSubIO, and batch many rows into each insert request."
       ]
     },
     "11": {
@@ -169,6 +175,7 @@
   },
   "glossary": [
     {"term": "Access-Control-Allow-Origin", "definition": "CORS response header that tells the browser which origin may read the response to a cross-origin request.", "exam_context": "Set it to the exact page origin (https://www.example.com), not *, a wildcard subdomain or the function's own domain.", "lesson": 4},
+    {"term": "Apigee Analytics Viewer", "definition": "IAM role (roles/apigee.analyticsViewer) that grants read access to Apigee API Analytics data such as traffic, latency and errors.", "exam_context": "Grant it to the operations team and use Apigee API Analytics to review traffic. API Reader lacks analytics access, and Cloud Monitoring isn't API-specific.", "lesson": 5},
     {"term": "Apigee environment group", "definition": "A set of Apigee environments that share a list of hostnames. Requests are routed by hostname to the environments attached to the group.", "exam_context": "To make each environment reachable only through its own URL, put each environment in its own group and add the hostname to that group.", "lesson": 5},
     {"term": "Apigee Quota policy", "definition": "An Apigee policy that caps how many requests a client, usually identified by API key, can make in a time interval such as a day.", "exam_context": "It's the answer for per-tier daily limits. SpikeArrest is the distractor because it only smooths bursts.", "lesson": 5},
     {"term": "Application Default Credentials (ADC)", "definition": "The strategy client libraries use to find credentials automatically, such as the service account attached to the runtime.", "exam_context": "The recommended way for VM-hosted apps to authenticate, instead of distributing JSON or P12 keys.", "lesson": 1},
@@ -181,7 +188,9 @@
     {"term": "Cloud Scheduler", "definition": "Managed cron service that triggers HTTP targets or Pub/Sub topics on a schedule.", "exam_context": "Preferred over cron on VMs for scheduled invocations of Cloud Run.", "lesson": 7},
     {"term": "Cloud Storage Pub/Sub notifications", "definition": "A bucket setting that publishes a message to a Pub/Sub topic when objects change.", "exam_context": "The minimal-effort answer for publishing a message whenever a report is uploaded, with no code to write.", "lesson": 7},
     {"term": "Cursor (Firestore/Datastore)", "definition": "An opaque position marker returned by a query, used to start the next page where the last one ended.", "exam_context": "Use cursors rather than offsets or more memory to stop memory blow-ups when listing many entities.", "lesson": 9},
+    {"term": "Customer-supplied encryption key (CSEK)", "definition": "An AES-256 key you supply with each Cloud Storage request. Google uses it to encrypt or decrypt the object but doesn't store it.", "exam_context": "Every read must send the base64 key and the base64-encoded SHA256 hash of the key. A missing hash causes a 4xx error.", "lesson": 8},
     {"term": "Dataflow", "definition": "Managed Apache Beam service for batch and streaming data processing.", "exam_context": "The middle of Pub/Sub → Dataflow → BigQuery pipelines for near real-time SQL analytics and windowed counts.", "lesson": 10},
+    {"term": "Datastore transaction", "definition": "A set of Datastore (Firestore in Datastore mode) reads and writes that commit atomically or not at all.", "exam_context": "Wrap the lookup and update of an account balance in one transaction so concurrent credits don't overwrite each other.", "lesson": 9},
     {"term": "Domain-wide delegation", "definition": "Workspace feature that lets an app or service account impersonate any user in a domain.", "exam_context": "A distractor for accessing users' Drive files, because it's excessive and doesn't cover users outside the domain.", "lesson": 3},
     {"term": "drive.file scope", "definition": "The OAuth scope https://www.googleapis.com/auth/drive.file, which limits an app to files it creates or opens.", "exam_context": "Pair it with an OAuth client ID to get a per-user access token for saving files to users' Drives.", "lesson": 3},
     {"term": "Eventarc", "definition": "Service that routes events from Google Cloud sources, audit logs and Pub/Sub to targets such as Cloud Run, using triggers.", "exam_context": "Keyed for flexible, team-maintainable Cloud Storage triggers targeting Cloud Run.", "lesson": 7},
@@ -192,6 +201,7 @@
     {"term": "OAuth client ID", "definition": "Credentials that identify an application in OAuth 2.0 flows, used to obtain user-authorized access tokens.", "exam_context": "Required when a web app accesses users' Google Drive. API keys, service accounts and SAML are distractors.", "lesson": 3},
     {"term": "Ordering key", "definition": "A Pub/Sub message attribute. On a subscription with ordering enabled, messages that share the key are delivered in publish order.", "exam_context": "Use the stock symbol as the ordering key so price updates per symbol apply in order.", "lesson": 6},
     {"term": "Private Google Access", "definition": "A subnet setting that lets VMs with only internal IPs reach Google APIs and services.", "exam_context": "The answer for a VM without an external IP calling Cloud Storage, rather than any peering option.", "lesson": 11},
+    {"term": "PubSubIO", "definition": "Apache Beam I/O connector for reading from and writing to Pub/Sub in a pipeline, such as one running on Dataflow.", "exam_context": "Read Pub/Sub messages in a Dataflow streaming pipeline so each message is processed once and stored cost-effectively.", "lesson": 10},
     {"term": "Pull subscription", "definition": "A Pub/Sub subscription where subscribers request messages. Several subscribers on one subscription share the messages.", "exam_context": "One shared pull subscription lets a pool of workers split the load without duplicates.", "lesson": 6},
     {"term": "Request rate ramp-up", "definition": "Cloud Storage guidance to increase request rates on a bucket gradually so the service can scale its capacity.", "exam_context": "The fix for 429/5xx errors when a dormant bucket suddenly gets thousands of requests per second.", "lesson": 8},
     {"term": "Service Directory", "definition": "Managed service registry where services register endpoints and clients look them up at runtime.", "exam_context": "Replaces hand-maintained environment variables for inter-service discovery between Cloud Run and Cloud Functions.", "lesson": 11},

@@ -22,10 +22,12 @@
         "Run the Pub/Sub emulator and point an application at it with PUBSUB_EMULATOR_HOST",
         "Design safe local integration tests with predefined, non-production test messages",
         "Test event-driven Cloud Functions locally with the Functions Framework",
-        "Set up a local Kubernetes loop with Minikube and Skaffold that mirrors production"
+        "Set up a local Kubernetes loop with Minikube and Skaffold that mirrors production",
+        "Connect a local development server to Cloud SQL securely with the Cloud SQL Auth Proxy"
       ],
       "takeaways": [
         "Pub/Sub emulator is reached via the PUBSUB_EMULATOR_HOST environment variable, not an endpoint override.",
+        "Local app to Cloud SQL with encrypted, IAM-authenticated traffic: run the Cloud SQL Auth Proxy locally and connect to localhost.",
         "Pub/Sub ordering unit tests: use the emulator rather than mocks or per-tester topics.",
         "Never replay production messages, especially sensitive data, into tests.",
         "Minikube + Skaffold for automated local build and deploy that mirrors GKE.",
@@ -43,6 +45,7 @@
       "takeaways": [
         "No Dockerfile on Cloud Run: pack build or gcloud run deploy --source.",
         "Java to container without a Dockerfile or daemon: Jib.",
+        "Build and push with Cloud Build: cloudbuild.yaml with docker build and push steps, run with gcloud builds submit.",
         "Faster builds: higher-CPU Cloud Build machine type plus --cache-from.",
         "Missing tool in Cloud Build: create a custom builder image.",
         "Switching from alpine to ubuntu:latest makes images bigger, not builds faster."
@@ -59,6 +62,7 @@
       "takeaways": [
         "Build and test on every commit with minimal ops: a Cloud Build trigger.",
         "Separate build steps make the failing test stage visible in build history.",
+        "Pass a file between build steps by writing it to /workspace, not Cloud Storage or an external server.",
         "Cleanup after a failure: write results to a file, exit 0, delete resources, then check the file in a final step.",
         "Central registry: dedicated ops project plus IAM for each team's Cloud Build service account, with no keys in the repo.",
         "Concurrent Spanner performance tests: create and delete a Spanner instance per build."
@@ -101,6 +105,7 @@
       ],
       "takeaways": [
         "Cloud Run: log to stdout and stderr with the language logger; no files, no library needed.",
+        "GKE structured logs: write single-line JSON to stdout instead of calling the Logging API.",
         "Errors missing from Error Reporting on Cloud Run: make sure they go to stderr.",
         "Raise the log level to DEBUG or INFO when reproducing issues locally.",
         "Logpoints add logs without redeploying, but Cloud Debugger is retired."
@@ -115,6 +120,7 @@
       ],
       "takeaways": [
         "Slow URLs across microservices: OpenTelemetry to Cloud Trace with analysis reports.",
+        "App with no telemetry and intermittent slowness to third-party APIs: add the OpenTelemetry library to the code.",
         "Guarantee a request is traced: send X-Cloud-Trace-Context with the right parameters.",
         "Cross-cloud latency: Zipkin collector plus Trace.",
         "Trace measures request latency, not per-function CPU or memory."
@@ -197,6 +203,12 @@
       "lesson": 1
     },
     {
+      "term": "Cloud SQL Auth Proxy",
+      "definition": "A small client that opens IAM-authenticated, encrypted connections to a Cloud SQL instance and exposes them on a local port.",
+      "exam_context": "Run it on a developer workstation so a local app connects to localhost while traffic stays encrypted and IAM-authenticated.",
+      "lesson": 2
+    },
+    {
       "term": "Cloud Trace",
       "definition": "Google Cloud's distributed tracing service that records request latency as spans across services.",
       "exam_context": "Used to find slow requests and bottlenecks across microservices, including during load tests.",
@@ -207,6 +219,12 @@
       "definition": "Managed, VPC-connected development environments built from base or custom container images.",
       "exam_context": "Chosen when a scenario needs consistent security controls, VPC access and custom tools, with images rebuilt regularly.",
       "lesson": 1
+    },
+    {
+      "term": "cloudbuild.yaml",
+      "definition": "The Cloud Build configuration file listing the build steps, each run as a container image with arguments.",
+      "exam_context": "A docker build step plus a docker push step, submitted with gcloud builds submit, builds and pushes an image.",
+      "lesson": 3
     },
     {
       "term": "Container Registry",
@@ -243,6 +261,12 @@
       "definition": "An open-source library that runs Cloud Functions code locally as a server you can call.",
       "exam_context": "The recommended way to develop and test Cloud Functions locally, including event-triggered ones.",
       "lesson": 2
+    },
+    {
+      "term": "gcloud builds submit",
+      "definition": "The gcloud command that uploads the current source directory to Cloud Build and runs a build from a config file or a --tag.",
+      "exam_context": "Paired with a cloudbuild.yaml to build and push a container image for a GKE migration.",
+      "lesson": 3
     },
     {
       "term": "Hash table",
@@ -315,6 +339,12 @@
       "definition": "A local emulator for Cloud Spanner suitable for functional testing.",
       "exam_context": "A distractor for performance tests, because it doesn't reproduce real performance; use an ephemeral instance instead.",
       "lesson": 2
+    },
+    {
+      "term": "Structured logging",
+      "definition": "Logs written as JSON objects so Cloud Logging stores them as jsonPayload with queryable fields and severity.",
+      "exam_context": "On GKE, single-line JSON on stdout is the recommended way to standardize logs without Logging API code.",
+      "lesson": 7
     },
     {
       "term": "Trunk-based development",

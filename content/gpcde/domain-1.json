@@ -13,7 +13,8 @@
         "Knative in the stem → Cloud Run.",
         "gRPC API that fans out asynchronously → Cloud Run publishing to Pub/Sub, not self-managed Kafka.",
         "Log errors to stderr and Error Reporting picks them up automatically.",
-        "App Engine flexible always keeps minimum instances, so it is never free while idle."
+        "App Engine flexible always keeps minimum instances, so it is never free while idle.",
+        "Faster Cloud Run scale-out during spikes: bake config and static data into the image instead of loading them from a database at startup; don't rely on background work after the response."
       ]
     },
     "2": {
@@ -44,7 +45,8 @@
         "UUIDv1 and auto-increment keys hotspot Spanner; use random UUIDs.",
         "Bigtable readable + even keys → concatenate several attributes; hashes aren't readable.",
         "Search Spanner customers by phone → interleaved Phones table plus an index on the phone column.",
-        "Unbounded comments or posts → a Firestore subcollection, never an array field."
+        "Unbounded comments or posts → a Firestore subcollection, never an array field.",
+        "Bigtable key from a MySQL composite key (id, timestamp) → id_timestamp: unique, spread by id, contiguous per id."
       ]
     },
     "4": {
@@ -123,7 +125,9 @@
         "Workspace employees from anywhere → HTTPS load balancer + IAP.",
         "SSH to private VMs → IAP TCP forwarding, not a bastion host.",
         "Encrypt pod-to-pod traffic → service mesh sidecars with mutual TLS; Network Policies don't encrypt.",
-        "Lowest TTFB for HTTP devices → MIG behind an external Application Load Balancer."
+        "Lowest TTFB for HTTP devices → MIG behind an external Application Load Balancer.",
+        "Internal Workspace app → Cloud Run or HTTPS LB + IAP with roles/iap.httpsResourceAccessor (not tunnelResourceAccessor); validate the IAP JWT in the app.",
+        "PII across Cloud SQL and Cloud Storage → Cloud SQL private IP + both services in one VPC Service Controls perimeter."
       ]
     },
     "9": {
@@ -139,6 +143,21 @@
         "Overwhelmed Cloud SQL behind an API → Apigee + Memorystore for Redis + exponential backoff.",
         "Cloud CDN + Cloud Storage for images, not for database-backed API responses.",
         "Pub/Sub, BigQuery and Cloud Storage files are not session stores."
+      ]
+    },
+    "10": {
+      "summary": "This lesson covers the data-side architecture questions: a streaming pipeline from devices to SQL analysis, moving analytics off a production Cloud SQL database, and migrating Hadoop with minimal changes. The keyed answers use managed services: Pub/Sub, Dataflow, BigQuery, Datastream and Dataproc with Cloud Storage.",
+      "objectives": [
+        "Assemble a streaming pipeline that ingests device data with Pub/Sub, processes it with Dataflow and analyzes it with SQL in BigQuery.",
+        "Offload reporting from a Cloud SQL database by replicating it to BigQuery with Datastream.",
+        "Migrate an on-premises Hadoop environment to Dataproc with data in Cloud Storage instead of HDFS.",
+        "Reject custom exports, dual writes and lift-and-shift VMs as distractors."
+      ],
+      "takeaways": [
+        "Streaming devices + SQL analysis → Pub/Sub → Dataflow → BigQuery.",
+        "Reports slowing the website → Datastream replicates Cloud SQL into BigQuery in near real time.",
+        "Hadoop with minimal changes → Dataproc + Cloud Storage connector; decouple storage from compute.",
+        "Dual writes, CSV exports and periodically refreshed clones are stale or fragile."
       ]
     }
   },
@@ -210,6 +229,24 @@
       "lesson": 5
     },
     {
+      "term": "Dataflow",
+      "definition": "Google Cloud's fully managed, serverless service for batch and stream data processing, based on Apache Beam.",
+      "exam_context": "The processing step between Pub/Sub ingestion and storage/BigQuery analysis in a streaming device-data pipeline.",
+      "lesson": 10
+    },
+    {
+      "term": "Dataproc",
+      "definition": "Managed Apache Hadoop and Spark service that runs existing Hadoop jobs on Google Cloud clusters.",
+      "exam_context": "Keyed for migrating on-prem Hadoop with minimal changes, with data moved from HDFS to Cloud Storage via the Cloud Storage connector.",
+      "lesson": 10
+    },
+    {
+      "term": "Datastream",
+      "definition": "Serverless change data capture and replication service that streams changes from databases such as Cloud SQL into BigQuery or Cloud Storage.",
+      "exam_context": "Keyed for giving data scientists up-to-date order data in BigQuery without loading the production Cloud SQL database.",
+      "lesson": 10
+    },
+    {
       "term": "Exponential backoff",
       "definition": "A retry strategy where the wait between retries grows exponentially to avoid overwhelming a struggling service.",
       "exam_context": "Part of the fix for an overloaded backend, but unbounded retries in a UI widget are a trap.",
@@ -238,6 +275,12 @@
       "definition": "A high-performance RPC framework that uses HTTP/2 and compact Protocol Buffers serialization, with generated client code for many languages.",
       "exam_context": "The answer when an API needs HTTPS, minimal bandwidth and easy mobile integration.",
       "lesson": 6
+    },
+    {
+      "term": "IAP-signed JWT",
+      "definition": "A JSON Web Token that Identity-Aware Proxy adds to each request (x-goog-iap-jwt-assertion header) so the backend can verify the user's identity.",
+      "exam_context": "The app should validate it, together with restricting IAP to a Google Group, so requests that bypass IAP are rejected.",
+      "lesson": 8
     },
     {
       "term": "Identity-Aware Proxy (IAP)",
@@ -318,6 +361,12 @@
       "lesson": 5
     },
     {
+      "term": "roles/iap.httpsResourceAccessor",
+      "definition": "IAM role that lets a user access HTTPS resources protected by Identity-Aware Proxy.",
+      "exam_context": "Grant it to users of an IAP-protected web app; roles/iap.tunnelResourceAccessor is only for TCP forwarding such as SSH.",
+      "lesson": 8
+    },
+    {
       "term": "Service account impersonation (act as)",
       "definition": "Permission for a principal to deploy or run resources as a service account without holding its keys or tokens.",
       "exam_context": "The deployer of a Cloud Function gets act-as on the function's service account, not access-token rights.",
@@ -364,6 +413,12 @@
       "definition": "A universally unique identifier used as a key; random (v4) UUIDs spread writes, while time-based v1 UUIDs increase monotonically.",
       "exam_context": "Random UUID keys avoid Spanner hotspots; UUIDv1 explains non-linear scaling.",
       "lesson": 3
+    },
+    {
+      "term": "VPC Service Controls",
+      "definition": "Service perimeters around Google Cloud services and projects that block data movement across the perimeter boundary.",
+      "exam_context": "Protect PII by placing Cloud SQL (with private IP) and the Cloud Storage bucket in the same perimeter.",
+      "lesson": 8
     },
     {
       "term": "Workforce Identity Federation",

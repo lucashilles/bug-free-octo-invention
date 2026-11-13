@@ -1,6 +1,6 @@
 # Domain 2 — Building and Testing Applications
 
-49 questions. Answers are collapsed — try each question before expanding it.
+57 questions. Answers are collapsed — try each question before expanding it.
 
 ## Questions
 
@@ -2087,6 +2087,413 @@ Therefore, option C is the correct approach to ensure that error messages from y
   * **Error Reporting for Cloud Run** : <https://cloud.google.com/run/docs/error-reporting>
 
   * <https://cloud.google.com/error-reporting/docs/troubleshooting>
+
+</details>
+
+---
+
+### Exam 5 · Q2
+
+**For a web application that sends messages to Pub/Sub, you need to configure local testing to quickly assess Pub/Sub integration for each new build. How should you set up local testing?**
+
+- II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through ${gcloud beta emulators pubsub env-init}.
+- III. Access the Google Cloud console, navigate to the API Library, and enable the Pub/Sub API. During local development, configure the application to call pubsub.googleapis.com.
+- IV. Deploy the Pub/Sub emulator using gcloud and start it with a valid Google Project ID. When developing locally, configure the application to utilize the local emulator by exporting the PUBSUB_EMULATOR_HOST variable.
+- I. Integrate Cloud Code into the integrated development environment (IDE). Activate Pub/Sub via Cloud APIs with a valid Google Project ID. During local development, configure the application to invoke pubsub.googleapis.com.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through ${gcloud beta emulators pubsub env-init}.
+
+**The correct approach to set up local testing for a web application that sends messages to Pub/Sub is:**
+
+**II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through**`**${gcloud beta emulators pubsub env-init}**`**.**
+
+**Explanation:**
+
+  * The Pub/Sub emulator allows you to emulate the behavior of Pub/Sub locally, which is useful for testing without incurring costs or affecting production systems.
+
+  * Using `**gcloud**` to install the Pub/Sub emulator and initiating it with a valid Google Project ID sets up the local environment for Pub/Sub emulation.
+
+  * Configuring the application to use the local emulator through `**${gcloud beta emulators pubsub env-init}**` ensures that the application sends messages to the local emulator instead of the actual Pub/Sub service during local development.
+
+Option I is incorrect because it suggests integrating Cloud Code into the IDE and activating Pub/Sub via Cloud APIs with a valid Google Project ID, which may not be suitable for local testing.
+
+Option III is incorrect because it involves enabling the Pub/Sub API in the Google Cloud console, which is not related to setting up local testing with the Pub/Sub emulator.
+
+Option IV is incorrect because it suggests deploying the Pub/Sub emulator using `**gcloud**`, which is unnecessary since the emulator can be started locally without deploying it. Additionally, the method of configuring the application to utilize the local emulator by exporting the `**PUBSUB_EMULATOR_HOST**` variable is not mentioned in this option.
+
+**References:**  
+[https://cloud.google.com/pubsub/docs/emulator#env](https://cloud.google.com/pubsub/docs/emulator#env  https://cloud.google.com/pubsub/docs/emulator#automatically_setting_the_variables)
+
+[https://cloud.google.com/pubsub/docs/emulator#automatically_setting_the_variables](https://cloud.google.com/pubsub/docs/emulator#env  https://cloud.google.com/pubsub/docs/emulator#automatically_setting_the_variables)
+
+</details>
+
+---
+
+### Exam 5 · Q6
+
+**You are developing a web application using Cloud Run and Cloud Storage. A production issue has been reported, requiring an immediate fix. You need to execute a script in a Git repository to implement a workaround. Your corporate laptop is unavailable, but you have access to your personal computer and can use your corporate credentials to access necessary Google Cloud resources. To resolve the issue quickly and efficiently, while minimizing costs, what should you do?**
+
+- B. Install VS Code and the Cloud Code extension on your personal computer. Check Cloud Run logs in Cloud Code to confirm the error, then execute the workaround script. Verify that the issue is resolved.
+- D. Install the gcloud CLI on your personal computer. Authenticate and configure API access, clone the Git repository, and execute the workaround script. Verify that the issue is resolved.
+- A. Use your personal computer to create and launch a Cloud Workstations instance. Authenticate and configure API access in the workstation, clone the Git repository, and execute the workaround script. Verify that the issue is resolved.
+- C. Access the Google Cloud Console and open Cloud Shell on your personal computer. Clone the Git repository and execute the workaround script in Cloud Shell. Verify that the issue is resolved.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** C. Access the Google Cloud Console and open Cloud Shell on your personal computer. Clone the Git repository and execute the workaround script in Cloud Shell. Verify that the issue is resolved.
+
+The correct answer is 
+
+**C. Access the Google Cloud Console and open Cloud Shell on your personal computer. Clone the Git repository and execute the workaround script in Cloud Shell. Verify that the issue is resolved.**
+
+Explanation:
+
+**Cloud Shell** provides a secure, managed environment within the Google Cloud Console that includes preconfigured tools (like `gcloud` and `git`) and does not require any local setup on your personal computer. Using Cloud Shell allows you to quickly access Google Cloud resources, clone the repository, and execute the workaround script without needing to install additional software or configure API access on your personal machine. This option also minimizes costs since Cloud Shell is free for interactive sessions and does not incur additional VM costs.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Launch a Cloud Workstations instance**  
+Setting up a Cloud Workstations instance is more complex and costly than using Cloud Shell, as it involves launching a VM and configuring access. Cloud Workstations is ideal for long-term development environments but is unnecessary for quick fixes.
+
+  * **Option B: Install VS Code and Cloud Code extension**  
+While Cloud Code is helpful for development, it requires installation and setup on your personal computer. Additionally, Cloud Code is optimized for development workflows, not for quickly executing scripts in production environments.
+
+  * **Option D: Install the**`**gcloud**`**CLI on your personal computer**  
+Installing and configuring the `gcloud` CLI on your personal computer is time-consuming compared to simply using Cloud Shell, which comes with `gcloud` pre-installed and fully configured for access to Google Cloud resources.
+
+**Relevant Documentation:**
+
+For more information on Cloud Shell, refer to:
+
+  * [Google Cloud Shell Documentation](https://cloud.google.com/shell/docs)
+
+</details>
+
+---
+
+### Exam 5 · Q7
+
+**You are developing an application using App Engine and Cloud SQL for PostgreSQL. Before deploying new versions to a shared development environment, you want to test your application code locally. To ensure secure and authenticated access to Cloud SQL, all traffic must remain encrypted and authenticated to Cloud IAM and PostgreSQL. What should you do before starting your local development server?**
+
+- D. Configure your local server to connect to the private IP of the Cloud SQL instance. Encrypt database entries before submitting them, and store the decryption key as an environment variable in App Engine.
+- A. Install PostgreSQL on your local workstation, run a local PostgreSQL database, and configure the application to connect to localhost.
+- C. Deploy a Compute Engine instance, install HAProxy on it, and set up Cloud SQL Auth Proxy on the instance. Use the instance’s service account to authenticate to Cloud SQL and configure the application to connect to the Compute Engine instance's IP address.
+- B. Download and install the Cloud SQL Auth Proxy on your local development environment. Configure the proxy to connect to Cloud SQL and run it locally. Set the application to connect to localhost.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** B. Download and install the Cloud SQL Auth Proxy on your local development environment. Configure the proxy to connect to Cloud SQL and run it locally. Set the application to connect to localhost.
+
+The correct answer is
+
+**B. Download and install the Cloud SQL Auth Proxy on your local development environment. Configure the proxy to connect to Cloud SQL and run it locally. Set the application to connect to localhost.**
+
+Explanation:
+
+The **Cloud SQL Auth Proxy** is the recommended approach for securely connecting to Cloud SQL from local development environments. It handles both **IAM-based authentication** and **encrypted connections** , ensuring secure access to your Cloud SQL instance. By running the Cloud SQL Auth Proxy locally, you can direct your application to connect to `localhost`, where the proxy securely forwards the connection to Cloud SQL. This setup allows you to test your application in an environment that closely matches the production setup in terms of security.
+
+Justifications for Incorrect Options:
+
+  * **Option A: Run a local PostgreSQL database on your workstation**  
+Running a local PostgreSQL instance does not allow you to test the Cloud SQL environment. It also bypasses Cloud IAM and does not reflect the real security configurations required by Cloud SQL.
+
+  * **Option C: Deploy a Compute Engine instance with HAProxy and Cloud SQL Auth Proxy**  
+Setting up a Compute Engine instance and HAProxy introduces unnecessary complexity for local testing. The Cloud SQL Auth Proxy can be used directly on your local machine, which is simpler and meets all the security requirements.
+
+  * **Option D: Connect directly to the private IP of the Cloud SQL instance**  
+Directly connecting to a private IP requires VPN or VPC peering and does not ensure IAM-based authentication. Additionally, encrypting entries before submission is not equivalent to encrypting the connection itself, which the Cloud SQL Auth Proxy provides.
+
+**Relevant Documentation:**
+
+For more information on secure connections to Cloud SQL, refer to:
+
+  * [Using the Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy)
+
+</details>
+
+---
+
+### Exam 5 · Q23
+
+**In your CI/CD pipeline utilizing Cloud Build, you need to ensure that a flat file generated in one builder is accessible to subsequent builders within the same pipeline. What is the recommended method to store the file for shared access?**
+
+- III. Use gsutil to output the file contents to a Cloud Storage object, allowing seamless access by subsequent build steps in the pipeline.
+- II. Output the file contents to a file within the /workspace directory and read from the same file in subsequent build steps to facilitate shared access.
+- IV. Incorporate a build argument that executes an HTTP POST via curl to a separate web server to persist the file's value in one builder, then employ an HTTP GET via curl from the subsequent build step to retrieve the value for shared access.
+- I. Utilize Compute Engine instance metadata to store and retrieve the file contents, ensuring accessibility across all builders in the pipeline.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** II. Output the file contents to a file within the /workspace directory and read from the same file in subsequent build steps to facilitate shared access.
+
+**Best Choice:**
+
+  * **II. Output the file contents to a file within the /workspace directory and read from the same file in subsequent build steps to facilitate shared access.**
+
+**Explanation:**
+
+  * **Simplicity:** Cloud Build's `workspace` is a shared directory persisting data across build steps within a pipeline. It's the most straightforward way to pass data between builders.
+
+  * **Efficiency:** Accessing files locally is the fastest approach, avoiding network calls to external services.
+
+**Why Other Options Are Less Ideal:**
+
+  * **I. Utilize Compute Engine instance metadata ...**
+
+    * **Intended Purpose:** Instance metadata is designed for storing small pieces of configuration data, not arbitrary files.
+
+  * **III. Use gsutil to output the file contents to a Cloud Storage object ...**
+
+    * **Unnecessary Overhead:** Accessing Cloud Storage introduces network latency and adds operational overhead compared to the local workspace.
+
+  * **IV. Incorporate a build argument that executes an HTTP POST via curl ...**
+
+    * **Complex and Indirect:** Maintaining a separate web server solely for passing intermediate data during a build process is overly complex.
+
+**References:**  
+[https://cloud.google.com/build/docs/build-config-file-schema](https://cloud.google.com/build/docs/build-config-file-schema  https://cloud.google.com/build/docs/configuring-builds/pass-data-between-steps#passing_data_using_workspaces)
+
+[https://cloud.google.com/build/docs/configuring-builds/pass-data-between-steps#passing_data_using_workspaces](https://cloud.google.com/build/docs/build-config-file-schema  https://cloud.google.com/build/docs/configuring-builds/pass-data-between-steps#passing_data_using_workspaces)
+
+</details>
+
+---
+
+### Exam 5 · Q24
+
+**Your team is tasked with standardizing log data for services running on Google Kubernetes Engine. How can you achieve this using Google-recommended practices efficiently? (Select two options.)**
+
+- IV. Enforce the usage of the Logging API within the application code to generate structured logs for Cloud Logging.
+- I. Implement logging exports on application logs to BigQuery for streamlined log analytics.
+- V. Enforce the usage of the Pub/Sub API to transmit structured data to Pub/Sub, then establish a Dataflow streaming pipeline to standardize logs and transfer them to BigQuery for analytics.
+- III. Configure log output to standard output (stdout) as single-line JSON to be fed into Cloud Logging as structured logs.
+- II. Implement logging exports on application logs to Cloud Storage for enhanced log analytics.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** I. Implement logging exports on application logs to BigQuery for streamlined log analytics. **|** III. Configure log output to standard output (stdout) as single-line JSON to be fed into Cloud Logging as structured logs.
+
+**Based on Google-recommended practices for standardizing log data for services running on Google Kubernetes Engine, the two most efficient options would be:**
+
+**I. Implement logging exports on application logs to BigQuery for streamlined log analytics.**
+
+**III. Configure log output to standard output (stdout) as single-line JSON to be fed into Cloud Logging as structured logs.**
+
+**Justification:**
+
+I. Implement logging exports on application logs to BigQuery for streamlined log analytics: Exporting application logs directly to BigQuery allows for centralized storage and streamlined log analytics. BigQuery is a powerful tool for analyzing large datasets, and by exporting logs to BigQuery, you can perform advanced queries and analyses on your log data efficiently. This aligns with Google-recommended practices for log management and analysis.
+
+III. Configure log output to standard output (stdout) as single-line JSON to be fed into Cloud Logging as structured logs: Configuring log output to standard output (stdout) as single-line JSON allows for easy ingestion of logs into Cloud Logging as structured logs. Cloud Logging can parse and analyze structured logs effectively, providing insights and monitoring capabilities for your applications running on Google Kubernetes Engine. This approach ensures consistency and compatibility with Cloud Logging's structured logging features.
+
+**Why the other options are not as efficient:**
+
+II. Implement logging exports on application logs to Cloud Storage for enhanced log analytics: While exporting logs to Cloud Storage can be useful for archival and storage purposes, it may not be as efficient as exporting logs directly to BigQuery for streamlined log analytics. Cloud Storage is better suited for long-term storage rather than real-time log analysis, which is more effectively handled by BigQuery.
+
+IV. Enforce the usage of the Logging API within the application code to generate structured logs for Cloud Logging: While using the Logging API within the application code can generate structured logs for Cloud Logging, it may introduce complexity and maintenance overhead. Configuring log output to standard output (stdout) as single-line JSON is a more straightforward approach and aligns better with Google-recommended practices for log standardization on Google Kubernetes Engine.
+
+V. Enforce the usage of the Pub/Sub API to transmit structured data to Pub/Sub, then establish a Dataflow streaming pipeline to standardize logs and transfer them to BigQuery for analytics: While this option provides a method for standardizing logs and transferring them to BigQuery for analytics, it involves additional components and complexity compared to directly exporting logs to BigQuery. It may not be as efficient in terms of implementation and management, especially when simpler solutions are available for achieving the same outcome.
+
+**Documentation Links:**
+
+  * [Exporting logs to BigQuery](https://cloud.google.com/logging/docs/export/bigquery)
+
+  * [Structured logging with Cloud Logging](https://cloud.google.com/logging/docs/structured-logging)
+
+</details>
+
+---
+
+### Exam 5 · Q37
+
+**You're preparing to migrate your Compute Engine application to Google Kubernetes Engine (GKE). As part of this process, you need to build a container image and push it to Artifact Registry using Cloud Build. Which steps should you take? (Select two.)**
+
+- A. Execute `gcloud builds submit` in the directory containing the application source code.
+- B. Run `gcloud run deploy app-name --image gcr.io/$PROJECT_ID/app-name` in the directory housing the application source code.
+- E. Within the application source directory, generate a file named `cloudbuild.yaml` with the following content:
+    steps:
+    \- name: 'gcr.io/cloud-builders/cloud'
+    args: ['app', 'deploy']
+    timeout: '1600s'
+- C. Use `gcloud container images add-tag gcr.io/$PROJECT_ID/app-name gcr.io/$PROJECT_ID/app-name:latest` in the application source directory.
+- D. Create a file named `cloudbuild.yaml` in the application source directory, and include the following content:
+    steps:
+    \- name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-name', '.']
+    \- name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/app-name']
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** A. Execute `gcloud builds submit` in the directory containing the application source code. **|** D. Create a file named `cloudbuild.yaml` in the application source directory, and include the following content:
+
+**Correct Answers:**
+
+  * **A. Execute**`**gcloud builds submit**`**in the directory containing the application source code.**
+
+    * **Justification:** This command triggers Cloud Build to execute a build process, typically defined in a `cloudbuild.yaml` file. It will handle containerizing your application and pushing the image to Artifact Registry.
+
+  * **D. Create a file named**`**cloudbuild.yaml**`**in the application source directory, and include the following content:**
+
+YAML
+        
+                    1. steps:
+            2. - name: 'gcr.io/cloud-builders/docker'
+            3.   args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-name', '.']
+            4. - name: 'gcr.io/cloud-builders/docker'
+            5.   args: ['push', 'gcr.io/$PROJECT_ID/app-name']
+
+* **Justification:** This `cloudbuild.yaml` file provides Cloud Build with the instructions to:
+
+      1. Build the Docker image from your application code and tag it appropriately for Artifact Registry.
+
+      2. Push the built image to Artifact Registry.
+
+**Incorrect Answers:**
+
+  * **B. Run**`**gcloud run deploy app-name --image gcr.io/$PROJECT_ID/app-name**`**...**
+
+    * **Reasoning:** This is a command for deploying an application to Cloud Run (a separate service), not for building and pushing images to Artifact Registry.
+
+  * **C. Use**`**gcloud container images add-tag gcr.io/$PROJECT_ID/app-name gcr.io/$PROJECT_ID/app-name:latest**`**...**
+
+    * **Reasoning:** This command deals with re-tagging existing container images, not the primary build-and-push process.
+
+  * **E. Within the application source directory, generate a file named**`**cloudbuild.yaml**`**...**
+
+    * **Reasoning:** The `cloudbuild.yaml` content provided here is related to deploying to Cloud App Engine, not for containerization and Artifact Registry.
+
+</details>
+
+---
+
+### Exam 5 · Q51
+
+**Your ecommerce application, which forwards requests to third-party API services for credit card processing, shipping, and inventory management, is experiencing intermittent performance issues reported by customers. However, the application lacks metrics for diagnosis. What action should you take to identify the cause of these performance inconsistencies?**
+
+**
+
+**
+
+- D. Activate Managed Service for Prometheus on your Google Kubernetes Engine cluster to collect application metrics.
+- C. Adjust your application to include and propagate the X-Cloud-Trace-Context header when communicating with downstream services.
+- B. Deploy the Ops Agent within your container and configure it to collect application metrics.
+- A. Implement the OpenTelemetry library in your application code to enable instrumentation.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** A. Implement the OpenTelemetry library in your application code to enable instrumentation.
+
+**A. Implement the OpenTelemetry library in your application code to enable instrumentation.**
+
+Justification:
+
+  * OpenTelemetry is a powerful observability framework that allows you to instrument your code to collect telemetry data such as traces, metrics, and logs.
+
+  * By instrumenting your application code with OpenTelemetry, you can gather detailed information about the execution of requests, including latency measurements, service dependencies, and error rates.
+
+  * OpenTelemetry supports various programming languages and frameworks, making it suitable for a wide range of applications, including containerized microservices running in Kubernetes clusters.
+
+  * Once implemented, OpenTelemetry can provide insights into the performance of your application and help pinpoint the root cause of intermittent performance issues.
+
+  * It is important to collect metrics and traces directly from your application code to gain visibility into internal operations and interactions with third-party API services.
+
+Options B, C, and D are less suitable for this scenario due to the following reasons:
+
+B. Deploying the Ops Agent within your container and configuring it to collect application metrics may provide some insights into the performance of your application, but it may not capture all relevant data needed for diagnosis, especially if the performance issues originate from interactions with third-party API services.
+
+C. Adjusting your application to include and propagate the X-Cloud-Trace-Context header when communicating with downstream services is a best practice for tracing requests in distributed systems. While this can help trace requests, it does not provide detailed performance metrics and may not be sufficient for diagnosing intermittent performance issues.
+
+D. Activating Managed Service for Prometheus on your Google Kubernetes Engine cluster can collect application metrics, but it primarily focuses on infrastructure-level metrics rather than application-level metrics. While it can provide insights into resource utilization and cluster health, it may not capture the specific telemetry data needed to diagnose performance issues within your application code.
+
+</details>
+
+---
+
+### Exam 5 · Q56
+
+**You're deploying a Python application to Cloud Run via Cloud Source Repositories and Cloud Build. Below is the Cloud Build pipeline:**
+
+**```**
+
+**steps:**
+
+**\- name: python**
+
+**entrypoint: ["install", "-r", "requirements.txt", "user"]**
+
+**pip**
+
+**args:**
+
+**\- name: 'gcr.io/cloud-builders/docker'**
+
+**args: ['build', '-t', 'us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:$(SHORT_SHA)',**
+
+**\- name: 'gcr.io/cloud-builders/docker'**
+
+**args: ['push', 'us-central1-docker.pkg.dev/$(PROJECT_ID)/$(_REPO_NAME)/myimage:$(SHORT_SHA)']**
+
+**\- name: google/cloud-sdk**
+
+**args: ['gcloud', 'run', 'deploy', 'helloworld-$(SHORT_SHA)',**
+
+**'--image=us-central1-docker.pkg.dev/$(PROJECT_ID)/$(_REPO_NAME)/myimage:$(SHORT_SHA)',**
+
+**'--region=us-central1', 'platform', 'managed',**
+
+**'--allow-unauthenticated']**
+
+**```**
+
+**You aim to optimize deployment times and eliminate unnecessary steps. What should you do?**
+
+- D. Introduce the --cache-from argument to the Docker build step in your build configuration file.
+- C. Store image artifacts in a Cloud Storage bucket located in the same region as the Cloud Run instance.
+- A. Eliminate the step responsible for pushing the container to Artifact Registry.
+- B. Set up a new Docker registry within a VPC and utilize Cloud Build worker pools within the VPC to execute the build pipeline.
+
+<details><summary>Answer &amp; explanation</summary>
+
+**Correct:** D. Introduce the --cache-from argument to the Docker build step in your build configuration file.
+
+**Correct Answer:**
+
+  * **D. Introduce the --cache-from argument to the Docker build step in your build configuration file.**
+
+**Justification:**
+
+  * **Build Caching:** The `--cache-from` argument in Docker builds allows reusing image layers from previous builds if they haven't changed. This significantly speeds up builds, especially when dependencies (like in `requirements.txt`) are relatively stable.
+
+  * **Direct Impact:** This change addresses the core question of optimizing deployment times.
+
+**Example Modification:**
+
+1.  steps:
+      2.   ... 
+      3.   - name: 'gcr.io/cloud-builders/docker'
+      4.     args: 
+      5.       ['build', 
+      6.        '--cache-from=us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:latest', # Example - adapt as needed
+      7.        '-t', 'us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:$(SHORT_SHA)', 
+      8.        '.'] 
+      9.   ...
+
+**Incorrect Answers:**
+
+  * **A. Eliminate the step responsible for pushing the container to Artifact Registry.**
+
+    * **Reasoning:** This breaks the deployment. Cloud Run needs the image in a registry it can access.
+
+  * **B. Set up a new Docker registry within a VPC ...**
+
+    * **Reasoning:** While potentially useful for other reasons (security, locality), this adds complexity and management overhead without directly addressing the core goal of faster builds.
+
+  * **C. Store image artifacts in a Cloud Storage bucket ...**
+
+    * **Reasoning:** Cloud Storage isn't a container registry. While a complex workaround _might_ be possible, it deviates significantly from standard container deployment practice.
 
 </details>
 
