@@ -1,0 +1,226 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "Cloud Build is the managed CI engine at the center of most Domain 2 questions. This lesson covers which trigger type fits which requirement, how trigger approval differs from source-control approval, how to run steps in parallel, how to get build notifications, and how to make builds faster or reach private networks.",
+      "objectives": [
+        "After this lesson you can choose between push-to-branch, push-new-tag, and pull request triggers based on the wording of a requirement.",
+        "After this lesson you can tell Cloud Build trigger approval apart from GitHub branch protection and name the role that can approve builds.",
+        "After this lesson you can configure waitFor so that independent build steps run concurrently.",
+        "After this lesson you can choose caching, private pools, or Pub/Sub notifications to meet speed, network, or integration requirements."
+      ],
+      "takeaways": [
+        "Release on a semver tag means a push-new-tag trigger with a strict semver regex, and the tag must be pushed to the remote.",
+        "Auto-submit but wait for a human means trigger approval plus roles/cloudbuild.builds.approver; builds.editor cannot approve.",
+        "Approval of pushes or merges to main belongs to GitHub branch protection, not to Cloud Build approval.",
+        "Parallel steps need waitFor: ['-'] on every independent step; the default is to wait for all previous steps.",
+        "Faster builds come from caching (--cache-from for Docker, Cloud Storage for other artifacts), not from a bigger machineType."
+      ]
+    },
+    "2": {
+      "summary": "Pipelines need identities, and the exam rewards the identity that is attached, keyless, and scoped to the exact resource. This lesson covers which service account and role to use for GKE deploys, Cloud Deploy access, Terraform state, Jenkins on Compute Engine, and KMS signing from GKE.",
+      "objectives": [
+        "After this lesson you can grant the Cloud Build service account the right role to deploy to GKE with kubectl.",
+        "After this lesson you can scope Cloud Deploy and Cloud Storage permissions to a single pipeline or bucket.",
+        "After this lesson you can choose between an attached service account, Workload Identity, and Workload Identity Federation based on the constraints in a question.",
+        "After this lesson you can explain why an IAM role alone does not grant database privileges for an AlloyDB migration."
+      ],
+      "takeaways": [
+        "kubectl deploys from Cloud Build: grant roles/container.developer to the existing Cloud Build service account.",
+        "A resource-scoped role, such as roles/storage.objectAdmin on the state bucket, always beats roles/owner.",
+        "Workloads on a GCE VM use the attached service account through ADC; never a JSON key or user ADC login.",
+        "A GKE workload that signs with a KMS key uses Workload Identity, not an SA key stored as a Kubernetes Secret.",
+        "\"No static credentials and no external IdP federation\" rules out Workload Identity Federation and points to Cloud Build's own service account."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers the canonical order of stages in a container pipeline and the process choices that the exam ties to DORA research. It also covers how to cut MTTR and toil, how to replace a change advisory board, and how to handle feature branches, API deprecation, and unreliable dependencies.",
+      "objectives": [
+        "After this lesson you can order the stages of a trunk-based container pipeline, from unit tests to production smoke tests.",
+        "After this lesson you can explain why you build an image once and promote the same artifact through environments.",
+        "After this lesson you can choose process changes that shorten MTTR and replace a CAB without slowing delivery.",
+        "After this lesson you can choose the right test type or resilience pattern for a given failure mode."
+      ],
+      "takeaways": [
+        "Pipeline order: unit tests on push, build once, push to the registry, integration and acceptance tests in a test environment, then prod with smoke tests.",
+        "Git hooks are not a pipeline gate, and rebuilding for prod means you ship an untested artifact.",
+        "Replace a CAB with peer review at check-in backed by automated tests, plus fast feedback to developers.",
+        "Reduce Cloud Deploy toil by auto-approving the low-risk dev to test promotion and notifying the team when a manual step is reached.",
+        "Use a circuit breaker with a fallback for an unreliable synchronous dependency under a tight SLO; retries eat the latency budget."
+      ]
+    },
+    "4": {
+      "summary": "Cloud Deploy is Google Cloud's managed continuous delivery service for GKE and serverless targets. This lesson covers delivery pipelines, targets, releases, rollouts and rollbacks, how to enforce manual QA with approvals, how to automate canary rollback, and how to vary manifests per environment with Skaffold profiles and Kustomize.",
+      "objectives": [
+        "After this lesson you can model a delivery pipeline as ordered targets and explain releases, rollouts and rollbacks.",
+        "After this lesson you can enforce a manual QA gate with requireApproval on the production target.",
+        "After this lesson you can design a canary rollout that rolls back automatically on failed verification.",
+        "After this lesson you can use Skaffold profiles with Kustomize overlays to handle per-target differences."
+      ],
+      "takeaways": [
+        "Manual QA before prod: two stages (QA then Prod) with the standard strategy and requireApproval: true on prod.",
+        "Automatic rollback: canary phases plus verification on Cloud Monitoring telemetry plus an automation rule that rolls back on failure.",
+        "Per-environment differences: one Skaffold profile per target, each pointing at a Kustomize overlay over a shared base.",
+        "A rollback is a new rollout of a previously successful release; don't hand-build a rollback pipeline in Cloud Build.",
+        "Cloud Deploy is not for multi-cloud VM images; use Cloud Build with Packer for those."
+      ]
+    },
+    "5": {
+      "summary": "Artifact Registry is the managed home for container images, Helm charts and language packages, and Container Registry is retired. This lesson covers repository modes, registry location, tags versus digests, registry Pub/Sub events, retention, and audit logging of pushes.",
+      "objectives": [
+        "After this lesson you can choose between standard, remote and virtual Artifact Registry repositories.",
+        "After this lesson you can decide when to reference an image by tag and when by digest.",
+        "After this lesson you can trigger deployments from registry events on the gcr Pub/Sub topic.",
+        "After this lesson you can find out who pushed an image using Data Write audit logs."
+      ],
+      "takeaways": [
+        "Cache upstream dependencies through one endpoint with remote repositories fronted by a virtual repository.",
+        "Pin or roll back to exact bytes with a digest; select a release version with a tag such as $TAG_NAME.",
+        "Re-pointing latest does not change the Pod spec, so no rollout happens.",
+        "Store images in a registry location near the cluster that pulls them: push once, pull often.",
+        "Retention means Artifact Registry cleanup policies with a dry run, not a scheduled delete job."
+      ]
+    },
+    "6": {
+      "summary": "Deployment strategy questions turn on a few keywords: instant rollback, limited blast radius, full load with no users exposed, or half the pods. This lesson compares recreate, rolling, partitioned rolling, blue/green, canary, A/B and shadow deployments and shows how each is implemented on GKE, Compute Engine and with a service mesh.",
+      "objectives": [
+        "After this lesson you can map requirement wording to the right deployment strategy.",
+        "After this lesson you can roll back a blue/green deployment on GKE by switching the Service selector.",
+        "After this lesson you can choose the right platform for header-based routing combined with percentage splits.",
+        "After this lesson you can roll out an urgent patch to a MIG fleet safely and quickly."
+      ],
+      "takeaways": [
+        "Instant rollback means blue/green; limiting how many users you risk means canary.",
+        "Blue/green rollback on GKE is changing the Service selector back, not kubectl rollout undo.",
+        "Full production load with zero users exposed means a shadow deployment.",
+        "A phased rollout to half the pods means a StatefulSet rolling update partition.",
+        "Header-based routing plus arbitrary % splits means GKE with a Cloud Service Mesh VirtualService."
+      ]
+    },
+    "7": {
+      "summary": "Cloud Run gives you revisions, revision tags and traffic splitting, which together cover most testing and canary scenarios with very little effort. This lesson covers deploying with no traffic, testing at a tagged URL, splitting traffic between revisions, and rolling back by moving traffic.",
+      "objectives": [
+        "After this lesson you can deploy a Cloud Run revision with --no-traffic and a tag, then test it at its tag URL.",
+        "After this lesson you can run a canary by splitting traffic between revisions of the same service.",
+        "After this lesson you can roll back a Cloud Run release by moving traffic back to the previous revision."
+      ],
+      "takeaways": [
+        "QA before any customer traffic: gcloud run deploy --no-traffic --tag, then test at the tag---service URL.",
+        "Canary with least effort: a traffic split such as 90/10 between revisions of the same service.",
+        "--to-revisions LATEST=1 sends real customers to an untested revision.",
+        "A tagged revision with zero traffic is not private; its URL is public if the service is public.",
+        "10% of requests is not 10% of distinct clients, because session affinity is best effort."
+      ]
+    },
+    "8": {
+      "summary": "Secret handling in pipelines and at runtime is a frequent source of trap answers. This lesson contrasts Secret Manager with Cloud KMS, traces how Cloud Build secret handling evolved to availableSecrets.secretManager, and explains when Cloud Run should expose a secret as an environment variable or as a volume.",
+      "objectives": [
+        "After this lesson you can choose between Secret Manager and Cloud KMS for a given requirement.",
+        "After this lesson you can give a Cloud Build pipeline access to secrets through availableSecrets.secretManager and secretAccessor.",
+        "After this lesson you can decide between an environment variable and a volume mount for a Cloud Run secret.",
+        "After this lesson you can recognize insecure secret patterns such as secrets in Git, base64 encoding, or the key next to the ciphertext."
+      ],
+      "takeaways": [
+        "Build secrets: Secret Manager with availableSecrets.secretManager and roles/secretmanager.secretAccessor on the build service account.",
+        "An API key is a secret to store (Secret Manager); KMS manages keys.",
+        "A rotating Cloud Run secret that the app must always see is a volume mount of latest; a static key can be an env var.",
+        "The latest alias does not make an environment variable refresh; env vars are read once at instance start.",
+        "Never put secrets in Git or images, never treat base64 as encryption, and never store the key next to the ciphertext."
+      ]
+    },
+    "9": {
+      "summary": "Supply-chain questions ask which control enforces what can run versus which control only reports. This lesson covers Binary Authorization policies, attestors and break-glass, build provenance, and Artifact Analysis scanning, both automatic and on-demand.",
+      "objectives": [
+        "After this lesson you can choose Binary Authorization when a question requires that only trusted images can be deployed.",
+        "After this lesson you can choose between the built-by-cloud-build attestor, a custom KMS-signed attestation, and an allowlist name pattern.",
+        "After this lesson you can explain when Artifact Analysis scans images and why On-Demand Scanning is needed to block vulnerabilities before push.",
+        "After this lesson you can deploy an unsigned debug Pod safely with the break-glass label."
+      ],
+      "takeaways": [
+        "Only trusted or tested images can deploy means Binary Authorization; scanning only reports and IAM only controls who.",
+        "Images built by Cloud Build means requiring the built-by-cloud-build attestor; no custom KMS keyring is needed.",
+        "A custom gate attestation is signed by the pipeline with a Cloud KMS key, authenticated through Workload Identity.",
+        "Block critical vulnerabilities before they reach the registry with On-Demand Scanning in Cloud Build; automatic scanning runs after push.",
+        "Automatic scanning works by digest on push: tags don't trigger a rescan, and enabling it doesn't scan existing images."
+      ]
+    },
+    "10": {
+      "summary": "Terraform shows up in pipelines through state backends, authentication, triggering, and a recurring instance template replacement error. This lesson covers create_before_destroy, remote state permissions, keyless authentication, and how to trigger IaC applies and tests.",
+      "objectives": [
+        "After this lesson you can fix the instance template \"already being used by\" error with create_before_destroy and name_prefix.",
+        "After this lesson you can resolve a 403 on a Terraform state bucket with a bucket-scoped role.",
+        "After this lesson you can authenticate Terraform on Compute Engine through the attached service account.",
+        "After this lesson you can choose tag and PR triggers for IaC applies and module tests."
+      ],
+      "takeaways": [
+        "A template in use by a MIG: lifecycle { create_before_destroy = true } with name_prefix, replaced in one apply.",
+        "create_before_destroy does not by itself roll a new machine type out to existing VMs; the MIG update policy does.",
+        "A state bucket 403 means grant bucket-scoped roles/storage.objectAdmin; keep shared, lockable remote state.",
+        "Apply on a semver tag trigger and run IaC module tests on every PR, scoped per folder.",
+        "Multi-cloud VM images are built with Packer orchestrated by Cloud Build."
+      ]
+    },
+    "11": {
+      "summary": "The exam still includes Jenkins and Spinnaker scenarios alongside managed GCP tools. This lesson covers where to host Jenkins, how to fix slow-starting Jenkins jobs, when managed Cloud Build private pools beat a self-hosted fleet, and how Spinnaker integrates with Pub/Sub and canary analysis.",
+      "objectives": [
+        "After this lesson you can choose Compute Engine as the host for a Jenkins controller serving a GCP-only application.",
+        "After this lesson you can diagnose slow Jenkins job starts and fix them by adding executors.",
+        "After this lesson you can configure Spinnaker to deploy on new images and run Kayenta canary analysis correctly.",
+        "After this lesson you can explain when to prefer managed Cloud Build private pools or Binary Authorization over self-operated tools."
+      ],
+      "takeaways": [
+        "Jenkins for an app entirely on GCP runs on Compute Engine VMs, because it needs a persistent controller.",
+        "Jobs slow to start while CPU and memory look normal: increase executors on the agents.",
+        "Spinnaker deploys on each new image through a Pub/Sub trigger on the gcr topic.",
+        "Kayenta canary analysis compares against a freshly created baseline of the current production version.",
+        "Kritis and Binary Authorization share an idea, but Binary Authorization is managed, so pick it for low overhead."
+      ]
+    }
+  },
+  "glossary": [
+    {"term": "A/B testing", "definition": "A release approach that routes a defined user segment to a variant based on conditions, in order to compare variants.", "exam_context": "Pick it for experimentation across user segments, not for safe rollout or fast rollback.", "lesson": 6},
+    {"term": "Artifact Analysis", "definition": "Google Cloud's vulnerability scanning and metadata service for images in Artifact Registry, formerly called Container Analysis. It scans images on push, by digest, and keeps findings up to date through continuous analysis.", "exam_context": "Choose it to find or report CVEs; remember that it only detects, enabling it does not scan existing images, and adding a tag does not trigger a rescan.", "lesson": 9},
+    {"term": "Artifact Registry", "definition": "Google Cloud's managed registry for container images, Helm charts and other packages, with IAM, VPC-SC, GKE and Cloud Run integration. It replaces the retired Container Registry.", "exam_context": "Pick it whenever a question needs to store images and Helm charts together; Container Registry never stored Helm charts.", "lesson": 5},
+    {"term": "Artifact Registry cleanup policies", "definition": "Rules on an Artifact Registry repository that automatically delete or keep artifacts, with a dry-run mode to preview their effect.", "exam_context": "The answer to image retention; a scheduled Cloud Build delete job or manual deletion is the trap.", "lesson": 4},
+    {"term": "availableSecrets.secretManager", "definition": "The Cloud Build config field that references Secret Manager secret versions and exposes them to build steps through secretEnv.", "exam_context": "The recommended way to use secrets in builds, paired with roles/secretmanager.secretAccessor on the build service account; rotation needs no config change.", "lesson": 8},
+    {"term": "Binary Authorization", "definition": "A managed deploy-time admission control for GKE and Cloud Run that only admits images matching a policy, such as required attestations or allowlisted name patterns. It is based on the Kritis spec, supports dry run, and logs enforcement to Cloud Audit Logs.", "exam_context": "Choose it whenever the stem says only trusted, approved or tested images can be deployed; IAM, RBAC and scanning do not control what runs.", "lesson": 9},
+    {"term": "Blue/green deployment", "definition": "A strategy that runs the old (blue) and new (green) versions side by side and switches all traffic at cutover, so rollback is switching traffic back.", "exam_context": "Pick it for \"instant rollback\" or \"shortest rollback\"; on GKE the rollback is flipping the Service selector, not kubectl rollout undo.", "lesson": 6},
+    {"term": "Break-glass label", "definition": "The Pod label image-policy.k8s.io/break-glass: \"true\", which lets a single Pod bypass Binary Authorization enforcement while the event is automatically logged.", "exam_context": "The answer for an emergency or debug Pod with an unsigned image; ALWAYS_ALLOW, disabling Binary Authorization, or a permanent allowlist entry are traps.", "lesson": 9},
+    {"term": "built-by-cloud-build attestor", "definition": "An attestor that Cloud Build creates and whose attestations it signs automatically for images it builds.", "exam_context": "Require it in a Binary Authorization policy for \"only images built by our Cloud Build\" with low effort; building your own KMS keyring and attestor duplicates it.", "lesson": 9},
+    {"term": "Canary deployment", "definition": "A strategy that exposes a small percentage of real traffic to the new version and widens exposure as evidence shows it is healthy.", "exam_context": "Pick it for \"not fully load-tested\", \"progressively widen exposure\" or \"limit blast radius\"; it does not replace a preceding QA environment.", "lesson": 6},
+    {"term": "Circuit breaker", "definition": "A resilience pattern that stops calling a failing dependency and serves a fallback instead, so failures don't consume the caller's latency budget.", "exam_context": "The answer for an unreliable synchronous dependency under a tight SLO; more retries or a bigger queue add latency.", "lesson": 3},
+    {"term": "Cloud Build", "definition": "Google Cloud's managed CI service that runs build steps defined in a build config, typically cloudbuild.yaml, in response to triggers.", "exam_context": "It is for builds, not recurring batch jobs; a scheduled job belongs in a Cloud Run job with a scheduler.", "lesson": 1},
+    {"term": "Cloud Build private pool", "definition": "A pool of dedicated Cloud Build workers that can be peered to your VPC and used with VPC Service Controls, so builds reach private resources without public IPs.", "exam_context": "Choose it when tests must reach private VPC APIs or private-IP databases, or when builds must avoid public IPs and exfiltration; creating the pool alone does not connect it to your VPC.", "lesson": 1},
+    {"term": "Cloud Build trigger", "definition": "A rule that starts a build on a source event: a push to a branch, a push of a new tag matching a regex, or a pull request. Included-files filters can scope it to parts of a repository.", "exam_context": "Semver release means a tag trigger, test-before-accept means a PR trigger, and the included-files filter has nothing to do with approval.", "lesson": 1},
+    {"term": "Cloud Build trigger approval", "definition": "A trigger setting where builds are submitted automatically but stay pending until a principal with roles/cloudbuild.builds.approver approves them.", "exam_context": "Use it for \"builds start automatically but must wait for group X\"; approval of pushes to a branch is GitHub branch protection instead, and builds.editor cannot approve.", "lesson": 1},
+    {"term": "Cloud Deploy", "definition": "Google Cloud's managed continuous delivery service that models a delivery pipeline across ordered targets and manages releases, rollouts, approvals and rollbacks for GKE and serverless targets.", "exam_context": "Choose it for promotion, approvals and automated canary rollback on GKE or Cloud Run; it does not create your tests and is not for multi-cloud VM images.", "lesson": 4},
+    {"term": "Cloud Deploy automation", "definition": "Rules in Cloud Deploy that act on rollouts without a human, such as promoting a release or rolling back after failed verification.", "exam_context": "Combine canary phases, verification and an automation rule for \"automatic rollback\"; also used to auto-approve low-risk dev to test promotions to cut toil.", "lesson": 4},
+    {"term": "Cloud KMS", "definition": "Google Cloud's service for managing cryptographic keys used to encrypt, decrypt and sign data.", "exam_context": "Use it for signing keys and decryption keys, not to store API keys; rotating a KMS key is not rotating a secret value.", "lesson": 8},
+    {"term": "Cloud Run revision tag", "definition": "A named tag on a Cloud Run revision that gives it its own URL of the form tag---service, so it can be tested without receiving production traffic.", "exam_context": "Deploy with --no-traffic --tag to let QA test before any customer traffic; a tagged URL is not private if the service is public.", "lesson": 7},
+    {"term": "Cloud Run traffic splitting", "definition": "Routing fixed percentages of requests to different revisions of the same Cloud Run service.", "exam_context": "The least-effort canary (for example 90/10) and rollback mechanism on Cloud Run; it splits by revision percentage only, not by header.", "lesson": 7},
+    {"term": "Cloud Service Mesh VirtualService", "definition": "A service mesh routing resource that routes requests by headers or attributes and splits traffic by weights.", "exam_context": "Pick GKE with Cloud Service Mesh when routing must use headers such as user agent plus arbitrary % splits.", "lesson": 6},
+    {"term": "cloud-builds Pub/Sub topic", "definition": "The Pub/Sub topic to which Cloud Build publishes every build state change.", "exam_context": "Send build info to a third-party webhook with a push subscription on this topic; a final build step that POSTs needs custom code and never runs for failed builds.", "lesson": 1},
+    {"term": "create_before_destroy", "definition": "A Terraform lifecycle setting that creates a replacement resource before destroying the old one; with name_prefix it lets an in-use instance template be replaced in one apply.", "exam_context": "The fix for the \"already being used by\" instance template error; it does not by itself roll the new config out to existing MIG VMs.", "lesson": 10},
+    {"term": "Image digest", "definition": "An immutable, content-derived sha256 identifier for an image that always refers to the same bytes.", "exam_context": "Use a digest to pin or roll back to a known-good image; it can't be matched to a Git tag because it is only known after the push.", "lesson": 5},
+    {"term": "Image tag", "definition": "A mutable, human-readable label on an image, such as a version number or latest, that can be moved to point at different content.", "exam_context": "Use a tag such as $TAG_NAME to select a release version; re-pointing latest does not trigger a Kubernetes rollout.", "lesson": 5},
+    {"term": "Kayenta", "definition": "Spinnaker's automated canary analysis component, which compares metrics from the canary against a baseline.", "exam_context": "The baseline must be a freshly created deployment of the current production version, not long-running prod with warm caches.", "lesson": 11},
+    {"term": "Kritis", "definition": "An open-source, self-operated admission control spec and implementation for deploy-time image policy, on which Binary Authorization is based.", "exam_context": "With \"low overhead\" in the stem, pick the managed Binary Authorization over self-operated Kritis.", "lesson": 9},
+    {"term": "Kustomize overlay", "definition": "A set of patches applied on top of a shared base of Kubernetes manifests to produce environment-specific variants.", "exam_context": "Use one Skaffold profile per Cloud Deploy target, each pointing at a Kustomize overlay, for per-environment differences such as replica counts.", "lesson": 4},
+    {"term": "On-Demand Scanning", "definition": "An Artifact Analysis API that scans an image for vulnerabilities on request, for example inside a build before the image is pushed.", "exam_context": "Use it in Cloud Build to fail the build on critical vulnerabilities so they never reach the registry; automatic scanning runs after push.", "lesson": 9},
+    {"term": "Packer", "definition": "A tool that builds machine images, which can be orchestrated by Cloud Build.", "exam_context": "The answer for custom Compute Engine or multi-cloud VM images; Cloud Deploy and kpt are Kubernetes and serverless oriented.", "lesson": 10},
+    {"term": "Remote repository", "definition": "An Artifact Registry repository mode that proxies an upstream source such as Docker Hub and caches artifacts on first pull.", "exam_context": "For \"cache every dependency through one endpoint\", use remote repositories fronted by a virtual repository.", "lesson": 5},
+    {"term": "requireApproval", "definition": "A Cloud Deploy target setting that makes rollouts to that target wait for manual approval.", "exam_context": "Set it on the prod target, after a QA stage with the standard strategy, to enforce \"QA done\" before any prod traffic.", "lesson": 4},
+    {"term": "roles/cloudbuild.builds.approver", "definition": "The IAM role that grants permission to approve or reject Cloud Build builds that require approval.", "exam_context": "Grant it to the group that must approve builds; roles/cloudbuild.builds.editor does not include the approve permission.", "lesson": 1},
+    {"term": "roles/clouddeploy.developer", "definition": "A Cloud Deploy IAM role for working with delivery pipelines and releases.", "exam_context": "Bind it on the specific delivery pipeline with set-iam-policy to limit access to one pipeline; a target is not a pipeline.", "lesson": 2},
+    {"term": "roles/container.developer", "definition": "A GKE IAM role that grants access to Kubernetes API objects inside clusters.", "exam_context": "Grant it to the existing Cloud Build service account so the kubectl builder can deploy; you can't set roles in cloudbuild.yaml.", "lesson": 2},
+    {"term": "roles/secretmanager.secretAccessor", "definition": "The IAM role that allows reading secret payloads from Secret Manager.", "exam_context": "Grant it to the build or runtime service account that needs the secret, rather than embedding the secret anywhere.", "lesson": 8},
+    {"term": "Secret Manager", "definition": "Google Cloud's managed store for versioned secret values such as API keys, passwords and certificates.", "exam_context": "The recommended store for pipeline and Cloud Run secrets; rotation is adding a new version. Pick Cloud Storage plus KMS only when Secret Manager isn't offered.", "lesson": 8},
+    {"term": "Shadow deployment", "definition": "A strategy that mirrors a copy of production traffic to the new version without returning its responses to users.", "exam_context": "Pick it for \"full production load before launch\" with no users exposed.", "lesson": 6},
+    {"term": "Signed build provenance", "definition": "Verifiable metadata that Cloud Build generates and signs about how an image was built (SLSA level 3), stored through the Container Analysis API.", "exam_context": "Use it, verified by Binary Authorization, to trace a running image back to its source and build; scanning is not provenance.", "lesson": 9},
+    {"term": "Skaffold profile", "definition": "A named configuration in skaffold.yaml that changes how manifests are rendered, for example by selecting a Kustomize overlay.", "exam_context": "Use multiple profiles, one per Cloud Deploy target, with manifests.kustomize; a single profile allows no per-target variation.", "lesson": 4},
+    {"term": "StatefulSet partition", "definition": "A StatefulSet RollingUpdate field that updates only Pods with an ordinal greater than or equal to the partition value.", "exam_context": "The answer for a phased rollout to half the pods; it is a StatefulSet field, not a Deployment field.", "lesson": 6},
+    {"term": "Substitution variables", "definition": "Values such as $TAG_NAME that Cloud Build fills into the build config, with $TAG_NAME holding the Git tag on trigger-invoked builds.", "exam_context": "Use $TAG_NAME in the image name to tie an image to its release tag.", "lesson": 1},
+    {"term": "Virtual repository", "definition": "An Artifact Registry repository mode that provides a single endpoint in front of several repositories; it routes requests but does not cache by itself.", "exam_context": "Combine it with remote repositories for a single endpoint that caches upstream dependencies.", "lesson": 5},
+    {"term": "waitFor", "definition": "A Cloud Build step field that lists which steps must finish first; waitFor: ['-'] starts the step immediately, and with no waitFor a step waits for all previous steps.", "exam_context": "To run independent steps concurrently, put waitFor: ['-'] on every one of them; setting it on the first step only changes nothing.", "lesson": 1},
+    {"term": "Workload Identity", "definition": "A GKE feature that lets Kubernetes service accounts act as IAM service accounts without key files.", "exam_context": "Use it for GKE pipeline components that call Google APIs, such as signing attestations with Cloud KMS, instead of an SA JSON key in a Kubernetes Secret.", "lesson": 2}
+  ]
+}

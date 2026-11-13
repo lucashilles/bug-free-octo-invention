@@ -1,0 +1,483 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how the Log Router uses sinks to send log entries to destinations, and how aggregated sinks at the folder or organization level cover many projects at once. Exam questions often hinge on choosing the right scope (project, folder, org) and the right destination (Cloud Storage, BigQuery, Pub/Sub, log bucket) for a stated requirement.",
+      "objectives": [
+        "After this lesson you can explain what a sink is and why two destinations require two sinks.",
+        "After this lesson you can choose between project, folder and organization aggregated sinks, including for projects created in the future.",
+        "After this lesson you can match Cloud Storage, BigQuery, Pub/Sub and Cloud Logging buckets to archive, analysis, SIEM and native-query requirements.",
+        "After this lesson you can spot distractors that get scope right but destination wrong (or the reverse)."
+      ],
+      "takeaways": [
+        "One sink routes to exactly one destination; folder or org aggregated sinks automatically include future child projects.",
+        "Cheapest multi-year or immutable archive: sink to Cloud Storage with a retention policy plus Bucket Lock.",
+        "External SIEM that ingests via Pub/Sub: org sink to a Pub/Sub topic; Pub/Sub is transport (max 31 days), never storage.",
+        "Live, shareable SQL dashboards on logs: sink to BigQuery, then Data Studio/Looker Studio; a CSV/Sheets export is only a static snapshot.",
+        "Prefer native collection plus a sink over custom apps, pullers or third-party relays that write logs elsewhere."
+      ]
+    },
+    "2": {
+      "summary": "This lesson explains exclusion filters, the _Default sink, custom log buckets and retention, and what actually drives Cloud Logging cost. The exam tests whether you know that ingestion volume, not retention, is the cost lever and that a sink copies logs rather than removing them.",
+      "objectives": [
+        "After this lesson you can use exclusion filters to reduce ingestion cost while keeping critical ERROR and security data.",
+        "After this lesson you can combine a sink with an exclusion to capture logs elsewhere and keep them out of Cloud Logging.",
+        "After this lesson you can configure a custom log bucket with a specific retention (e.g., 365 days) and share it via a sink.",
+        "After this lesson you can choose between --logging=SYSTEM and exclusion filters for GKE log volume."
+      ],
+      "takeaways": [
+        "Cost of high-volume logging is driven by ingestion; exclude non-ERROR logs and keep visibility with log-based metrics.",
+        "A sink sends a copy; to keep entries out of _Default you need sink + exclusion.",
+        "Exclusion filters are not access control; they drop entire entries before storage.",
+        "GKE: drop app logs but keep operational logs with gcloud container clusters update --logging=SYSTEM; use an exclusion instead on Autopilot or to keep part of app logs.",
+        "Long retention for sharing is a log bucket + sink problem, not a code change; Pub/Sub cannot hold logs for a year."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers the different ways to handle PII and sensitive data in logs: excluding whole entries, scrubbing fields at the agent, restricting field visibility, and redacting before storage. Exam stems distinguish between 'stop retaining', 'stop writing fast' and 'hide from most people', and each maps to a different mechanism.",
+      "objectives": [
+        "After this lesson you can capture sensitive entries securely in Cloud Storage while excluding them from Cloud Logging.",
+        "After this lesson you can hide a single field from most users with restricted fields and the Log Field Accessor role.",
+        "After this lesson you can choose agent-side field removal as the fastest way to stop new sensitive fields being written.",
+        "After this lesson you can reject encryption, sampling and exclusion when the requirement is redaction or field-level access."
+      ],
+      "takeaways": [
+        "Capture securely and stop retaining in Logging: advanced filter sink to Cloud Storage + exclusion with the same filter.",
+        "Hide one field but keep the entry: mark it as a restricted field on the log bucket and grant roles/logging.fieldAccessor to the allowed group.",
+        "Fastest way to stop a field being written: remove it at the logging agent, not wait for a code patch.",
+        "Encryption is not redaction, sampling does not remove PII, and exclusion drops the whole entry.",
+        "Prefer native options (restricted fields, agent-side removal) over custom Sensitive Data Protection preprocessing when they fit."
+      ]
+    },
+    "4": {
+      "summary": "This lesson explains log-based metrics, which turn a log filter into a Cloud Monitoring time series you can chart and alert on. The exam uses them for 'how often does X happen' questions and for breaking traffic down by fields such as client IP or Cloud Armor parameter name.",
+      "objectives": [
+        "After this lesson you can create counter and distribution log-based metrics from a log filter.",
+        "After this lesson you can extract a log field as a metric label and group charts by it.",
+        "After this lesson you can pair the Ops Agent logging receiver with a log-based metric to count requests per client IP.",
+        "After this lesson you can explain why log-based metrics show that something happens, not where latency comes from."
+      ],
+      "takeaways": [
+        "Frequency of a log event over time: log-based metric + Cloud Monitoring dashboard, not BigQuery scheduled queries or Profiler.",
+        "User-defined log-based metric types are counter and distribution; Boolean is not a metric type (only a label type).",
+        "Extract fields as labels (e.g., matchedFieldName) to break down Cloud Armor DENY requests by parameter.",
+        "Ops Agent metrics receivers report fixed metric sets and cannot break down by client IP; use access logs + a log-based metric.",
+        "Log-based metrics still count entries dropped by exclusion filters."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers how logs get collected on Compute Engine (Ops Agent), GKE (node agent, stdout/stderr) and Cloud Run (automatic capture). Exam questions often present missing logs or unstructured logs and ask for the first troubleshooting step or the least-effort fix.",
+      "objectives": [
+        "After this lesson you can troubleshoot missing VM logs in order: agent installed, agent running, service account has Logs Writer, then network path.",
+        "After this lesson you can keep the Ops Agent installed and current on all current and future VMs with an agent policy.",
+        "After this lesson you can collect file-based logs from an unmodifiable GKE container using a sidecar.",
+        "After this lesson you can produce structured JSON logs on Cloud Run with the Cloud Logging client library."
+      ],
+      "takeaways": [
+        "Compute Engine VMs do not have a logging agent by default; the Ops Agent collects both logs and metrics.",
+        "Agent running but no logs with a user-managed SA: grant roles/logging.logWriter; don't export keys or switch to the default SA.",
+        "Current and future VMs with the agent kept up to date: Ops Agent agent policy, not images or one-off scripts.",
+        "GKE only collects stdout/stderr; tail a file to stdout with a sidecar and shared volume.",
+        "Cloud Run has no installable agent; a line becomes jsonPayload only if it is a single valid JSON object."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers Cloud Monitoring metric kinds and value types, the built-in metrics that appear on the exam, and how to get application metrics in. Expect questions that ask you to pick the right metric descriptor for latency or the right built-in metric for a GKE or App Engine symptom.",
+      "objectives": [
+        "After this lesson you can choose DISTRIBUTION value type with GAUGE kind and a heatmap to show latency for all users.",
+        "After this lesson you can explain why scalar types hide tail latency and why METRIC_KIND_UNSPECIFIED is never valid.",
+        "After this lesson you can identify which Pods cause node DiskPressure using container ephemeral storage metrics.",
+        "After this lesson you can use OpenTelemetry with a Cloud Monitoring exporter for new application metrics."
+      ],
+      "takeaways": [
+        "Latency for all users: custom metric with valueType=DISTRIBUTION, metricKind=GAUGE, shown as a Heatmap.",
+        "Which Pods cause DiskPressure without exec: container/ephemeral_storage/used_bytes grouped by pod, not the node metric.",
+        "Container CPU/memory are already system metrics via Kubernetes Engine monitoring; don't build custom metrics for them.",
+        "New GKE app metrics with minimal setup: OpenTelemetry client libraries with a Cloud Monitoring exporter.",
+        "App Engine flex whole-app connections: flex/connections/current, not the per-instance metric."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers Google Cloud Managed Service for Prometheus (GMP) on GKE and bringing hybrid or on-prem telemetry into Cloud Monitoring with Bindplane. The exam favors managed, low-overhead options over self-run Prometheus, federation or Thanos stacks.",
+      "objectives": [
+        "After this lesson you can choose GMP managed collection for Prometheus metrics on GKE with least maintenance.",
+        "After this lesson you can query GMP data with PromQL in Metrics Explorer across projects via a metrics scope.",
+        "After this lesson you can troubleshoot missing GMP metrics by checking the PodMonitoring port or 429 quota errors.",
+        "After this lesson you can bring on-prem OpenTelemetry telemetry into a scoping project using Bindplane."
+      ],
+      "takeaways": [
+        "Prometheus on GKE, low ops, global PromQL view: GMP managed collection, not hierarchical or cross-service federation.",
+        "GMP stores data in Cloud Monitoring's backend; query with PromQL in Metrics Explorer or Grafana, not BigQuery.",
+        "The Ops Agent Prometheus receiver is for Compute Engine VMs; GKE uses managed collection.",
+        "Missing GMP metrics with no errors: check the port in the PodMonitoring resource; check write quota only on HTTP 429.",
+        "On-prem K8s + multiple GCP projects via OpenTelemetry: scoping project + Bindplane."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers metrics scopes for viewing metrics across projects, and how to share charts and dashboards with least privilege. Exam questions test whether you share by URL with Monitoring Viewer internally or export dashboard JSON for external teams.",
+      "objectives": [
+        "After this lesson you can use a scoping project and metrics scope to view metrics from many monitored projects.",
+        "After this lesson you can design one scoping project per folder for environment-specific dashboards.",
+        "After this lesson you can share a live chart or dashboard internally with roles/monitoring.viewer and the URL.",
+        "After this lesson you can share a dashboard with a partner team by exporting its JSON definition."
+      ],
+      "takeaways": [
+        "A metrics scope consolidates metrics, not logs; 'Workspaces' is the legacy name.",
+        "Dashboards only for one folder's projects: create a new scoping project per folder, don't reuse an app project.",
+        "Internal live sharing: dashboard URL + roles/monitoring.viewer; roles/viewer is too broad and exports are static.",
+        "Dashboard Configuration Viewer sees definitions only, so charts fail to render.",
+        "Partner team without project access: export the dashboard JSON so they import their own copy."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers notification channels, SLO burn-rate alerting, alert fatigue, uptime checks, synthetic monitors and Service Health annotations. The exam asks you to pick the native channel or probe type that fits constraints like SMS, private networks or multi-step user journeys.",
+      "objectives": [
+        "After this lesson you can configure native notification channels, including SMS and Pub/Sub for private alerting platforms.",
+        "After this lesson you can alert before the error budget is exhausted using SLO burn-rate alerts.",
+        "After this lesson you can choose between uptime checks, private uptime checks and synthetic monitors.",
+        "After this lesson you can reduce alert fatigue by not paging on conditions that need no human action."
+      ],
+      "takeaways": [
+        "SMS alerts: team members add and verify phone numbers as native SMS channels; don't chain Slack or webhooks to SMS.",
+        "Webhooks need public endpoints; for a VPC-only alerting platform use a Pub/Sub channel + pull subscription.",
+        "'Before the error budget runs out' means an SLO burn-rate alert.",
+        "Multi-step business journey: synthetic monitor + alerting policy; internal-only endpoints: private uptime checks via Service Directory.",
+        "Distinguish your failures from Google Cloud incidents with Personalized Service Health annotations on the dashboard."
+      ]
+    },
+    "10": {
+      "summary": "This lesson compares Cloud Trace, Cloud Profiler, Error Reporting and metrics, which each answer a different diagnostic question. Exam stems use keywords like 'downstream dependency', 'which function' or 'exceptions' to point to the right tool, and Cloud Debugger is never correct.",
+      "objectives": [
+        "After this lesson you can pick Trace, Profiler, Error Reporting or metrics based on the diagnostic question.",
+        "After this lesson you can correlate logs with traces by writing the trace ID into structured log entries.",
+        "After this lesson you can fix inconsistent Cloud Run traces with instance-based billing.",
+        "After this lesson you can customize Error Reporting details with ReportedErrorEvent objects."
+      ],
+      "takeaways": [
+        "Metrics say that it's slow, Trace says where, Profiler says which code, Error Reporting says what failed.",
+        "Cloud Debugger is shut down (May 2023) and is never the answer.",
+        "Logs to trace correlation: put the OTel trace ID in each structured log entry, then use 'Show logs' in Trace.",
+        "Cloud Run + OTel with inconsistent traces: instance-based billing (CPU always allocated).",
+        "Apigee: use a proxy-scoped trace configuration override rather than tracing the whole environment."
+      ]
+    },
+    "11": {
+      "summary": "This lesson covers VPC Flow Logs, firewall rules logging, Connectivity Tests and Packet Mirroring for network troubleshooting. The exam tests which tool records the right granularity, explains denials, or finds a broken path without exec access.",
+      "objectives": [
+        "After this lesson you can enable VPC Flow Logs with high sampling on only the implicated subnets for forensics.",
+        "After this lesson you can record each source IP hitting an allowed port with firewall rules logging.",
+        "After this lesson you can diagnose a broken cross-VPC path with Connectivity Tests in Network Intelligence Center.",
+        "After this lesson you can choose Packet Mirroring when full payload inspection is required."
+      ],
+      "takeaways": [
+        "Each source IP on a port an existing rule allows, fewest steps: enable firewall rules logging on that rule.",
+        "Broken path with no exec access: Connectivity Tests (Network Intelligence Center) simulates routes, firewalls and peering.",
+        "VPC Flow Logs are per subnet, sampled and aggregated; sampling 1.0 is the most complete setting, not a per-packet guarantee.",
+        "Flow Logs fit broad analysis (volume trends, top talkers); they don't explain why traffic was denied.",
+        "Packet Mirroring is for full payloads and needs collectors behind an internal load balancer."
+      ]
+    },
+    "12": {
+      "summary": "This lesson covers a method for troubleshooting performance and resource problems such as database timeouts, persistent latency, OOMKilled Pods and DiskPressure. The exam rewards starting from the signal closest to the symptom and matching the fix to the resource boundary that is failing.",
+      "objectives": [
+        "After this lesson you can investigate Cloud SQL timeouts after a release by checking connection counts.",
+        "After this lesson you can identify a shared serving layer as the cause when all backends are equally slow.",
+        "After this lesson you can fix OOMKilled Pods by raising container memory limits instead of scaling nodes.",
+        "After this lesson you can apply a diagnose-before-change approach to resource problems."
+      ],
+      "takeaways": [
+        "DB timeouts with the same user count after an update: check whether Cloud SQL connections increased.",
+        "Cloud SQL and Cloud Storage equally slow after a spike: the shared App Engine layer; keep more idle instances.",
+        "OOMKilled Pods with HPA at minimum: raise the container memory limit; bigger nodes or higher HPA max don't help.",
+        "Start with the signal closest to the symptom, run diagnostics before changing anything, and fix the failing boundary."
+      ]
+    },
+    "13": {
+      "summary": "This lesson covers the Cloud Logging and Cloud Monitoring IAM roles that appear on the exam and the least-privilege choice for each task. Many questions are decided by picking the narrowest predefined role that actually grants the needed action.",
+      "objectives": [
+        "After this lesson you can grant Logs Configuration Writer to let users create sinks and export logs.",
+        "After this lesson you can choose between Logs Viewer and Private Logs Viewer based on whether Data Access audit logs are needed.",
+        "After this lesson you can fix agent write failures by granting Logs Writer to the attached service account.",
+        "After this lesson you can choose Monitoring Viewer over Dashboard Configuration Viewer or roles/viewer for sharing dashboards."
+      ],
+      "takeaways": [
+        "Let team members export logs: roles/logging.configWriter; a custom role with sinks.list/get can't create sinks.",
+        "Private Logs Viewer adds private logs such as Data Access audit logs; Logs Viewer suffices for ordinary logs.",
+        "Agent can't write logs: grant roles/logging.logWriter to the attached SA; never export keys or fall back to the default SA.",
+        "Restricted PII fields: roles/logging.fieldAccessor; metric ingestion identity: Monitoring Metric Writer, not servicesViewer.",
+        "Access Context Manager and Organization Policy don't grant permissions; roles/viewer works but is too broad."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "_Default sink",
+      "definition": "The project's built-in sink that routes logs into the _Default log bucket.",
+      "exam_context": "Disabling it stops all routing into _Default, including system logs, so it's rarely the right way to cut volume.",
+      "lesson": 2
+    },
+    {
+      "term": "Agent policy",
+      "definition": "A gcloud-managed policy that installs the Ops Agent on matching current and future VMs and keeps it up to date.",
+      "exam_context": "Pick it over images, one-off installs or scripts when the stem says 'current and future VMs' and 'keep up to date'.",
+      "lesson": 5
+    },
+    {
+      "term": "Aggregated sink",
+      "definition": "A sink created at the folder or organization level that routes matching logs from all child projects, including projects created later.",
+      "exam_context": "If the stem says 'current and future projects', pick an org (or folder) aggregated sink; per-project or per-folder repetition misses new resources.",
+      "lesson": 1
+    },
+    {
+      "term": "BigQuery sink destination",
+      "definition": "Routing logs to a BigQuery dataset for SQL analysis and live dashboards in Data Studio/Looker Studio.",
+      "exam_context": "Pick it for analysis and live shareable dashboards; not for locked retention or cheapest cold archive.",
+      "lesson": 1
+    },
+    {
+      "term": "Bindplane",
+      "definition": "Google's documented OpenTelemetry pipeline for bringing on-prem and hybrid telemetry into Cloud Monitoring.",
+      "exam_context": "On-prem Kubernetes + several projects, one place, easy to support: scoping project + Bindplane.",
+      "lesson": 7
+    },
+    {
+      "term": "Bucket Lock",
+      "definition": "A Cloud Storage feature that locks a bucket's retention policy so objects cannot be deleted or the policy shortened.",
+      "exam_context": "Regulatory multi-year retention 'guarding against human error' means sink to Cloud Storage with a locked retention policy.",
+      "lesson": 1
+    },
+    {
+      "term": "Burn-rate alert",
+      "definition": "An SLO alert that fires based on how fast the error budget is being consumed.",
+      "exam_context": "'Notify before the error budget runs out' means a burn-rate alert, not a latency threshold or daily report.",
+      "lesson": 9
+    },
+    {
+      "term": "Cloud Debugger",
+      "definition": "A deprecated debugging service shut down in May 2023.",
+      "exam_context": "Never the correct answer.",
+      "lesson": 10
+    },
+    {
+      "term": "Cloud Profiler",
+      "definition": "A continuous profiler that attributes CPU and memory use to functions inside a process.",
+      "exam_context": "'Which function burns CPU/memory' means Profiler; it can't read logs and misses time waiting on dependencies.",
+      "lesson": 10
+    },
+    {
+      "term": "Cloud Trace",
+      "definition": "A distributed tracing service that shows per-request spans and latency across services.",
+      "exam_context": "'Which service is slow' or 'downstream dependencies' means Trace; correlate logs by writing the trace ID into structured logs.",
+      "lesson": 10
+    },
+    {
+      "term": "Connectivity Tests",
+      "definition": "A Network Intelligence Center tool that simulates routes, firewalls, forwarding rules and peering to find where a path breaks.",
+      "exam_context": "Broken cross-VPC path with no exec access; the real product is Network Intelligence Center, not Network Connectivity Center.",
+      "lesson": 11
+    },
+    {
+      "term": "Distribution metric",
+      "definition": "A metric value type that records a spread of values (histogram) per interval rather than a single number.",
+      "exam_context": "Latency for all users: DISTRIBUTION value type with GAUGE kind displayed as a heatmap; scalar types hide the tail.",
+      "lesson": 6
+    },
+    {
+      "term": "Error Reporting",
+      "definition": "A service that groups application errors and exceptions; custom details can be sent as ReportedErrorEvent objects.",
+      "exam_context": "Pick it for 'exceptions' or 'failed requests increased'; customize details by building ReportedErrorEvent objects via the API.",
+      "lesson": 10
+    },
+    {
+      "term": "Exclusion filter",
+      "definition": "A filter that stops matching log entries from being ingested and stored in Cloud Logging.",
+      "exam_context": "Use it to cut ingestion cost (e.g., exclude non-ERROR) or with a sink to keep data out of Logging; it is not access control and drops whole entries.",
+      "lesson": 2
+    },
+    {
+      "term": "Firewall rules logging",
+      "definition": "Logging enabled on an individual firewall rule that records connections the rule allows or denies.",
+      "exam_context": "Record each source IP hitting a port an existing rule allows, with fewest steps: enable logging on that rule.",
+      "lesson": 11
+    },
+    {
+      "term": "GKE logging components (SYSTEM / WORKLOAD)",
+      "definition": "Cluster settings that choose which log sources GKE collects: SYSTEM for operational logs and WORKLOAD for application logs.",
+      "exam_context": "Drop app logs but keep operational logs with --logging=SYSTEM; use an exclusion filter instead on Autopilot or to keep part of app logs.",
+      "lesson": 2
+    },
+    {
+      "term": "Instance-based billing",
+      "definition": "A Cloud Run billing mode where CPU stays allocated outside request handling.",
+      "exam_context": "Inconsistent traces from a Cloud Run OTel agent: switch to instance-based billing, not more vCPUs.",
+      "lesson": 10
+    },
+    {
+      "term": "Kubernetes Engine monitoring",
+      "definition": "Built-in Cloud Monitoring for GKE (Cloud Operations for GKE) that provides system metrics like container CPU and memory.",
+      "exam_context": "Find containers using most CPU/memory with built-in metrics; don't create custom metrics for data already collected.",
+      "lesson": 6
+    },
+    {
+      "term": "Log bucket",
+      "definition": "A Cloud Logging storage container (such as _Default or a custom bucket) with configurable retention that keeps logs queryable and alertable natively.",
+      "exam_context": "Centralize logs while still querying and alerting in Logging, or keep logs 365 days for sharing: sink to a custom log bucket.",
+      "lesson": 2
+    },
+    {
+      "term": "Log Field Accessor (roles/logging.fieldAccessor)",
+      "definition": "An IAM role that lets principals see restricted fields on a log bucket.",
+      "exam_context": "Paired with restricted fields to let only one group see a PII field.",
+      "lesson": 13
+    },
+    {
+      "term": "Log-based metric",
+      "definition": "A Cloud Monitoring metric derived from log entries that match a filter, which you can chart and alert on.",
+      "exam_context": "Answer for 'how often does log event X happen' or 'requests by client IP'; it shows that something happens, not where latency comes from.",
+      "lesson": 4
+    },
+    {
+      "term": "Logs Configuration Writer (roles/logging.configWriter)",
+      "definition": "An IAM role to create and manage sinks and log-based metric configurations.",
+      "exam_context": "'Let team members export logs' means Logs Configuration Writer; read-only sink permissions can't create sinks.",
+      "lesson": 13
+    },
+    {
+      "term": "Logs Writer (roles/logging.logWriter)",
+      "definition": "An IAM role that allows writing log entries.",
+      "exam_context": "Agent running but no logs with a user-managed SA: grant Logs Writer to that SA instead of exporting keys.",
+      "lesson": 13
+    },
+    {
+      "term": "Managed Service for Prometheus (GMP)",
+      "definition": "Google Cloud's managed Prometheus that stores data in Cloud Monitoring's global backend and is queried with PromQL.",
+      "exam_context": "Prometheus on GKE with least maintenance or a global PromQL view: GMP managed collection, not federation or Thanos.",
+      "lesson": 7
+    },
+    {
+      "term": "Metric kind",
+      "definition": "The Cloud Monitoring property describing how values relate over time: GAUGE, DELTA or CUMULATIVE.",
+      "exam_context": "CUMULATIVE is a running total, not a distribution; METRIC_KIND_UNSPECIFIED is never a valid answer.",
+      "lesson": 6
+    },
+    {
+      "term": "Metrics scope",
+      "definition": "The set of monitored projects whose metrics a scoping project can view; formerly called a Workspace.",
+      "exam_context": "Consolidates metrics, not logs; for folder-only dashboards create a new scoping project per folder.",
+      "lesson": 8
+    },
+    {
+      "term": "Monitoring Metric Writer",
+      "definition": "An IAM role that allows writing metric data to Cloud Monitoring.",
+      "exam_context": "The ingestion identity role; roles/monitoring.servicesViewer is SLO read-only and doesn't fix ingestion.",
+      "lesson": 13
+    },
+    {
+      "term": "Monitoring Viewer (roles/monitoring.viewer)",
+      "definition": "An IAM role that grants read access to metric data and dashboards.",
+      "exam_context": "Least-privilege way to share a live chart or dashboard by URL; Dashboard Configuration Viewer can't render charts and roles/viewer is too broad.",
+      "lesson": 13
+    },
+    {
+      "term": "Notification channel",
+      "definition": "A destination for alert notifications such as email, SMS, mobile push, PagerDuty, Slack, webhooks or Pub/Sub.",
+      "exam_context": "Use native SMS channels for SMS; for VPC-only alert platforms use a Pub/Sub channel + pull subscription since webhooks need public endpoints.",
+      "lesson": 9
+    },
+    {
+      "term": "OOMKilled",
+      "definition": "A container termination status meaning it exceeded its memory limit (or the node ran out of memory).",
+      "exam_context": "Half the Pods OOMKilled at minimum replicas: raise the container memory limit, not node size or HPA max.",
+      "lesson": 12
+    },
+    {
+      "term": "OpenTelemetry",
+      "definition": "An open standard and set of libraries for emitting metrics and traces that can export to Cloud Monitoring and Cloud Trace.",
+      "exam_context": "New GKE app metrics with minimal setup: OTel client libraries with a Cloud Monitoring exporter.",
+      "lesson": 6
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's current agent for Compute Engine VMs that collects both logs and metrics, replacing the end-of-support legacy logging and monitoring agents.",
+      "exam_context": "VMs don't have it by default; missing VM logs start with 'is the Ops Agent installed and running?'.",
+      "lesson": 5
+    },
+    {
+      "term": "Packet Mirroring",
+      "definition": "A feature that copies full packets to collectors behind an internal load balancer for payload inspection.",
+      "exam_context": "Only for full payload inspection; it doesn't write to Cloud Logging.",
+      "lesson": 11
+    },
+    {
+      "term": "Personalized Service Health",
+      "definition": "A service that surfaces Google Cloud incidents affecting your projects, including as dashboard event annotations.",
+      "exam_context": "Distinguish your own failures from Google Cloud incidents on a dashboard by enabling its annotations.",
+      "lesson": 9
+    },
+    {
+      "term": "PodMonitoring",
+      "definition": "The GMP managed-collection custom resource that defines which Pods and ports are scraped.",
+      "exam_context": "Missing GMP metrics with no errors: validate the port in PodMonitoring; check write quota only on HTTP 429.",
+      "lesson": 7
+    },
+    {
+      "term": "Private Logs Viewer (roles/logging.privateLogViewer)",
+      "definition": "An IAM role that adds access to private logs, mainly Data Access audit logs, on top of Logs Viewer.",
+      "exam_context": "Grant it only when Data Access audit logs are needed; Logs Viewer suffices for app troubleshooting.",
+      "lesson": 13
+    },
+    {
+      "term": "Pub/Sub sink destination",
+      "definition": "Routing logs to a Pub/Sub topic so external systems such as a SIEM can consume them as a stream.",
+      "exam_context": "Choose it when a third-party tool ingests via Pub/Sub; reject it for storage because retention is at most 31 days.",
+      "lesson": 1
+    },
+    {
+      "term": "Restricted field",
+      "definition": "A log field (e.g., jsonPayload.<field>) marked on a log bucket so only principals with Log Field Accessor can view it.",
+      "exam_context": "Hide one PII field while keeping the entry: restricted field + roles/logging.fieldAccessor, not an exclusion or encryption.",
+      "lesson": 3
+    },
+    {
+      "term": "Sensitive Data Protection",
+      "definition": "Google Cloud's service for inspecting and redacting sensitive data such as PII.",
+      "exam_context": "Appears as custom preprocessing before logs are stored; prefer native options like restricted fields or agent-side removal when they fit.",
+      "lesson": 3
+    },
+    {
+      "term": "Sidecar log container",
+      "definition": "A helper container sharing a volume with the app container that tails a log file to stdout so GKE collects it.",
+      "exam_context": "Unmodifiable GKE app writing to a file: sidecar tailing to stdout + shared volume.",
+      "lesson": 5
+    },
+    {
+      "term": "Sink",
+      "definition": "A Log Router rule that sends log entries matching a filter to exactly one destination: Cloud Storage, BigQuery, Pub/Sub or a Cloud Logging bucket.",
+      "exam_context": "Two destinations require two sinks; check scope and destination separately because distractors usually get only one right.",
+      "lesson": 1
+    },
+    {
+      "term": "Structured logging (jsonPayload)",
+      "definition": "Log entries written as single valid JSON objects so Cloud Logging stores them as jsonPayload fields.",
+      "exam_context": "On Cloud Run there is no agent; use the Cloud Logging client library to emit JSON.",
+      "lesson": 5
+    },
+    {
+      "term": "Synthetic monitor",
+      "definition": "A Cloud Monitoring test implemented as a Cloud Run function that runs a multi-step user journey on a schedule.",
+      "exam_context": "Recurring test of a business journey like checkout plus alerting: synthetic monitor, not an uptime check or log-based alert.",
+      "lesson": 9
+    },
+    {
+      "term": "Uptime check",
+      "definition": "A Cloud Monitoring probe that sends independent requests to check endpoint availability; private uptime checks use Service Directory for internal endpoints.",
+      "exam_context": "Internal-only APIs in a VPC: private uptime checks, no relay function or VPN needed.",
+      "lesson": 9
+    },
+    {
+      "term": "VPC Flow Logs",
+      "definition": "Sampled, per-connection network flow records enabled per subnet.",
+      "exam_context": "Good for forensics (sampling 1.0 on implicated subnets) and broad trends; they don't explain denials or guarantee every packet.",
+      "lesson": 11
+    }
+  ]
+}

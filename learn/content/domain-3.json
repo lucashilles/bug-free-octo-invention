@@ -1,0 +1,402 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how to choose Service Level Indicators (SLIs): what to measure, how to express it as a ratio, and where to collect it. Exam questions test whether you can pick the SLI type that matches a symptom and a measurement point that sees what users actually experience.",
+      "objectives": [
+        "After this lesson you can express an SLI as good events divided by valid events, with a correctly scoped denominator.",
+        "After this lesson you can choose between availability, latency, quality and freshness SLIs based on scenario wording.",
+        "After this lesson you can pick a measurement point (synthetic clients, request logs, client-side instrumentation) that fits the stated constraints.",
+        "After this lesson you can reject backend-health and average-latency options that do not reflect user experience."
+      ],
+      "takeaways": [
+        "SLI = good events / valid events, and the denominator covers the same scope as the numerator (home page requests only for a home page SLI).",
+        "Partial or degraded responses call for a quality SLI, failed responses for availability, and speed for latency.",
+        "Queue size, I/O wait and disk throughput are causes, not SLIs. A correlated metric can still be a leading-indicator alert.",
+        "No code changes allowed: use synthetic clients plus existing request logs. To catch CDN, LB or network failures: client-side instrumentation plus a synthetic client.",
+        "Average latency hides the tail, so it is never the answer for a '95% of requests' goal."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers setting SLO targets: anchoring latency SLOs to measured percentiles, configuring SLOs in Cloud Monitoring, and deciding what to do when you exceed or miss an SLO. It also covers the arithmetic for judging whether an extra nine of availability is worth its cost.",
+      "objectives": [
+        "After this lesson you can set a latency SLO from measured percentiles by adding a modest margin to current performance.",
+        "After this lesson you can choose request-based or windows-based evaluation and tell the compliance period apart from the evaluation method.",
+        "After this lesson you can decide what to do when an SLO is greatly exceeded, met with unhappy users, or missed.",
+        "After this lesson you can calculate the value of an extra nine of availability and compare it with its cost."
+      ],
+      "takeaways": [
+        "Latency SLO = current measured value + modest margin: 120/275 ms becomes 150/300, and 160/300 becomes 190/330. Never tighter than, or exactly equal to, current performance.",
+        "'X% of requests under N ms' means a latency metric with request-based evaluation. A calendar month is the compliance period, not the evaluation method.",
+        "Don't greatly exceed the SLO. If it is met, users are happy and toil is low, raise release velocity or accepted risk and move engineers to services that need them.",
+        "If the SLI falls short of the SLO, fix the service. Don't lower the SLO to match.",
+        "Value of an extra nine = difference in availability x revenue: 0.09% x $1M = $900, which is less than a $2,000 cost, so not worth it."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers error budgets, burn rate alerting and the error budget policy that decides what happens when the budget runs out. The exam tests whether you respect a budget freeze, set policy with stakeholders in advance, and use surplus budget in line with the stated goals.",
+      "objectives": [
+        "After this lesson you can derive an error budget from an SLO target and work out how much of it has been used.",
+        "After this lesson you can detect budget consumption with an SLO burn-rate alert instead of threshold or uptime-check alerts.",
+        "After this lesson you can apply an error budget policy when the budget is exhausted, nearly exhausted or in surplus.",
+        "After this lesson you can describe shared reliability ownership between development and SRE teams."
+      ],
+      "takeaways": [
+        "Error budget = 1 - SLO target. Each SLO has its own budget, and budget cannot be requested, granted or moved between SLOs.",
+        "Detect budget consumption with an SLO plus a select_slo_burn_rate alert, ideally a fast-burn and a slow-burn pair.",
+        "Agree on an error budget policy with all stakeholders ahead of time. Absolutes ('reliability always wins') and single-tool fixes are distractors.",
+        "Budget exhausted and the policy says freeze: wait for it to replenish. A canary or passing tests is still a production deployment.",
+        "Shared ownership means both teams define, agree on and publish the SLOs together. Handing the pager to developers is not sharing."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers incident management using Google's IMAG model: the three roles, what happens first after roles are assigned, and how responders communicate. It also covers the 'mitigate first' rule for common GCP rollback and traffic-shifting scenarios.",
+      "objectives": [
+        "After this lesson you can name the three IMAG roles and what each one owns.",
+        "After this lesson you can order early incident steps, starting with a dedicated shared communication channel.",
+        "After this lesson you can pick the mitigation that stops user impact first: rollback, traffic shift or selector change.",
+        "After this lesson you can sequence safe operational actions such as removing a bad node from a load-balanced pool or isolating a suspect GKE node."
+      ],
+      "takeaways": [
+        "IMAG has exactly three roles: Incident Commander, Operations Lead and Communications Lead. Any other 'lead' is a distractor.",
+        "Once the IC has assigned an OL and a CL, the next step is a dedicated shared communication channel. The OL fixes, the CL tells, and the postmortem comes last.",
+        "The CL sends periodic updates to all stakeholders, internal and external, and each one commits to a 'next update' time.",
+        "Mitigate first: revert the canary, roll back the release, send 100% of traffic to the previous Cloud Run revision, or redirect traffic to healthy regions.",
+        "Blue/green on GKE: change the Service selector to version: blue to restore traffic and keep green for investigation."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers blameless postmortems: when to write one, what to put in it, and how to make sure its action items prevent recurrence. Exam questions reward fixing the system rather than the person, and sharing postmortems widely.",
+      "objectives": [
+        "After this lesson you can list objective postmortem triggers and recognize automation working as intended as a non-trigger.",
+        "After this lesson you can choose what a postmortem should include and exclude.",
+        "After this lesson you can pick system-level preventive actions over people-focused ones.",
+        "After this lesson you can describe action item ownership and the practices that build a healthy postmortem culture."
+      ],
+      "takeaways": [
+        "Triggers include data loss, user-visible impact, on-call intervention, long resolution time and monitoring failure. Automatic CD rollback or automated failure detection is not a trigger.",
+        "Include root cause, action items and how it could have been worse. Never include a list of people responsible.",
+        "To prevent a recurrence, make tests that catch this class of error a required gate before every release.",
+        "Each action item has exactly one owner, plus collaborators as needed.",
+        "Postmortem culture grows when senior leadership takes part and good postmortems are rewarded, and when postmortems are published org-wide."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers recognizing toil and replacing it with automation that uses built-in GCP features. It also covers related operational hygiene: fast log-based alerts, peer-reviewed infrastructure code, and least-privilege telemetry permissions.",
+      "objectives": [
+        "After this lesson you can identify toil and pick the built-in GCP feature that eliminates it.",
+        "After this lesson you can choose self-healing mechanisms such as MIG autohealing and Kubernetes liveness probes.",
+        "After this lesson you can set up a log-based alert for fast notification of infrastructure events.",
+        "After this lesson you can apply least privilege to VM telemetry and source control practices to shared Terraform code."
+      ],
+      "takeaways": [
+        "Recreating a crashing VM by hand is toil. Fix it with a managed instance group of size 1 with health-check autohealing.",
+        "A Pod that degrades after hours needs an HTTP liveness probe, not a cron job or a human babysitter.",
+        "For fast notification of a VM stop, use a log-based alert on protoPayload.methodName = v1.compute.instances.stop.",
+        "VM telemetry service accounts get logging.logWriter + monitoring.metricWriter and nothing broader.",
+        "Shared Terraform belongs in Git with peer review and unit tests before integration."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers capacity planning and scaling: horizontal scaling for availability, compounding growth math, zone-loss headroom, risk catalog values and choosing the right GKE autoscaler. It also covers preparing for peak events through load testing and quota checks.",
+      "objectives": [
+        "After this lesson you can calculate compound growth and utilization after losing a zone.",
+        "After this lesson you can fill in risk catalog values (MTTD, MTTR, MTBF, user impact) from a scenario.",
+        "After this lesson you can choose between HPA, VPA and the cluster autoscaler, and pick the right scaling signal.",
+        "After this lesson you can decide the first step before a peak event or launch, such as load testing or verifying regional quota."
+      ],
+      "takeaways": [
+        "Availability under load means multiple instances across zones behind a load balancer that distributes traffic. A bigger VM is still a single-zone SPOF.",
+        "Growth compounds: 1.1^6 is about 1.77x. Judge headroom after losing a zone (divide by 2/3 with 3 zones), then confirm max node pool size, enable HPA and load test.",
+        "Risk catalog: MTTR = failover time, user impact = 1 / number of zones. Change only the field the new property drives.",
+        "HPA sets Pod count, the cluster autoscaler sets node count, VPA sets Pod size. Daily cycles need HPA + CA. For an LB-fronted GKE frontend, scale on the load balancer request-count metric.",
+        "Low CPU with a growing Pub/Sub backlog means scale out replicas. Before a peak, load test first, and verify quota per region for multi-region MIGs."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers production readiness reviews and how SRE engages with development teams across a service's lifecycle. It also covers the least-disruptive sequence for retiring an API version.",
+      "objectives": [
+        "After this lesson you can respond correctly when a production readiness review shows a service can't meet its SLOs.",
+        "After this lesson you can explain why SRE input belongs early, in the design phase.",
+        "After this lesson you can order the steps of an API version retirement from introducing the new version to turn-down."
+      ],
+      "takeaways": [
+        "If a PRR shows SLOs can't be met, make the reliability improvements before handover. Don't lower the SLOs or launch without them.",
+        "Give early operational input by reviewing the design with the product team during the design phase. Load tests and staging metrics come later.",
+        "API retirement: introduce the new version, announce deprecation, deprecate, contact remaining users, give best-effort support, then turn down.",
+        "Turn-down is always the last step, and the replacement must exist before any announcement."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Action item owner",
+      "definition": "The single person accountable for a postmortem action item, supported by collaborators as needed.",
+      "exam_context": "Exactly one owner per item. Multiple owners or 'collaborators only' are distractors.",
+      "lesson": 5
+    },
+    {
+      "term": "API deprecation sequence",
+      "definition": "The least-disruptive order for retiring an API version: introduce new, announce, deprecate, contact remaining users, best-effort support, turn down.",
+      "exam_context": "The replacement exists before any announcement, and turn-down is always last.",
+      "lesson": 8
+    },
+    {
+      "term": "Availability SLI",
+      "definition": "The ratio of successful requests to valid (attempted) requests.",
+      "exam_context": "Choose it when requests fail or return 5xx. A per-minute success count is throughput, not availability.",
+      "lesson": 1
+    },
+    {
+      "term": "Blameless postmortem",
+      "definition": "A postmortem that asks what failed in the system, not who failed.",
+      "exam_context": "Reject options that list culprits, escalate engineers to management or prescribe personal practices. Rebuilding the timeline through interviews is fine.",
+      "lesson": 5
+    },
+    {
+      "term": "Blue/green deployment",
+      "definition": "Running two environments side by side and switching traffic between them, on GKE through the Service selector.",
+      "exam_context": "Change the selector to version: blue to restore traffic and keep green running for investigation. Rolling back traffic is not rolling back a Deployment.",
+      "lesson": 4
+    },
+    {
+      "term": "Burn rate",
+      "definition": "How fast the error budget is being consumed relative to the rate that would use it up exactly over the compliance period.",
+      "exam_context": "Alert with select_slo_burn_rate on fast-burn and slow-burn windows. A sustained rate above 1 means the SLO will be missed.",
+      "lesson": 3
+    },
+    {
+      "term": "Client-side instrumentation",
+      "definition": "Measurement collected in the user's client, outside your own infrastructure.",
+      "exam_context": "Use it to catch CDN, load balancer or global network failures that server logs and LB metrics can't see.",
+      "lesson": 1
+    },
+    {
+      "term": "Cluster autoscaler",
+      "definition": "The GKE autoscaler that adds or removes nodes when Pods are pending or nodes are underused.",
+      "exam_context": "It is bounded by max node pool size and only reacts to pending Pods. Combine it with HPA for daily cycles.",
+      "lesson": 7
+    },
+    {
+      "term": "Communications Lead (CL)",
+      "definition": "The incident role that owns all stakeholder updates, internal and external.",
+      "exam_context": "Sends periodic updates to all audiences, each with a committed 'next update' time.",
+      "lesson": 4
+    },
+    {
+      "term": "Compliance period",
+      "definition": "The time span over which SLO compliance is measured, such as a calendar month or rolling window.",
+      "exam_context": "'Calendar month' sets the compliance period and says nothing about request-based vs. windows-based evaluation.",
+      "lesson": 2
+    },
+    {
+      "term": "Compound growth",
+      "definition": "Growth that multiplies on the previous period's value, such as 10% per month, giving 1.1^6 (about 1.77x) over 6 months.",
+      "exam_context": "The simple-interest answer (60%) is the trap. Then judge headroom after losing a zone.",
+      "lesson": 7
+    },
+    {
+      "term": "Cordon and drain",
+      "definition": "Marking a GKE node unschedulable (cordon) and then gracefully evicting its Pods (drain).",
+      "exam_context": "For a suspected compromised node, cordon then drain, and also restrict network access and preserve the suspect Pod. It is not full isolation on its own.",
+      "lesson": 4
+    },
+    {
+      "term": "Cost of an extra nine",
+      "definition": "The value of raising availability by one nine, calculated as the difference in availability times revenue.",
+      "exam_context": "99.9% to 99.99% on $1M is a 0.09-point gain worth $900. The $1,000 and $9,000 distractors are off by a factor of 10.",
+      "lesson": 2
+    },
+    {
+      "term": "Error budget",
+      "definition": "The amount of unreliability an SLO allows, equal to 1 - SLO target.",
+      "exam_context": "Each SLO has its own budget, and budget can't be requested, granted or reallocated from another SLO.",
+      "lesson": 3
+    },
+    {
+      "term": "Error budget policy",
+      "definition": "An agreement, made in advance with all stakeholders, on what happens (for example, a release freeze) when the budget is exhausted.",
+      "exam_context": "When the budget is gone and the policy says freeze, wait. Canaries and passing tests don't lift the freeze.",
+      "lesson": 3
+    },
+    {
+      "term": "Freshness SLI",
+      "definition": "An SLI that measures whether data was updated recently enough, typical for pipelines.",
+      "exam_context": "A distractor when the real problem is incomplete or degraded content.",
+      "lesson": 1
+    },
+    {
+      "term": "Horizontal Pod Autoscaler (HPA)",
+      "definition": "The GKE autoscaler that changes the number of Pod replicas based on a metric.",
+      "exam_context": "Use it for unpredictable, stateless traffic. For an LB-fronted frontend, scale on the load balancer request-count metric.",
+      "lesson": 7
+    },
+    {
+      "term": "Implicit SLO",
+      "definition": "The tighter reliability level users come to depend on when a service greatly exceeds its stated SLO.",
+      "exam_context": "The reason not to over-deliver: release faster or take more risk instead of tightening the SLO.",
+      "lesson": 2
+    },
+    {
+      "term": "Incident Commander (IC)",
+      "definition": "The person in overall command of an incident who holds every role not yet delegated.",
+      "exam_context": "After assigning an OL and a CL, the IC's next step is a dedicated shared communication channel, not hands-on mitigation.",
+      "lesson": 4
+    },
+    {
+      "term": "Incident Management at Google (IMAG)",
+      "definition": "Google's incident response framework with exactly three roles: Incident Commander, Operations Lead and Communications Lead.",
+      "exam_context": "Roles such as 'Engineering Lead' or 'Customer Impact Assessor' are distractors.",
+      "lesson": 4
+    },
+    {
+      "term": "Incident state document",
+      "definition": "A living document that responders update in real time during an incident.",
+      "exam_context": "Use it during the incident. The postmortem is written after resolution for the wider org.",
+      "lesson": 4
+    },
+    {
+      "term": "Latency SLI",
+      "definition": "The share of valid requests served faster than a threshold, expressed as good/valid.",
+      "exam_context": "For 'fast enough' goals, prefer it over average latency or a percentile-at-threshold calculation.",
+      "lesson": 1
+    },
+    {
+      "term": "Liveness probe",
+      "definition": "A Kubernetes health check that restarts a container when it stops responding correctly.",
+      "exam_context": "For Pods that go bad after hours, add an HTTP liveness probe rather than a cron job that kills old Pods.",
+      "lesson": 6
+    },
+    {
+      "term": "Load testing",
+      "definition": "Running controlled traffic against a service to profile its performance and scaling behavior.",
+      "exam_context": "For a just-migrated app ahead of peak season it is the first step, before re-platforming or pre-provisioning.",
+      "lesson": 7
+    },
+    {
+      "term": "Log-based alert",
+      "definition": "A Cloud Monitoring alert that fires on matching log entries.",
+      "exam_context": "For fast notification of a VM stop, alert on protoPayload.methodName = v1.compute.instances.stop.",
+      "lesson": 6
+    },
+    {
+      "term": "Maintenance exclusion",
+      "definition": "A GKE setting that blocks upgrades during a defined window, with a scope such as 'No minor or node upgrades'.",
+      "exam_context": "Use it for interruption-intolerant workloads. The Stable channel and max-surge-upgrade=0 still upgrade.",
+      "lesson": 7
+    },
+    {
+      "term": "MIG autohealing",
+      "definition": "A managed instance group feature that recreates VMs failing a health check.",
+      "exam_context": "A size-1 MIG with autohealing replaces manual VM recreation. A load balancer only routes around the failure.",
+      "lesson": 6
+    },
+    {
+      "term": "Mitigate first",
+      "definition": "The rule of stopping user impact before diagnosing root cause, usually by rolling back the most recent change.",
+      "exam_context": "Revert the canary or release, or shift traffic to the previous revision, region or blue environment, before reaching for logs or traces.",
+      "lesson": 4
+    },
+    {
+      "term": "MTBF",
+      "definition": "Mean time between failures, such as 90 days for a once-a-quarter failure.",
+      "exam_context": "Leave it unchanged unless the scenario changes failure frequency.",
+      "lesson": 7
+    },
+    {
+      "term": "MTTD",
+      "definition": "Mean time to detect a failure.",
+      "exam_context": "Stays the same when the detection setup doesn't change.",
+      "lesson": 7
+    },
+    {
+      "term": "MTTR",
+      "definition": "Mean time to recover, which in a risk catalog equals the failover duration.",
+      "exam_context": "If the new database fails over twice as slowly (10 min to 20 min), only MTTR changes.",
+      "lesson": 7
+    },
+    {
+      "term": "Operations Lead (OL)",
+      "definition": "The incident role that owns the hands-on technical response: diagnosis, mitigation and system changes.",
+      "exam_context": "When removing a bad node, the OL communicates intent, runs a load analysis, scales if needed, then drains and removes it.",
+      "lesson": 4
+    },
+    {
+      "term": "Planned downtime",
+      "definition": "An announced, deliberate outage that stops dependents from assuming the service never fails, as in Google's Chubby example.",
+      "exam_context": "When an SLO is greatly exceeded and confirmed appropriate, announced planned downtime plus riskier releases is the preferred answer.",
+      "lesson": 2
+    },
+    {
+      "term": "Postmortem",
+      "definition": "A written record of an incident covering root cause, resolution, lessons learned and action items, produced after resolution.",
+      "exam_context": "Write one after a multi-hour outage and publish it widely, not just to one manager.",
+      "lesson": 5
+    },
+    {
+      "term": "Postmortem trigger",
+      "definition": "A condition that requires a postmortem, such as data loss, user-visible impact, on-call intervention, long resolution or monitoring failure.",
+      "exam_context": "Automation working as intended (automatic CD rollback, monitoring detecting a failed instance) is not a trigger.",
+      "lesson": 5
+    },
+    {
+      "term": "Production Readiness Review (PRR)",
+      "definition": "An SRE assessment of whether a service is ready to be supported in production.",
+      "exam_context": "If it shows SLOs can't be met, make the reliability fixes before handover. Don't lower the SLOs.",
+      "lesson": 8
+    },
+    {
+      "term": "Quality SLI",
+      "definition": "The ratio of non-degraded responses to total responses, for services that can return partial results.",
+      "exam_context": "Pick it when a page is served but some widgets or content are missing. Freshness is the distractor.",
+      "lesson": 1
+    },
+    {
+      "term": "Request-based SLO",
+      "definition": "A Cloud Monitoring SLO evaluation method that counts good requests over total requests.",
+      "exam_context": "Use it when the goal is stated per request ('90% of requests under 300 ms'), even if the wording says 'of the time'.",
+      "lesson": 2
+    },
+    {
+      "term": "Service Level Indicator (SLI)",
+      "definition": "A measure of the service users receive, expressed as good events divided by valid events.",
+      "exam_context": "Reject options that measure backend causes (queue size, I/O wait) or infrastructure health instead of user outcomes.",
+      "lesson": 1
+    },
+    {
+      "term": "Service Level Objective (SLO)",
+      "definition": "A target value for an SLI over a compliance period.",
+      "exam_context": "Set it from current measured performance plus a modest margin. Don't tighten it to match observed reliability or loosen it to match a failing SLI.",
+      "lesson": 2
+    },
+    {
+      "term": "Synthetic client",
+      "definition": "An automated probe that sends requests to the service the way a user would, from outside the serving infrastructure.",
+      "exam_context": "Pair it with existing request logs when code changes aren't allowed, or with client-side instrumentation to catch CDN and LB failures.",
+      "lesson": 1
+    },
+    {
+      "term": "Toil",
+      "definition": "Recurring manual operational work that automation could eliminate, such as recreating a crashing VM by hand.",
+      "exam_context": "When goals are reducing technical debt and ops cost, spend surplus budget on finding and automating toil away.",
+      "lesson": 6
+    },
+    {
+      "term": "Uptime check",
+      "definition": "A Cloud Monitoring probe that checks whether an endpoint is reachable.",
+      "exam_context": "Right for 'notify as soon as an endpoint is unreachable', but wrong for tracking how fast the error budget is spent.",
+      "lesson": 3
+    },
+    {
+      "term": "Vertical Pod Autoscaler (VPA)",
+      "definition": "The GKE autoscaler that adjusts the resource requests of each Pod.",
+      "exam_context": "Use it for steady load with mis-sized requests. It doesn't set replica count.",
+      "lesson": 7
+    },
+    {
+      "term": "Windows-based SLO",
+      "definition": "A Cloud Monitoring SLO evaluation method that counts good time windows over total windows.",
+      "exam_context": "Fits goals stated per interval, or a raw metric that is already a percentile.",
+      "lesson": 2
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson compares the main ways to lower Compute Engine prices: committed use discounts (resource-based and compute flexible), reservations, and Spot VMs. Exam questions usually give you a workload profile (stable or interruptible, one region or moving between regions, capacity needs) and ask which pricing lever fits without risking performance or availability.",
+      "objectives": [
+        "After this lesson you can choose between resource-based CUDs, compute flexible commitments and Spot VMs for a given workload profile.",
+        "After this lesson you can explain why a commitment is only a billing discount and does not reserve capacity.",
+        "After this lesson you can tell when a workload is a safe Spot VM candidate (it survives losing a node or can resume work).",
+        "After this lesson you can rule out options that do not lower price, such as MIGs and unmanaged instance groups."
+      ],
+      "takeaways": [
+        "Stable, fixed-size, business-critical workload that needs no performance impact: choose a CUD, never Spot.",
+        "Steady spend but instances move between regions: choose a compute flexible commitment, and the 3-year term for a multi-year horizon.",
+        "A commitment is not capacity. If the question asks for guaranteed capacity in specific zones, add reservations (unused reserved capacity is still billed).",
+        "Spot VMs give the biggest discount but can be reclaimed at any time and have no SLA. Use them only for interruptible or resumable work, or architectures that survive losing a node (such as quorum).",
+        "MIGs and unmanaged instance groups do not lower prices. They provide operations features and load balancing."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers Premium and Standard Network Service Tiers and how tier choice limits load balancer scope. The exam tests whether you can cut internet egress cost with Standard Tier while avoiding invalid combinations such as Standard Tier with a global load balancer.",
+      "objectives": [
+        "After this lesson you can compare Premium Tier and Standard Tier on cost, performance and scope.",
+        "After this lesson you can identify which load balancers and IP addresses require Premium Tier.",
+        "After this lesson you can pick the right tier and load balancer scope for local versus worldwide users.",
+        "After this lesson you can reject network options that do not reduce egress cost (Shared VPC, private clusters, Cloud NAT, a load balancer used as Ingress)."
+      ],
+      "takeaways": [
+        "To lower internet-facing network cost, choose Standard Tier.",
+        "Backends in one region with local users: Standard Tier plus a regional load balancer.",
+        "Global external IPs and the global external Application Load Balancer require Premium Tier, so Standard plus global is an invalid combination.",
+        "Standard Tier with a regional load balancer gives up the global anycast IP and Cloud CDN.",
+        "Shared VPC, private GKE clusters, Cloud NAT and a load balancer used as Ingress do not reduce egress cost."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers how to serve a Cloud Run service to users worldwide with low latency. It is the counterpart to the cost rule in lesson 2: when global latency is the goal, you deploy to many regions behind one global anycast IP on a Premium Tier global load balancer.",
+      "objectives": [
+        "After this lesson you can design a multi-region Cloud Run deployment that routes users to the nearest region.",
+        "After this lesson you can explain why one region behind a global load balancer, or Cloud Armor, does not solve latency.",
+        "After this lesson you can decide between the global latency design and the regional cost design based on the question's goal."
+      ],
+      "takeaways": [
+        "Worldwide users who should reach the nearest region: deploy the service to every region behind one global anycast IP on a global external HTTP(S) load balancer.",
+        "A single region behind a global load balancer still serves far-away users from far away.",
+        "Cloud Armor is a security control, not a latency tool.",
+        "Regional load balancers cannot share one global anycast IP; a global IP needs the global, Premium Tier load balancer.",
+        "Latency for global users points to global plus Premium; cost for local users points to regional plus Standard."
+      ]
+    },
+    "4": {
+      "summary": "This lesson explains how Compute Engine network bandwidth is capped per instance and scales with vCPU count. The exam presents a VM pinned at its maximum throughput and offers distractors such as adding NICs, Cloud NAT or the Ops Agent.",
+      "objectives": [
+        "After this lesson you can explain that the egress bandwidth cap applies to the whole instance and scales with vCPUs up to a machine-series limit.",
+        "After this lesson you can choose the right fix for a VM that is pinned at its throughput limit.",
+        "After this lesson you can explain why extra vNICs, Cloud NAT and the Ops Agent do not raise throughput."
+      ],
+      "takeaways": [
+        "The bandwidth cap is per instance, not per vNIC, and scales with vCPU count (the bank cites about 2 Gbps per vCPU).",
+        "VM pinned at maximum throughput: resize to a larger machine type (for example n2-standard-2 to n2-standard-8).",
+        "Tier_1 networking on qualifying machine types also raises the cap.",
+        "Adding vNICs, Cloud NAT or the Ops Agent does not add bandwidth."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers how to attribute cloud cost to systems or teams that share one project, using labels and Cloud Billing export to BigQuery. Exam questions test which metadata actually reaches billing data and which tempting options (metadata, log exports, VM names) do not.",
+      "objectives": [
+        "After this lesson you can split costs between systems that share one project by using labels and billing export to BigQuery.",
+        "After this lesson you can identify which attributes are billing dimensions and which are not.",
+        "After this lesson you can describe good labeling practice, such as applying labels through IaC at provisioning time.",
+        "After this lesson you can query labels in the billing export correctly (labels are a repeated key/value field)."
+      ],
+      "takeaways": [
+        "Cost per system inside one project: label each system's resources, export billing to BigQuery, and group cost by label.",
+        "Labels are forwarded to Cloud Billing; instance metadata, Cloud Logging exports and VM names are not billing dimensions.",
+        "Console billing reports can group by label, but only after the labels exist.",
+        "In the BigQuery billing export, labels is a repeated key/value field, so use UNNEST(labels) and filter on the key.",
+        "Apply labels at provisioning time through IaC and watch for unlabeled spend."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers how to find over- or under-provisioned resources using data Google already collects. For VMs that means the rightsizing recommender in Active Assist; for Cloud Run it means Cloud Monitoring's built-in container metrics. The exam rewards the managed, no-setup option over building your own pipeline or installing agents.",
+      "objectives": [
+        "After this lesson you can use the VM instance rightsizing recommender through the Recommender API to resize VMs.",
+        "After this lesson you can explain when the Ops Agent is optional and when it cannot be used at all (Cloud Run).",
+        "After this lesson you can check Cloud Run CPU and memory utilization with built-in Cloud Monitoring metrics.",
+        "After this lesson you can explain why peak utilization matters, not just the average, before resizing."
+      ],
+      "takeaways": [
+        "VM rightsizing: query the rightsizing recommender (Recommender API), which uses the last 8 days of CPU and memory data and needs no agent for CPU-based recommendations.",
+        "The Ops Agent is optional for rightsizing and only needed for finer guest or memory metrics.",
+        "Cloud Run utilization: use Cloud Monitoring's built-in container CPU and memory metrics; there is no VM, so no Ops Agent.",
+        "Check peak utilization, not just the average, before resizing.",
+        "If Google already collects the data and a recommender exists, use it instead of a custom pipeline or manual dashboard reading."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers how to reduce Cloud Logging cost from verbose GKE workload logs while keeping GKE operational logs. The bank's answer is disputed, so the lesson focuses on what each option (logging component settings, sink changes, exclusion filters) actually does and which one the guide recommends for the exam.",
+      "objectives": [
+        "After this lesson you can explain what the GKE --logging=SYSTEM and --logging=WORKLOAD settings do.",
+        "After this lesson you can explain why disabling the _Default sink is too broad.",
+        "After this lesson you can choose a log-cost reduction that keeps GKE operational logs when developers read logs with kubectl logs."
+      ],
+      "takeaways": [
+        "Dev GKE cluster, developers read logs with kubectl logs, system logs must be kept: prefer --logging=SYSTEM.",
+        "--logging=SYSTEM sends system logs only, so workload logs stop going to Cloud Logging.",
+        "Disabling the _Default sink is too broad because it also drops GKE operational logs.",
+        "The _Required sink keeps audit logs even if _Default is disabled.",
+        "kubectl logs does not depend on Cloud Logging."
+      ]
+    },
+    "8": {
+      "summary": "This lesson maps performance questions to the right tool: Cloud Monitoring for utilization, Cloud Profiler for hot code paths, Cloud Trace for request latency, and logs-based metrics for values only found in log content. It also covers how the exam expects you to act on Profiler findings such as heap growth and wall-clock versus CPU time.",
+      "objectives": [
+        "After this lesson you can choose between Cloud Monitoring, Cloud Profiler, Cloud Trace and logs-based metrics for a given performance question.",
+        "After this lesson you can explain why Cloud Profiler is safe to run continuously in production and how it is enabled.",
+        "After this lesson you can give the exam's expected responses to Profiler findings (heap growth, wall-clock versus CPU time gaps).",
+        "After this lesson you can spot where the exam answer differs from real-world diagnosis."
+      ],
+      "takeaways": [
+        "Utilization: Cloud Monitoring. Hot code paths: Cloud Profiler. Latency across services: Cloud Trace. Aggregates only in log content: logs-based metric.",
+        "Cloud Profiler is a managed, continuous, sampling profiler with low overhead, viewed as flame graphs; in Go you call profiler.Start early in main.",
+        "Profiler needs a language-specific agent or library in the application; it is not paired with the Ops Agent.",
+        "Heap climbing until restart on GKE: the exam answer is to raise the container memory limit, but treat it as a stopgap for a likely memory leak.",
+        "Wall-clock versus CPU time (exam answer): a large gap means add CPU; a small gap with latency burning the error budget means optimize the code."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers capacity planning for a peak event or busy season. When a question asks what to do first, the exam expects you to measure with a load test before setting autoscaling thresholds, pre-provisioning or sizing anything.",
+      "objectives": [
+        "After this lesson you can identify load testing as the first step in preparing for a peak event.",
+        "After this lesson you can explain why arbitrary capacity multipliers and premature autoscaling settings are traps.",
+        "After this lesson you can separate peak-traffic planning from disaster recovery planning."
+      ],
+      "takeaways": [
+        "Asked what to do first before a peak season: run a load test to learn how the system scales and where it bottlenecks.",
+        "Base autoscaling thresholds, pre-provisioning and capacity sizing on load test results.",
+        "Doubling last season's capacity is an arbitrary multiplier, not a plan.",
+        "A DR runbook addresses a different concern than normal peak traffic.",
+        "Google's peak-event guidance says to start load testing 3 to 5 months before the event."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Active Assist",
+      "definition": "Google Cloud's portfolio of recommenders that analyze usage data and suggest actions such as rightsizing VMs.",
+      "exam_context": "When the question asks for Google's recommended way to resize VMs, pick the Active Assist rightsizing recommender over reading dashboards yourself.",
+      "lesson": 6
+    },
+    {
+      "term": "Billing export to BigQuery",
+      "definition": "A Cloud Billing feature that writes cost line items, including resource labels, into a BigQuery dataset you can query.",
+      "exam_context": "Combined with labels, it is the answer for splitting cost between systems that share one project.",
+      "lesson": 5
+    },
+    {
+      "term": "Cloud Armor",
+      "definition": "Google Cloud's security service that protects applications behind load balancers.",
+      "exam_context": "It is a distractor in latency questions: it is a security control, not a way to serve users from a nearer region.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud CDN",
+      "definition": "Google's content delivery network that caches content at the edge for external Application Load Balancers.",
+      "exam_context": "Standard Tier with a regional load balancer gives up Cloud CDN; if CDN is needed, choose Premium Tier with a global load balancer.",
+      "lesson": 2
+    },
+    {
+      "term": "Cloud Monitoring built-in metrics",
+      "definition": "Metrics that Google Cloud collects automatically, such as container CPU and memory utilization for Cloud Run, with no setup.",
+      "exam_context": "For Cloud Run utilization or sizing questions, use these metrics; the Ops Agent cannot be installed because there is no VM.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud NAT",
+      "definition": "A managed service that gives private VMs outbound internet access without external IP addresses.",
+      "exam_context": "A distractor for both egress cost and throughput: it neither lowers network cost nor raises VM bandwidth.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Profiler",
+      "definition": "A managed, continuous, statistical (sampling) profiler that attributes CPU and heap usage to source code with low overhead, shown as flame graphs.",
+      "exam_context": "Pick it when you must find hot or slow code paths in production with minimal overhead and management.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Trace",
+      "definition": "A distributed tracing service that shows where latency goes across a request and its downstream calls.",
+      "exam_context": "Use it for latency across services; it measures latency, not memory or CPU usage.",
+      "lesson": 8
+    },
+    {
+      "term": "Committed use discount (CUD)",
+      "definition": "A lower price in return for a 1-year or 3-year commitment; it is a billing arrangement only, so VMs run unchanged.",
+      "exam_context": "Stable, fixed, business-critical workloads that need no performance impact get CUDs, never Spot VMs.",
+      "lesson": 1
+    },
+    {
+      "term": "Compute flexible commitment",
+      "definition": "A spend-based commitment to a minimum hourly spend that applies across regions and projects in the same Cloud Billing account.",
+      "exam_context": "Choose it (3-year for a multi-year horizon) when total usage is steady but instances move between regions.",
+      "lesson": 1
+    },
+    {
+      "term": "Container memory limit",
+      "definition": "The memory limit set on a container in a Kubernetes deployment; exceeding it causes the container to be OOM-killed.",
+      "exam_context": "When Profiler shows heap climbing until each restart on GKE, the exam answer is to raise this limit, not node size or CPU (it is a stopgap if the code leaks).",
+      "lesson": 8
+    },
+    {
+      "term": "Exclusion filter",
+      "definition": "A filter on a log sink that drops matching log entries so they are not stored, reducing log volume and cost.",
+      "exam_context": "Appears as the bank's answer for verbose GKE dev logs, but for that exact scenario the guide recommends --logging=SYSTEM instead.",
+      "lesson": 7
+    },
+    {
+      "term": "Flame graph",
+      "definition": "A visualization of profiling data that shows which functions consume the most CPU or memory.",
+      "exam_context": "Cloud Profiler presents results as flame graphs, useful for comparing algorithms in staging and production.",
+      "lesson": 8
+    },
+    {
+      "term": "GKE logging components (--logging)",
+      "definition": "GKE cluster setting that selects which logs go to Cloud Logging; SYSTEM sends system logs only, WORKLOAD adds workload logs.",
+      "exam_context": "For a dev cluster where developers use kubectl logs and system logs must be kept, prefer --logging=SYSTEM; WORKLOAD does not reduce verbosity.",
+      "lesson": 7
+    },
+    {
+      "term": "Global anycast IP",
+      "definition": "A single global external IP address served from many locations, routing users to the nearest healthy backend.",
+      "exam_context": "Needed to route worldwide users to the nearest region; it requires the global, Premium Tier load balancer.",
+      "lesson": 3
+    },
+    {
+      "term": "Global external Application Load Balancer",
+      "definition": "Google's global, Envoy-based HTTP(S) load balancer that serves backends in many regions behind one anycast IP.",
+      "exam_context": "Requires Premium Tier; use it for worldwide users and multi-region backends, not for local cost savings.",
+      "lesson": 2
+    },
+    {
+      "term": "Labels",
+      "definition": "Key/value pairs attached to resources that are forwarded to Cloud Billing and appear in billing data.",
+      "exam_context": "Labels, not metadata, VM names or log exports, are how you attribute cost to systems; apply them at provisioning time through IaC.",
+      "lesson": 5
+    },
+    {
+      "term": "Load testing",
+      "definition": "Running controlled traffic against a system to learn how it scales and where it bottlenecks.",
+      "exam_context": "When asked what to do first before a peak season, run a load test before setting autoscaling or capacity.",
+      "lesson": 9
+    },
+    {
+      "term": "Logs-based metric",
+      "definition": "A Cloud Monitoring metric derived from the content of log entries.",
+      "exam_context": "Use it only when the value you need exists only in log content; for CPU or memory use built-in metrics.",
+      "lesson": 8
+    },
+    {
+      "term": "Managed instance group (MIG)",
+      "definition": "A group of identical VMs that provides autoscaling, autohealing and rolling updates.",
+      "exam_context": "MIGs do not lower prices, so they are wrong answers to pricing questions.",
+      "lesson": 1
+    },
+    {
+      "term": "Network Service Tiers",
+      "definition": "A Google Cloud setting that chooses how internet traffic is routed and priced: Premium Tier or Standard Tier.",
+      "exam_context": "Cost goal points to Standard Tier; global latency goal or global load balancer points to Premium Tier.",
+      "lesson": 2
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's agent installed on VMs to collect guest-level logs and metrics.",
+      "exam_context": "A frequent distractor: not needed for CPU-based rightsizing, impossible on Cloud Run, unrelated to Profiler, and does not add throughput.",
+      "lesson": 6
+    },
+    {
+      "term": "Premium Tier",
+      "definition": "The default network tier, which carries traffic on Google's global backbone for better performance at higher cost.",
+      "exam_context": "Required for global external IPs and the global external Application Load Balancer.",
+      "lesson": 2
+    },
+    {
+      "term": "Proxy-only subnet",
+      "definition": "A subnet reserved for the Envoy proxies used by regional Envoy-based load balancers.",
+      "exam_context": "The regional external Application Load Balancer needs one and works in either network tier.",
+      "lesson": 2
+    },
+    {
+      "term": "Recommender API",
+      "definition": "The API that exposes Active Assist recommendations, including the VM instance rightsizing recommender.",
+      "exam_context": "Query it to rightsize VMs; it uses data Compute Engine already collects, so no agent is needed for CPU-based recommendations.",
+      "lesson": 6
+    },
+    {
+      "term": "Reservation",
+      "definition": "A Compute Engine feature that holds VM capacity in specific zones; unused reserved capacity is still charged.",
+      "exam_context": "Add a reservation only when the question needs assured capacity, because commitments do not reserve capacity.",
+      "lesson": 1
+    },
+    {
+      "term": "Resource-based commitment",
+      "definition": "A committed use discount for predictable, steady usage of specific resources, tied to one region.",
+      "exam_context": "Fits steady usage in one region; if workloads move between regions, choose a compute flexible commitment instead.",
+      "lesson": 1
+    },
+    {
+      "term": "Rightsizing recommender",
+      "definition": "The VM instance rightsizing recommender analyzes the last 8 days of CPU and memory data and suggests a better machine type.",
+      "exam_context": "The recommended answer for resizing VMs, ahead of manual dashboard reading or installing agents first.",
+      "lesson": 6
+    },
+    {
+      "term": "Spot VM",
+      "definition": "A heavily discounted VM (the bank cites 60 to 90 percent) that Compute Engine can reclaim at any time and that is excluded from the Compute Engine SLA.",
+      "exam_context": "Choose it for interruptible or resumable work, or systems that survive losing a node; never for business-critical workloads.",
+      "lesson": 1
+    },
+    {
+      "term": "Standard Tier",
+      "definition": "A regional network tier that hands traffic to ordinary ISP transit networks, costing less with lower performance and availability.",
+      "exam_context": "The answer for cutting internet egress cost; it cannot be combined with a global load balancer or global anycast IP.",
+      "lesson": 2
+    },
+    {
+      "term": "Tier_1 networking",
+      "definition": "A higher-bandwidth networking option on qualifying Compute Engine machine types that raises the per-instance bandwidth cap.",
+      "exam_context": "Along with a larger machine type, a valid way to raise VM throughput; extra vNICs are not.",
+      "lesson": 4
+    },
+    {
+      "term": "VM network bandwidth cap",
+      "definition": "The per-instance egress bandwidth limit, which scales with vCPU count up to a limit set by the machine series.",
+      "exam_context": "A VM pinned at max throughput needs a larger machine type, not more vNICs, Cloud NAT or the Ops Agent.",
+      "lesson": 4
+    },
+    {
+      "term": "Wall-clock time vs CPU time",
+      "definition": "Profiler measurements of elapsed time versus time actually spent executing on the CPU.",
+      "exam_context": "Exam answer: a large gap means add CPU, a small gap with error budget burning means optimize the code; in real diagnosis a large gap usually means waiting on I/O or locks.",
+      "lesson": 8
+    }
+  ]
+}

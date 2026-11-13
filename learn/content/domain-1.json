@@ -1,0 +1,469 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how folders, labels and projects group resources in a Google Cloud organization, and which of them carry IAM, Organization Policy and cost boundaries. Exam questions here test whether you can choose an environment-based folder layout and a folder-scoped budget instead of options that only look right.",
+      "objectives": [
+        "After this lesson you can explain why folders are the attachment point for IAM and Organization Policy inheritance and for cost aggregation.",
+        "After this lesson you can choose between environment-based and business-unit folder layouts based on the problem the question describes.",
+        "After this lesson you can set up a single Cloud Billing budget scoped to a folder to track total department spend.",
+        "After this lesson you can tell folders, labels and common-services projects apart by what each one actually controls."
+      ],
+      "takeaways": [
+        "Consistent security policy plus prod vs dev cost tracking → one Production folder and one Development folder.",
+        "Labels only filter billing exports; they are not an IAM or Org Policy attachment point.",
+        "Department total spend with an alert → department folder + one budget scoped to that folder at the full amount.",
+        "Use per-project budgets only when the question asks which project overspent.",
+        "Don't let \"20 business units\" in the question pull you toward BU folders when the stated problems are environment problems."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers Organization Policy constraints, how they inherit and are overridden, and the specific constraints the exam keeps coming back to: service account keys, resource locations and Shared VPC liens. The right answer is usually a preventive guardrail set at the right level, with the narrowest possible exception.",
+      "objectives": [
+        "After this lesson you can explain how org policies inherit from org to folder to project and how a lower level overrides a parent.",
+        "After this lesson you can choose the right constraint to block service account key creation, restrict resource locations, or protect a Shared VPC host project.",
+        "After this lesson you can handle an unavoidable exception with a project-level override instead of removing the guardrail.",
+        "After this lesson you can fix a policy-blocked create by changing the resource configuration, for example Secret Manager user-managed replication."
+      ],
+      "takeaways": [
+        "Remove JSON key risk org-wide → enforce iam.disableServiceAccountKeyCreation at the organization (not ...KeyUpload).",
+        "A third-party app that truly needs a key → override the constraint on that one project only. No downloadable \"default key\" exists.",
+        "Data residency → gcp.resourceLocations with allowed regions. Secret Manager under that policy → user-managed replication in allowed regions.",
+        "Lien removal on a Shared VPC host restricted to the org level → compute.restrictXpnProjectLienRemoval.",
+        "Detect-and-delete approaches (log alerts, Asset Inventory scans) react after the fact; org policies prevent."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers how workloads and people get access to Google Cloud without long-lived credentials: Workload Identity Federation for GKE, attached service accounts on VMs, and group-based, time-boxed IAM. The exam often offers convenient options (node service accounts, JSON keys in Secrets) that break least privilege.",
+      "objectives": [
+        "After this lesson you can set up Workload Identity Federation for GKE with a Google service account, a Kubernetes ServiceAccount, the workloadIdentityUser role and the KSA annotation.",
+        "After this lesson you can explain why node service accounts and JSON keys stored in Kubernetes Secrets violate least privilege.",
+        "After this lesson you can grant temporary access by combining a group with an IAM Condition.",
+        "After this lesson you can use change risk recommendations to assess an IAM change before applying it."
+      ],
+      "takeaways": [
+        "Pods → Google APIs: Workload Identity Federation for GKE. Never a node SA shared by all Pods, never a JSON key in a Secret.",
+        "When the question requires impersonation: GSA + KSA, grant roles/iam.workloadIdentityUser to the KSA, annotate with iam.gke.io/gcp-service-account.",
+        "CI tool on a Compute Engine VM → attach a service account with the needed roles to the VM.",
+        "\"Access only during September\" → group + IAM Condition with a date/time expression. Grant roles to groups, not individuals.",
+        "Restricting a team to its namespace → Kubernetes RBAC. IAP is for HTTP(S) apps."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers how Data Access audit log settings inherit through the hierarchy and how to give teams scoped access to centrally stored logs. Expect questions about excluding part of the org from audit logging, log views on a central bucket, and the IAM role needed to read Data Access logs.",
+      "objectives": [
+        "After this lesson you can explain why a child resource cannot disable a Data Access log type that a parent enabled.",
+        "After this lesson you can narrow an org-level audit config with exempted principals and describe the limits of that approach.",
+        "After this lesson you can design per-team log views on a central log bucket, with ops on _AllLogs.",
+        "After this lesson you can choose roles/logging.privateLogViewer over roles/logging.viewer for Data Access logs."
+      ],
+      "takeaways": [
+        "Audit config inherits downward and only adds; children can't turn off what a parent enabled.",
+        "Enabling at the org automatically covers future projects; per-project enablement does not.",
+        "Exempted principals are identity-based: they are exempt wherever the org config applies, not just inside one folder.",
+        "Each team sees only its logs in a central project → log views (no data duplication); ops gets _AllLogs.",
+        "Security team reads Data Access logs → roles/logging.privateLogViewer granted to a group."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers Cloud Monitoring metrics scopes, which let a single scoping project view metrics from many monitored projects. Exam questions test where to host the scope, how to split scopes by environment, and the minimum role needed to view data.",
+      "objectives": [
+        "After this lesson you can explain what a scoping project stores and that metric data stays in the source project.",
+        "After this lesson you can choose a new, resource-free project as the scoping project.",
+        "After this lesson you can design one scoping project per environment for per-environment dashboards and alerts.",
+        "After this lesson you can grant Monitoring Viewer on the scoping project as the least-privilege way to see all monitored projects."
+      ],
+      "takeaways": [
+        "Scoping project holds the metrics scope, alert policies, dashboards and uptime checks; metric data stays in each source project.",
+        "Monitoring Viewer on the scoping project is enough; no roles are needed on the workload projects.",
+        "Google recommends a new or resource-free project as the scoping project, not an existing prod workload project.",
+        "Per-environment dashboards → one dedicated scoping project per environment.",
+        "Ordinary folders don't automatically add projects to a metrics scope."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers how to manage Terraform as a team: source in Git with reviews, state in a remote locked backend, and Google-maintained modules for project provisioning. It also covers repository layout for infrastructure, Kubernetes config and application code.",
+      "objectives": [
+        "After this lesson you can keep Terraform code in Git with branches, peer review and validate/plan checks before merge.",
+        "After this lesson you can diagnose duplicate stacks as missing shared state and fix it with a remote gcs backend.",
+        "After this lesson you can choose Cloud Foundation Toolkit modules for fast, repeatable project provisioning.",
+        "After this lesson you can pick a repository layout: shared infra repo with per-environment directories or overlays, and one repo per app with feature branches."
+      ],
+      "takeaways": [
+        ".tf source → Git + pull requests. A versioned GCS bucket, Drive or network share is not a VCS.",
+        "terraform.tfstate → remote gcs backend with locking. Never in Git (no locking, plaintext secrets).",
+        "\"A new stack appears on every apply\" means Terraform can't see shared state.",
+        "Fast, reliable project provisioning → Cloud Foundation Toolkit modules, not hand-written modules or gcloud scripts.",
+        "Don't encode the environment twice (repo per env and branch per env); it breaks the single source of truth."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers the Kubernetes-native tools for managing configuration: Config Connector for Google Cloud resources, Config Sync for GitOps sync of cluster objects, and Policy Controller for admission control and audit. Many questions turn on which of these three a scenario actually needs.",
+      "objectives": [
+        "After this lesson you can choose Config Connector when you need Google Cloud resources as Kubernetes CRDs with Google support and drift correction.",
+        "After this lesson you can choose Config Sync when you need to install Kubernetes objects from Git and keep them matching Git across clusters.",
+        "After this lesson you can choose Policy Controller when you need to decide which resources are allowed, using admission control and audit.",
+        "After this lesson you can tell reconcilers (controllers) apart from one-off runners such as Pods, Jobs and Cloud Build triggers."
+      ],
+      "takeaways": [
+        "CRDs + Google Cloud Support, or periodic drift correction for cloud resources → Config Connector (Crossplane has no Google support path).",
+        "Git as source of truth, install and keep objects consistent across clusters → Config Sync.",
+        "Prevent Pods that violate a security standard → Policy Controller. Enforcing that something exists is Config Sync.",
+        "Constraint templates in Git applied automatically → Config Sync + Policy Controller (formerly branded Anthos Config Management).",
+        "Cloud Build, Pods and Jobs run once per trigger; they don't reconcile drift."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers choosing the right CI/CD tool for each job: Artifact Registry for Helm charts and images, Packer for multi-cloud VM images, Cloud Deploy for release promotion, kpt for config packages, and Cloud Build private pools for builds that need to reach private networks.",
+      "objectives": [
+        "After this lesson you can store Helm charts as OCI artifacts in Artifact Registry with IAM and VPC Service Controls.",
+        "After this lesson you can match Packer, Cloud Deploy and kpt to the problems they solve.",
+        "After this lesson you can use Cloud Build private pools so builds reach private VPC resources without public exposure."
+      ],
+      "takeaways": [
+        "Helm charts with native IAM and VPC-SC → Artifact Registry (OCI). Not a GCS bucket, GitHub Enterprise or a self-hosted chart server.",
+        "Multi-cloud VM image pipeline → Cloud Build + Packer. Cloud Deploy builds no VM images.",
+        "Release promotion to GKE or Cloud Run → Cloud Deploy. Kubernetes config packages → kpt.",
+        "CI must reach private VPC APIs → Cloud Build private pool. The default pool runs outside your VPC."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers how to separate dev, test and prod, and how to lay out GKE clusters and namespaces for many teams at minimum cost. It also covers choosing GKE release channels based on what the question prioritizes.",
+      "objectives": [
+        "After this lesson you can describe what belongs in dev, test/staging and prod environments.",
+        "After this lesson you can design a cluster-per-environment, namespace-per-team/app layout using RBAC and network policies.",
+        "After this lesson you can explain why cluster count drives GKE cost.",
+        "After this lesson you can pick the GKE release channel (Stable, Regular, Rapid, Extended) that matches the stated priority."
+      ],
+      "takeaways": [
+        "Experiments or load tests hurting prod → separate dev and test environments; test should be production-like.",
+        "Many teams, minimum cost → one shared dev cluster and one shared prod cluster, namespace per team, RBAC.",
+        "Cluster per app or per team multiplies the per-cluster management fee and admin overhead.",
+        "\"Prioritize stability\" → Stable for both staging and prod; Extended means longer support, not extra stability."
+      ]
+    },
+    "10": {
+      "summary": "This lesson covers connecting VPC networks across many departments and how to rule out options that solve a different problem. The exam's answer here only holds relative to the options given, so learn the reasoning, not just the pick.",
+      "objectives": [
+        "After this lesson you can explain why VPC per department beats VPC per application at scale.",
+        "After this lesson you can tell VPC Network Peering, Private Service Connect and Cloud VPN apart by what each one connects.",
+        "After this lesson you can recognize the limits of peering meshes and the alternatives landing-zone guidance points to."
+      ],
+      "takeaways": [
+        "Among the listed options, many departments with minimal management → VPC per department + VPC Network Peering.",
+        "Private Service Connect exposes one published service at a time; it isn't general VPC-to-VPC connectivity.",
+        "Cloud VPN encrypts over the public internet for hybrid links, not for linking Google Cloud VPCs.",
+        "Caveat: peering is non-transitive and limited per network; landing-zone guidance often uses Shared VPC or hub-and-spoke."
+      ]
+    },
+    "11": {
+      "summary": "This lesson covers Cloud Workstations as the managed way to give teams standardized, patched and private development environments. Exam questions focus on configurations, timeouts for cost and patching, preview links, and GPU support.",
+      "objectives": [
+        "After this lesson you can use workstation configurations as team templates that apply on next start.",
+        "After this lesson you can tell idleTimeout (cost) apart from runningTimeout (forced refresh).",
+        "After this lesson you can give developers browser access to an app on a workstation port with a preview link.",
+        "After this lesson you can provide GPU development environments with Cloud Workstations instead of Cloud Shell."
+      ],
+      "takeaways": [
+        "Standardized team environments with ongoing patching → one Cloud Workstations configuration per team.",
+        "Most cost-effective private setup → private Workstations cluster + idleTimeout.",
+        "runningTimeout stops a workstation after a fixed runtime even when it's active, forcing a refresh to updated images.",
+        "View a web app running on a workstation → Code OSS preview link; no public IP, bastion or IAP tunnel needed.",
+        "Need GPUs → GPU workstation with the Cloud Workstations User role; Cloud Shell can't get GPUs."
+      ]
+    },
+    "12": {
+      "summary": "This lesson covers capacity planning with regional quotas, setting Cloud Run scaling within limits, and protecting sensitive data with Cloud KMS. These are short decision-rule questions where the trap is an option that solves a neighboring problem.",
+      "objectives": [
+        "After this lesson you can plan multi-region capacity by checking quota in each target region.",
+        "After this lesson you can tell a Cloud Run scaling target (when to scale) apart from max instances, limits and quotas (how far it can scale).",
+        "After this lesson you can choose Cloud KMS-managed, regularly rotated keys for sensitive data, and explain what rotation does and doesn't protect."
+      ],
+      "takeaways": [
+        "Quotas are enforced per project per region → verify quota in every target region.",
+        "Machine-type choice is sizing, not capacity planning; Cloud Trace is for latency debugging.",
+        "Cloud Run: scaling target says when, max instances/limits and quotas say how far. CPU targets are customizable.",
+        "Key rotation protects new encryptions; older key versions still decrypt existing data until it is re-encrypted."
+      ]
+    },
+    "13": {
+      "summary": "This lesson covers preparing teams for incidents in a way that reduces customer disruption. The exam favors current playbooks plus automation that helps on-call engineers, over options that sound decisive but break coordination or least privilege.",
+      "objectives": [
+        "After this lesson you can identify current playbooks and impact-analysis automation as the best way to reduce customer disruption.",
+        "After this lesson you can reject uncoordinated production changes during incidents.",
+        "After this lesson you can explain why unrestricted on-call permissions and alerts on internal behavior alone are weak answers."
+      ],
+      "takeaways": [
+        "Reduce customer disruption → keep playbooks current + automation that analyzes impact and suggests mitigations to on-call.",
+        "Everyone changing prod during an incident is uncoordinated, not faster.",
+        "Exclusive, unrestricted on-call permissions break least privilege.",
+        "Alerts on internal behavior alone aren't necessarily actionable or symptom-based."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "_AllLogs view",
+      "definition": "A built-in log view that gives access to all logs in a log bucket.",
+      "exam_context": "Give the central ops team _AllLogs while each team gets its own log view.",
+      "lesson": 4
+    },
+    {
+      "term": "Artifact Registry (OCI)",
+      "definition": "Google Cloud's managed artifact store; Helm 3.8+ charts can be stored as OCI artifacts in Docker-format repositories, with IAM access control and VPC Service Controls support.",
+      "exam_context": "Public and private Helm charts with native IAM and VPC-SC → Artifact Registry, not a GCS bucket or a self-hosted chart server.",
+      "lesson": 8
+    },
+    {
+      "term": "Change risk recommendations",
+      "definition": "Recommender (Active Assist) insights that show the risk of an IAM policy change before you apply it.",
+      "exam_context": "\"Assess the risk of this IAM change before production\" → change risk recommendations, not recent-change recommendations, which come after the fact.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Billing budget (folder-scoped)",
+      "definition": "A budget whose scope is a folder, so it adds up spend across every project nested under that folder.",
+      "exam_context": "Department total spend with an alert → one budget scoped to the department folder, not a full budget on each project.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Build private pool",
+      "definition": "A managed pool of Cloud Build workers peered into your VPC, so builds can reach private resources without exposing them publicly.",
+      "exam_context": "CI must call private VPC APIs with low overhead → private pool. The default pool runs outside your VPC.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Deploy",
+      "definition": "A managed service that promotes releases through targets such as GKE, Cloud Run and attached clusters.",
+      "exam_context": "Often offered as the \"standard pairing\" with Cloud Build, but it builds no VM images; choose Packer for those.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Foundation Toolkit",
+      "definition": "A set of Google-maintained Terraform modules for provisioning projects and foundational resources.",
+      "exam_context": "\"Fast, reliable, repeatable project provisioning\" → CFT modules, not custom modules from scratch or gcloud scripts.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud KMS",
+      "definition": "Google Cloud's key management service for creating, storing and rotating encryption keys.",
+      "exam_context": "Sensitive data with bounded exposure → keys in Cloud KMS, rotated regularly. Rotation applies to new encryptions; old versions still decrypt existing data.",
+      "lesson": 12
+    },
+    {
+      "term": "Cloud VPN",
+      "definition": "Encrypted tunnels over the public internet, typically used for hybrid connectivity.",
+      "exam_context": "A distractor for connecting Google Cloud VPCs to each other.",
+      "lesson": 10
+    },
+    {
+      "term": "Cloud Workstations",
+      "definition": "Managed development environments created from shared configurations, with a choice of IDE and support for private clusters and GPUs.",
+      "exam_context": "Standardized, patched team dev environments → a Cloud Workstations configuration per team, not golden-VM snapshots or laptop images.",
+      "lesson": 11
+    },
+    {
+      "term": "compute.restrictXpnProjectLienRemoval",
+      "definition": "An Organization Policy constraint that makes lien removal on a Shared VPC host project require resourcemanager.projects.updateLiens at the organization level.",
+      "exam_context": "Teams self-manage project IAM but lien removal must be org-only → this constraint. Project-level revocation and VPC-SC don't solve it.",
+      "lesson": 2
+    },
+    {
+      "term": "Config Connector",
+      "definition": "A Kubernetes controller that represents Google Cloud resources as CRDs and continuously reconciles them to correct drift; Google-supported.",
+      "exam_context": "\"CRDs + Google Cloud Support\" or \"devs create cloud resources via GitOps with drift correction\" → Config Connector (not Crossplane).",
+      "lesson": 7
+    },
+    {
+      "term": "Config Sync",
+      "definition": "A GitOps tool that continuously syncs Kubernetes objects from a Git repo into clusters and keeps them matching.",
+      "exam_context": "\"Install network policies and a DaemonSet and keep them consistent across clusters from Git\" → Config Sync, not Policy Controller.",
+      "lesson": 7
+    },
+    {
+      "term": "Crossplane",
+      "definition": "A community project that also manages cloud resources through Kubernetes CRDs.",
+      "exam_context": "A distractor when the question requires Google Cloud Support; it has no Google support path.",
+      "lesson": 7
+    },
+    {
+      "term": "Data Access audit logs",
+      "definition": "Audit logs that record reads of resource data and configuration; they must be enabled and their config inherits down the hierarchy.",
+      "exam_context": "Enabled at a parent, they can't be disabled by a child; enabling at the org also covers future projects.",
+      "lesson": 4
+    },
+    {
+      "term": "Exempted principals",
+      "definition": "Identities listed in an audit log config so their access isn't logged for that log type.",
+      "exam_context": "The supported way to narrow an org-level Data Access config. They're identity-based, so they're exempt everywhere the config applies, not just in one folder.",
+      "lesson": 4
+    },
+    {
+      "term": "Folder",
+      "definition": "A resource hierarchy node that groups projects; IAM and Organization Policy inherit through it, and it can serve as a cost-aggregation boundary.",
+      "exam_context": "Policy consistency and cost tracking per environment → Production and Development folders, not business-unit folders or labels.",
+      "lesson": 1
+    },
+    {
+      "term": "gcp.resourceLocations",
+      "definition": "An Organization Policy constraint that restricts the locations where resources can be created, using allowed values.",
+      "exam_context": "Data residency across the org → this constraint with allowed regions. An error mentioning [global] for Secret Manager means switch to user-managed replication.",
+      "lesson": 2
+    },
+    {
+      "term": "GKE release channels",
+      "definition": "Channels that control GKE version upgrades: Rapid (earliest), Regular (default balance), Stable (most mature) and Extended (longer minor-version support).",
+      "exam_context": "\"Prioritize stability\" → Stable for both staging and prod. Extended is not \"extra stable\".",
+      "lesson": 9
+    },
+    {
+      "term": "IAM Condition",
+      "definition": "An expression on an IAM role binding, such as a date/time range, that limits when or where the binding applies.",
+      "exam_context": "Temporary access (\"only during September\") → group + IAM Condition; access ends automatically without manual removal.",
+      "lesson": 3
+    },
+    {
+      "term": "iam.disableServiceAccountKeyCreation",
+      "definition": "An Organization Policy constraint that blocks creating user-managed service account keys.",
+      "exam_context": "Remove JSON key risk org-wide → enforce at the org; if a key is unavoidable, override on that one project only.",
+      "lesson": 2
+    },
+    {
+      "term": "iam.disableServiceAccountKeyUpload",
+      "definition": "An Organization Policy constraint that blocks uploading an externally generated public key to a service account.",
+      "exam_context": "A common distractor for key-creation questions; it blocks a different action.",
+      "lesson": 2
+    },
+    {
+      "term": "kpt",
+      "definition": "A tool for managing Kubernetes configuration as packages.",
+      "exam_context": "Matches questions about Kubernetes config packages, not VM images or release promotion.",
+      "lesson": 8
+    },
+    {
+      "term": "Kubernetes RBAC",
+      "definition": "Kubernetes role-based access control that grants permissions on cluster resources, scoped to namespaces or the whole cluster.",
+      "exam_context": "Restrict a team to its namespace → RBAC. IAP only protects HTTP(S) apps.",
+      "lesson": 9
+    },
+    {
+      "term": "Label",
+      "definition": "A key/value tag on resources that can be used to filter and break down billing exports.",
+      "exam_context": "Not an IAM or Org Policy attachment point; a distractor when the question needs policy inheritance.",
+      "lesson": 1
+    },
+    {
+      "term": "Log view",
+      "definition": "A subset of a log bucket that can be granted through IAM, so different teams see different logs without duplicating data.",
+      "exam_context": "Central log project where each team sees only its logs at low cost → per-team log views, not per-team BigQuery exports.",
+      "lesson": 4
+    },
+    {
+      "term": "Metrics scope",
+      "definition": "The list of monitored projects whose metrics a scoping project can view; the successor to Monitoring Workspaces.",
+      "exam_context": "Multi-project monitoring → a metrics scope in a dedicated scoping project; ordinary folders don't add projects automatically.",
+      "lesson": 5
+    },
+    {
+      "term": "Monitoring Viewer",
+      "definition": "An IAM role that grants read access to Cloud Monitoring data.",
+      "exam_context": "Granting it on the scoping project is enough to view all monitored projects; Project Viewer is too broad.",
+      "lesson": 5
+    },
+    {
+      "term": "Node service account",
+      "definition": "The service account attached to GKE nodes, whose credentials every Pod on the node can use.",
+      "exam_context": "Looks like the keyless answer but is a shared identity that violates least privilege for Pods.",
+      "lesson": 3
+    },
+    {
+      "term": "Organization policy",
+      "definition": "A guardrail made of constraints, set at the org, folder or project, that inherits down the hierarchy; a lower level can override the parent.",
+      "exam_context": "Preventive answer over detect-and-delete. When a policy blocks a create, change the resource configuration rather than relaxing the policy.",
+      "lesson": 2
+    },
+    {
+      "term": "Packer",
+      "definition": "A tool that builds VM images for multiple clouds from one configuration.",
+      "exam_context": "Multi-cloud VM image pipeline → Cloud Build + Packer.",
+      "lesson": 8
+    },
+    {
+      "term": "Policy Controller",
+      "definition": "A Gatekeeper-based admission controller that enforces and audits constraints defined by constraint templates; it decides what is allowed but doesn't install resources.",
+      "exam_context": "\"Prevent Pods that violate a security standard\" → Policy Controller; constraint templates in Git → Policy Controller + Config Sync.",
+      "lesson": 7
+    },
+    {
+      "term": "Preview link",
+      "definition": "A Code OSS feature in Cloud Workstations that gives authenticated browser access to an app on a workstation port.",
+      "exam_context": "View a web app running in a workstation → preview link; no public IP, bastion or IAP tunnel needed.",
+      "lesson": 11
+    },
+    {
+      "term": "Private Service Connect",
+      "definition": "A way to expose a single published service to consumers in other networks.",
+      "exam_context": "A distractor for department-to-department networking; it isn't general VPC-to-VPC connectivity.",
+      "lesson": 10
+    },
+    {
+      "term": "Quota (per project per region)",
+      "definition": "Limits on resource usage that Google Cloud enforces per project and per region.",
+      "exam_context": "Multi-region capacity planning → verify quota in each target region; machine-type choice is sizing, not capacity planning.",
+      "lesson": 12
+    },
+    {
+      "term": "roles/iam.workloadIdentityUser",
+      "definition": "The IAM role granted to a Kubernetes ServiceAccount on a Google service account so it can impersonate that GSA.",
+      "exam_context": "Part of the impersonation setup with the iam.gke.io/gcp-service-account annotation, used when the question asks for impersonation.",
+      "lesson": 3
+    },
+    {
+      "term": "roles/logging.privateLogViewer",
+      "definition": "A Logging role that can read private logs, including Data Access audit logs.",
+      "exam_context": "Security team needs read-only Data Access logs → privateLogViewer to a group; roles/logging.viewer can't see them.",
+      "lesson": 4
+    },
+    {
+      "term": "runningTimeout / idleTimeout",
+      "definition": "Cloud Workstations settings: idleTimeout stops a workstation after inactivity; runningTimeout stops it after a fixed runtime even when active.",
+      "exam_context": "Cost savings → idleTimeout. Forcing refresh to patched images → runningTimeout.",
+      "lesson": 11
+    },
+    {
+      "term": "Scoping project",
+      "definition": "The project that hosts a metrics scope plus its alert policies, dashboards and uptime checks; metric data stays in the source projects.",
+      "exam_context": "Use a new or resource-free project, one per environment boundary, not an existing prod workload project.",
+      "lesson": 5
+    },
+    {
+      "term": "Secret Manager replication",
+      "definition": "How a secret's replicas are placed: automatic replication requires the global location; user-managed replication lets you pick specific regions.",
+      "exam_context": "Under a gcp.resourceLocations policy that excludes global → use user-managed replication with replicas only in allowed regions.",
+      "lesson": 2
+    },
+    {
+      "term": "Terraform gcs backend",
+      "definition": "A remote Terraform state backend in Cloud Storage that shares state across runs and supports locking.",
+      "exam_context": "A new stack on every apply means missing shared state → configure a gcs backend. Never keep state in Git.",
+      "lesson": 6
+    },
+    {
+      "term": "VPC Network Peering",
+      "definition": "A connection between two VPC networks for private traffic; it is non-transitive and has per-network limits.",
+      "exam_context": "Selected for VPC-per-department connectivity only relative to the listed options; landing-zone guidance often favors Shared VPC or hub-and-spoke.",
+      "lesson": 10
+    },
+    {
+      "term": "Workload Identity Federation for GKE",
+      "definition": "A GKE feature that gives each Kubernetes ServiceAccount its own identity with short-lived credentials to call Google APIs, with no keys.",
+      "exam_context": "Pods → Google APIs, avoid long-lived credentials, per-workload permissions → Workload Identity, not a node SA or a JSON key in a Secret.",
+      "lesson": 3
+    },
+    {
+      "term": "Workstation configuration",
+      "definition": "A Cloud Workstations template defining image, IDE, machine type and storage, shared with a team; changes apply on next start.",
+      "exam_context": "Standardized team environment with ongoing patching → one configuration per team.",
+      "lesson": 11
+    }
+  ]
+}
