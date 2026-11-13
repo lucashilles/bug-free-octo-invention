@@ -248,3 +248,14 @@ a.card:hover { border-color: var(--accent); text-decoration: none; transform: tr
   body { background: #fff; color: #000; font-size: 12px; }
   a.cite { background: none; }
 }
+
+/* Certification switcher + landing page */
+.cert-switch { margin-bottom: 14px; }
+.cert-switch label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 4px 2px; }
+.cert-switch select {
+  width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); font: inherit; font-size: 14px;
+}
+body.no-cert .layout { grid-template-columns: minmax(0, 1fr); }
+body.no-cert .sidebar, body.no-cert .menu-btn, body.no-cert .scrim { display: none !important; }
+body.no-cert main { margin: 0 auto; }

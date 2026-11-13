@@ -3,24 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GCP DevOps Study</title>
+<title>GCP Certification Study</title>
 <link rel="stylesheet" href="assets/styles.css">
 <script>
-  try { var t = localStorage.getItem('gcpdevops-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  try { var t = localStorage.getItem('gcp-study-theme') || localStorage.getItem('gcpdevops-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="topbar">
   <button class="icon-btn menu-btn" id="menuBtn" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-  <a class="brand" href="#/"><span class="brand-mark">PCDOE</span><span class="brand-text">GCP DevOps Study</span></a>
-  <nav class="topnav" aria-label="Primary">
-    <a href="#/" data-nav="learn">Learn</a>
-    <a href="#/drill" data-nav="drill">Drill</a>
-    <a href="#/mock" data-nav="mock">Mock exam</a>
-    <a href="#/ref" data-nav="ref">Quick Reference</a>
-    <a href="#/glossary" data-nav="glossary">Glossary</a>
-  </nav>
+  <a class="brand" href="#/"><span class="brand-mark">GCP</span><span class="brand-text">GCP Certification Study</span></a>
+  <nav class="topnav" aria-label="Primary"></nav>
   <form class="search" id="searchForm" role="search">
     <input id="searchInput" type="search" placeholder="Search lessons, terms, questions…" aria-label="Search">
   </form>
@@ -31,7 +25,7 @@
   <div class="scrim" id="scrim"></div>
   <main id="main" tabindex="-1"></main>
 </div>
-<script src="assets/data.js"></script>
+<script src="assets/certs.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

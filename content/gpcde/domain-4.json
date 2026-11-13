@@ -1,0 +1,206 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "Application code on Google Cloud calls APIs as a service account, not as a person. This lesson covers Application Default Credentials, the metadata server and cross-project IAM grants, which together remove the need to ever distribute key files.",
+      "objectives": [
+        "Diagnose a 403 from application code by identifying the runtime identity and the missing resource-level role",
+        "Configure cross-project access by granting a home-project service account a role on the remote resource",
+        "Obtain credentials and runtime metadata from the metadata server instead of keys or hard-coded config",
+        "Choose the minimal BigQuery roles needed to run queries from a script"
+      ],
+      "takeaways": [
+        "On a 403, grant the narrowest role on the target resource to the identity the code runs as.",
+        "Use the attached service account with ADC. Key files, P12 files and API keys are always distractors.",
+        "No client library? Fetch a token from the metadata server and send it in the Authorization header.",
+        "The metadata server lives at metadata.google.internal and requires the Metadata-Flavor: Google header.",
+        "Running BigQuery queries needs Data Viewer plus Job User."
+      ]
+    },
+    "2": {
+      "summary": "Workload Identity is Google's recommended way for GKE Pods to call Google Cloud APIs. It binds a Kubernetes service account to a Google service account, so no keys are stored or rotated by hand.",
+      "objectives": [
+        "Describe how Workload Identity maps a Kubernetes service account to a Google service account",
+        "List the setup steps: enable on the cluster, bind with roles/iam.workloadIdentityUser, reference the KSA in the Deployment",
+        "Explain why node service accounts, Kubernetes Secrets and Secret Manager-held keys are weaker options"
+      ],
+      "takeaways": [
+        "GKE + Google API + best practice means Workload Identity, every time.",
+        "For a choose-two question, pick enabling Workload Identity on the cluster and binding the KSA to the GSA.",
+        "Any option that stores a service account key, however securely, is a distractor.",
+        "GKE RBAC governs Kubernetes resources, not access to Google Cloud APIs."
+      ]
+    },
+    "3": {
+      "summary": "When an application works with a user's own data, such as files in Google Drive, it must act on that user's behalf through OAuth 2.0. This lesson covers the authorization-code flow and why narrow scopes beat service accounts and domain-wide delegation.",
+      "objectives": [
+        "Pick an OAuth 2.0 client ID over API keys, service accounts or SAML for user-data access",
+        "Walk through the authorization-code flow, including the code-for-token exchange",
+        "Choose a minimal scope such as drive.file and reject domain-wide delegation"
+      ],
+      "takeaways": [
+        "Users' Drive means an OAuth client ID, the drive.file scope and an access token per user.",
+        "The flow is consent, then authorization code, then token exchange, then the API call.",
+        "Domain-wide delegation is excessive and doesn't fit users outside your domain.",
+        "Never collect or store users' Google passwords."
+      ]
+    },
+    "4": {
+      "summary": "Calls between services must be authorized explicitly. This lesson covers the Invoker role for functions, CORS headers for browser callers on another domain, and scheduling calls to internal-ingress Cloud Run.",
+      "objectives": [
+        "Restrict function invocation to authorized callers with an Invoker-role service account",
+        "Set Access-Control-Allow-Origin correctly for a cross-domain browser caller",
+        "Choose managed scheduling over VM cron or loosened ingress for internal Cloud Run services"
+      ],
+      "takeaways": [
+        "To invoke, the caller needs the Invoker role. Viewer can't invoke.",
+        "IAP protects user access to web apps, not service-to-service calls.",
+        "CORS allow-origin should be the exact calling page origin, never * or the function's own domain.",
+        "Don't loosen Cloud Run ingress to fix a scheduling 403."
+      ]
+    },
+    "5": {
+      "summary": "An API management layer sits in front of backends to authenticate callers, enforce quotas, collect metrics and version APIs. The bank uses Cloud Endpoints for versioning and gateway features, and Apigee for per-tier quotas and hostname routing by environment group.",
+      "objectives": [
+        "Select an API management layer when a question asks for authentication, quotas and metrics",
+        "Expose backward-incompatible API versions side by side through a gateway",
+        "Implement daily per-client limits with the Apigee Quota policy and API keys",
+        "Isolate Apigee environments by hostname using environment groups"
+      ],
+      "takeaways": [
+        "Auth, quota and metrics for API callers point to API management (Cloud Endpoints or Apigee).",
+        "Daily request limits per tier use the Apigee Quota policy. SpikeArrest only smooths bursts.",
+        "Hostnames attach to Apigee environment groups, with one group per environment for isolation.",
+        "For a breaking change, keep v1, deploy v2 separately and version through the gateway."
+      ]
+    },
+    "6": {
+      "summary": "Pub/Sub decouples producers from consumers. Topic and subscription design decides whether every consumer gets a copy of each message or the consumers share the work. This lesson covers fan-out, competing consumers, ordering keys, durability and log sinks.",
+      "objectives": [
+        "Design topic and subscription layouts for fan-out versus load sharing",
+        "Use ordering keys to keep per-entity updates in order",
+        "Introduce Pub/Sub to prevent loss when a downstream consumer fails",
+        "Route Cloud Logging entries to several real-time consumers through a Pub/Sub sink"
+      ],
+      "takeaways": [
+        "One subscription per consumer that needs every message. One shared pull subscription for workers that split the load.",
+        "Per-key ordering means a pull subscription with message ordering and an ordering key such as the stock symbol.",
+        "To stop losing emails or events, publish to Pub/Sub and let the consumer read from it.",
+        "Pay only when messages arrive by using a function with a Pub/Sub trigger.",
+        "Multiple real-time log consumers read from a Logging sink to Pub/Sub."
+      ]
+    },
+    "7": {
+      "summary": "Google Cloud offers several ways to react to events and coordinate steps: Cloud Storage notifications, Eventarc, audit-log triggers, Workflows and Cloud Scheduler. This lesson maps each requirement to the lightest-weight managed option.",
+      "objectives": [
+        "Publish bucket changes to Pub/Sub with built-in notifications rather than custom code",
+        "Route events to Cloud Run with Eventarc triggers",
+        "Use audit-log triggers to react to resource creation without changing how resources are provisioned",
+        "Orchestrate functions with Workflows conditional jumps instead of Cloud Composer"
+      ],
+      "takeaways": [
+        "Minimal-effort bucket change to topic means Cloud Storage Pub/Sub notifications.",
+        "Flexible event routing to Cloud Run means Eventarc. Cloud Build is not a runtime.",
+        "Auto-fix newly created resources with an audit-log trigger and a function, not a periodic poller.",
+        "Low-latency branching between function steps means Workflows, not Composer."
+      ]
+    },
+    "8": {
+      "summary": "Applications use Cloud Storage for uploads, downloads and sharing. Signed URLs give time-limited access without Google accounts, and request-rate ramp-up and exponential backoff keep calls reliable under load. The lesson also covers metadata retrieval and folder conventions.",
+      "objectives": [
+        "Use signed URLs for time-limited downloads, direct client uploads and external sharing",
+        "Handle 429 and 5xx responses with truncated exponential backoff and gradual ramp-up",
+        "Retrieve only selected object metadata with the fields parameter",
+        "Create empty folder placeholders with trailing-slash object names"
+      ],
+      "takeaways": [
+        "Limited time, outside users or large direct uploads all point to signed URLs.",
+        "429 or 503 means retry with truncated exponential backoff at increasing intervals.",
+        "A cold bucket hit by a sudden spike needs a gradual ramp-up of request rate.",
+        "allUsers, IAP or IP allowlists are wrong for private objects served to anonymous users.",
+        "Partial metadata uses the fields parameter. An empty folder is a zero-byte object ending in /."
+      ]
+    },
+    "9": {
+      "summary": "Application code must use operational databases efficiently. This lesson covers Spanner read types and client libraries, Firestore pagination and handling 429 errors, how to report storage failures to callers, and basic SQL set operations.",
+      "objectives": [
+        "Choose stale single reads in Spanner when latency matters more than consistency",
+        "Paginate Firestore queries with cursors instead of offsets",
+        "Mitigate Firestore RESOURCE_EXHAUSTED errors through query optimization and exponential backoff",
+        "Return accurate HTTP status codes when a backend write fails"
+      ],
+      "takeaways": [
+        "Spanner latency over consistency means stale reads with single-read methods.",
+        "Use Cloud Client Libraries rather than generic API clients or custom gRPC.",
+        "Large Firestore result sets need cursors. Offsets still scan the skipped entities.",
+        "Firestore 429 calls for fewer reads and writes plus exponential backoff, never fixed backoff.",
+        "UNION removes duplicates. UNION ALL keeps them."
+      ]
+    },
+    "10": {
+      "summary": "Analytics workloads land data in BigQuery, usually through Pub/Sub and Dataflow for streams. This lesson covers streaming inserts, Storage Write API stream types, batch query priority and the IAM needed to query.",
+      "objectives": [
+        "Choose BigQuery as the sink when users need SQL analytics on fresh data",
+        "Build a Pub/Sub to Dataflow to BigQuery pipeline for high-volume streams",
+        "Avoid duplicates with a committed-type Storage Write API stream",
+        "Use batch query priority so low-priority work doesn't impede critical jobs"
+      ],
+      "takeaways": [
+        "Analysts, SQL and aggregation mean landing the data in BigQuery.",
+        "High-volume streams with transformations or counts use Pub/Sub, Dataflow and BigQuery.",
+        "Use a committed-type write stream to prevent duplicates with the Storage Write API.",
+        "Queries where duration doesn't matter should run at batch priority."
+      ]
+    },
+    "11": {
+      "summary": "Integration also depends on tooling and network paths: gcloud filtering, Cloud Client Libraries, Private Google Access for VMs without external IPs, Service Directory for runtime discovery, and Traffic Director for resilient multi-cluster connections.",
+      "objectives": [
+        "Filter resource listings at the source with the gcloud --filter flag",
+        "Enable Private Google Access so VMs without external IPs can reach Google APIs",
+        "Use Service Directory to register and discover services at runtime",
+        "Recognize Traffic Director with sidecar proxies for connections to services spread across GKE clusters"
+      ],
+      "takeaways": [
+        "No external IP plus a Google API means Private Google Access, not any kind of peering.",
+        "Register at deploy time and look up at runtime with Service Directory.",
+        "Filter gcloud output with --filter instead of filtering in your own code.",
+        "Copy local files to a bucket with the Cloud Storage CLI, not gcloud dataproc or hadoop fs."
+      ]
+    }
+  },
+  "glossary": [
+    {"term": "Access-Control-Allow-Origin", "definition": "CORS response header that tells the browser which origin may read the response to a cross-origin request.", "exam_context": "Set it to the exact page origin (https://www.example.com), not *, a wildcard subdomain or the function's own domain.", "lesson": 4},
+    {"term": "Apigee environment group", "definition": "A set of Apigee environments that share a list of hostnames. Requests are routed by hostname to the environments attached to the group.", "exam_context": "To make each environment reachable only through its own URL, put each environment in its own group and add the hostname to that group.", "lesson": 5},
+    {"term": "Apigee Quota policy", "definition": "An Apigee policy that caps how many requests a client, usually identified by API key, can make in a time interval such as a day.", "exam_context": "It's the answer for per-tier daily limits. SpikeArrest is the distractor because it only smooths bursts.", "lesson": 5},
+    {"term": "Application Default Credentials (ADC)", "definition": "The strategy client libraries use to find credentials automatically, such as the service account attached to the runtime.", "exam_context": "The recommended way for VM-hosted apps to authenticate, instead of distributing JSON or P12 keys.", "lesson": 1},
+    {"term": "BigQuery batch query", "definition": "A query run at batch priority. It is queued and starts when resources are available, rather than immediately.", "exam_context": "For a user who doesn't care about duration but mustn't impede important workloads.", "lesson": 10},
+    {"term": "BigQuery Job User", "definition": "IAM role that lets a principal create jobs, including query jobs, in a project.", "exam_context": "Combined with Data Viewer, it fixes permission errors when a service account runs queries through the CLI.", "lesson": 1},
+    {"term": "BigQuery Storage Write API", "definition": "A high-throughput API for streaming rows into BigQuery through write streams of different types.", "exam_context": "Create a committed-type stream to avoid duplicate rows without building your own dedup layer.", "lesson": 10},
+    {"term": "Cloud Client Libraries", "definition": "Google's idiomatic, per-language libraries for Google Cloud services. They handle connections, retries and authentication.", "exam_context": "The recommended choice over generic Google API Client Libraries or custom gRPC/HTTP clients, for example with Spanner from Go.", "lesson": 9},
+    {"term": "Cloud Endpoints", "definition": "An API management service that adds authentication, quotas, monitoring and versioning in front of backends.", "exam_context": "The answer when an architecture needs auth, quotas and metrics for API callers, or a versioned API over two Cloud Functions.", "lesson": 5},
+    {"term": "Cloud Functions Invoker", "definition": "IAM role that grants permission to call (invoke) a Cloud Function.", "exam_context": "Grant it to the calling service account so only authorized services can invoke a sensitive function. Viewer can't invoke.", "lesson": 4},
+    {"term": "Cloud Scheduler", "definition": "Managed cron service that triggers HTTP targets or Pub/Sub topics on a schedule.", "exam_context": "Preferred over cron on VMs for scheduled invocations of Cloud Run.", "lesson": 7},
+    {"term": "Cloud Storage Pub/Sub notifications", "definition": "A bucket setting that publishes a message to a Pub/Sub topic when objects change.", "exam_context": "The minimal-effort answer for publishing a message whenever a report is uploaded, with no code to write.", "lesson": 7},
+    {"term": "Cursor (Firestore/Datastore)", "definition": "An opaque position marker returned by a query, used to start the next page where the last one ended.", "exam_context": "Use cursors rather than offsets or more memory to stop memory blow-ups when listing many entities.", "lesson": 9},
+    {"term": "Dataflow", "definition": "Managed Apache Beam service for batch and streaming data processing.", "exam_context": "The middle of Pub/Sub → Dataflow → BigQuery pipelines for near real-time SQL analytics and windowed counts.", "lesson": 10},
+    {"term": "Domain-wide delegation", "definition": "Workspace feature that lets an app or service account impersonate any user in a domain.", "exam_context": "A distractor for accessing users' Drive files, because it's excessive and doesn't cover users outside the domain.", "lesson": 3},
+    {"term": "drive.file scope", "definition": "The OAuth scope https://www.googleapis.com/auth/drive.file, which limits an app to files it creates or opens.", "exam_context": "Pair it with an OAuth client ID to get a per-user access token for saving files to users' Drives.", "lesson": 3},
+    {"term": "Eventarc", "definition": "Service that routes events from Google Cloud sources, audit logs and Pub/Sub to targets such as Cloud Run, using triggers.", "exam_context": "Keyed for flexible, team-maintainable Cloud Storage triggers targeting Cloud Run.", "lesson": 7},
+    {"term": "Exponential backoff", "definition": "A retry strategy that waits progressively longer between attempts, usually truncated at a maximum delay or attempt count.", "exam_context": "The answer for 429 and 503 errors from Cloud Storage or Firestore. Fixed or decreasing intervals are wrong.", "lesson": 8},
+    {"term": "fields request parameter", "definition": "A JSON API parameter that returns only the requested properties of a resource.", "exam_context": "Retrieve only specific object metadata quickly, rather than using patch, compose or copy.", "lesson": 8},
+    {"term": "Metadata server", "definition": "An endpoint inside each instance (metadata.google.internal, header Metadata-Flavor: Google) that serves project and instance metadata and access tokens.", "exam_context": "Read the project ID and region on Cloud Run, or get a token for raw REST calls when no client library exists.", "lesson": 1},
+    {"term": "OAuth 2.0 authorization-code flow", "definition": "Flow in which the user consents on Google's screen, the app receives an authorization code, and the app exchanges the code for an access token.", "exam_context": "The correct option includes the code-for-token exchange. Options that use the code directly or collect passwords are wrong.", "lesson": 3},
+    {"term": "OAuth client ID", "definition": "Credentials that identify an application in OAuth 2.0 flows, used to obtain user-authorized access tokens.", "exam_context": "Required when a web app accesses users' Google Drive. API keys, service accounts and SAML are distractors.", "lesson": 3},
+    {"term": "Ordering key", "definition": "A Pub/Sub message attribute. On a subscription with ordering enabled, messages that share the key are delivered in publish order.", "exam_context": "Use the stock symbol as the ordering key so price updates per symbol apply in order.", "lesson": 6},
+    {"term": "Private Google Access", "definition": "A subnet setting that lets VMs with only internal IPs reach Google APIs and services.", "exam_context": "The answer for a VM without an external IP calling Cloud Storage, rather than any peering option.", "lesson": 11},
+    {"term": "Pull subscription", "definition": "A Pub/Sub subscription where subscribers request messages. Several subscribers on one subscription share the messages.", "exam_context": "One shared pull subscription lets a pool of workers split the load without duplicates.", "lesson": 6},
+    {"term": "Request rate ramp-up", "definition": "Cloud Storage guidance to increase request rates on a bucket gradually so the service can scale its capacity.", "exam_context": "The fix for 429/5xx errors when a dormant bucket suddenly gets thousands of requests per second.", "lesson": 8},
+    {"term": "Service Directory", "definition": "Managed service registry where services register endpoints and clients look them up at runtime.", "exam_context": "Replaces hand-maintained environment variables for inter-service discovery between Cloud Run and Cloud Functions.", "lesson": 11},
+    {"term": "Signed URL", "definition": "A URL that carries a cryptographic signature and expiry, granting time-limited access to a specific Cloud Storage object to anyone holding it.", "exam_context": "The answer for temporary downloads, direct large uploads, anonymous users and sharing with outsiders with a custom expiry.", "lesson": 8},
+    {"term": "Stale read (Spanner)", "definition": "A Spanner read at a past timestamp that can be served without leader coordination, which lowers latency.", "exam_context": "Pick stale reads with single-read methods when latency matters more than consistency.", "lesson": 9},
+    {"term": "Subscription fan-out", "definition": "Attaching several subscriptions to one topic so that each subscription receives its own copy of every message.", "exam_context": "One topic with a subscription per downstream team or sink, as in timesheet steps or Cloud Storage + BigQuery writers.", "lesson": 6},
+    {"term": "Traffic Director", "definition": "Google's managed control plane for service mesh traffic. It configures sidecar or proxyless clients and is now part of Cloud Service Mesh.", "exam_context": "Keyed with a sidecar proxy for a resilient connection to a legacy service spread across two regional GKE clusters.", "lesson": 11},
+    {"term": "UNION", "definition": "A SQL set operator that appends the rows of two queries and removes duplicate rows.", "exam_context": "Pick UNION over UNION ALL (keeps duplicates) or JOIN (combines columns) to merge two matching tables without duplicates.", "lesson": 9},
+    {"term": "Workflows", "definition": "Serverless orchestration service that runs ordered steps calling services and APIs, with conditions and branching.", "exam_context": "Use conditional jumps in Workflows, not Cloud Composer, for low-latency orchestration of Cloud Functions.", "lesson": 7},
+    {"term": "Workload Identity", "definition": "GKE feature that lets a Kubernetes service account act as a Google service account, bound with roles/iam.workloadIdentityUser.", "exam_context": "The recommended answer whenever GKE workloads need Google Cloud API access, instead of keys, Secrets or node service accounts.", "lesson": 2}
+  ]
+}

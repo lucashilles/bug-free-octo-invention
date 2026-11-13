@@ -1,0 +1,375 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson compares Cloud Run, Cloud Functions, App Engine, GKE and Compute Engine for cloud-native workloads. Exam questions reward the platform that scales to zero and minimizes operations, which is usually Cloud Run, unless the stem names a specific constraint.",
+      "objectives": [
+        "Pick Cloud Run for stateless, spiky, gRPC or Knative-based workloads and justify it over GKE and Compute Engine.",
+        "Explain why App Engine flexible and managed instance groups cost more for intermittent traffic.",
+        "Design a multi-path API from separate Cloud Functions behind an HTTPS load balancer.",
+        "Route application errors to Error Reporting with minimal setup."
+      ],
+      "takeaways": [
+        "Unpredictable traffic + minimize cost + stateless → Cloud Run with Firestore.",
+        "Knative in the stem → Cloud Run.",
+        "gRPC API that fans out asynchronously → Cloud Run publishing to Pub/Sub, not self-managed Kafka.",
+        "Log errors to stderr and Error Reporting picks them up automatically.",
+        "App Engine flexible always keeps minimum instances, so it is never free while idle."
+      ]
+    },
+    "2": {
+      "summary": "This lesson maps requirements to Cloud SQL, Spanner, Firestore, Bigtable and BigQuery. Questions hinge on keywords such as existing MySQL schema, global consistency, offline sync and flexible schema.",
+      "objectives": [
+        "Choose between Cloud SQL and Spanner based on scale, geography and administrative effort.",
+        "Identify when Firestore Native mode is required for offline persistence and real-time listeners.",
+        "Rule out Bigtable and BigQuery for transactional mobile and web app data.",
+        "Pair a database choice with the least-privilege IAM role for it."
+      ],
+      "takeaways": [
+        "Existing MySQL + small ops team → Cloud SQL; Spanner is overkill without a global need.",
+        "Global strong consistency and high availability → Spanner.",
+        "Offline, sync across devices, real-time updates → Firestore Native mode.",
+        "Schema that keeps changing per user → Firestore's document model.",
+        "Mobile backend writing to Firestore → roles/datastore.user, not datastore.viewer."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers key and schema design that avoids hotspots in Spanner and Bigtable, and data modeling for unbounded relationships in Firestore. Many questions are about spotting a monotonically increasing key.",
+      "objectives": [
+        "Diagnose non-linear Spanner scaling caused by monotonically increasing primary keys.",
+        "Design Bigtable row keys that are both evenly distributed and human-readable.",
+        "Model one-to-many relationships with Spanner interleaved tables and Firestore subcollections.",
+        "Explain the Firestore 1 MB document limit and its effect on schema choices."
+      ],
+      "takeaways": [
+        "UUIDv1 and auto-increment keys hotspot Spanner; use random UUIDs.",
+        "Bigtable readable + even keys → concatenate several attributes; hashes aren't readable.",
+        "Search Spanner customers by phone → interleaved Phones table plus an index on the phone column.",
+        "Unbounded comments or posts → a Firestore subcollection, never an array field."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers the availability patterns the exam tests: GKE regional clusters, Spanner multi-region configurations, Bigtable multi-cluster routing, and one component per container with health probes.",
+      "objectives": [
+        "Distinguish GKE zonal, multi-zonal and regional clusters by how they handle a zone failure.",
+        "Select a Spanner configuration for five-nines availability and low global read latency.",
+        "Improve Bigtable availability with app profile routing.",
+        "Containerize a multi-component stack following Google's availability best practices."
+      ],
+      "takeaways": [
+        "Zone outage took down the GKE API → regional cluster; multi-zonal still has a single-zone control plane.",
+        "Worldwide five nines → multi-continent Spanner config such as nam-asia-eur1.",
+        "Bigtable manual failover → switch the app profile to multi-cluster routing.",
+        "One process per container plus readiness and liveness probes."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers Cloud Storage classes, lifecycle rules, retention policies and Bucket Lock, plus shared read-only disks, CDN for images, and BigQuery residency and access control. Questions usually ask you to combine one compliance feature with one cost feature.",
+      "objectives": [
+        "Combine a retention policy with a lifecycle rule to meet retention and cost requirements together.",
+        "Choose the right colder storage class from the stated access pattern.",
+        "Share large read-only datasets across a managed instance group efficiently.",
+        "Meet BigQuery data residency and deletion requirements, and restrict access by department."
+      ],
+      "takeaways": [
+        "Keep N years → retention policy or Bucket Lock; reduce cost → lifecycle rule to Coldline or Archive.",
+        "Native lifecycle rules beat Cloud Functions, schedulers and scripts that move objects.",
+        "Object Versioning and IAM Conditions don't enforce retention.",
+        "Many VMs need the same read-only data → one persistent disk attached read-only to all of them.",
+        "EU residency in BigQuery → an EU-region dataset; deletion requests → DML statements."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers how to break up a monolith safely and how to design the APIs between the resulting services. It includes phased migration, contracts and versioning, gRPC for mobile, Ingress-based version routing, header-based routing and asynchronous UI calls.",
+      "objectives": [
+        "Plan a phased monolith-to-microservices migration and choose a low-risk first service.",
+        "Identify the design aspects that matter most for composable microservices.",
+        "Choose gRPC, REST, MQTT or SOAP based on bandwidth and client requirements.",
+        "Route traffic to versioned or header-selected backends without breaking consumers."
+      ],
+      "takeaways": [
+        "Migrate gradually (Strangler Fig); start with a loosely coupled feature like the product catalog.",
+        "Microservice priorities: an API contract and a versioning scheme.",
+        "HTTPS + low bandwidth + mobile → gRPC with Protocol Buffers.",
+        "Protect API consumers on GKE → Ingress routing by versioned URL path.",
+        "Slow third-party data in a SPA → async request and hide the widget on error."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers workload identity and human access: dedicated service accounts, custom and narrow predefined roles, cross-project grants, Cloud SQL Client, group-based access and Workforce Identity Federation.",
+      "objectives": [
+        "Assign a dedicated user-managed service account with the narrowest role to Cloud Run and Cloud Functions workloads.",
+        "Grant cross-project access by binding a role on the target resource.",
+        "Select the correct role for applications connecting to Cloud SQL.",
+        "Choose between Workforce and Workload Identity Federation."
+      ],
+      "takeaways": [
+        "Default compute and App Engine service accounts and basic roles are always the distractors.",
+        "The deployer gets act-as on the runtime service account, not its access token.",
+        "Function in Project A writing to a bucket in Project B → SA in A with objectCreator on B's bucket.",
+        "Apps that connect to Cloud SQL get the Cloud SQL Client role.",
+        "Employees from an external IdP into the console → Workforce Identity Federation."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers how to expose applications safely and connect them across networks: TLS on load balancers, Identity-Aware Proxy for web and SSH, mTLS through a service mesh, external Application Load Balancers for latency, and cross-project database connectivity.",
+      "objectives": [
+        "Choose between a managed-certificate load balancer and IAP from the authentication requirement.",
+        "Provide administrative SSH access without public IPs or bastion hosts.",
+        "Encrypt in-cluster GKE traffic with minimal application changes.",
+        "Choose a load balancer that minimizes time to first byte for HTTP clients."
+      ],
+      "takeaways": [
+        "Public and unauthenticated but encrypted → HTTPS load balancer with a Google-managed certificate.",
+        "Workspace employees from anywhere → HTTPS load balancer + IAP.",
+        "SSH to private VMs → IAP TCP forwarding, not a bastion host.",
+        "Encrypt pod-to-pod traffic → service mesh sidecars with mutual TLS; Network Policies don't encrypt.",
+        "Lowest TTFB for HTTP devices → MIG behind an external Application Load Balancer."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers where sessions and carts belong and how to take load off an overwhelmed database. The usual answer pairs Memorystore with Firestore for state, and Apigee, Redis caching and exponential backoff for API load.",
+      "objectives": [
+        "Store session data and persistent cart data in the appropriate managed services.",
+        "Relieve an overloaded Cloud SQL backend with caching and API management.",
+        "Tell when Cloud CDN fits (static content) and when it doesn't (dynamic API responses).",
+        "Apply retry with exponential backoff appropriately."
+      ],
+      "takeaways": [
+        "Sessions with idle expiry → Memorystore; carts that survive logout → Firestore.",
+        "Overwhelmed Cloud SQL behind an API → Apigee + Memorystore for Redis + exponential backoff.",
+        "Cloud CDN + Cloud Storage for images, not for database-backed API responses.",
+        "Pub/Sub, BigQuery and Cloud Storage files are not session stores."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "AlloyDB",
+      "definition": "Google Cloud's managed PostgreSQL-compatible database service.",
+      "exam_context": "Appears in a cross-project connectivity question where the key is a Shared VPC rather than service account keys or extra firewall rules.",
+      "lesson": 8
+    },
+    {
+      "term": "Apigee",
+      "definition": "Google Cloud's API management platform, providing traffic control, rate limiting, caching, monitoring and analytics for APIs.",
+      "exam_context": "Paired with Memorystore and exponential backoff to protect an overwhelmed Cloud SQL backend.",
+      "lesson": 9
+    },
+    {
+      "term": "Authorized view",
+      "definition": "A BigQuery view that is granted access to a source dataset so users can query the view's filtered rows without access to the underlying tables.",
+      "exam_context": "Used to limit employees to their own department's rows in a shared Master dataset.",
+      "lesson": 5
+    },
+    {
+      "term": "Bigtable app profile",
+      "definition": "Settings that control how an application's requests are routed to the clusters of a Bigtable instance, using single-cluster or multi-cluster routing.",
+      "exam_context": "Switching from single-cluster routing with manual failover to multi-cluster routing is the high-availability fix.",
+      "lesson": 4
+    },
+    {
+      "term": "Bigtable row key",
+      "definition": "The single indexed key of a Bigtable row; its design determines how load spreads across nodes.",
+      "exam_context": "Concatenating readable attributes gives an even spread with readable keys; sequential IDs and timestamps cause hotspots.",
+      "lesson": 3
+    },
+    {
+      "term": "Bucket Lock",
+      "definition": "A Cloud Storage feature that locks a bucket's retention policy so objects can't be deleted or replaced before the retention period ends.",
+      "exam_context": "Combined with a lifecycle rule to meet multi-year retention and cost goals.",
+      "lesson": 5
+    },
+    {
+      "term": "Cloud CDN",
+      "definition": "Google's edge caching service, which serves cached content from locations close to users.",
+      "exam_context": "With Cloud Storage as the backend it is the cheap, fast way to serve images, but not dynamic API responses.",
+      "lesson": 9
+    },
+    {
+      "term": "Cloud Run",
+      "definition": "A fully managed serverless platform, built on Knative, for running stateless containers that scale automatically, including to zero.",
+      "exam_context": "The default answer for spiky traffic, Knative migrations, gRPC APIs and low-ops modernization.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud SQL Auth Proxy",
+      "definition": "A connector that provides authorized, encrypted connections from applications to Cloud SQL instances using IAM.",
+      "exam_context": "The service account running it needs the Cloud SQL Client role (or the connect permission), never Editor or Owner.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud SQL Client role",
+      "definition": "The predefined role roles/cloudsql.client, which grants the permissions needed to connect to Cloud SQL instances.",
+      "exam_context": "The least-privilege answer for VMs and GKE workloads that talk to Cloud SQL.",
+      "lesson": 7
+    },
+    {
+      "term": "Coldline Storage",
+      "definition": "A low-cost Cloud Storage class for data accessed rarely, cheaper to store than Nearline.",
+      "exam_context": "Logs reviewed for two weeks and then only yearly move to Coldline via a lifecycle rule after 14 days.",
+      "lesson": 5
+    },
+    {
+      "term": "Exponential backoff",
+      "definition": "A retry strategy where the wait between retries grows exponentially to avoid overwhelming a struggling service.",
+      "exam_context": "Part of the fix for an overloaded backend, but unbounded retries in a UI widget are a trap.",
+      "lesson": 9
+    },
+    {
+      "term": "Firestore Native mode",
+      "definition": "Firestore's document database mode, with real-time listeners, offline persistence in client libraries, and ACID transactions.",
+      "exam_context": "Chosen whenever a mobile or web app needs offline sync, real-time updates or a flexible schema.",
+      "lesson": 2
+    },
+    {
+      "term": "Firestore subcollection",
+      "definition": "A collection nested under a document, used to hold an unbounded set of related child documents.",
+      "exam_context": "Comments under articles and posts under user profiles belong in subcollections, not arrays.",
+      "lesson": 3
+    },
+    {
+      "term": "Google-managed SSL certificate",
+      "definition": "A TLS certificate that Google provisions and renews automatically for a load balancer.",
+      "exam_context": "Encrypts a public dashboard that must stay reachable without authentication.",
+      "lesson": 8
+    },
+    {
+      "term": "gRPC",
+      "definition": "A high-performance RPC framework that uses HTTP/2 and compact Protocol Buffers serialization, with generated client code for many languages.",
+      "exam_context": "The answer when an API needs HTTPS, minimal bandwidth and easy mobile integration.",
+      "lesson": 6
+    },
+    {
+      "term": "Identity-Aware Proxy (IAP)",
+      "definition": "A service that checks user identity and context before allowing access to web apps or TCP resources such as SSH.",
+      "exam_context": "Used for employee-only apps and SSH without public IPs, and rejected when access must be unauthenticated.",
+      "lesson": 8
+    },
+    {
+      "term": "Ingress",
+      "definition": "A Kubernetes resource that routes external HTTP(S) traffic to Services based on hosts and URL paths; on GKE it provisions a Google Cloud load balancer.",
+      "exam_context": "Routes versioned API URLs to separate backends so new releases don't break consumers.",
+      "lesson": 6
+    },
+    {
+      "term": "Interleaved table",
+      "definition": "A Spanner child table whose rows are physically stored with their parent row, sharing the parent's primary key prefix.",
+      "exam_context": "A Phones table interleaved in Customers, plus an index on phone number, enables searching customers by phone.",
+      "lesson": 3
+    },
+    {
+      "term": "Knative",
+      "definition": "An open-source Kubernetes-based platform for serverless workloads that Cloud Run is built on.",
+      "exam_context": "Migrating from on-prem Knative without changing the deployment strategy points to Cloud Run.",
+      "lesson": 1
+    },
+    {
+      "term": "Liveness and readiness probes",
+      "definition": "Kubernetes health checks: liveness restarts a stuck container, and readiness controls whether it receives traffic.",
+      "exam_context": "Required alongside one-component-per-container when containerizing a LAMP stack for availability.",
+      "lesson": 4
+    },
+    {
+      "term": "Memorystore",
+      "definition": "Google Cloud's managed in-memory data store service for Redis and Memcached.",
+      "exam_context": "Holds session data with expiry, and caches hot reads in front of Cloud SQL.",
+      "lesson": 9
+    },
+    {
+      "term": "Multi-cluster routing",
+      "definition": "A Bigtable app profile policy that sends requests to the nearest available cluster and fails over automatically.",
+      "exam_context": "Replaces single-cluster routing with manual failover to improve availability.",
+      "lesson": 4
+    },
+    {
+      "term": "Mutual TLS (mTLS)",
+      "definition": "TLS in which both client and server authenticate with certificates, encrypting service-to-service traffic.",
+      "exam_context": "Enabled through a service mesh's sidecar proxies to encrypt GKE traffic without changing application code.",
+      "lesson": 8
+    },
+    {
+      "term": "Object Lifecycle Management",
+      "definition": "Cloud Storage rules that automatically change an object's storage class or delete it based on conditions such as age.",
+      "exam_context": "Preferred over scheduled jobs or Cloud Functions for moving aging data to Coldline or Archive.",
+      "lesson": 5
+    },
+    {
+      "term": "Pub/Sub",
+      "definition": "Google Cloud's managed asynchronous messaging service for decoupling publishers from multiple subscribers.",
+      "exam_context": "Beats self-managed Kafka for async fan-out, but is wrong as a session store or to speed up synchronous APIs.",
+      "lesson": 6
+    },
+    {
+      "term": "Read-only persistent disk",
+      "definition": "A Compute Engine persistent disk attached in read-only mode to multiple VMs at once.",
+      "exam_context": "The fast, low-cost way to give a managed instance group a large shared read-only dataset.",
+      "lesson": 5
+    },
+    {
+      "term": "Regional GKE cluster",
+      "definition": "A GKE cluster whose control plane and nodes are replicated across multiple zones in a region.",
+      "exam_context": "The fix after a zone failure caused a GKE API outage; multi-zonal clusters still have a single-zone control plane.",
+      "lesson": 4
+    },
+    {
+      "term": "Retention policy",
+      "definition": "A Cloud Storage bucket setting that prevents deleting or modifying objects until they reach a minimum age.",
+      "exam_context": "Meets requirements such as keeping data accessible for at least 7 years.",
+      "lesson": 5
+    },
+    {
+      "term": "Service account impersonation (act as)",
+      "definition": "Permission for a principal to deploy or run resources as a service account without holding its keys or tokens.",
+      "exam_context": "The deployer of a Cloud Function gets act-as on the function's service account, not access-token rights.",
+      "lesson": 7
+    },
+    {
+      "term": "Shared VPC",
+      "definition": "A setup where a host project shares its VPC network with attached service projects.",
+      "exam_context": "The keyed way to connect an application and AlloyDB that live in separate projects.",
+      "lesson": 8
+    },
+    {
+      "term": "Spanner",
+      "definition": "Google Cloud's globally distributed, strongly consistent, horizontally scalable relational database.",
+      "exam_context": "Chosen for global consistency and five nines; its keys must avoid monotonically increasing values.",
+      "lesson": 2
+    },
+    {
+      "term": "Spanner multi-region configuration",
+      "definition": "A predefined Spanner instance configuration, such as nam-asia-eur1, that replicates data across several regions.",
+      "exam_context": "A multi-continent configuration plus enough nodes gives worldwide low-latency reads and 99.999% availability.",
+      "lesson": 4
+    },
+    {
+      "term": "Strangler Fig pattern",
+      "definition": "A migration approach that gradually replaces a monolith's features with new services while both run side by side.",
+      "exam_context": "The answer to monolith-to-microservices migration with minimal business impact.",
+      "lesson": 6
+    },
+    {
+      "term": "Traffic Director",
+      "definition": "Google Cloud's managed control plane for service mesh traffic, supporting advanced routing such as HTTP header matching across regions.",
+      "exam_context": "Chosen to call different backend implementations based on an HTTP header value.",
+      "lesson": 6
+    },
+    {
+      "term": "User-managed service account",
+      "definition": "A service account you create for a specific workload, as opposed to default service accounts created automatically.",
+      "exam_context": "Every least-privilege question expects a dedicated user-managed service account with a narrow or custom role.",
+      "lesson": 7
+    },
+    {
+      "term": "UUID primary key",
+      "definition": "A universally unique identifier used as a key; random (v4) UUIDs spread writes, while time-based v1 UUIDs increase monotonically.",
+      "exam_context": "Random UUID keys avoid Spanner hotspots; UUIDv1 explains non-linear scaling.",
+      "lesson": 3
+    },
+    {
+      "term": "Workforce Identity Federation",
+      "definition": "An IAM feature that lets users from an external identity provider access Google Cloud, including the console, without Google accounts.",
+      "exam_context": "The answer for employee console access through an external IdP with attribute mapping; Workload Identity Federation is the workload distractor.",
+      "lesson": 7
+    }
+  ]
+}

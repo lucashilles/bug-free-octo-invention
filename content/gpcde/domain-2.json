@@ -1,0 +1,350 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "Covers where developers write code and how they collaborate: Cloud Shell, Cloud Code, Cloud Workstations, multi-cluster kubectl access and branching strategy. Exam items describe a constraint, such as no local code, a specific IDE or VPC security controls, and ask which environment fits.",
+      "objectives": [
+        "Choose between Cloud Shell, Cloud Code and Cloud Workstations from a scenario's constraints",
+        "Configure developer access to multiple GKE clusters with kubeconfig contexts",
+        "Explain why trunk-based development reduces merge conflicts in rapid release cycles",
+        "Pick an efficient data structure for per-key aggregation tasks"
+      ],
+      "takeaways": [
+        "No source code allowed on the local machine: Cloud Shell and its editor.",
+        "VS Code or IntelliJ plus GKE: Cloud Code.",
+        "Secure VPC dev environments with custom tools: Cloud Workstations with centrally managed images rebuilt weekly.",
+        "Rapid releases with minimal merge conflicts: trunk-based development.",
+        "Summing values per account number: a hash table."
+      ]
+    },
+    "2": {
+      "summary": "Shows how to test against Google Cloud services locally with emulators, the Functions Framework and Minikube with Skaffold. It also covers the limits of emulators, most importantly that they say nothing about performance.",
+      "objectives": [
+        "Run the Pub/Sub emulator and point an application at it with PUBSUB_EMULATOR_HOST",
+        "Design safe local integration tests with predefined, non-production test messages",
+        "Test event-driven Cloud Functions locally with the Functions Framework",
+        "Set up a local Kubernetes loop with Minikube and Skaffold that mirrors production"
+      ],
+      "takeaways": [
+        "Pub/Sub emulator is reached via the PUBSUB_EMULATOR_HOST environment variable, not an endpoint override.",
+        "Pub/Sub ordering unit tests: use the emulator rather than mocks or per-tester topics.",
+        "Never replay production messages, especially sensitive data, into tests.",
+        "Minikube + Skaffold for automated local build and deploy that mirrors GKE.",
+        "Emulators are for functional tests, not performance benchmarks."
+      ]
+    },
+    "3": {
+      "summary": "Covers the ways to produce container images: Buildpacks, gcloud run deploy --source, Jib for Java and custom Cloud Build builders. It also covers which levers actually speed up an image build.",
+      "objectives": [
+        "Build container images without a Dockerfile using Buildpacks or --source deploys",
+        "Containerize a Java application with Jib and push it to Artifact Registry",
+        "Speed up Cloud Build image builds with machine type and layer caching",
+        "Provide missing build tools through a custom cloud builder image"
+      ],
+      "takeaways": [
+        "No Dockerfile on Cloud Run: pack build or gcloud run deploy --source.",
+        "Java to container without a Dockerfile or daemon: Jib.",
+        "Faster builds: higher-CPU Cloud Build machine type plus --cache-from.",
+        "Missing tool in Cloud Build: create a custom builder image.",
+        "Switching from alpine to ubuntu:latest makes images bigger, not builds faster."
+      ]
+    },
+    "4": {
+      "summary": "Explains how to structure Cloud Build CI pipelines: commit triggers, separate test steps, gated automatic deploys, shared /workspace and cleanup of test resources after failures. It also covers centralized registries and ephemeral test infrastructure for concurrent builds.",
+      "objectives": [
+        "Design a Cloud Build config with distinct test steps and automatic deploy on success",
+        "Guarantee cleanup of test resources even when a test step fails",
+        "Grant Cloud Build service accounts access to a central registry in another project",
+        "Choose isolated, ephemeral infrastructure for concurrent per-commit tests"
+      ],
+      "takeaways": [
+        "Build and test on every commit with minimal ops: a Cloud Build trigger.",
+        "Separate build steps make the failing test stage visible in build history.",
+        "Cleanup after a failure: write results to a file, exit 0, delete resources, then check the file in a final step.",
+        "Central registry: dedicated ops project plus IAM for each team's Cloud Build service account, with no keys in the repo.",
+        "Concurrent Spanner performance tests: create and delete a Spanner instance per build."
+      ]
+    },
+    "5": {
+      "summary": "Covers how to find vulnerabilities in container images and running web applications with managed Google Cloud services. Separates real scanners from look-alikes such as Cloud Armor and Binary Authorization.",
+      "objectives": [
+        "Enable automatic CVE scanning of images in Artifact Registry",
+        "Distinguish image scanning from web application scanning",
+        "Explain why Cloud Armor and Binary Authorization are not vulnerability scanners"
+      ],
+      "takeaways": [
+        "Image CVEs with managed services: Artifact Registry plus the Container Scanning API.",
+        "XSS or vulnerable libraries in a deployed app: Web Security Scanner.",
+        "Cloud Armor is a WAF; Binary Authorization enforces attestations; neither scans.",
+        "Scanning source code on check-in misses vulnerabilities in image dependencies."
+      ]
+    },
+    "6": {
+      "summary": "Covers load and performance testing practice on Google Cloud: distributed Locust or JMeter generators on GKE, Cloud Trace to find bottlenecks, and where to store and visualize results.",
+      "objectives": [
+        "Design a scalable distributed load test on GKE",
+        "Use Cloud Trace to locate bottlenecks under load",
+        "Route load test results to BigQuery and Looker Studio for analysis"
+      ],
+      "takeaways": [
+        "Google pattern: Locust or JMeter in GKE pods, scaled by adding pods.",
+        "Bottlenecks across microservices under load: Cloud Trace.",
+        "cURL on instance groups or containers in Cloud Shell are distractors.",
+        "JMeter results: log sink to BigQuery, then Looker Studio."
+      ]
+    },
+    "7": {
+      "summary": "Covers how applications get logs and errors into Cloud Logging and Error Reporting, especially on Cloud Run where stdout and stderr are captured automatically. It also covers the legacy Debugger logpoints and snapshots that older questions still mention.",
+      "objectives": [
+        "Send Cloud Run application logs to Cloud Logging with minimal code",
+        "Make application errors appear in Error Reporting",
+        "Distinguish logpoints from snapshots in legacy Debugger questions"
+      ],
+      "takeaways": [
+        "Cloud Run: log to stdout and stderr with the language logger; no files, no library needed.",
+        "Errors missing from Error Reporting on Cloud Run: make sure they go to stderr.",
+        "Raise the log level to DEBUG or INFO when reproducing issues locally.",
+        "Logpoints add logs without redeploying, but Cloud Debugger is retired."
+      ]
+    },
+    "8": {
+      "summary": "Covers distributed tracing with OpenTelemetry and Cloud Trace: instrumenting microservices, forcing a request to be sampled, and collecting traces across clouds.",
+      "objectives": [
+        "Instrument microservices with OpenTelemetry and export spans to Cloud Trace",
+        "Force tracing of a specific request with the X-Cloud-Trace-Context header",
+        "Choose tracing over metrics, logs or packet capture for request latency analysis"
+      ],
+      "takeaways": [
+        "Slow URLs across microservices: OpenTelemetry to Cloud Trace with analysis reports.",
+        "Guarantee a request is traced: send X-Cloud-Trace-Context with the right parameters.",
+        "Cross-cloud latency: Zipkin collector plus Trace.",
+        "Trace measures request latency, not per-function CPU or memory."
+      ]
+    },
+    "9": {
+      "summary": "Covers Cloud Profiler, the continuous low-overhead profiler that shows CPU and memory use per function as flame graphs. The lesson contrasts it with Trace, Debugger and logging so you pick the right tool from the wording of a question.",
+      "objectives": [
+        "Enable Cloud Profiler in an application with minimal code changes",
+        "Read flame graphs to find CPU-heavy and memory-heavy functions",
+        "Choose between Profiler, Trace and logging from the wording of a scenario"
+      ],
+      "takeaways": [
+        "Which function uses the most CPU or memory: Cloud Profiler flame graph.",
+        "Slower after deployment than locally: start with Profiler.",
+        "SSH + top, dashboards and log timestamp scripts are distractors.",
+        "Request-level latency points to Trace; function-level resource use points to Profiler."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Artifact Registry",
+      "definition": "Google Cloud's managed repository for container images and language packages, the successor to Container Registry.",
+      "exam_context": "The correct place to store images, both for central governance and for automatic vulnerability scanning.",
+      "lesson": 5
+    },
+    {
+      "term": "Binary Authorization",
+      "definition": "A deploy-time policy control that only admits container images carrying the required attestations.",
+      "exam_context": "Appears as a distractor when the question asks for a vulnerability scanner, because it consumes scan results rather than producing them.",
+      "lesson": 5
+    },
+    {
+      "term": "Buildpacks",
+      "definition": "Cloud Native Buildpacks inspect source code, detect the language and framework, and build a container image without a Dockerfile.",
+      "exam_context": "The answer for building Cloud Run images with no Dockerfile, via pack build or gcloud run deploy --source.",
+      "lesson": 3
+    },
+    {
+      "term": "--cache-from",
+      "definition": "A Docker build option that reuses layers from a previously built image as cache.",
+      "exam_context": "One of the two keyed ways to speed up Cloud Build image builds, alongside a higher-CPU machine type.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Build",
+      "definition": "Google Cloud's serverless CI service that runs build steps as containers and can be started by source repository triggers.",
+      "exam_context": "The default managed answer for building and testing on every commit, preferred over Jenkins or self-managed CI.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Build trigger",
+      "definition": "A rule that starts a Cloud Build run automatically on repository events such as commits or tags.",
+      "exam_context": "Chosen when a scenario asks to build and test on each commit with minimal operational overhead.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Code",
+      "definition": "IDE extensions for VS Code and IntelliJ that add Kubernetes and Cloud Run authoring, debugging and deployment features.",
+      "exam_context": "The answer when the stem names VS Code or IntelliJ and GKE developer productivity.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Debugger",
+      "definition": "A retired Google Cloud service, formerly Stackdriver Debugger, that captured snapshots and injected logpoints into running code.",
+      "exam_context": "Older questions key logpoints for diagnosing code without redeploying; treat these answers as legacy.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud Profiler",
+      "definition": "A continuous, low-overhead statistical profiler that reports CPU and memory use per function as flame graphs.",
+      "exam_context": "The answer whenever a question asks which functions or methods consume the most CPU or memory.",
+      "lesson": 9
+    },
+    {
+      "term": "Cloud Shell",
+      "definition": "A browser-based shell with a built-in code editor, Git and gcloud preconfigured for your project.",
+      "exam_context": "The answer for emergency development from a computer where source code must not be stored locally.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Trace",
+      "definition": "Google Cloud's distributed tracing service that records request latency as spans across services.",
+      "exam_context": "Used to find slow requests and bottlenecks across microservices, including during load tests.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Workstations",
+      "definition": "Managed, VPC-connected development environments built from base or custom container images.",
+      "exam_context": "Chosen when a scenario needs consistent security controls, VPC access and custom tools, with images rebuilt regularly.",
+      "lesson": 1
+    },
+    {
+      "term": "Container Registry",
+      "definition": "Google's older container image registry, now deprecated in favor of Artifact Registry.",
+      "exam_context": "Appears in older keys for scanning and central registries; prefer Artifact Registry when both are offered.",
+      "lesson": 5
+    },
+    {
+      "term": "Container Scanning API",
+      "definition": "The Artifact Analysis feature that automatically scans images pushed to Artifact Registry for known OS-package CVEs.",
+      "exam_context": "The managed way to add vulnerability scanning to a pipeline without disrupting developers.",
+      "lesson": 5
+    },
+    {
+      "term": "Custom cloud builder",
+      "definition": "A container image you create that packages extra tools, used as a step in a Cloud Build config.",
+      "exam_context": "The answer when the build needs a tool that Cloud Build does not provide.",
+      "lesson": 3
+    },
+    {
+      "term": "Error Reporting",
+      "definition": "A service that groups and counts application errors found in Cloud Logging.",
+      "exam_context": "On Cloud Run, errors must be written to stderr to show up here.",
+      "lesson": 7
+    },
+    {
+      "term": "Flame graph",
+      "definition": "A visualization of sampled stack traces in which wider frames mean more resource consumption.",
+      "exam_context": "The Profiler view used to pinpoint CPU-heavy or memory-heavy functions.",
+      "lesson": 9
+    },
+    {
+      "term": "Functions Framework",
+      "definition": "An open-source library that runs Cloud Functions code locally as a server you can call.",
+      "exam_context": "The recommended way to develop and test Cloud Functions locally, including event-triggered ones.",
+      "lesson": 2
+    },
+    {
+      "term": "Hash table",
+      "definition": "A key-value data structure with near-constant-time lookups and inserts.",
+      "exam_context": "The best structure for summing transaction amounts per account while parsing logs.",
+      "lesson": 1
+    },
+    {
+      "term": "Jib",
+      "definition": "A Google tool that builds Docker or OCI images for Java apps from Maven or Gradle without a Dockerfile or Docker daemon.",
+      "exam_context": "The answer for containerizing a standalone Java application instead of migrating the VM.",
+      "lesson": 3
+    },
+    {
+      "term": "JMeter",
+      "definition": "An open-source load-testing tool that generates configurable request traffic.",
+      "exam_context": "Appears in distributed load tests on GKE, or on Compute Engine with results sunk to BigQuery.",
+      "lesson": 6
+    },
+    {
+      "term": "kubeconfig context",
+      "definition": "A named combination of cluster, user and namespace in a kubeconfig file, selected with kubectl config.",
+      "exam_context": "Used to let developers switch between multiple GKE clusters.",
+      "lesson": 1
+    },
+    {
+      "term": "Locust",
+      "definition": "An open-source, Python-based distributed load-testing framework.",
+      "exam_context": "Run in GKE pods as Google's reference distributed load-testing pattern.",
+      "lesson": 6
+    },
+    {
+      "term": "Logpoint",
+      "definition": "A Debugger feature that injects a log statement into running code without redeploying.",
+      "exam_context": "Keyed in an older question for continuous code diagnosis on App Engine; the product is now retired.",
+      "lesson": 7
+    },
+    {
+      "term": "Minikube",
+      "definition": "A tool that runs a lightweight single-node Kubernetes cluster on a local machine.",
+      "exam_context": "Paired with Skaffold for low-resource local testing that mirrors GKE.",
+      "lesson": 2
+    },
+    {
+      "term": "OpenTelemetry",
+      "definition": "The open-source standard for generating and exporting traces, metrics and logs, which absorbed OpenCensus.",
+      "exam_context": "The instrumentation layer that sends microservice traces to Cloud Trace.",
+      "lesson": 8
+    },
+    {
+      "term": "Pub/Sub emulator",
+      "definition": "A local emulation of the Pub/Sub service, installed and started with gcloud.",
+      "exam_context": "The answer for cheap, isolated Pub/Sub unit and integration tests, reached through PUBSUB_EMULATOR_HOST.",
+      "lesson": 2
+    },
+    {
+      "term": "PUBSUB_EMULATOR_HOST",
+      "definition": "An environment variable that makes Pub/Sub client libraries connect to the local emulator.",
+      "exam_context": "The correct configuration step; endpoint override commands are fake distractors.",
+      "lesson": 2
+    },
+    {
+      "term": "Skaffold",
+      "definition": "A command-line tool that automates the build, push and deploy loop for Kubernetes and rebuilds on code changes.",
+      "exam_context": "Chosen with Minikube for automated local testing that mirrors the production deployment.",
+      "lesson": 2
+    },
+    {
+      "term": "Spanner emulator",
+      "definition": "A local emulator for Cloud Spanner suitable for functional testing.",
+      "exam_context": "A distractor for performance tests, because it doesn't reproduce real performance; use an ephemeral instance instead.",
+      "lesson": 2
+    },
+    {
+      "term": "Trunk-based development",
+      "definition": "A branching model where developers integrate small changes into the main branch frequently.",
+      "exam_context": "The answer for rapid release cycles with minimal merge conflicts.",
+      "lesson": 1
+    },
+    {
+      "term": "Web Security Scanner",
+      "definition": "A Security Command Center service, formerly Cloud Security Scanner, that crawls deployed web apps for vulnerabilities such as XSS.",
+      "exam_context": "The answer for checking App Engine or GKE web apps for XSS or vulnerable libraries.",
+      "lesson": 5
+    },
+    {
+      "term": "/workspace",
+      "definition": "The directory shared by all steps of a Cloud Build run, holding the checked-out source.",
+      "exam_context": "Custom steps that inspect or modify source files work on /workspace, not on a Cloud Storage bucket.",
+      "lesson": 4
+    },
+    {
+      "term": "X-Cloud-Trace-Context",
+      "definition": "An HTTP header that carries trace ID, span ID and sampling options for Cloud Trace.",
+      "exam_context": "Sending it with the right options forces a specific request to be traced despite sampling.",
+      "lesson": 8
+    },
+    {
+      "term": "Zipkin",
+      "definition": "An open-source distributed tracing system whose collector can gather spans from heterogeneous backends.",
+      "exam_context": "Paired with Trace for analyzing API network latency across multiple cloud providers.",
+      "lesson": 8
+    }
+  ]
+}

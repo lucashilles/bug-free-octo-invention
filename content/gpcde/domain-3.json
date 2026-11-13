@@ -1,0 +1,442 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers choosing the right Google Cloud platform for a deployment: Cloud Run, GKE, Compute Engine, App Engine, Cloud Functions or Cloud Storage. Exam questions reward the option with the least operational overhead that still meets the workload's needs, and test App Engine custom-domain setup.",
+      "objectives": [
+        "Choose Cloud Run over GKE Autopilot, GKE Standard or Compute Engine for stateless containers that need minimal management.",
+        "Recognize when a static site belongs in Cloud Storage rather than on a compute service.",
+        "Configure an App Engine custom domain with domain verification and a CNAME to ghs.googlehosted.com.",
+        "Reject Cloud Functions for hosting whole websites or long-running microservices."
+      ],
+      "takeaways": [
+        "Stateless container with no OS dependencies and 'least ops' means Cloud Run.",
+        "Static HTML, CSS, JS and images mean a Cloud Storage website.",
+        "Custom native libraries plus minimal management means Cloud Build building a container for Cloud Run.",
+        "App Engine custom domain: verify ownership, then CNAME to ghs.googlehosted.com; dispatch.yaml is for routing between services."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers the Kubernetes objects used to deploy and expose applications on GKE: Deployments, StatefulSets, DaemonSets, Services and Ingress. Exam questions test matching the workload's needs to the right object and using Service DNS names for in-cluster discovery.",
+      "objectives": [
+        "Pick between Deployment, StatefulSet and DaemonSet from the scenario's requirements.",
+        "Expose a microservice internally with a ClusterIP Service and address it by its DNS name.",
+        "Serve an additional domain on the same external IP by adding a host rule to an existing Ingress.",
+        "Reject Ingress, bare Pods or Cloud DNS records for service-to-service traffic inside a cluster."
+      ],
+      "takeaways": [
+        "Stable network identity plus its own persistent disk per replica means StatefulSet.",
+        "An agent on every node means DaemonSet.",
+        "Per-microservice replica counts plus uniform addressing means Deployment + Service + Service DNS name.",
+        "Internal-only access means ClusterIP; NodePort exposes the service outside the cluster.",
+        "A new Ingress or LoadBalancer Service gets a new IP; edit the existing Ingress to keep the same one."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers how containers and VMs start and stop cleanly: SIGTERM handling, probes, lifecycle hooks and shutdown scripts. Exam questions test which mechanism actually fixes an abrupt shutdown or gates traffic until dependencies are ready.",
+      "objectives": [
+        "Explain why handling SIGTERM in code is the fix for connections dropped during a Deployment update.",
+        "Distinguish probes, preStop, PostStart and initContainers by when they run.",
+        "Design a graceful shutdown for preemptible Compute Engine VMs using a shutdown script that signals the process.",
+        "Gate a legacy app on NFS-hosted configuration with a PVC and an ENTRYPOINT check."
+      ],
+      "takeaways": [
+        "Abrupt DB disconnects during rollout: handle SIGTERM; a longer grace period alone does nothing.",
+        "PodDisruptionBudgets and preStop hooks don't replace SIGTERM handling in the app.",
+        "Continuous check plus shutdown script: probe + preStop, not initContainer or PostStart.",
+        "Preemptible VM: shutdown script sends a Linux signal to the app; file polling is too slow."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers passing environment-specific configuration to deployed apps and providing storage they can share. It focuses on Compute Engine metadata for golden images and on GKE volumes: PVCs, Filestore and volume expansion.",
+      "objectives": [
+        "Use instance or instance-template metadata, read from the metadata server, to configure a single golden image per environment.",
+        "Choose Filestore as an NFS PersistentVolume for a shared read/write file system.",
+        "Expand a GKE volume by editing the PersistentVolumeClaim request.",
+        "Reject tags, labels, startup scripts and baked-in config as configuration mechanisms."
+      ],
+      "takeaways": [
+        "Same image, different environments on Compute Engine: metadata key read from the metadata server, not an env var.",
+        "Different config per MIG: put values in each instance template's metadata.",
+        "Many Pods need read/write access to one file without code changes: Filestore NFS PV.",
+        "Volume grown but Pods don't see it: edit spec.resources.requests.storage on the PVC, not the PV."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers keeping secrets out of reach of the Kubernetes API on GKE. The recommended answer is Secret Manager accessed through Workload Identity, with Kubernetes Secrets encrypted by Cloud KMS as a fallback when Secret Manager isn't offered.",
+      "objectives": [
+        "Describe the Secret Manager + Google service account + Kubernetes service account + Workload Identity pattern.",
+        "Explain why Kubernetes Secrets in env vars and Application-layer Secrets Encryption don't stop exposure through the API server.",
+        "Reject options that export service account keys as JSON files."
+      ],
+      "takeaways": [
+        "Secret Manager + Workload Identity is the default answer for secrets on GKE.",
+        "Kubernetes Secrets are base64-encoded and readable through the API server.",
+        "Cloud KMS stores keys, not secrets.",
+        "If Secret Manager isn't an option, a Kubernetes Secret encrypted with the Cloud KMS plugin is the bank's key."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers release strategies (canary, blue/green, rolling, recreate, traffic mirroring and A/B testing) and how to implement traffic splitting on Cloud Run, App Engine and GKE with Anthos Service Mesh. Exam questions hinge on matching the stem's goal to the strategy.",
+      "objectives": [
+        "Match canary, blue/green, rolling, mirroring and A/B testing to the goal stated in a scenario.",
+        "Roll out a Cloud Run revision gradually with no initial traffic and percentage splits.",
+        "Route traffic by HTTP header such as user-agent using Anthos Service Mesh on GKE.",
+        "Design an A/B experiment that measures a business metric with a predetermined split."
+      ],
+      "takeaways": [
+        "Limit how many users a production-only bug can reach: canary.",
+        "Swift complete rollback: blue/green.",
+        "Test against full production load before launch without user impact: traffic mirroring.",
+        "Cloud Run gradual release: deploy with 'Serve this revision immediately' off, then shift percentages.",
+        "Segment users by OS or user-agent: GKE + Anthos Service Mesh routing rules."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers autoscaling for GKE workloads and Compute Engine MIGs, plus right-sizing managed capacity. Exam questions test HPA vs VPA vs Cluster Autoscaler, choosing the scaling metric, and tuning a MIG autoscaler for latency.",
+      "objectives": [
+        "Distinguish HPA, VPA and Cluster Autoscaler by what they scale.",
+        "Choose CPU-based HPA for fast implementation and an external metric for queue backlogs.",
+        "Tune a MIG autoscaler (target utilization, cooldown) to reduce latency during scale-out.",
+        "Right-size Cloud Spanner processing units using CPU utilization in Cloud Monitoring."
+      ],
+      "takeaways": [
+        "Urgent autoscaling for a stateless GKE service: HPA on CPU.",
+        "Pub/Sub backlog drives load: HPA on an external metric such as num_undelivered_messages.",
+        "Pods and nodes must both scale: Cluster Autoscaler + HPA.",
+        "MIG latency while scaling: lower the CPU target and shorten the cooldown.",
+        "Spanner cost cuts: watch CPU utilization and reduce processing units gradually."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers automating deployments with Cloud Build triggers and Cloud Deploy. Exam questions test choosing the right trigger type, diagnosing permission failures in the deploy step, promoting releases between environments, and creating isolated test environments.",
+      "objectives": [
+        "Choose between branch, tag, webhook and Pub/Sub Cloud Build triggers.",
+        "Diagnose a Cloud Build deploy step that fails because the build service account lacks a role.",
+        "Automate Cloud Deploy promotion from Dev to Test based on deploy events.",
+        "Create an isolated test environment by running Terraform from Cloud Build."
+      ],
+      "takeaways": [
+        "Release only specific commits: trigger on a Git tag pattern.",
+        "Deploy on every push to a branch: a Cloud Build branch trigger running the existing build file.",
+        "Functions deploy fails right after validation: grant the Cloud Build service account Cloud Functions Developer.",
+        "Cloud Deploy events come from clouddeploy-operations, not cloud-builds.",
+        "Isolated system tests: Cloud Build runs Terraform to create a new project."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers enforcing that only trusted, tested container images reach GKE using Binary Authorization. Exam questions test the service combination, where attestations are created, where signing keys live, and which project's policy enforces the rule.",
+      "objectives": [
+        "Name Cloud Build, Artifact Registry and Binary Authorization as the trusted-image pipeline.",
+        "Create attestations in a Cloud Build step after the relevant gate (tests, UAT, vulnerability scan).",
+        "Place signing keys in Cloud KMS and enforcement rules in the production project's policy.",
+        "Reject Cloud Armor, Web Security Scanner and Pod Security Standards for image provenance."
+      ],
+      "takeaways": [
+        "Only pipeline-built images on GKE: Cloud Build + Artifact Registry + Binary Authorization.",
+        "Only images that passed tests: attestor + policy + attestation step in Cloud Build.",
+        "Only UAT-passed images in prod: KMS-signed attestation + cluster-specific rule in the production project.",
+        "Block critical CVEs: scan programmatically, attest clean images, enforce with Binary Authorization."
+      ]
+    },
+    "10": {
+      "summary": "This lesson covers connecting deployed apps to private resources and to each other: serverless VPC access, Cloud SQL private IP, Compute Engine internal DNS, hybrid VPN capacity, and Istio policy debugging. Exam questions test the managed path that keeps traffic private.",
+      "objectives": [
+        "Connect Cloud Run privately to Cloud SQL and Memorystore with a Serverless VPC Access connector in the same region.",
+        "Connect Compute Engine to Cloud SQL without IP allowlisting using private IP.",
+        "Address a VM-hosted API from inside the VPC with Compute Engine internal DNS.",
+        "Diagnose URL-specific failures in an Istio mesh as an AuthorizationPolicy issue."
+      ],
+      "takeaways": [
+        "Cloud Run to private Cloud SQL: private IP + private services access + Serverless VPC Access connector, same project.",
+        "502 from Cloud Run to Memorystore: the connector is in a different region.",
+        "No allowlisting for Cloud SQL: enable private IP.",
+        "Only some URLs fail between the same Pods: Istio AuthorizationPolicy (L7), not NetworkPolicy (L3/L4)."
+      ]
+    },
+    "11": {
+      "summary": "This lesson covers day-two operations for Compute Engine deployments: diagnosing boot and SSH failures, copying files to VMs, collecting Cloud Storage performance diagnostics, and getting GKE upgrade notifications. Diagnose before destroying is the recurring theme.",
+      "objectives": [
+        "Use serial port output and the interactive serial console to diagnose and fix VMs that won't boot or accept SSH.",
+        "Identify boot disk and file system problems as causes of launch failures.",
+        "Use gcloud compute scp and gsutil perfdiag for the right jobs.",
+        "Receive GKE upgrade and security bulletins through cluster notifications to Pub/Sub."
+      ],
+      "takeaways": [
+        "VM won't boot or SSH hangs: serial port output first, not restart or replace.",
+        "Broken low-level config file: fix it through the serial console.",
+        "Instance won't launch: check for a full boot disk and a corrupted file system.",
+        "Copy a directory to a VM: gcloud compute scp --recurse.",
+        "GKE release-channel events: cluster notifications to a Pub/Sub topic."
+      ]
+    },
+    "12": {
+      "summary": "This lesson covers observing applications in production with Cloud Logging and Cloud Monitoring: agents, alerting policies, uptime checks, metric-absence conditions and logs-based metrics. Exam questions favor native features over custom functions or exports.",
+      "objectives": [
+        "Ship VM log files and memory metrics with the logging and monitoring agents without code changes.",
+        "Pick the right alert type: metric threshold, uptime check or metric absence.",
+        "Count log entries matching a path pattern with a logs-based counter metric.",
+        "Correlate Prometheus metrics and logs in Cloud Monitoring cost-effectively."
+      ],
+      "takeaways": [
+        "Any 'alert when X' with minimal development: Cloud Monitoring alerting policy, never a scheduled function.",
+        "App unreachable for users: uptime check; process stopped without app changes: metric absence.",
+        "VM memory needs the monitoring agent; log files need the logging agent with a custom source.",
+        "Count /api/alpha/* requests: logs-based counter metric with a wildcard."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "A/B testing",
+      "definition": "Exposing users to two or more variants with a predetermined traffic split and comparing a business metric for a statistically significant difference.",
+      "exam_context": "Shows up as 'will the new color scheme increase sales' or 'compare three designs', answered with traffic splitting.",
+      "lesson": 6
+    },
+    {
+      "term": "Alerting policy",
+      "definition": "A Cloud Monitoring configuration of conditions and notification channels that fires when a metric crosses a threshold.",
+      "exam_context": "Beats scheduled Cloud Functions, Composer jobs or scripts for error-rate and memory alerts.",
+      "lesson": 12
+    },
+    {
+      "term": "Anthos Service Mesh",
+      "definition": "Google's managed Istio-based service mesh for GKE that controls traffic routing, security and observability between services.",
+      "exam_context": "The answer when traffic must be split by HTTP header such as user-agent, or for zero-downtime canary/A/B on GKE.",
+      "lesson": 6
+    },
+    {
+      "term": "Application-layer Secrets Encryption",
+      "definition": "A GKE feature that encrypts Kubernetes Secrets in etcd with a Cloud KMS key.",
+      "exam_context": "A distractor when the goal is keeping secrets away from the Kubernetes API server; Secret Manager + Workload Identity wins.",
+      "lesson": 5
+    },
+    {
+      "term": "Artifact Registry",
+      "definition": "Google Cloud's managed repository for container images and packages.",
+      "exam_context": "Part of the trusted-image trio with Cloud Build and Binary Authorization; Cloud Storage is the wrong store.",
+      "lesson": 9
+    },
+    {
+      "term": "Attestation",
+      "definition": "A signed statement that a container image passed a specific check, such as tests, UAT or a vulnerability scan.",
+      "exam_context": "Created as a Cloud Build step after the relevant gate and signed with a Cloud KMS key.",
+      "lesson": 9
+    },
+    {
+      "term": "AuthorizationPolicy",
+      "definition": "An Istio resource that allows or denies requests based on attributes such as HTTP method and path.",
+      "exam_context": "The cause when only certain URLs fail between two Pods that otherwise communicate.",
+      "lesson": 10
+    },
+    {
+      "term": "Binary Authorization",
+      "definition": "A deploy-time control that only admits container images carrying the attestations required by a policy.",
+      "exam_context": "The enforcement piece whenever only pipeline-built, tested or scanned images may run on GKE; rules belong in the production project.",
+      "lesson": 9
+    },
+    {
+      "term": "Blue/green deployment",
+      "definition": "Running two full environments and switching all traffic from the old (blue) to the new (green) one.",
+      "exam_context": "Chosen for swift, complete rollback; rejected when gradual exposure is required.",
+      "lesson": 6
+    },
+    {
+      "term": "Canary deployment",
+      "definition": "Sending a small share of real traffic to a new version and increasing it as metrics stay healthy.",
+      "exam_context": "The answer for limiting how many users a production-only bug can reach, often inside a CD pipeline with Cloud Monitoring.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Build trigger",
+      "definition": "A rule that starts a Cloud Build run on events such as a push to a branch, a Git tag, a webhook or a Pub/Sub message.",
+      "exam_context": "Branch triggers deploy every push; tag-pattern triggers release specific commits.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Deploy",
+      "definition": "A managed continuous delivery service that promotes releases through a sequence of targets such as Dev, Test and Prod.",
+      "exam_context": "Its events go to the clouddeploy-operations Pub/Sub topic, which the bank uses to drive automatic promotion.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Run traffic splitting",
+      "definition": "Cloud Run's built-in ability to divide traffic among revisions by percentage.",
+      "exam_context": "Deploy a revision with no traffic, then shift percentages, for a gradual rollout with minimal configuration.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud SQL private IP",
+      "definition": "Configuring a Cloud SQL instance with an internal address in a VPC through private services access.",
+      "exam_context": "Removes the need for IP allowlisting and keeps Cloud Run or VM traffic private.",
+      "lesson": 10
+    },
+    {
+      "term": "Cluster Autoscaler",
+      "definition": "A GKE feature that adds or removes nodes based on pending Pods and node utilization.",
+      "exam_context": "Paired with HPA when both Pods and nodes must follow load; editing the node MIG autoscaler directly is a distractor.",
+      "lesson": 7
+    },
+    {
+      "term": "ClusterIP Service",
+      "definition": "The default Kubernetes Service type, reachable only from inside the cluster.",
+      "exam_context": "The answer when a GKE service must be accessible only to other services in the cluster.",
+      "lesson": 2
+    },
+    {
+      "term": "Compute Engine internal DNS",
+      "definition": "Automatic DNS names for VMs in a VPC, such as INSTANCE_NAME.ZONE.c.PROJECT_ID.internal.",
+      "exam_context": "How clients in the same VPC find a VM-hosted API without external IPs or load balancers.",
+      "lesson": 10
+    },
+    {
+      "term": "Container Scanning API",
+      "definition": "The API that scans container images for known vulnerabilities, now part of Artifact Analysis.",
+      "exam_context": "Review results programmatically in the pipeline and attest clean images for Binary Authorization.",
+      "lesson": 9
+    },
+    {
+      "term": "DaemonSet",
+      "definition": "A Kubernetes workload that runs one copy of a Pod on every node.",
+      "exam_context": "The way to install a third-party logging or monitoring agent on each GKE node.",
+      "lesson": 2
+    },
+    {
+      "term": "Deployment",
+      "definition": "A Kubernetes workload that manages a replicated set of stateless Pods and their rolling updates.",
+      "exam_context": "Use one per microservice to control replica counts; bare Pods are the distractor.",
+      "lesson": 2
+    },
+    {
+      "term": "Filestore",
+      "definition": "Google Cloud's managed NFS file service.",
+      "exam_context": "Mounted as an NFS PersistentVolume when many instances need read/write access to a shared file without code changes.",
+      "lesson": 4
+    },
+    {
+      "term": "GKE cluster notifications",
+      "definition": "GKE events such as available upgrades and security bulletins, published to a Pub/Sub topic.",
+      "exam_context": "The recommended way to stay informed about release-channel clusters, instead of RSS or API polling.",
+      "lesson": 11
+    },
+    {
+      "term": "gsutil perfdiag",
+      "definition": "A gsutil command that runs Cloud Storage performance diagnostics and can write results to a file.",
+      "exam_context": "The command to collect data for support when Cloud Storage reads are slow.",
+      "lesson": 11
+    },
+    {
+      "term": "Horizontal Pod Autoscaler",
+      "definition": "A Kubernetes controller that changes the number of Pod replicas based on CPU, custom or external metrics.",
+      "exam_context": "CPU-based HPA is the fast answer; an external metric is used for Pub/Sub backlog.",
+      "lesson": 7
+    },
+    {
+      "term": "Ingress",
+      "definition": "A Kubernetes resource that routes external HTTP(S) traffic to Services; on GKE it provisions an HTTP(S) load balancer.",
+      "exam_context": "Add a host rule to the existing Ingress to serve a new domain on the same IP; never use it for in-cluster calls.",
+      "lesson": 2
+    },
+    {
+      "term": "Instance metadata",
+      "definition": "Key-value data attached to a Compute Engine instance or instance template, readable from the metadata server.",
+      "exam_context": "The built-in way to pass per-environment config to a golden image or per-MIG values to one custom image.",
+      "lesson": 4
+    },
+    {
+      "term": "Interactive serial console",
+      "definition": "Access to a Compute Engine VM's serial port that works even when the OS or network isn't up.",
+      "exam_context": "Used to read boot logs and fix a VM that won't boot or accept SSH.",
+      "lesson": 11
+    },
+    {
+      "term": "Liveness probe",
+      "definition": "A container check whose failure makes the kubelet restart the container.",
+      "exam_context": "Keyed with a preStop hook for a DB-connectivity check, though checking external dependencies this way is questionable.",
+      "lesson": 3
+    },
+    {
+      "term": "Logs-based metric",
+      "definition": "A Cloud Monitoring metric derived from log entries that match a filter, such as a counter.",
+      "exam_context": "Used to count requests to a path pattern like /api/alpha/* and to correlate logs with metrics.",
+      "lesson": 12
+    },
+    {
+      "term": "Metric absence condition",
+      "definition": "A Cloud Monitoring alert condition that fires when a metric stops reporting for a set duration.",
+      "exam_context": "The answer for 'alert if a process hasn't run for 5 minutes' when the app can't be changed.",
+      "lesson": 12
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's current unified agent for collecting logs and metrics from Compute Engine VMs, replacing the separate logging (fluentd) and monitoring (collectd) agents.",
+      "exam_context": "Questions still say 'Stackdriver Logging/Monitoring Agent'; treat that as the agent you install for log files and VM memory.",
+      "lesson": 12
+    },
+    {
+      "term": "PersistentVolumeClaim",
+      "definition": "A Pod's request for storage that binds to a PersistentVolume.",
+      "exam_context": "Edit its spec.resources.requests.storage to expand a volume; also used to mount NFS config for a legacy app.",
+      "lesson": 4
+    },
+    {
+      "term": "PodDisruptionBudget",
+      "definition": "A Kubernetes object that limits how many Pods of an app can be down during voluntary disruptions like node drains.",
+      "exam_context": "Keyed with a rolling update for safe rollouts, although it doesn't actually govern Deployment rollouts.",
+      "lesson": 3
+    },
+    {
+      "term": "preStop hook",
+      "definition": "A container lifecycle handler that runs just before the container is terminated.",
+      "exam_context": "Holds a graceful shutdown script, but doesn't replace handling SIGTERM in the application.",
+      "lesson": 3
+    },
+    {
+      "term": "Secret Manager",
+      "definition": "Google Cloud's managed service for storing, versioning and accessing secrets.",
+      "exam_context": "With Workload Identity, the recommended way to give GKE Pods secrets without exposing them through the Kubernetes API.",
+      "lesson": 5
+    },
+    {
+      "term": "Serverless VPC Access connector",
+      "definition": "A managed resource that lets Cloud Run, Cloud Functions and App Engine reach private IPs in a VPC.",
+      "exam_context": "Required for Cloud Run to reach Cloud SQL private IP or Memorystore, and it must be in the same region.",
+      "lesson": 10
+    },
+    {
+      "term": "SIGTERM",
+      "definition": "The termination signal Kubernetes sends to a container before killing it.",
+      "exam_context": "Handling it in code is the fix for DB connections dropped during a Deployment update.",
+      "lesson": 3
+    },
+    {
+      "term": "StatefulSet",
+      "definition": "A Kubernetes workload giving each Pod a stable network identity, its own persistent volume and ordered scaling.",
+      "exam_context": "The answer when each replica needs a stable identity and its own persistent disk.",
+      "lesson": 2
+    },
+    {
+      "term": "Traffic mirroring",
+      "definition": "Copying live production traffic to a new version without returning its responses to users.",
+      "exam_context": "The answer for testing against the full production load before launch.",
+      "lesson": 6
+    },
+    {
+      "term": "Uptime check",
+      "definition": "A Cloud Monitoring probe that periodically requests a public endpoint and can trigger alerts.",
+      "exam_context": "The way to be alerted when users can't reach an app behind a load balancer; LB health checks don't notify.",
+      "lesson": 12
+    },
+    {
+      "term": "Vertical Pod Autoscaler",
+      "definition": "A Kubernetes controller that adjusts Pods' CPU and memory requests and limits.",
+      "exam_context": "A distractor for bursty or rapid scaling needs, where HPA is the answer.",
+      "lesson": 7
+    },
+    {
+      "term": "Workload Identity",
+      "definition": "A GKE feature that lets a Kubernetes service account act as a Google service account without keys.",
+      "exam_context": "Paired with Secret Manager so Pods fetch secrets without exported JSON keys.",
+      "lesson": 5
+    }
+  ]
+}

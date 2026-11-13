@@ -1,1 +1,3 @@
 __pycache__/
+# Raw Udemy result pages contain the test-taker's own answers; parse them, then delete.
+GPCD*/*.html

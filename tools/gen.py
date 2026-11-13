@@ -1,7 +1,17 @@
-import json, re, sys, os
-d = json.load(open(sys.argv[1])); outdir = sys.argv[2]
+"""Generate per-domain question banks + index for a certification: study/<CODE>/.
+
+Usage: python3 gen.py <cert-id>
+"""
+import os, re, sys
+from certs import CERTS, study_dir, load_questions, domain_resolver
+
+cid = sys.argv[1]
+cert = CERTS[cid]
+d = load_questions(cid)
+dom = domain_resolver(cid)
+outdir = study_dir(cid)
 os.makedirs(outdir, exist_ok=True)
-from domains import DOMAINS, dom
+DOMAINS = {n: (x['slug'], f"Domain {n} — {x['title']}") for n, x in cert['domains'].items()}
 
 def section(text, name):
     m = re.search(r'\*\*' + re.escape(name) + r'\*\*\s*\n+(.*?)(?=\n\s*\*\*[A-Z][^*\n]{2,40}\*\*\s*\n|\Z)', text, re.S)
@@ -13,8 +23,9 @@ def demote(md):  # keep embedded headings below question level
 by = {k: [] for k in DOMAINS}
 for x in d: by[dom(x)].append(x)
 
-index = ['# GCP Professional Cloud DevOps Engineer — Study Materials', '',
-         f'Generated from {len(d)} practice-exam questions across 5 exams, grouped by exam domain.', '',
+n_exams = len({x['exam'] for x in d})
+index = [f"# GCP {cert['name']} — Study Materials", '',
+         f'Generated from {len(d)} practice-exam questions across {n_exams} exams, grouped by exam domain.', '',
          'Start with each domain\'s **study guide** (condensed concepts, decision rules, traps), then drill the **question bank** (answers collapsed for self-testing).', '',
          '| Domain | Study guide | Questions |', '|---|---|---|']
 for k, (slug, title) in DOMAINS.items():

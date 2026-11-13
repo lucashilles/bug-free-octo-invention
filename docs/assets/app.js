@@ -1,24 +1,30 @@
 (function () {
   'use strict';
-  const DATA = window.APP_DATA;
-  const Q = DATA.questions;
-  const DOMAINS = DATA.domains;
-  const LESSONS = DOMAINS.flatMap(d => d.lessons.map(l => Object.assign({ domain: d.n }, l)));
-  const LESSON_BY_ID = Object.fromEntries(LESSONS.map(l => [l.id, l]));
-  const GLOSSARY = DOMAINS.flatMap(d => d.glossary).sort((a, b) => a.term.localeCompare(b.term));
+  const CERTS = window.CERTS;
+  const CERT_BY_ID = Object.fromEntries(CERTS.map(c => [c.id, c]));
+  // Per-certification state, set by useCert().
+  let CERT, P, Q, DOMAINS, LESSONS, LESSON_BY_ID, GLOSSARY, store;
   const MOCK_SIZE = 50, MOCK_MINUTES = 120;
 
   // ---------- persistence ----------
-  const KEY = 'gcpdevops-study-v1';
-  const store = (() => {
+  const KEY = 'gcp-study-v2', LEGACY_KEY = 'gcpdevops-study-v1';
+  const allStores = (() => {
     let s = {};
     try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+    try {
+      const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY));
+      if (legacy && !s.gpcdoe) s.gpcdoe = legacy;
+    } catch (e) {}
+    return s;
+  })();
+  function certStore(cid) {
+    const s = allStores[cid] = allStores[cid] || {};
     s.done = s.done || {};
     s.attempts = s.attempts || {};
     s.mocks = s.mocks || [];
     return s;
-  })();
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(allStores)); } catch (e) {} }
   function recordAttempt(qid, ok) { store.attempts[qid] = { ok, ts: Date.now() }; save(); }
   // A question counts as a mistake while your latest answer to it (in a lesson, drill or mock exam) is wrong.
   function isMistake(qid) {
@@ -33,10 +39,48 @@
   const badge = n => `<span class="badge" style="background:${dcolor(n)}">D${n}</span>`;
   const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
   const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const lessonHref = l => `#/d/${l.domain}/${l.num}`;
+  const lessonHref = l => `${P}d/${l.domain}/${l.num}`;
   const domainDone = d => d.lessons.filter(l => store.done[l.id]).length;
   const correctSet = q => q.options.map((o, i) => (o.correct ? i : -1)).filter(i => i >= 0);
   const strip = html => html.replace(/<[^>]+>/g, ' ');
+
+  // ---------- certifications ----------
+  function loadCert(cid) {
+    if (window.CERT_DATA && window.CERT_DATA[cid]) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const el = document.createElement('script');
+      el.src = `assets/data-${cid}.js`;
+      el.onload = resolve;
+      el.onerror = () => reject(new Error(`Could not load assets/data-${cid}.js`));
+      document.head.appendChild(el);
+    });
+  }
+  function useCert(cid) {
+    if (CERT && CERT.id === cid) return;
+    const data = window.CERT_DATA[cid];
+    CERT = CERT_BY_ID[cid];
+    P = `#/${cid}/`;
+    Q = data.questions;
+    DOMAINS = data.domains;
+    LESSONS = DOMAINS.flatMap(d => d.lessons.map(l => Object.assign({ domain: d.n }, l)));
+    LESSON_BY_ID = Object.fromEntries(LESSONS.map(l => [l.id, l]));
+    GLOSSARY = DOMAINS.flatMap(d => d.glossary).sort((a, b) => a.term.localeCompare(b.term));
+    store = certStore(cid);
+    drill = null; mock = null;
+    try { localStorage.setItem('gcp-study-last', cid); } catch (e) {}
+  }
+  function lastCert() {
+    let c = null;
+    try { c = localStorage.getItem('gcp-study-last'); } catch (e) {}
+    return CERT_BY_ID[c] ? c : CERTS[0].id;
+  }
+  function renderChrome() {
+    $('.brand-mark').textContent = CERT ? CERT.code : 'GCP';
+    $('.topnav').innerHTML = CERT ? [['', 'learn', 'Learn'], ['drill', 'drill', 'Drill'], ['mock', 'mock', 'Mock exam'], ['ref', 'ref', 'Quick Reference'], ['glossary', 'glossary', 'Glossary']]
+      .map(([path, key, label]) => `<a href="${P}${path}" data-nav="${key}">${label}</a>`).join('') : '';
+    $('#searchInput').placeholder = CERT ? `Search ${CERT.code} lessons, terms, questions…` : 'Search lessons, terms, questions…';
+  }
+  const weightText = d => (d.weight ? `${d.weight} of exam` : '');
 
   // ---------- sidebar ----------
   function renderSidebar(route) {
@@ -44,11 +88,15 @@
     const activeLesson = route[0] === 'd' && route[2] ? `d${route[1]}l${route[2]}` : null;
     const link = (href, label, key) => `<a class="nav-link ${location.hash === href || (key && route[0] === key) ? 'active' : ''}" href="${href}">${label}</a>`;
     $('#sidebar').innerHTML = `
+      <div class="cert-switch">
+        <label for="certSel">Certification</label>
+        <select id="certSel">${CERTS.map(c => `<option value="${c.id}" ${c.id === CERT.id ? 'selected' : ''}>${esc(c.code)} · ${esc(c.name)}</option>`).join('')}</select>
+      </div>
       <div class="progress-box">
         <div class="label"><span>Study progress</span><span>${done} of ${total} lessons</span></div>
         <div class="bar"><span style="width:${pct(done, total)}%"></span></div>
       </div>
-      <div class="nav-group"><h4>Overview</h4>${link('#/', 'Curriculum overview')}</div>
+      <div class="nav-group"><h4>Overview</h4>${link(P, 'Curriculum overview')}</div>
       <div class="nav-group"><h4>Curriculum</h4>
         ${DOMAINS.map(d => `
           <details class="nav-domain" ${String(d.n) === route[1] && route[0] === 'd' ? 'open' : ''}>
@@ -56,22 +104,23 @@
               ${badge(d.n)}<span>${esc(d.short)}</span><span class="chev">▶</span>
             </summary>
             <div class="lessons">
-              <a class="nav-link" href="#/d/${d.n}"><span class="num">··</span>Domain overview</a>
-              ${d.lessons.map(l => `<a class="nav-link ${activeLesson === l.id ? 'active' : ''}" href="#/d/${d.n}/${l.num}">
+              <a class="nav-link" href="${P}d/${d.n}"><span class="num">··</span>Domain overview</a>
+              ${d.lessons.map(l => `<a class="nav-link ${activeLesson === l.id ? 'active' : ''}" href="${P}d/${d.n}/${l.num}">
                 <span class="num">${d.n}.${l.num}</span><span>${esc(l.title)}</span>${store.done[l.id] ? '<span class="check">✓</span>' : ''}</a>`).join('')}
             </div>
           </details>`).join('')}
       </div>
       <div class="nav-group"><h4>Practice</h4>
-        ${link('#/drill', 'Drill mode', 'drill')}${link('#/mock', 'Mock exam', 'mock')}${link('#/review', 'Review mistakes', 'review')}
+        ${link(P + 'drill', 'Drill mode', 'drill')}${link(P + 'mock', 'Mock exam', 'mock')}${link(P + 'review', 'Review mistakes', 'review')}
       </div>
       <div class="nav-group"><h4>Look Up</h4>
-        ${link('#/ref', 'Quick Reference', 'ref')}${link('#/glossary', 'Glossary', 'glossary')}
+        ${link(P + 'ref', 'Quick Reference', 'ref')}${link(P + 'glossary', 'Glossary', 'glossary')}
       </div>`;
     document.querySelectorAll('.topnav a').forEach(a => {
       const k = a.dataset.nav;
       a.classList.toggle('active', k === 'learn' ? (!route[0] || route[0] === 'd') : route[0] === k);
     });
+    $('#certSel').onchange = e => { location.hash = `#/${e.target.value}/`; };
   }
 
   // ---------- quiz component ----------
@@ -137,9 +186,9 @@
     const right = Object.values(store.attempts).filter(a => a.ok).length;
     const next = LESSONS.find(l => !store.done[l.id]);
     main.innerHTML = `
-      <div class="crumbs">PCDOE / Curriculum</div>
-      <h1>Professional Cloud DevOps Engineer</h1>
-      <p class="lead">${DOMAINS.length} domains, ${total} lessons and ${Object.keys(Q).length} practice questions from five practice exams. Work through each domain's lessons, then drill the questions and take a mock exam.</p>
+      <div class="crumbs"><a href="#/">Certifications</a> / ${esc(CERT.code)} / Curriculum</div>
+      <h1>${esc(CERT.name)}</h1>
+      <p class="lead">${DOMAINS.length} domains, ${total} lessons and ${Object.keys(Q).length} practice questions from ${CERT.exams} practice exams. Work through each domain's lessons, then drill the questions and take a mock exam.</p>
       <div class="stats">
         <div class="stat"><b>${done}/${total}</b><span>Lessons complete</span></div>
         <div class="stat"><b>${attempted}</b><span>Questions attempted</span></div>
@@ -149,8 +198,8 @@
       ${next ? `<div class="row"><a class="btn primary" href="${lessonHref(next)}">${done ? 'Continue' : 'Start'}: ${next.domain}.${next.num} ${esc(next.title)} →</a></div>` : ''}
       <h2>Domains</h2>
       <div class="cards">${DOMAINS.map(d => `
-        <a class="card" href="#/d/${d.n}">
-          <div class="card-head">${badge(d.n)}<span class="weight">${d.weight} of exam</span></div>
+        <a class="card" href="${P}d/${d.n}">
+          <div class="card-head">${badge(d.n)}<span class="weight">${weightText(d)}</span></div>
           <h3>${esc(d.title)}</h3>
           <p>${esc(d.desc)}</p>
           <div class="meta"><span>${d.lessons.length} lessons</span><span>${domainDone(d)}/${d.lessons.length} done</span></div>
@@ -159,16 +208,16 @@
       </div>
       <h2>Practice</h2>
       <div class="cards">
-        <a class="card" href="#/drill"><h3>Drill mode</h3><p>Questions one at a time with instant feedback. Filter by domain, unseen questions or mistakes.</p></a>
-        <a class="card" href="#/mock"><h3>Mock exam</h3><p>${MOCK_SIZE} questions weighted by domain in ${MOCK_MINUTES} minutes, scored at the end.</p></a>
-        <a class="card" href="#/review"><h3>Review mistakes</h3><p>Every question you got wrong in lessons, drills or mock exams.</p></a>
+        <a class="card" href="${P}drill"><h3>Drill mode</h3><p>Questions one at a time with instant feedback. Filter by domain, unseen questions or mistakes.</p></a>
+        <a class="card" href="${P}mock"><h3>Mock exam</h3><p>${MOCK_SIZE} questions weighted by domain in ${MOCK_MINUTES} minutes, scored at the end.</p></a>
+        <a class="card" href="${P}review"><h3>Review mistakes</h3><p>Every question you got wrong in lessons, drills or mock exams.</p></a>
       </div>
       <h2>Look Up</h2>
       <div class="cards">
-        <a class="card" href="#/ref"><h3>Quick Reference</h3><p>One printable sheet per domain: cheat sheet, decision rules, exam traps and questionable answers.</p></a>
-        <a class="card" href="#/glossary"><h3>Glossary</h3><p>${GLOSSARY.length} terms with definitions, how they're tested, and links to the lesson.</p></a>
+        <a class="card" href="${P}ref"><h3>Quick Reference</h3><p>One printable sheet per domain: cheat sheet, decision rules, exam traps and questionable answers.</p></a>
+        <a class="card" href="${P}glossary"><h3>Glossary</h3><p>${GLOSSARY.length} terms with definitions, how they're tested, and links to the lesson.</p></a>
       </div>
-      <p class="muted" style="font-size:13px;margin-top:28px">Exam weights are approximate. Check the current official exam guide.</p>`;
+      <p class="muted" style="font-size:13px;margin-top:28px">${DOMAINS.some(d => d.weight) ? 'Exam weights are approximate.' : 'Official domain weights are not listed here.'} Check the current official exam guide.</p>`;
   }
 
   function viewDomain(main, n) {
@@ -176,18 +225,18 @@
     if (!d) return viewNotFound(main);
     const qcount = Object.values(Q).filter(q => q.domain === d.n).length;
     main.innerHTML = `
-      <div class="crumbs"><a href="#/">Curriculum</a> / Domain ${d.n}</div>
-      <div class="row" style="margin-bottom:8px">${badge(d.n)}<span class="muted">${d.weight} of exam · ${d.lessons.length} lessons · ${qcount} questions</span></div>
+      <div class="crumbs"><a href="${P}">Curriculum</a> / Domain ${d.n}</div>
+      <div class="row" style="margin-bottom:8px">${badge(d.n)}<span class="muted">${d.weight ? weightText(d) + ' · ' : ''}${d.lessons.length} lessons · ${qcount} questions</span></div>
       <h1>${esc(d.title)}</h1>
       <p class="lead">${esc(d.desc)}</p>
       <div class="row">
-        <a class="btn primary" href="#/d/${d.n}/${(d.lessons.find(l => !store.done[l.id]) || d.lessons[0]).num}">${domainDone(d) ? 'Continue' : 'Start'} domain →</a>
-        <a class="btn" href="#/drill/${d.n}">Drill this domain</a>
-        <a class="btn" href="#/ref/${d.n}">Quick reference</a>
-        <a class="btn" href="#/glossary/${d.n}">Glossary</a>
+        <a class="btn primary" href="${P}d/${d.n}/${(d.lessons.find(l => !store.done[l.id]) || d.lessons[0]).num}">${domainDone(d) ? 'Continue' : 'Start'} domain →</a>
+        <a class="btn" href="${P}drill/${d.n}">Drill this domain</a>
+        <a class="btn" href="${P}ref/${d.n}">Quick reference</a>
+        <a class="btn" href="${P}glossary/${d.n}">Glossary</a>
       </div>
       <ul class="lesson-list">${d.lessons.map(l => `
-        <li><a href="#/d/${d.n}/${l.num}">
+        <li><a href="${P}d/${d.n}/${l.num}">
           <span class="num">${d.n}.${l.num}</span>
           <span style="flex:1"><div class="t">${esc(l.title)}</div>${l.summary ? `<div class="s">${esc(l.summary)}</div>` : ''}</span>
           ${store.done[l.id] ? '<span class="check">✓ Done</span>' : `<span class="muted" style="font-size:12.5px;white-space:nowrap">${l.questions.length} Qs</span>`}
@@ -202,14 +251,14 @@
     const l = LESSONS[idx], prev = LESSONS[idx - 1], next = LESSONS[idx + 1];
     const terms = GLOSSARY.filter(g => g.lesson === l.id);
     main.innerHTML = `
-      <div class="crumbs"><a href="#/">Curriculum</a> / <a href="#/d/${d.n}">Domain ${d.n}</a> / Lesson ${d.n}.${l.num}</div>
+      <div class="crumbs"><a href="${P}">Curriculum</a> / <a href="${P}d/${d.n}">Domain ${d.n}</a> / Lesson ${d.n}.${l.num}</div>
       <div class="row" style="margin-bottom:8px">${badge(d.n)}<span class="muted">${esc(d.short)} · Lesson ${l.num} of ${d.lessons.length}</span></div>
       <h1>${esc(l.title)}</h1>
       ${l.summary ? `<p class="lead">${esc(l.summary)}</p>` : ''}
       ${l.objectives.length ? `<div class="callout objectives"><h4>After this lesson you can</h4><ul>${l.objectives.map(o => `<li>${esc(o.replace(/^After this lesson,? you (can|will be able to)\s*/i, '').replace(/^./, c => c.toUpperCase()))}</li>`).join('')}</ul></div>` : ''}
       <div class="prose">${l.html}</div>
       ${l.takeaways.length ? `<div class="callout takeaways"><h4>Key takeaways</h4><ul>${l.takeaways.map(o => `<li>${esc(o)}</li>`).join('')}</ul></div>` : ''}
-      ${terms.length ? `<p class="muted" style="font-size:14px">Terms in this lesson: ${terms.map(t => `<a href="#/glossary/${d.n}/${encodeURIComponent(t.term)}">${esc(t.term)}</a>`).join(' · ')}</p>` : ''}
+      ${terms.length ? `<p class="muted" style="font-size:14px">Terms in this lesson: ${terms.map(t => `<a href="${P}glossary/${d.n}/${encodeURIComponent(t.term)}">${esc(t.term)}</a>`).join(' · ')}</p>` : ''}
       ${l.questions.length ? `<h2>Practice questions <span class="muted" style="font-size:15px;font-weight:400">(${l.questions.length})</span></h2>
         <p class="muted">Questions cited in this lesson. Answer them before reading the explanation.</p><div id="lessonQs"></div>` : ''}
       <div class="row no-print" style="margin-top:28px">
@@ -232,7 +281,7 @@
   function viewQuestion(main, qid) {
     const q = Q[qid];
     if (!q) return viewNotFound(main);
-    main.innerHTML = `<div class="crumbs"><a href="#/">Curriculum</a> / <a href="#/d/${q.domain}">Domain ${q.domain}</a> / Question</div>
+    main.innerHTML = `<div class="crumbs"><a href="${P}">Curriculum</a> / <a href="${P}d/${q.domain}">Domain ${q.domain}</a> / Question</div>
       <h1>Exam ${q.exam} · Question ${q.n}</h1>
       <p class="muted"><a href="javascript:history.back()">← Back</a></p><div id="qbox"></div>`;
     $('#qbox').appendChild(quizCard(qid));
@@ -303,9 +352,9 @@
       <h1>Drill complete</h1>
       <div class="stats"><div class="stat"><b>${right}/${ids.length}</b><span>Correct</span></div><div class="stat"><b>${pct(right, ids.length)}%</b><span>Score</span></div></div>
       ${domainBreakdown(ids, id => res[id])}
-      ${ids.some(id => !res[id]) ? `<h2>Missed in this drill</h2><ul>${ids.filter(id => !res[id]).map(id => `<li><a href="#/q/${id}">Exam ${Q[id].exam} · Q${Q[id].n}</a> <span class="muted">${esc(strip(Q[id].html).slice(0, 110))}…</span></li>`).join('')}</ul>` : ''}
-      <div class="row" style="margin-top:20px"><a class="btn primary" href="#/drill" id="again">New drill</a><a class="btn" href="#/review">Review all mistakes</a></div>`;
-    $('#again').onclick = e => { e.preventDefault(); drill = null; location.hash === '#/drill' ? route() : (location.hash = '#/drill'); };
+      ${ids.some(id => !res[id]) ? `<h2>Missed in this drill</h2><ul>${ids.filter(id => !res[id]).map(id => `<li><a href="${P}q/${id}">Exam ${Q[id].exam} · Q${Q[id].n}</a> <span class="muted">${esc(strip(Q[id].html).slice(0, 110))}…</span></li>`).join('')}</ul>` : ''}
+      <div class="row" style="margin-top:20px"><a class="btn primary" href="${P}drill" id="again">New drill</a><a class="btn" href="${P}review">Review all mistakes</a></div>`;
+    $('#again').onclick = e => { e.preventDefault(); drill = null; location.hash === P + 'drill' ? route() : (location.hash = P + 'drill'); };
   }
   function domainBreakdown(ids, isRight) {
     return `<table class="table prose"><thead><tr><th>Domain</th><th>Correct</th><th>Score</th></tr></thead><tbody>${DOMAINS.map(d => {
@@ -324,11 +373,13 @@
     main.innerHTML = `
       <div class="crumbs">Practice / Mock exam</div>
       <h1>Mock exam</h1>
-      <p class="lead">${MOCK_SIZE} questions drawn across all domains in proportion to exam weight, with a ${MOCK_MINUTES}-minute timer. No feedback until you submit. You can flag questions and jump around.</p>
+      <p class="lead">${MOCK_SIZE} questions drawn across all domains in proportion to ${DOMAINS.every(d => d.weight) ? 'exam weight' : 'the size of each domain\'s question bank'}, with a ${MOCK_MINUTES}-minute timer. No feedback until you submit. You can flag questions and jump around.</p>
       <div class="row"><button class="btn primary" id="startMock">Start mock exam</button></div>
       ${history.length ? `<h2>Recent attempts</h2><table class="table prose"><thead><tr><th>Date</th><th>Score</th><th>Time used</th></tr></thead><tbody>${history.map(h => `<tr><td>${new Date(h.ts).toLocaleString()}</td><td>${h.right}/${h.total} (${pct(h.right, h.total)}%)</td><td>${Math.round(h.secs / 60)} min</td></tr>`).join('')}</tbody></table>` : ''}`;
     $('#startMock').onclick = () => {
-      const weights = DOMAINS.map(d => parseFloat(d.weight.replace(/[^\d.]/g, '')) || 20);
+      const weights = DOMAINS.every(d => d.weight)
+        ? DOMAINS.map(d => parseFloat(d.weight.replace(/[^\d.]/g, '')))
+        : DOMAINS.map(d => Object.values(Q).filter(q => q.domain === d.n).length);
       const wsum = weights.reduce((a, b) => a + b, 0);
       let ids = [];
       DOMAINS.forEach((d, i) => {
@@ -417,20 +468,20 @@
       <div class="crumbs">Practice / Review mistakes</div>
       <h1>Review mistakes</h1>
       <p class="lead">${ids.length} question${ids.length === 1 ? '' : 's'} to review: every question whose latest answer, in a lesson, drill or mock exam, was wrong. A question leaves this list once you answer it correctly.</p>
-      ${ids.length ? `<div class="row"><a class="btn primary" href="#/drill" id="drillMistakes">Drill these as a session</a></div><div id="list"></div>` : '<div class="empty">No mistakes yet. Questions you get wrong in lessons, drills or mock exams will show up here.</div>'}`;
+      ${ids.length ? `<div class="row"><a class="btn primary" href="${P}drill" id="drillMistakes">Drill these as a session</a></div><div id="list"></div>` : '<div class="empty">No mistakes yet. Questions you get wrong in lessons, drills or mock exams will show up here.</div>'}`;
     const box = $('#list');
     if (box) ids.forEach(id => box.appendChild(quizCard(id)));
     const b = $('#drillMistakes');
-    if (b) b.onclick = e => { e.preventDefault(); drill = { active: true, ids: shuffle(ids), i: 0, results: {} }; location.hash = '#/drill'; };
+    if (b) b.onclick = e => { e.preventDefault(); drill = { active: true, ids: shuffle(ids), i: 0, results: {} }; location.hash = P + 'drill'; };
   }
 
   function viewRefIndex(main) {
     main.innerHTML = `
       <div class="crumbs">Look Up / Quick Reference</div>
       <h1>Quick Reference Sheets</h1>
-      <p class="lead">Dense one-page summaries for final review: the cheat sheet, every decision rule and exam trap from the lessons, and answers from the dumps that look wrong.</p>
+      <p class="lead">Dense one-page summaries for final review: the cheat sheet, every decision rule and exam trap from the lessons, and mock exam answers that look wrong.</p>
       <div class="cards">${DOMAINS.map(d => `
-        <a class="card" href="#/ref/${d.n}">
+        <a class="card" href="${P}ref/${d.n}">
           <div class="card-head">${badge(d.n)}<span class="weight">${d.weight}</span></div>
           <h3>${esc(d.title)}</h3><p>${d.lessons.map(l => esc(l.title)).slice(0, 4).join(' · ')}${d.lessons.length > 4 ? ' …' : ''}</p>
         </a>`).join('')}
@@ -444,18 +495,18 @@
   function viewRef(main, n) {
     const d = DOMAINS.find(x => String(x.n) === n);
     if (!d) return viewNotFound(main);
-    const block = (items, title) => items.length ? `<h2>${title}</h2>${items.map(r => `<div class="ref-rule ref-section"><h4><a href="#/d/${d.n}/${LESSON_BY_ID[r.lesson].num}">${d.n}.${LESSON_BY_ID[r.lesson].num} ${esc(r.title)}</a></h4><div class="prose">${r.html}</div></div>`).join('')}` : '';
+    const block = (items, title) => items.length ? `<h2>${title}</h2>${items.map(r => `<div class="ref-rule ref-section"><h4><a href="${P}d/${d.n}/${LESSON_BY_ID[r.lesson].num}">${d.n}.${LESSON_BY_ID[r.lesson].num} ${esc(r.title)}</a></h4><div class="prose">${r.html}</div></div>`).join('')}` : '';
     main.innerHTML = `
-      <div class="crumbs"><a href="#/ref">Quick Reference</a> / Domain ${d.n}</div>
+      <div class="crumbs"><a href="${P}ref">Quick Reference</a> / Domain ${d.n}</div>
       <div class="row" style="justify-content:space-between">
-        <div class="row">${badge(d.n)}<span class="muted">${d.weight} of exam</span></div>
+        <div class="row">${badge(d.n)}<span class="muted">${weightText(d)}</span></div>
         <button class="btn no-print" onclick="window.print()">Print</button>
       </div>
       <h1>${esc(d.title)}</h1>
       <h2>Cheat sheet</h2><div class="prose ref-section">${d.ref.cheat}</div>
       ${block(d.ref.rules, 'Decision rules')}
       ${block(d.ref.traps, 'Exam traps')}
-      ${d.ref.questionable ? `<div class="callout warn ref-section"><h4>⚠️ Questionable answers in the dumps</h4><div class="prose">${d.ref.questionable}</div></div>` : ''}
+      ${d.ref.questionable ? `<div class="callout warn ref-section"><h4>⚠️ Questionable answers in the mock exams</h4><div class="prose">${d.ref.questionable}</div></div>` : ''}
       ${d.glossary.length ? `<h2>Key terms</h2><table class="table prose"><tbody>${d.glossary.map(g => `<tr><th style="white-space:nowrap">${esc(g.term)}</th><td>${esc(g.definition)}</td></tr>`).join('')}</tbody></table>` : ''}`;
   }
 
@@ -502,23 +553,60 @@
     main.innerHTML = `
       <div class="crumbs">Search</div>
       <h1>Results for “${esc(q)}”</h1>
-      <h2>Glossary (${terms.length})</h2>${terms.slice(0, 20).map(g => `<div class="search-hit"><a href="#/glossary/${g.domain}/${encodeURIComponent(g.term)}">${esc(g.term)}</a> ${badge(g.domain)}<small>${esc(g.definition)}</small></div>`).join('') || '<p class="muted">None</p>'}
+      <h2>Glossary (${terms.length})</h2>${terms.slice(0, 20).map(g => `<div class="search-hit"><a href="${P}glossary/${g.domain}/${encodeURIComponent(g.term)}">${esc(g.term)}</a> ${badge(g.domain)}<small>${esc(g.definition)}</small></div>`).join('') || '<p class="muted">None</p>'}
       <h2>Lessons (${lessons.length})</h2>${lessons.map(l => `<div class="search-hit"><a href="${lessonHref(l)}">${l.domain}.${l.num} ${esc(l.title)}</a><small>${esc(l.summary)}</small></div>`).join('') || '<p class="muted">None</p>'}
-      <h2>Questions (${qs.length})</h2>${qs.slice(0, 40).map(x => `<div class="search-hit"><a href="#/q/${x.id}">Exam ${x.exam} · Q${x.n}</a> ${badge(x.domain)}<small>${esc(strip(x.html).slice(0, 180))}…</small></div>`).join('') || '<p class="muted">None</p>'}
+      <h2>Questions (${qs.length})</h2>${qs.slice(0, 40).map(x => `<div class="search-hit"><a href="${P}q/${x.id}">Exam ${x.exam} · Q${x.n}</a> ${badge(x.domain)}<small>${esc(strip(x.html).slice(0, 180))}…</small></div>`).join('') || '<p class="muted">None</p>'}
       ${qs.length > 40 ? '<p class="muted">Showing first 40 questions. Refine your search.</p>' : ''}`;
   }
 
+  function viewLanding(main) {
+    main.innerHTML = `
+      <div class="crumbs">Certifications</div>
+      <h1>Google Cloud Certification Study</h1>
+      <p class="lead">Pick a certification. Each has its own curriculum, practice questions, mock exam, quick reference and glossary. Your progress is saved separately for each one, in this browser.</p>
+      <div class="cards">${CERTS.map(c => {
+        const s = certStore(c.id), done = Object.keys(s.done).length;
+        return `<a class="card" href="#/${c.id}/">
+          <div class="card-head"><span class="badge" style="background:var(--accent)">${esc(c.code)}</span></div>
+          <h3>${esc(c.name)}</h3>
+          <p>${c.domains.length} domains · ${c.lessons} lessons · ${c.questions} questions from ${c.exams} practice exams</p>
+          <div class="meta"><span>Progress</span><span>${done}/${c.lessons} lessons</span></div>
+          <div class="bar"><span style="width:${pct(done, c.lessons)}%"></span></div>
+        </a>`;
+      }).join('')}</div>`;
+  }
+
   function viewNotFound(main) {
-    main.innerHTML = `<h1>Page not found</h1><p><a href="#/">Back to the curriculum</a></p>`;
+    main.innerHTML = `<h1>Page not found</h1><p><a href="${P}">Back to the curriculum</a></p>`;
   }
 
   // ---------- router ----------
-  function route() {
-    const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const LEGACY_ROUTES = ['d', 'q', 'drill', 'mock', 'review', 'ref', 'glossary', 'search'];
+  let routeSeq = 0;
+  async function route() {
+    const all = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     const main = $('#main');
-    if (parts[0] !== 'mock') clearInterval(timerHandle);
-    renderSidebar(parts);
     document.body.classList.remove('nav-open');
+    clearInterval(timerHandle);
+    // Links from before multi-certification support (#/d/3/1 …) belonged to the DevOps curriculum.
+    if (LEGACY_ROUTES.includes(all[0])) { location.replace('#/gpcdoe/' + all.join('/')); return; }
+    if (!all[0]) {
+      CERT = null; P = null; renderChrome();
+      document.body.classList.add('no-cert');
+      viewLanding(main);
+      document.title = 'GCP Certification Study';
+      return;
+    }
+    if (!CERT_BY_ID[all[0]]) { location.replace('#/'); return; }
+    const seq = ++routeSeq;
+    if (!(window.CERT_DATA && window.CERT_DATA[all[0]])) main.innerHTML = '<p class="muted">Loading…</p>';
+    try { await loadCert(all[0]); } catch (e) { main.innerHTML = `<h1>Could not load this certification</h1><p class="muted">${esc(e.message)}</p>`; return; }
+    if (seq !== routeSeq) return; // a newer navigation happened while loading
+    useCert(all[0]);
+    document.body.classList.remove('no-cert');
+    renderChrome();
+    const parts = all.slice(1);
+    renderSidebar(parts);
     const [a, b, c] = parts;
     if (!a) viewHome(main);
     else if (a === 'd' && c) viewLesson(main, b, c);
@@ -534,14 +622,14 @@
     else viewNotFound(main);
     if (!(a === 'glossary' && c)) window.scrollTo(0, 0);
     const t = $('h1', main);
-    document.title = (t && a ? t.textContent.trim() + ' · ' : '') + 'GCP DevOps Study';
+    document.title = (t && a ? t.textContent.trim() + ' · ' : '') + `${CERT.code} Study`;
   }
 
   window.addEventListener('hashchange', route);
   $('#searchForm').addEventListener('submit', e => {
     e.preventDefault();
     const v = $('#searchInput').value.trim();
-    if (v) location.hash = '#/search/' + encodeURIComponent(v);
+    if (v) location.hash = (P || `#/${lastCert()}/`) + 'search/' + encodeURIComponent(v);
   });
   $('#menuBtn').addEventListener('click', () => {
     const open = document.body.classList.toggle('nav-open');
@@ -552,7 +640,7 @@
     const root = document.documentElement;
     const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
-    try { localStorage.setItem('gcpdevops-theme', root.dataset.theme); } catch (e) {}
+    try { localStorage.setItem('gcp-study-theme', root.dataset.theme); } catch (e) {}
   });
   route();
 })();
