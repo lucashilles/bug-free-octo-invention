@@ -910,7 +910,7 @@ When a question pairs a Git source of truth with consistency across multiple GKE
 
 ---
 
-### Exam 2 · Q20 ❌ *you missed this*
+### Exam 2 · Q20
 
 Your organization is building a CI/CD pipeline that deploys Google Cloud resources with Terraform. The CI/CD tooling runs on Google Kubernetes Engine (GKE), and each pipeline run executes in its own ephemeral Pod. You need to make sure that the pipelines running in these Pods hold the right Identity and Access Management (IAM) permissions to carry out the Terraform deployments, and you want to follow Google-recommended practices for identity management. Which two actions should you take? (Choose two.)
 

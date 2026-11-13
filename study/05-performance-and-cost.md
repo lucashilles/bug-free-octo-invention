@@ -1076,7 +1076,7 @@ When a question asks for the fastest, Google-recommended way to pick a resource 
 
 ---
 
-### Exam 5 · Q4 ❌ *you missed this*
+### Exam 5 · Q4
 
 **You manage the backend infrastructure of a mobile game running on a Google Kubernetes Engine (GKE) cluster, serving HTTP requests from users. To optimize network expenses, what step should you take?**
 

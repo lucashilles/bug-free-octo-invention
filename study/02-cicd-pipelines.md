@@ -1234,7 +1234,7 @@ When a question says the release could not be fully tested for performance and t
 
 ---
 
-### Exam 2 · Q21 ❌ *you missed this*
+### Exam 2 · Q21
 
 You need to build a CI/CD pipeline in Google Cloud for a containerized application. Your development team practices trunk-based development with a central Git repository. You want every new version of the application to pass through all of your tests in the pipeline so that quality improves. What should you do?
 
@@ -5271,7 +5271,7 @@ When a Cloud Run workload needs to securely hold a credential like an API key, t
 
 ---
 
-### Exam 5 · Q2 ❌ *you missed this*
+### Exam 5 · Q2
 
 You use a **multi-step Cloud Build pipeline** to build and deploy your application to **Google Kubernetes Engine (GKE)**. You want to **integrate with a third-party monitoring platform** by performing an **HTTP POST of the build information to a webhook**. You want to **minimize development effort**.
 
@@ -5467,7 +5467,7 @@ Here's why this choice is optimal:
 
 ---
 
-### Exam 5 · Q19 ❌ *you missed this*
+### Exam 5 · Q19
 
 **You're set to deploy a new feature of a web-based application to production and wish to utilize Google Kubernetes Engine (GKE) for a phased rollout to half of the web server pods. What is the optimal course of action?**
 
@@ -5510,7 +5510,7 @@ Here's why this choice is optimal:
 
 ---
 
-### Exam 5 · Q21 ❌ *you missed this*
+### Exam 5 · Q21
 
 **During the migration of an on-premises containerized web application to Google Cloud, considering specific traffic direction and testing needs, which deployment strategy and platform should you opt for?**
 

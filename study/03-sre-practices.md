@@ -1877,7 +1877,7 @@ Supports: Objective 3.3, mitigating incident impact by adding capacity, and obje
 
 ---
 
-### Exam 2 · Q7 ❌ *you missed this*
+### Exam 2 · Q7
 
 Your team is writing a postmortem after an incident on your externally facing application. The team wants to improve its postmortem policy by adding triggers that indicate when an incident requires a postmortem. Based on Site Reliability Engineering (SRE) practices, which triggers should the policy define? (Choose two.)
 
@@ -1953,7 +1953,7 @@ For SRE postmortem-trigger questions, pick the listed objective triggers such as
 
 ---
 
-### Exam 2 · Q10 ❌ *you missed this*
+### Exam 2 · Q10
 
 Your organization wants to raise an application’s availability target from 99.9% to 99.99%, and the improvement would cost $2,000. The application currently generates $1,000,000 in revenue. You need to decide whether the higher availability is worth the investment over a single year of use. What should you do?
 
@@ -2026,7 +2026,7 @@ For availability-versus-cost questions, subtract the two targets, multiply by re
 
 ---
 
-### Exam 2 · Q12 ❌ *you missed this*
+### Exam 2 · Q12
 
 Your company runs an ecommerce website built from JVM-based applications in a microservice architecture on Google Kubernetes Engine (GKE). Traffic rises during the day and falls overnight. Your operations team currently runs enough Pods to cover the evening peak at all times. You want to automate scaling so that only the Pods and nodes needed for the current load are running. What should you do?
 
@@ -2101,7 +2101,7 @@ For GKE workloads whose load rises and falls over time and where both Pod and no
 
 ---
 
-### Exam 2 · Q23 ❌ *you missed this*
+### Exam 2 · Q23
 
 You operate a globally used service that has a 99% availability target, and your team has limited engineering capacity. For the current calendar month, measured availability is 99.5%. You need to keep the service within its defined availability goals while staying able to respond to business changes, including an upcoming launch of new features. You must also reduce technical debt and keep operational costs low, and you want to follow Google-recommended practices. What should you do?
 
@@ -2176,7 +2176,7 @@ Read every stated goal in an SRE scenario, since the surplus-error-budget detail
 
 ---
 
-### Exam 2 · Q27 ❌ *you missed this*
+### Exam 2 · Q27
 
 Your team runs microservices on Google Kubernetes Engine (GKE). You want to detect when your error budget is being consumed so that you can protect customers and establish release policies. What should you do?
 
@@ -2251,7 +2251,7 @@ When a question asks how to detect error budget consumption, look for an SLO plu
 
 ---
 
-### Exam 2 · Q31 ❌ *you missed this*
+### Exam 2 · Q31
 
 You support a service that has a well-defined Service Level Objective (SLO). Over the past six months, the service has consistently met its SLO and customer satisfaction has remained high. Most of its operational tasks are automated, so few repetitive tasks occur often. You want to optimize the balance between reliability and deployment velocity while following site reliability engineering (SRE) best practices. Which two actions should you take? (Choose two.)
 
@@ -2329,7 +2329,7 @@ When a service consistently beats its SLO, users are happy, and toil is low, shi
 
 ---
 
-### Exam 2 · Q33 ❌ *you missed this*
+### Exam 2 · Q33
 
 You support a user-facing web application. When you analyze its error budget for the past six months, you find that it has never used more than 5% of its error budget in any given time window. You hold a Service Level Objective (SLO) review with business stakeholders and confirm that the SLO is set appropriately. You want the application’s SLO to reflect its observed reliability more closely. Which two steps can you take to further that goal while balancing velocity, reliability, and business needs? (Choose two.)
 
@@ -4972,7 +4972,7 @@ While improving test coverage is a top priority, consider these additional SRE-a
 
 ---
 
-### Exam 5 · Q12 ❌ *you missed this*
+### Exam 5 · Q12
 
 **Your team has recently deployed an NGINX-based application into Google Kubernetes Engine (GKE) and has exposed it to the public via an HTTP Google Cloud Load Balancer (GCLB) ingress.**
 
@@ -5036,7 +5036,7 @@ While improving test coverage is a top priority, consider these additional SRE-a
 
 ---
 
-### Exam 5 · Q15 ❌ *you missed this*
+### Exam 5 · Q15
 
 **You support a web application hosted on Compute Engine that provides a booking service for thousands of users.**
 

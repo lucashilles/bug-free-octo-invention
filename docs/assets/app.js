@@ -20,10 +20,10 @@
   })();
   function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
   function recordAttempt(qid, ok) { store.attempts[qid] = { ok, ts: Date.now() }; save(); }
-  // A question counts as a mistake if your last drill attempt was wrong, or you missed it in the original exam and haven't since got it right.
+  // A question counts as a mistake while your latest answer to it (in a lesson, drill or mock exam) is wrong.
   function isMistake(qid) {
     const a = store.attempts[qid];
-    return a ? !a.ok : Q[qid].missed;
+    return !!a && !a.ok;
   }
 
   // ---------- helpers ----------
@@ -139,7 +139,7 @@
     main.innerHTML = `
       <div class="crumbs">PCDOE / Curriculum</div>
       <h1>Professional Cloud DevOps Engineer</h1>
-      <p class="lead">${DOMAINS.length} domains, ${total} lessons and ${Object.keys(Q).length} practice questions, built from your practice-exam dumps. Work through each domain's lessons, then drill the questions and take a mock exam.</p>
+      <p class="lead">${DOMAINS.length} domains, ${total} lessons and ${Object.keys(Q).length} practice questions from five practice exams. Work through each domain's lessons, then drill the questions and take a mock exam.</p>
       <div class="stats">
         <div class="stat"><b>${done}/${total}</b><span>Lessons complete</span></div>
         <div class="stat"><b>${attempted}</b><span>Questions attempted</span></div>
@@ -161,7 +161,7 @@
       <div class="cards">
         <a class="card" href="#/drill"><h3>Drill mode</h3><p>Questions one at a time with instant feedback. Filter by domain, unseen questions or mistakes.</p></a>
         <a class="card" href="#/mock"><h3>Mock exam</h3><p>${MOCK_SIZE} questions weighted by domain in ${MOCK_MINUTES} minutes, scored at the end.</p></a>
-        <a class="card" href="#/review"><h3>Review mistakes</h3><p>Every question you got wrong, in the original exams or in drills here.</p></a>
+        <a class="card" href="#/review"><h3>Review mistakes</h3><p>Every question you got wrong in lessons, drills or mock exams.</p></a>
       </div>
       <h2>Look Up</h2>
       <div class="cards">
@@ -416,8 +416,8 @@
     main.innerHTML = `
       <div class="crumbs">Practice / Review mistakes</div>
       <h1>Review mistakes</h1>
-      <p class="lead">${ids.length} question${ids.length === 1 ? '' : 's'} to review: ones you missed in the original exams, plus any you got wrong here. A question leaves this list once you answer it correctly.</p>
-      ${ids.length ? `<div class="row"><a class="btn primary" href="#/drill" id="drillMistakes">Drill these as a session</a></div><div id="list"></div>` : '<div class="empty">No mistakes to review. Nice work.</div>'}`;
+      <p class="lead">${ids.length} question${ids.length === 1 ? '' : 's'} to review: every question whose latest answer, in a lesson, drill or mock exam, was wrong. A question leaves this list once you answer it correctly.</p>
+      ${ids.length ? `<div class="row"><a class="btn primary" href="#/drill" id="drillMistakes">Drill these as a session</a></div><div id="list"></div>` : '<div class="empty">No mistakes yet. Questions you get wrong in lessons, drills or mock exams will show up here.</div>'}`;
     const box = $('#list');
     if (box) ids.forEach(id => box.appendChild(quizCard(id)));
     const b = $('#drillMistakes');

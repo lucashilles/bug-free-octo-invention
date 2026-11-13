@@ -9,7 +9,6 @@ out = []
 for f in sys.argv[2:]:
     soup = BeautifulSoup(open(f, encoding='utf-8').read(), 'html.parser')
     for i, pane in enumerate(soup.select('div[class*="question-result-pane--sIcOh"]'), 1):
-        status = pane.select_one('[data-purpose="question-result-header-status-label"]')
         q = pane.select_one('#question-prompt')
         answers = []
         for a in pane.select('div[class*="answer-result-pane--Niazi"]'):
@@ -19,11 +18,10 @@ for f in sys.argv[2:]:
             cls = ' '.join(ad.get('class', []))
             label = ad.select_one('[data-purpose="answer-result-header-user-label"]')
             correct = 'answer-correct' in cls or (label and 'Correct answer' in label.text)
-            answers.append({'text': h2md(txt), 'correct': bool(correct), 'chosen': bool(label and 'Your answer' in label.text)})
+            answers.append({'text': h2md(txt), 'correct': bool(correct)})
         ov = pane.select_one('#overall-explanation')
         dom = pane.select_one('[data-purpose="domain-pane"] .ud-text-md')
         out.append({'exam': f.split('/')[-1].split('.')[0], 'n': i,
-                    'status': status.text.strip() if status else '',
                     'question': h2md(q) if q else '', 'answers': answers,
                     'explanation': h2md(ov) if ov else '',
                     'domain': dom.text.strip() if dom else 'Unknown'})

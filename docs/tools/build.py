@@ -105,7 +105,6 @@ def build_questions():
     for x in qs:
         qid = f"e{x['exam']}q{x['n']}"
         out[qid] = {'id': qid, 'exam': int(x['exam']), 'n': x['n'], 'domain': dom(x),
-                    'missed': x['status'] == 'Incorrect',
                     'html': md(x['question']),
                     'options': [{'html': md(a['text']), 'correct': a['correct']} for a in x['answers']],
                     'explanation': md(x['explanation'])}

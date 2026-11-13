@@ -1,6 +1,6 @@
 # Domain 2 Study Guide — Building and Implementing CI/CD Pipelines
 
-> Condensed from the 86-question bank in [`02-cicd-pipelines.md`](02-cicd-pipelines.md). Citations look like (Exam N · QM). ❌ marks a question you missed.
+> Condensed from the 86-question bank in [`02-cicd-pipelines.md`](02-cicd-pipelines.md). Citations look like (Exam N · QM).
 
 ## Contents
 

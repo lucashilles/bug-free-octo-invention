@@ -10,7 +10,7 @@ A static study site for the Google Cloud Professional Cloud DevOps Engineer exam
 - **Practice**
   - *Drill mode*: one question at a time with instant feedback. Filter by domain, unseen questions or your mistakes.
   - *Mock exam*: 50 questions weighted by domain with a 120-minute timer. You can flag questions and jump around, and get a per-domain score at the end.
-  - *Review mistakes*: questions you missed in the original exams or in drills here.
+  - *Review mistakes*: questions whose latest answer (in a lesson, drill or mock exam) was wrong.
 - **Look Up**
   - *Quick Reference*: a printable sheet per domain with the cheat sheet, decision rules, exam traps, questionable answers and key terms.
   - *Glossary*: 212 terms with definitions, how each is tested on the exam, and a link to the lesson. Filter by domain or text.
