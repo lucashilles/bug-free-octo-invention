@@ -36,7 +36,7 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const dcolor = n => `var(--d${n})`;
-  const badge = n => `<span class="badge" style="background:${dcolor(n)}">D${n}</span>`;
+  const badge = n => `<span class="badge" style="--c:${dcolor(n)}">D${n}</span>`;
   const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
   const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const lessonHref = l => `${P}d/${l.domain}/${l.num}`;
