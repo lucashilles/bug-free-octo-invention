@@ -293,7 +293,7 @@
 
 | Need | Tool | Source |
 |---|---|---|
-| Forensic capture of an intermittent malicious process | **VPC Flow Logs, sampling 1.0**, on the **implicated env only** (prod frontend + backend subnets), no test-first rollout | Exam 1 · Q11 |
+| Forensic capture of an intermittent malicious process | **VPC Flow Logs, sampling 1.0**, on the **implicated env only** (prod frontend + backend subnets), no test-first rollout. 1.0 is the most complete Flow Logs setting, but packets are still sampled, so it is not a guarantee of every flow | Exam 1 · Q11, Exam 2 · Q13 |
 | Record **each** source IP hitting a port an existing firewall rule allows, fewest steps | **Enable firewall rules logging** on that rule (a passthrough NLB keeps client IPs) | Exam 2 · Q13 |
 | Which **layer** of a cross-VPC path is broken, **no exec access** | **Connectivity Tests** (Network *Intelligence* Center): simulates routes, firewalls, forwarding rules and peering | Exam 2 · Q4 |
 | Full packet payload inspection | Packet Mirroring (needs collectors behind an internal NLB; doesn't write to Cloud Logging) | Exam 2 · Q13 |
@@ -346,14 +346,9 @@
 | Question | Issue |
 |---|---|
 | **Exam 1 · Q8** (Cloud Profiler for "system resource utilization" metrics, hybrid) | Profiler is code-level CPU/heap profiling attributed to functions. Other explanations in this bank say so (Exam 1 · Q18, Exam 2 · Q11, Exam 1 · Q36), and it does not produce system resource-utilization metrics. The bank's own memory hook adds "(or the Ops/Monitoring agent)". Profiler is the least-bad option listed, but on a real exam an **Ops Agent / Cloud Monitoring** option would beat it. |
-| **Exam 5 · Q3** explanation | Says Private Logs Viewer is for "admin activity and system logs". In fact, private logs are mainly **Data Access audit logs**, as Exam 1 · Q46 correctly states, and Admin Activity logs are readable with Logs Viewer. The answer (A) is right; the reasoning is wrong. |
-| **Exam 5 · Q13** explanation | Rejects INT64 because latency is "floating-point" and calls DELTA "rate-based". These are weak reasons. The stronger reasoning in Exam 1 · Q1 is that any scalar loses the distribution. The keyed answer (GAUGE + DISTRIBUTION + Heatmap) stands. The claim in Exam 1 · Q1 that DELTA-kind DISTRIBUTION is disallowed for custom metrics is stated without detail, so don't lean on it beyond this question. |
-| **Exam 5 · Q28** explanation | Rejects the Ops Agent metrics receiver only because it "likely requires more configuration". The real reason, given in Exam 2 · Q3, is that a metrics receiver **can't break down by client IP** at all. |
-| **Exam 2 · Q4** option text | The keyed option says "Network **Connectivity** Center" runs Connectivity Tests. Connectivity Tests belong to **Network Intelligence Center**, as the explanation itself admits. Pick it by capability, but know the real product name. |
-| **Exam 1 · Q11** vs **Exam 2 · Q13** | Exam 1 · Q11 treats Flow Logs at sampling 1.0 as capturing every flow. Exam 2 · Q13 says Flow Logs have a dynamic, non-adjustable primary sampling and can't guarantee every IP. Both keyed answers are defensible in context. Know that "sampling 1.0" is the most complete Flow Logs setting, not a guarantee of every packet. |
+| **Exam 1 · Q1** explanation | Claims that DELTA-kind DISTRIBUTION is disallowed for custom metrics, without detail. The keyed answer (GAUGE + DISTRIBUTION + Heatmap) stands because any scalar loses the distribution (Exam 1 · Q1, Exam 5 · Q13). Don't lean on the DELTA claim beyond this question. |
 | **Exam 2 · Q41**, **Exam 1 · Q16**, **Exam 1 · Q51** | These are built on the **legacy Fluentd-based logging agent**, which is end-of-support per Exam 1 · Q46. Learn the principle (scrub at the agent; check that the agent process is running) rather than the Fluentd plugin and process names. |
 | **Exam 3 · Q2** | The keyed answer describes Sensitive Data Protection redacting "before storing in Cloud Logging". The explanation admits this is a custom preprocessing integration, not a Cloud Logging setting. If a question offers native options such as restricted fields (Exam 4 · Q6) or agent-side removal (Exam 2 · Q41), prefer those when they fit. |
-| **Exam 5 · Q1** explanation | Says Monitoring Viewer via a project ID "shares all dashboards", while via a URL it doesn't. The role grants the same access either way; the URL only *delivers* the chart. The answer is right; the over-sharing argument is not. |
 
 ---
 

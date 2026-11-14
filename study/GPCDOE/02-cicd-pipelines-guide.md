@@ -100,7 +100,7 @@
 - **Shortening MTTR** (choose two): **blue/green** through a CD server (rollback becomes a traffic switch) plus a **CI server running unit tests on every commit**. Local integration tests are not enforced. (Exam 1 · Q42)
 - **Replacing a CAB without hurting delivery** (DORA): **peer review at check-in backed by automated tests** plus **fast feedback** to developers. A senior manager approver, self-merge without review, or bigger batches all lose. (Exam 2 · Q28)
 - **A runtime config failure** (missing env var) needs an **integration test that starts the container with its real config**. Canary, static analysis and audit logs don't catch it. (Exam 4 · Q17)
-- **Concurrent feature branches breaking a shared Dev cluster**: build per feature branch and deploy into a **dynamic namespace per branch** (Config Sync) in the autoscaling Dev cluster, then delete it afterwards. A cluster per branch is costlier. (Exam 4 · Q8)
+- **Concurrent feature branches breaking a shared Dev cluster**: build per feature branch and deploy into a **dynamic namespace per branch** (Config Sync) in the autoscaling Dev cluster, then delete it afterwards. A cluster per branch is costlier, and building only after merging to main is too late for independent testing. (Exam 4 · Q8)
 - **Reducing toil and duration in Cloud Deploy** (choose two):
   - **Automate the low-risk dev→test promotion approval.**
   - **Notify the team the moment a manual step is reached.**
@@ -182,7 +182,7 @@
 |---|---|---|---|---|
 | **Recreate** | All, with downtime | Slow redeploy | (almost never the answer) | Exam 2 · Q22 |
 | **Rolling update** | Gradually all | Roll back through the fleet (`kubectl rollout undo`), mixed versions | Default K8s, no special need | Exam 2 · Q22, Q30 |
-| **Partitioned rolling update** (StatefulSet `partition`) | Pods with ordinal ≥ partition | Raise or lower the partition | "Phased rollout to **half the pods**" | Exam 2 · Q39, Exam 5 · Q19 ❌ |
+| **Partitioned rolling update** (StatefulSet `partition`) | Pods with ordinal ≥ partition | Raise or lower the partition | "Phased rollout to **half the pods**" | Exam 2 · Q39, Exam 5 · Q19 |
 | **Blue/green** | All, at cutover | **Instant**: switch traffic back, the old version is still running | "**Instant** rollback", "simplify releases", "shortest rollback" | Exam 2 · Q22, Q30, Exam 1 · Q42 |
 | **Canary** | **Small %**, growing on evidence | Shift traffic back | "Not fully load-tested", "progressively widen exposure", "limit blast radius" | Exam 2 · Q19, Q22, Exam 5 · Q58 |
 | **A/B testing** | A defined segment, by condition | — | Comparing variants for user segments (experimentation) | Exam 2 · Q22, Q30 |
@@ -195,7 +195,7 @@
   - **Rollback = change the Service selector back** to the old version (for example `version: blue`). This also keeps the failing Deployment intact for debugging.
   - Not `kubectl rollout undo` (that's for rolling updates), not scaling green to zero, and not deleting the image. (Exam 4 · Q59, Exam 5 · Q29, Exam 5 · Q52)
 - **Canary analysis baseline** (Spinnaker/Kayenta): compare against a **freshly created deployment of the *current* production version**, started at the same time. Long-running prod has warm caches, which skews the comparison. (Exam 1 · Q45)
-- **Header- or attribute-based routing plus arbitrary % splits** (Android user-agent → Android microservice): **GKE + Cloud Service Mesh VirtualService** (headers decide *who*, weights decide *how many*). (Exam 2 · Q36, Exam 5 · Q21 ❌)
+- **Header- or attribute-based routing plus arbitrary % splits** (Android user-agent → Android microservice): **GKE + Cloud Service Mesh VirtualService** (headers decide *who*, weights decide *how many*). (Exam 2 · Q36, Exam 5 · Q21)
   - Cloud Run splits only by revision %.
   - App Engine splits by IP or cookie.
 - **Urgent security patch on a global GCE fleet**: a **short canary in the MIG updater, then a full rollout**. All-at-once is too risky, overnight regional rolls are too slow, and duplicating the fleet costs too much. (Exam 5 · Q58)
@@ -333,33 +333,13 @@ These are graded "correct" in the bank but conflict with other questions or curr
 
 1. **Exam 1 · Q21 and Exam 5 · Q9: Cloud Storage + Cloud KMS for pipeline secrets.**
    - The answer is the best of the four options offered, but none of them is Secret Manager. Secret Manager is the current recommended store (Exam 3 · Q46, Exam 5 · Q65).
-   - Exam 5 · Q9's claim that "Cloud KMS simplifies **secret** rotation" confuses rotating a key with rotating a secret value.
    - Pick GCS+KMS only when Secret Manager isn't offered.
 2. **Exam 2 · Q45: KMS-encrypted secrets inline in the build config.**
    - This is valid among its options, but Exam 3 · Q46 calls it higher-maintenance than Secret Manager, because every rotation needs a re-encrypt and re-embed.
    - It is a dated pattern, not the preferred one.
-3. **Exam 5 · Q19 ❌: the explanation says partitioned rolling updates are "directly supported within Kubernetes Deployment objects".**
-   - That is wrong. `partition` is a **StatefulSet** RollingUpdate field (Exam 2 · Q39 says so explicitly).
-   - It also dismisses StatefulSets as "not for phased rollouts", which contradicts where the feature actually lives.
-   - The answer letter is right; the reasoning is wrong.
-4. **Exam 5 · Q21 ❌: the explanation claims Anthos Service Mesh "does not manage non-GKE VM workloads".**
-   - The parallel question (Exam 2 · Q36) rejects the Compute Engine option for a different reason: the option only configures a % split and has no user-agent rule.
-   - Rely on the Exam 2 · Q36 reasoning: header routing is the deciding criterion.
-5. **Exam 5 · Q30: the explanation says "Cloud Run does not support arbitrary filesystem secret mounts".**
-   - Cloud Run *does* mount Secret Manager secrets as volumes (Exam 3 · Q28, Exam 4 · Q28 depend on it).
-   - Option II is wrong because of the needless app-side "decrypt" step (Exam 4 · Q60), not because of mounting.
-6. **Exam 5 · Q14: the explanation recommends integrating with "Google Container Registry".**
-   - Container Registry is retired (Exam 4 · Q12, Exam 1 · Q10).
-   - Read "Container Analysis" as today's **Artifact Analysis** on Artifact Registry.
-7. **Exam 5 · Q53: the explanation says `create_before_destroy` lets "new ones with the updated machine type spin up", avoiding downtime.**
-   - Exam 1 · Q55 explicitly notes that it does **not** guarantee rollout to existing VMs, which depends on the MIG update configuration.
-   - It also faults option B for "mixing instance types", which is not the real reason. The real reason is extra pipeline runs.
-8. **Exam 5 · Q52: the reasoning against option B ("roll back green") is weak.**
-   - It says this "reverts to an outdated version". The stronger reason, consistent with Exam 4 · Q59, is that switching the selector to blue is instant and leaves green intact for developers to debug.
-9. **Exam 3 · Q12 and Exam 4 · Q8: the bank's own explanations admit ambiguity.**
-   - Exam 3 · Q12: option C (two stages plus canary) is "technically defensible".
-   - Exam 4 · Q8: option A's "main-branch merge requests" wording is ambiguous.
-   - Choose the simplest option that literally matches the stem.
+3. **Exam 3 · Q12: the bank's own explanation admits ambiguity.**
+   - Option C (two stages plus a production canary after the QA approval) is "technically defensible".
+   - Choose D, the simplest option that literally matches the stem.
 
 ---
 

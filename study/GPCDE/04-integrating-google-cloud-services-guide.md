@@ -7,7 +7,7 @@
 ## 1. Service identity, Application Default Credentials and the metadata server
 
 ### Key facts
-- **Code runs as a service account, not as you.** When a function's write to another project's bucket fails with 403, the fix is to grant a narrow role (`roles/storage.objectCreator`) **on the bucket** to the identity the function runs as. Granting the role to your user account, or giving yourself `iam.serviceAccountUser`, doesn't change what the function can do. Enabling the API in project B doesn't fix a permissions error (Exam 1 · Q13, see ⚠️ for which service account that really is).
+- **Code runs as a service account, not as you.** When a function's write to another project's bucket fails with 403, the fix is to grant a narrow role (`roles/storage.objectCreator`) **on the bucket** to the function's **runtime service account**, the identity the code runs as. That is not the Cloud Functions service agent (`service-…@gcf-admin-robot.iam.gserviceaccount.com`), which Google uses to manage the function. Granting the role to your user account, or giving yourself `iam.serviceAccountUser`, doesn't change what the function can do. Enabling the API in project B doesn't fix a permissions error (Exam 1 · Q13).
 - **Cross-project access = home-project service account + role on the remote resource.** A Compute Engine app in project A that publishes to a topic in project B runs with a **service account from project A**, which is granted publisher **directly on the topic** in project B (Exam 1 · Q47).
   - Same pattern for a Cloud Function in project A writing to a bucket in project B: **create a dedicated service account in project A**, deploy the function with it, and grant **`roles/storage.objectCreator` on the bucket** in project B. A service account created in project B hands B control over A's function, and the **default App Engine service account** (`PROJECT_ID@appspot.gserviceaccount.com`) is far broader than needed (Exam 5 · Q40).
 - **403 vs 401 vs 404 from Cloud Storage:** **403 Permission Denied** means the identity authenticated but lacks permission, for example because the permissions behind its role were changed. A rotated key that the server never picked up fails **authentication (401)**, a changed folder/object path gives **404**, and an Interconnect outage shows up as timeouts or connection errors (Exam 5 · Q22).
@@ -31,7 +31,7 @@
 ### Decision rules
 - 403 from code calling an API: find the **runtime identity**, then grant the **least-privileged role on the target resource** (Exam 1 · Q13), (Exam 1 · Q47), (Exam 5 · Q40). Suspect a **change in that identity's permissions** before network or path problems (Exam 5 · Q22).
 - "Securely distribute credentials to VMs": the answer is **don't**. Use the attached service account with ADC (Exam 2 · Q49).
-- Need project ID or region at runtime on Cloud Run: query the **metadata server**, not console-copied environment variables or the Cloud Asset Inventory API (Exam 2 · Q46).
+- Need project ID or region at runtime on Cloud Run: query the **metadata server** (`project/project-id`, `instance/region`), not console-copied environment variables or the Cloud Asset Inventory API (Exam 2 · Q46).
 - BigQuery permission error when running queries: **Data Viewer + Job User** (Exam 3 · Q41).
 
 ### Traps
@@ -46,7 +46,7 @@
 ## 2. Workload Identity on GKE
 
 ### Key facts
-- **Workload Identity** binds a **Kubernetes service account (KSA)** to a **Google service account (GSA)**. Pods get short-lived tokens, so no keys are stored in the cluster. It is Google's recommended way for GKE workloads to call Google Cloud APIs (Exam 1 · Q51), (Exam 3 · Q27).
+- **Workload Identity** (now called *Workload Identity Federation for GKE*) binds a **Kubernetes service account (KSA)** to a **Google service account (GSA)**. Pods get short-lived tokens, so no keys are stored in the cluster. It is Google's recommended way for GKE workloads to call Google Cloud APIs (Exam 1 · Q51), (Exam 3 · Q27).
 - Setup steps: create the GSA with the needed role (BigQuery, Spanner and so on) → create a KSA → **enable Workload Identity on the cluster** → bind KSA to GSA with **`roles/iam.workloadIdentityUser`** → set the KSA in the Deployment spec (Exam 2 · Q37), (Exam 1 · Q57), (Exam 3 · Q31).
 - It is a **one-time setup**, and credentials are rotated for you (Exam 3 · Q27).
 - It needs minimal code change. Client libraries pick up the identity automatically, for example when accessing Spanner from microservices (Exam 1 · Q44).
@@ -99,7 +99,7 @@
 ### Key facts
 - **Only authorized services may call a function:** create a service account with the **Cloud Functions Invoker** role and make calls as that account. The **Viewer** role can only read configuration and can't invoke. **IAP** is for users reaching web apps, not service-to-service calls. A separate OAuth client ID adds complexity for no benefit (Exam 1 · Q30).
 - **CORS:** if a browser page on `https://www.example.com` posts to a function on `https://fn.example.com`, the function returns **`Access-Control-Allow-Origin: https://www.example.com`**, the exact calling origin. `*` lets any site in, `https://*.example.com` is broader than needed, and the function's own origin blocks the real callers (Exam 3 · Q29).
-- **Scheduling calls to an internal-ingress Cloud Run service:** the keyed fix for the 403 is **Cloud Scheduler + Pub/Sub** delivering to Cloud Run. Switching ingress to "Internal and Cloud Load Balancing" exposes the service, a cron VM adds management overhead, and `roles/run.developer` is overly broad (Exam 4 · Q14, see ⚠️).
+- **Scheduling calls to an internal-ingress Cloud Run service:** the keyed fix for the 403 is **Cloud Scheduler + Pub/Sub**, with a **push subscription** delivering to Cloud Run (Pub/Sub push is allowed through internal ingress). The push identity needs **`roles/run.invoker`**. Switching ingress to "Internal and Cloud Load Balancing" loosens the ingress requirement, a cron VM adds management overhead, and `roles/run.developer` is for managing services, not invoking them (Exam 4 · Q14).
 
 ### Decision rules
 - "Invoke" means **Invoker** role (`roles/cloudfunctions.invoker` style roles), granted to the **calling** service account (Exam 1 · Q30).
@@ -114,7 +114,7 @@
 ## 5. API management: Cloud Endpoints and Apigee
 
 ### Key facts
-- **Authenticate callers + enforce quotas + track metrics** in front of a backend: use an **API management layer**. In the bank this is **Cloud Endpoints**, which sits between Cloud Load Balancing and the app (Exam 1 · Q55), (Exam 5 · Q17). App Engine only hosts the backend, IAP secures user access, and GKE Ingress only routes traffic (Exam 5 · Q17).
+- **Authenticate callers + enforce quotas + track metrics** in front of a backend: use an **API management layer**. In the bank this is **Cloud Endpoints**, which sits between Cloud Load Balancing and the app and authenticates callers with **API keys and JWTs** (Exam 1 · Q55), (Exam 5 · Q17). Google's current API-management products are **API Gateway** and **Apigee**, so treat either as the same answer if offered. App Engine only hosts the backend, IAP secures user access, and GKE Ingress only routes traffic (Exam 5 · Q17).
 - **Backward-incompatible API change on Cloud Functions:** leave the original function unchanged, deploy a **second function** with the new API, and expose a **versioned API through Cloud Endpoints**. One function branching on a version field risks breaking old callers. A plain load balancer has no API-management features, and Cloud Functions doesn't route by version automatically (Exam 1 · Q18).
 - **Subscription tiers with daily request limits:** put the GKE service behind an **Apigee proxy**, identify client apps with **API keys**, and apply a **Quota policy** per tier (Exam 6 · Q3).
 - **Reviewing API traffic patterns across Apigee environments:** grant the operations team the **Apigee Analytics Viewer** role on the environments (here `orders-prod` and `users-prod` in the `store-prod` group) and use **Apigee API Analytics**. The **API Reader** role covers proxies and configuration, not analytics data, and Cloud Monitoring gives general infrastructure metrics rather than API-level traffic, latency and error breakdowns (Exam 5 · Q35).
@@ -144,7 +144,8 @@
 - **Every message must go to two sinks** (Cloud Storage and BigQuery) with low operational overhead: **one topic, 2 subscriptions, 2 Cloud Run services** (Exam 4 · Q44).
 - **Competing consumers / load sharing:** a pool of audit-service VMs that should split the work uses **one topic + one pull subscription** that all instances share. A subscription per instance would duplicate every message (Exam 4 · Q50).
 - **Durability against downstream failure:** if a function that sends emails throws 500s, have the sender **publish to Pub/Sub** and let the function consume the topic. Messages persist until processed. A longer timeout, aggressive one-second retries or a Memorystore hand-off don't give you durability (Exam 4 · Q7).
-- **Ordering:** to keep updates per stock symbol in order in an in-memory DB, use a **pull subscription with message ordering enabled and the stock symbol as the ordering key** (Exam 4 · Q13).
+- **Stock prices into an in-memory DB:** a **pull subscription with ordering and exactly-once delivery both disabled**. Each message carries a timestamp, so the consumer keeps the newest price and ignores older ones, and duplicates are harmless. An ordering key on the stock symbol would work but isn't needed, and it only costs throughput. **Exactly-once delivery is pull-only**, so "push + exactly-once" is impossible (Exam 4 · Q13), (Exam 4 · Q26).
+- **When you do need ordering keys:** only when messages carry nothing the consumer can use to drop stale ones, such as a timestamp or a version. Then use a **pull subscription with message ordering enabled and the entity ID as the ordering key**.
 - **Serverless consumer that costs nothing when idle:** a **Cloud Function with a Pub/Sub trigger**. You don't need to also create a pull subscription in code. Compute Engine and GKE cost money even when no messages arrive (Exam 2 · Q9).
 - **Several processes analyzing logs in near real time:** a **Cloud Logging sink → Pub/Sub topic**, with each process subscribing. Polling the Logging API doesn't scale, and a Cloud Storage sink isn't near real time (Exam 4 · Q24).
   - The same answer applies when logs must be **pushed to a third-party application** in real time: export to Pub/Sub, which many third-party tools consume directly. A BigQuery sink is for analytics, a Cloud Storage sink still needs something to pick the files up, and a custom function that pulls log entries adds code and failure points (Exam 5 · Q60).
@@ -157,18 +158,20 @@
 | Each team or step gets every event | 1 topic, **N subscriptions** | (Exam 2 · Q42) |
 | Same message to Cloud Storage **and** BigQuery | 1 topic, **2 subs**, 2 services | (Exam 4 · Q44) |
 | N worker instances share the load | 1 topic, **1 pull sub** shared by all | (Exam 4 · Q50) |
-| Per-key ordering | Pull sub, **ordering key** = entity ID | (Exam 4 · Q13) |
+| Latest value per entity, messages carry timestamps | **Pull sub**, ordering and exactly-once **off** | (Exam 4 · Q13), (Exam 4 · Q26) |
+| Strict per-entity order, no timestamp or version | Pull sub, **ordering key** = entity ID | |
 | Logs to several consumers or a third-party tool in real time | **Logging sink → Pub/Sub** | (Exam 4 · Q24), (Exam 5 · Q60) |
 
 ### Decision rules
 - Copies or duplicates: a **subscription** is the unit of fan-out. A **topic per publisher instance** makes subscribers listen to everything (Exam 4 · Q50).
 - Two subscribers attached to **one** subscription split the messages between them. They don't each get every message (Exam 4 · Q44), (Exam 4 · Q50).
-- Per-entity order matters (prices, balances): use an **ordering key** (Exam 4 · Q13).
+- Messages carry a timestamp or version: let the consumer discard stale ones; **no ordering key** (Exam 4 · Q13). Use an **ordering key** only when nothing in the message lets the consumer detect stale ones.
 - "Avoid losing emails, orders or events" → put **Pub/Sub** between producer and consumer (Exam 4 · Q7).
 - "Only that user may publish/subscribe to their own topic" → IAM roles **on the topic and subscription**, not on the project (Exam 5 · Q53).
 
 ### Traps
-- Bank explanations disagree on push vs pull for high volume. (Exam 4 · Q50) says push is less suited to large volumes, and (Exam 4 · Q26) claims the opposite and keys "push + exactly-once" (see ⚠️).
+- Push subscriptions are less suited to very large volumes than pull (Exam 4 · Q50), (Exam 4 · Q26). Any option combining **push with exactly-once delivery** is impossible (Exam 4 · Q26).
+- "Ordering key = stock symbol" sounds right but isn't the answer for timestamped prices: the timestamp already handles ordering (Exam 4 · Q13), (Exam 4 · Q26).
 - One Cloud Run service writing to both sinks via push couples both writes into one handler (Exam 4 · Q44).
 - A separate topic for each processing step (Exam 2 · Q42) makes the publisher know about every step.
 
@@ -178,12 +181,12 @@
 
 ### Key facts
 - **Object uploaded → message on a topic, minimal effort:** configure **Cloud Storage Pub/Sub notifications** on the bucket. That needs no code, unlike a function, App Engine app or GKE app that publishes for you (Exam 3 · Q47).
-- **Flexible, team-maintainable triggers that route to Cloud Run:** an **Eventarc trigger** on Cloud Storage events with **Cloud Run as the target**. Pub/Sub → Cloud Build misuses a CI tool as a runtime, and Firebase functions are aimed at Firebase-based apps (Exam 4 · Q16, see ⚠️ about filename filtering).
+- **Flexible, team-maintainable triggers that route to Cloud Run:** an **Eventarc trigger** on Cloud Storage events with **Cloud Run as the target**. Direct Cloud Storage triggers filter by **bucket** and event type, so the service checks the object name (or an audit-log trigger uses a path pattern). Pub/Sub → Cloud Build misuses a CI tool as a runtime, and Firebase functions are aimed at Firebase-based apps (Exam 4 · Q16).
 - **React to resource creation without changing how resources are provisioned:** a **Cloud Audit Logs-based trigger** fires a **Cloud Function** each time a VM is created, and the function adds missing labels. Periodic Cloud Scheduler scripts leave gaps between runs, and `gcloud terraform vet` only covers Terraform-provisioned resources (Exam 6 · Q9).
 - **Orchestrating Cloud Functions where each output drives the next step, with low latency:** use **Workflows with conditional jumps** (`switch`/`next`). **Cloud Composer** (Airflow) is heavier and adds latency. Callbacks are for waiting on external events, not for branching (Exam 4 · Q1).
 - **Multi-step processing pipeline (resize → crop → watermark) with monitoring and minimal setup:** **Workflows** orchestrates the steps and **Cloud Logging** tracks execution. Composer + Dataproc is ETL/big-data tooling, Cloud Build is CI/CD, and Apigee is for exposing external APIs, not internal orchestration (Exam 5 · Q16).
-- **Scheduling:** use **Cloud Scheduler** rather than cron on VMs (Exam 4 · Q14, see ⚠️).
-- **Ticket seat reservation:** the bank keys **Pub/Sub + Eventarc → GKE** over Cloud Tasks + Workflows, a Cloud Storage drop or a load balancer + MIG (Exam 6 · Q13, see ⚠️).
+- **Scheduling:** use **Cloud Scheduler** rather than cron on VMs (Exam 4 · Q14).
+- **Ticket seat reservation with immediate confirmation:** a **synchronous HTTP POST through an Application Load Balancer to a managed instance group** that reserves the seat and answers in the same response. Pub/Sub + Eventarc, Cloud Tasks + Workflows and a Cloud Storage drop are all asynchronous: they confirm the message was received, not that the seat was reserved (Exam 6 · Q13).
 
 ### Orchestration vs choreography
 
@@ -224,7 +227,7 @@
 - **Customer-supplied encryption keys (CSEK):** every read or write of a CSEK object must send the **AES-256 key (base64)** *and* the **base64-encoded SHA256 hash of the key** (`x-goog-encryption-algorithm`, `x-goog-encryption-key`, `x-goog-encryption-key-sha256`). A 4xx on read most likely means the **hash was missing**. Sending the base64 key or the hash is required, not the cause of the error (Exam 5 · Q1).
 - **Read only some metadata properties:** use the JSON API **`fields` request parameter** on `objects.get`. `patch` updates metadata, `compose` concatenates objects, and `copy` duplicates them (Exam 3 · Q21).
 - **Empty "folder":** create a zero-byte object whose name ends in a **trailing slash** (`user123/`). There is no special content type for folders (Exam 3 · Q56).
-- **Copy local files to a bucket from the command line:** `gsutil cp LOCAL gs://BUCKET/` (Exam 1 · Q48, see ⚠️ for the current CLI).
+- **Copy local files to a bucket from the command line:** `gcloud storage cp LOCAL gs://BUCKET/` (the legacy `gsutil cp` does the same). There is no top-level `gcloud cp` (Exam 1 · Q48).
 
 ### Access options for private objects
 
@@ -237,7 +240,7 @@
 | Per-user buckets + per-bucket service accounts handed to clients | ❌ Complex, leaks credentials | (Exam 2 · Q24) |
 
 ### Decision rules
-- "Limited time", "external users", "no Google account", "large upload without servers" → **signed URL** (Exam 1 · Q15), (Exam 2 · Q24), (Exam 6 · Q7).
+- "Limited time", "external users", "no Google account", "large upload without servers" → **signed URL** (Exam 1 · Q15), (Exam 2 · Q24), (Exam 6 · Q7). A 500-MB upload API moving to App Engine also uses **signed URLs**, since App Engine requests are capped at 32 MB (Exam 3 · Q43).
 - Spike on a dormant bucket → **ramp up**. Throttling during peaks → **exponential backoff** (Exam 1 · Q22), (Exam 1 · Q24).
 - 429 at peak: **backoff** is the immediate fix. A quota increase is slow, caching misses on a cold cache, and a multi-regional class doesn't change request quotas (Exam 1 · Q24), (Exam 5 · Q15).
 - Any transient 429/5xx (including **504**) from Cloud Storage → **exponential backoff around the client call** (Exam 5 · Q26).
@@ -247,7 +250,7 @@
 - Spreading uploads over many buckets isn't the keyed fix for a ramp-up problem (Exam 1 · Q22).
 - Firestore is not a store for large images or videos (Exam 5 · Q15).
 - CSEK: "used the base64 key" and "used the SHA256 hash" both describe correct behaviour. The error comes from **leaving one of them out** (Exam 5 · Q1).
-- (Exam 3 · Q43) keys "multipart upload API" over signed URLs for 500 MB uploads to App Engine, which contradicts (Exam 2 · Q24) (see ⚠️).
+- A "multipart upload API" still sends every byte through App Engine and hits its 32-MB request limit (Exam 3 · Q43).
 
 ---
 
@@ -260,7 +263,7 @@
 - **Firestore (Datastore mode) memory blow-ups on large lists:** paginate with **query cursors**. Integer offsets still scan the skipped entities, adding latency and cost. A bare limit doesn't page through the rest, and more memory only hides the problem (Exam 3 · Q57).
 - **Firestore 429 RESOURCE_EXHAUSTED before a traffic surge:** **optimize queries to cut reads and writes, and retry with exponential backoff**. A quota increase alone or fixed backoff isn't enough (Exam 4 · Q2).
 - **Read-modify-write on Datastore (crediting an account balance):** do the **entity lookup and the update inside one transaction**, so concurrent credits can't overwrite each other. An ancestor query alone doesn't make the update atomic, Datastore already is a strongly consistent transactional database, and not returning the entity is cosmetic (Exam 5 · Q4).
-- **Your API's write to Datastore failed with a 5xx:** return **HTTP 500** to your caller so the failure is visible. 204 looks like success, and 406 is about content negotiation (Exam 4 · Q41, see ⚠️).
+- **Your API's write to Datastore failed with a 5xx:** return **HTTP 500** to your caller so the failure is visible (after a few **bounded** backoff retries, if you like). 204 looks like success, 406 is about content negotiation, and retrying "until 2xx" never tells the caller anything (Exam 4 · Q41).
 - **SQL: combine two tables with matching columns and remove duplicates:** use **`UNION`**. `UNION ALL` keeps duplicates, and `JOIN` combines columns, not rows (Exam 3 · Q13).
 
 ### Spanner read types
@@ -290,11 +293,11 @@
 ### Key facts
 - **Flat JSON from an HTTP function that many users need to analyze right away:** **stream it into BigQuery**. Datastore is for entity lookups, Cloud SQL isn't built for that analytics load, and one file per request in Cloud Storage makes querying hard (Exam 1 · Q38).
 - **Near real-time SQL analytics at growing scale, managed services only:** **Pub/Sub → Dataflow → BigQuery**. Cloud Storage or Firestore as the sink doesn't give SQL analytics, and self-managed Kafka adds operational load (Exam 4 · Q17).
-- **High-volume voting in 30-minute windows, counted and stored for reporting:** **Pub/Sub → Dataflow** (counts plus raw votes) **→ BigQuery**, visualized in Data Studio (Exam 4 · Q39).
-- **Pub/Sub messages processed once and stored cost-effectively:** a **Dataflow streaming pipeline** reading with Apache Beam's **`PubSubIO`** and writing to storage. Dataflow deduplicates Pub/Sub deliveries (by message ID) for you. Dataproc isn't built for this streaming case, a function + BigQuery dedup step and a second "dedup" Dataflow job over Bigtable both add work Dataflow already does (Exam 5 · Q21, see ⚠️).
+- **High-volume voting in 30-minute windows, counted and stored for reporting:** **Pub/Sub → Dataflow** (counts plus raw votes) **→ BigQuery**, visualized in Looker Studio (formerly Data Studio) (Exam 4 · Q39).
+- **Pub/Sub messages processed once and stored cost-effectively:** a **Dataflow streaming pipeline** reading with Apache Beam's **`PubSubIO`** and writing to storage. Dataflow deduplicates Pub/Sub redeliveries (by message ID) for you. Duplicates the publisher sends as separate messages need a unique ID attribute read with `withIdAttribute`. Dataproc isn't built for this streaming case, a function + BigQuery dedup step and a second "dedup" Dataflow job over Bigtable both add work Dataflow already does (Exam 5 · Q21).
 - **Inserting many small rows with `insertAll`:** **batch multiple rows into each request** instead of one API call per row. Threads add contention, and writing each row to a Cloud Storage object before loading adds steps (Exam 5 · Q50). For new high-throughput code, the Storage Write API is the current recommendation (see the next point).
-- **BigQuery Storage Write API without duplicates:** create a write stream of **committed type** (Exam 4 · Q11, see ⚠️ for the explanation's mistakes).
-- **A user who doesn't care about job duration and mustn't impede critical work:** run their queries as **batch** jobs, which start when resources are free. You don't need a separate project or manual timing, and `jobUser` alone doesn't set a priority (Exam 4 · Q43), (Exam 5 · Q14, see ⚠️).
+- **BigQuery Storage Write API without duplicates:** create a write stream of **committed type**, whose **stream offsets** make retried appends exactly-once. The default stream is at-least-once (Exam 4 · Q11).
+- **A user who doesn't care about job duration and mustn't impede critical work:** run their queries as **batch** jobs, which start when resources are free. Batch priority doesn't lower the price; it saves cost because you don't need a separate project, reservation or manual timing, and `jobUser` alone doesn't set a priority (Exam 4 · Q43), (Exam 5 · Q14).
 - **Query permissions:** Data Viewer + Job User (Exam 3 · Q41).
 
 ### Analytics sink selector
@@ -328,7 +331,7 @@
 - **Calling Google APIs from code:** prefer **Cloud Client Libraries** (Exam 2 · Q16).
 - **A VM with no external IP calling the Cloud Storage API:** enable **Private Google Access** on the subnet. Carrier Peering connects on-prem to Google, VPC Peering connects VPCs, and Shared VPC shares networks across projects. None of those give access to Google APIs (Exam 3 · Q9), (Exam 4 · Q33).
 - **Dynamic discovery between Cloud Run services and functions:** use a **Service Directory** namespace. Services register at deploy time and are looked up at runtime. That beats hand-maintained environment variables, naming conventions, querying the Admin APIs, or Consul on a single VM (Exam 3 · Q28).
-- **Resilient connection to a legacy REST service running in two regional GKE clusters, with probe-based health checks on a separate port:** the key is **Traffic Director with a sidecar proxy**, plus a firewall rule that allows the health checks (Exam 4 · Q35, see ⚠️ on where health checks really come from).
+- **Resilient connection to a legacy REST service running in two regional GKE clusters, with probe-based health checks on a separate port:** the key is **Cloud Service Mesh (formerly Traffic Director) with a sidecar proxy**, plus a firewall rule that allows the health checks (Exam 4 · Q35, see ⚠️ on where health checks really come from).
 
 ### Decision rules
 - "No public IP" + "Google API" → **Private Google Access** (Exam 3 · Q9), (Exam 4 · Q33).
@@ -346,22 +349,7 @@
 
 | Item | Issue |
 |---|---|
-| **(Exam 4 · Q26)** | Keys **push + exactly-once delivery** and says push suits high volume better. Pub/Sub exactly-once delivery is a **pull**-subscription feature, and (Exam 4 · Q50) says push is *less* suited to large volumes. The same scenario in (Exam 4 · Q13) keys **pull + ordering key**. Expect the pull answer to be the defensible one. |
-| **(Exam 1 · Q13)** | `service-PROJECTA@gcf-admin-robot.iam.gserviceaccount.com` is the Cloud Functions **service agent** (used by Google to manage the function), not the **runtime** service account your code executes as. The principle (grant `objectCreator` on the bucket to the function's identity) is right, but in practice the grant goes to the function's runtime service account, which (Exam 5 · Q40) gets right: a dedicated service account in project A. |
-| **(Exam 3 · Q43)** | Keys "multipart upload API" for 500 MB uploads to App Engine and rejects signed URLs as "unnecessary complexity". App Engine request sizes are limited far below 500 MB, and Google's pattern (taught in (Exam 2 · Q24)) is direct-to-Cloud Storage uploads via **signed URLs**. Learn the key, but expect signed URLs elsewhere. |
-| **(Exam 6 · Q13)** | Keys asynchronous Pub/Sub + Eventarc for "**immediate confirmation** of a specific seat". Publishing only confirms that the message was received, not that the seat was reserved. The rejection of the load-balancer option ("relies on polling the load balancer") is technically wrong. |
-| **(Exam 4 · Q11)** | The answer (committed type) is right, but the explanation says the default stream is "buffered". The default stream gives at-least-once semantics, and buffered is a separate type. Committed-type streams avoid duplicates through **stream offsets**, not some automatic dedup. |
-| **(Exam 4 · Q14)** | A 403 calling Cloud Run usually means the caller lacks **`roles/run.invoker`**. The explanation says Cloud Run "subscribes" to Pub/Sub, but delivery is a push subscription to the service. Treat the key as "use managed Scheduler, not VM cron or loosened ingress". |
-| **(Exam 4 · Q16)** | The explanation says Eventarc Cloud Storage triggers filter by object name and that Cloud Functions can't. Direct Cloud Storage events filter by bucket, and Cloud Functions (2nd gen) triggers are themselves Eventarc triggers. Learn "Eventarc → Cloud Run for flexible triggers" but not the filtering claims. |
-| **(Exam 4 · Q35)** | Keys health checks "initiated from the sidecar proxy". For Traffic Director (now Cloud Service Mesh), backend health checks come from **Google Cloud health-check probers**, and firewall rules normally allow those ranges. Know the key, but it's shaky. |
-| **(Exam 4 · Q43)**, **(Exam 5 · Q14)** | The answer (batch queries) is fine, but both explanations say batch jobs are "less expensive" ((Exam 5 · Q14): "significantly more cost-effective"). Batch priority changes scheduling, not on-demand price, and (Exam 4 · Q43)'s cited link is for Google Cloud *Batch*, a different product. |
-| **(Exam 5 · Q17)** | The answer (Cloud Endpoints) matches (Exam 1 · Q55), but the explanation says Endpoints "integrates with IAM" for user authentication. Endpoints validates API keys and JWTs (Firebase, Auth0, Google ID tokens), and its quotas are tied to API keys/consumer projects. The cited reference is the GKE Ingress page. |
-| **(Exam 5 · Q21)** | The answer (Dataflow + `PubSubIO`) is right, but "Dataflow automatically handles deduplication" only covers redelivery of the **same** Pub/Sub message. Duplicates the **publisher** sends as separate messages need an ID attribute (`idAttribute`/`withIdAttribute`) or dedup logic in the pipeline. |
-| **(Exam 4 · Q41)** | Keys C (return 500), but its own explanation recommends "C **and** D" (retry with backoff, then report). In practice, retrying transient 5xx with bounded backoff and then surfacing a 5xx is best. Pick C if you must pick one. |
-| **(Exam 1 · Q57)**, **(Exam 3 · Q31)** | Option V describes itself as "not as endorsed" yet is keyed correct. (Exam 3 · Q31) writes the role as `roles/iam.workloadIdentity`, but the real role is **`roles/iam.workloadIdentityUser`**. The feature is now called *Workload Identity Federation for GKE*. |
-| **(Exam 1 · Q48)** | `gsutil` is legacy. Google now recommends **`gcloud storage cp`**. The explanation also wrongly says `gcloud` has a general `cp` command. |
-| **(Exam 2 · Q46)** | The explanation says to read the region from `instance/zone`. Cloud Run's metadata server exposes `instance/region` for that. |
-| **(Exam 1 · Q18)**, **(Exam 1 · Q55)**, **(Exam 4 · Q39)** | Older product framing. Cloud Endpoints still exists, but API Gateway and Apigee are the current API-management options. Data Studio is now **Looker Studio**. |
+| **(Exam 4 · Q35)** | Keys health checks "initiated from the sidecar proxy". In Cloud Service Mesh (formerly Traffic Director), backend health checks come from **Google Cloud health-check probers** (`35.191.0.0/16`, `130.211.0.0/22`), and the firewall must allow those ranges. No option says that exactly. Know the key, but it's shaky. |
 
 ---
 
@@ -380,13 +368,14 @@
 - Breaking API change: keep v1, deploy v2, **version through the gateway** (Exam 1 · Q18).
 - Pub/Sub fan-out = **one subscription per consumer**. Load sharing = **one shared pull subscription**. Per-user access = roles **on the topic/subscription** (Exam 2 · Q42), (Exam 4 · Q44), (Exam 4 · Q50), (Exam 5 · Q53).
 - Logs to real-time consumers or a third-party tool → **Logging sink → Pub/Sub** (Exam 4 · Q24), (Exam 5 · Q60).
-- Per-key order → **ordering key** on a pull subscription (Exam 4 · Q13).
+- Timestamped messages → **pull, ordering and exactly-once off** (Exam 4 · Q13), (Exam 4 · Q26). Exactly-once is **pull-only**.
 - Don't lose work when a consumer fails → **put Pub/Sub in between** (Exam 4 · Q7).
 - Pay only when messages arrive → **function with a Pub/Sub trigger** (Exam 2 · Q9).
 - Bucket change → topic, no code: **Cloud Storage Pub/Sub notifications** (Exam 3 · Q47).
+- Immediate confirmation (seat reserved) → **synchronous** request via load balancer, not Pub/Sub (Exam 6 · Q13).
 - Flexible event routing to Cloud Run → **Eventarc**. React to resource creation → **audit-log trigger** (Exam 4 · Q16), (Exam 6 · Q9).
 - Branching or multi-step orchestration → **Workflows** (+ Cloud Logging), not Composer or Cloud Build (Exam 4 · Q1), (Exam 5 · Q16).
-- Temporary or external object access, big direct uploads → **signed URLs** (Exam 1 · Q15), (Exam 2 · Q24), (Exam 6 · Q7).
+- Temporary or external object access, big direct uploads (including to App Engine apps) → **signed URLs** (Exam 1 · Q15), (Exam 2 · Q24), (Exam 3 · Q43), (Exam 6 · Q7).
 - 429/503/504 → **truncated exponential backoff**. Cold bucket spike → **ramp up gradually** (Exam 1 · Q24), (Exam 3 · Q32), (Exam 5 · Q15), (Exam 5 · Q26), (Exam 1 · Q22).
 - CSEK reads/writes need the **base64 key + base64 SHA256 hash of the key**. Missing hash → 4xx (Exam 5 · Q1).
 - Partial metadata → `fields` parameter. Empty folder → object name ending in `/` (Exam 3 · Q21), (Exam 3 · Q56).

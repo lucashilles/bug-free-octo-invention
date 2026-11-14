@@ -14,7 +14,7 @@
 - Modernizing a Python 3 web API that needs autoscaling, frequent deployments, low cost and low ops → Cloud Run, not App Engine flexible, a single VM, or a GKE rewrite (Exam 4 · Q54).
 - A containerized Python service with daytime traffic and **no traffic at night** → Cloud Run, logging errors to **standard error** so **Error Reporting** picks them up automatically (Exam 6 · Q16).
 - **Cloud Run cold starts during spikes**: new instances start faster when **configuration and static data are baked into the image at build time** instead of fetched from a database on startup, which can bottleneck on an already loaded database (Exam 5 · Q54).
-- **App Engine flexible** keeps a minimum number of instances running, so it costs money while idle (Exam 1 · Q29).
+- **App Engine flexible** keeps a minimum number of instances running, so it costs money while idle (Exam 1 · Q29). App Engine **standard** can scale to zero; pairing it with Cloud SQL is what loses, because the database instance bills around the clock (Exam 1 · Q29).
 - **GKE** (Standard or Autopilot) and **Compute Engine MIGs** scale, but they add cluster/VM management and cost more for spiky traffic than Cloud Run (Exam 1 · Q60), (Exam 6 · Q16).
 
 ### Comparison
@@ -31,7 +31,7 @@
 - "Unpredictable traffic" + "minimize cost" + "stateless" → **Cloud Run + Firestore** (Exam 1 · Q29), (Exam 1 · Q60).
 - "Knative" anywhere in the stem → **Cloud Run** (Exam 1 · Q11), (Exam 4 · Q4).
 - An API with several URL paths, each mapped to a different function → **one Cloud Function per path**, each a separate backend service behind an **HTTPS load balancer** with path routing (Exam 2 · Q23).
-- Hybrid (cloud + on-prem) microservices with an emphasis on managed services and scalability → **GKE clusters in each environment via Anthos + Cloud Run for Anthos** (Exam 3 · Q17). See the questionable-answers note on product naming.
+- Hybrid (cloud + on-prem) microservices with an emphasis on managed services and scalability → **GKE clusters in each environment via Anthos + Cloud Run for Anthos** (Exam 3 · Q17). Anthos is now GKE Enterprise and Cloud Run for Anthos is now Knative serving; see questionable answers.
 - Errors must show up in Error Reporting with minimal setup → write them to **stderr**, not to a Cloud Storage bucket (Exam 6 · Q16).
 - "Better user experience during traffic spikes on Cloud Run" → **shorten instance startup**: embed config/static data in the image rather than loading it from a database at startup (Exam 5 · Q54).
 
@@ -76,7 +76,7 @@
 - Analysts' queries hurting an OLTP Cloud SQL database → replicate to **BigQuery with Datastream** and point them there (Exam 5 · Q39). See section 10.
 
 ### Traps
-- Firestore in **Datastore mode** is not the answer when offline sync or real-time client features are required (Exam 1 · Q17), (Exam 3 · Q15).
+- Firestore in **Datastore mode** is not the answer when offline sync or real-time client features are required. It isn't slower; it just lacks real-time listeners and the mobile/web client libraries (Exam 1 · Q17), (Exam 3 · Q15).
 - Spanner is "overkill" for a standard MySQL workload with no global requirement (Exam 2 · Q14).
 - A self-managed SQLite + Cloud Storage sync job means writing your own sync logic (Exam 4 · Q31).
 - A migration path of "Cloud SQL, then import into Firestore Native" is keyed in one vague item; treat it as weak (Exam 4 · Q42). See questionable answers.
@@ -122,7 +122,7 @@
 
 ### Key facts
 - **GKE regional clusters** replicate the control plane and nodes across zones in a region. They survive a zone failure. **Multi-zonal** clusters spread nodes but keep a **single-zone control plane**, so a zone outage can still take down the GKE API (Exam 2 · Q60).
-- **Spanner 99.999% + low global read latency** → a multi-region instance config spanning continents (**`nam-asia-eur1`**) with **at least 3 nodes**, not separate regional instances or Dataflow replication (Exam 2 · Q36).
+- **Spanner 99.999% + low global read latency** → a multi-region instance config spanning continents (**`nam-asia-eur1`**) with **at least 3 nodes**, not separate regional instances or Dataflow replication (Exam 2 · Q36). Replication comes from the instance configuration; nodes only add capacity. `nam3` is also multi-region, but North America only, so it doesn't cut latency for users in Europe or Asia (Exam 2 · Q36).
 - **Bigtable app profile with multi-cluster routing** gives automatic failover across clusters. Single-cluster routing with manual failover is the problem to fix (Exam 6 · Q11).
 - **Containers on GKE**: one component per container (Apache, PHP, MySQL separate) with **readiness and liveness probes**, so Kubernetes can restart unhealthy containers. Avoid one container running everything under a process manager or bash script (Exam 3 · Q1).
 - **Spanner** is the database for global consistency and high availability (Exam 4 · Q59).
@@ -147,35 +147,35 @@
 
 ### Key facts
 - **Object Lifecycle Management** moves objects to colder classes declaratively (e.g. Standard → Coldline after 14 days, Standard → Archive after 3 years). It beats a scheduled job or a Cloud Function + Cloud Scheduler doing the same thing (Exam 1 · Q2), (Exam 1 · Q8), (Exam 1 · Q54).
-- **Retention policy / Bucket Lock** guarantees objects can't be deleted or modified before the retention period ends. This is how you meet "keep for 7 years" (Exam 1 · Q8), (Exam 1 · Q54), (Exam 1 · Q2).
+- **Retention policy / Bucket Lock** guarantees objects can't be deleted or modified before the retention period ends. This is how you meet "keep for 7 years". Bucket Lock has no extra charge (Exam 1 · Q8), (Exam 1 · Q54), (Exam 1 · Q2), (Exam 2 · Q31).
 - Logs reviewed for two weeks then only annually → **Coldline** after 14 days. Nearline costs more than Coldline for this infrequently accessed data (Exam 1 · Q2), (Exam 2 · Q31).
 - **Object Versioning** guards against accidental overwrite/delete but does not enforce retention and adds cost. **IAM Conditions** control access, not retention (Exam 1 · Q8), (Exam 1 · Q54).
 - **Large read-only dataset shared by a MIG**, fast startup, filesystem access, low cost → **one persistent disk attached read-only to many VMs**. Cloud Storage FUSE adds latency; copying at startup slows boot; per-VM disks from a snapshot cost more (Exam 2 · Q52).
 - **Images served fast and cheaply** → **Cloud CDN with a Cloud Storage backend** (Exam 3 · Q33). For global reliability, make that bucket **multi-region** (Exam 5 · Q19).
 - **BigQuery compliance**: EU data residency → a **dataset created in an EU region**; right to delete → **DML `DELETE`/`UPDATE`** statements (Exam 2 · Q19).
-- **BigQuery row-level separation by department** → views filtering by department, granted per group, without copying data (Exam 3 · Q20). See questionable answers for where the views should live.
+- **BigQuery row-level separation by department** → **authorized views**: one dataset per department holding a view with a `WHERE` filter on the "Master" data, the views authorized on the Master dataset, and employees granted access only to their department's dataset. An authorized view must be in a different dataset from its source, so views inside Master won't do (Exam 3 · Q20).
 
 ### Comparison: compliance vs cost features
 
 | Feature | Solves | Doesn't solve | Source |
 |---|---|---|---|
-| Retention policy / Bucket Lock | "Must keep N years", can't delete | Cost | (Exam 1 · Q8), (Exam 1 · Q54) |
-| Lifecycle rule (SetStorageClass) | Cost of aging data | Retention guarantee | (Exam 1 · Q2), (Exam 1 · Q54) |
+| Retention policy / Bucket Lock | "Must keep N years", can't delete | Cost | (Exam 1 · Q8), (Exam 1 · Q54), (Exam 2 · Q31) |
+| Lifecycle rule (SetStorageClass) | Cost of aging data | Retention guarantee | (Exam 1 · Q2), (Exam 1 · Q54), (Exam 2 · Q31) |
 | Object Versioning | Accidental overwrite | Retention, cost | (Exam 1 · Q8) |
 | IAM Conditions | Who can read | Retention | (Exam 1 · Q54) |
 | JWT for users | Nothing storage-related | — | (Exam 1 · Q2), (Exam 2 · Q31) |
 
 ### Decision rules
 - "Accessible for at least 7 years" + "rarely accessed after 3 years" → **retention policy 7 years + lifecycle to Archive at 3 years** (Exam 1 · Q8), (Exam 1 · Q54).
-- "Review 2 weeks, then auditor yearly" → **lifecycle to Coldline at 14 days + Bucket Lock retention** (Exam 1 · Q2).
-- "Choose two" with both a lifecycle rule and a script doing the same transition → prefer the **native lifecycle rule** (Exam 1 · Q54).
+- "Review 2 weeks, then auditor yearly" → **lifecycle to Coldline at 14 days + Bucket Lock retention** (Exam 1 · Q2), (Exam 2 · Q31).
+- "Choose two" with both a lifecycle rule and a script doing the same transition → prefer the **native lifecycle rule**, and spend the second pick on the other requirement (e.g. retention) (Exam 1 · Q54), (Exam 2 · Q31).
 - Shared read-only data for many VMs → **read-only multi-attach PD** (Exam 2 · Q52).
 - Residency in BigQuery → **regional dataset**; deletion on request → **DML** (Exam 2 · Q19).
 
 ### Traps
 - A Cloud Function + Cloud Scheduler that moves old objects to another bucket is custom code that native lifecycle already provides (Exam 1 · Q8), (Exam 1 · Q54).
 - An EU Cloud Storage bucket or federated queries don't satisfy BigQuery residency or deletion by themselves; a Dataflow re-upload is unnecessary complexity (Exam 2 · Q19).
-- Copying data into per-department datasets with pipelines duplicates data and needs syncing (Exam 3 · Q20).
+- Copying data into per-department datasets with pipelines duplicates data and needs syncing. Per-department datasets holding *authorized views* is the right answer; the copies are the trap (Exam 3 · Q20).
 - App Engine or a VM with Persistent Disk serving images loses to CDN + Cloud Storage (Exam 3 · Q33).
 
 ---
@@ -187,8 +187,8 @@
 - **Pick the first service to migrate** by low risk and few dependencies: the **product catalog** (frontend + product DB), not payments, order fulfillment or the shopping cart (Exam 1 · Q10).
 - Priorities when designing composable microservices: an **API contract** between caller and implementation, and a **versioning scheme** for future incompatible changes (Exam 2 · Q22).
 - Expose versioned REST microservices on GKE through an **Ingress** that routes by URL (e.g. `/api/v1/`, `/api/v2/`), so consumers and third parties aren't disrupted by new releases (Exam 3 · Q54).
-- **gRPC** for mobile APIs: HTTP/2, HTTPS, compact Protocol Buffers payloads (less bandwidth than JSON or SOAP XML), and generated client code for Android/iOS (Exam 2 · Q12), (Exam 2 · Q34).
-- **Header-based routing** across service implementations on VMs/instance groups in several regions → **Traffic Director** (Exam 2 · Q25).
+- **gRPC** for mobile APIs: HTTP/2, HTTPS, compact Protocol Buffers payloads (less bandwidth than JSON or SOAP XML), and generated client code for Android/iOS (Exam 2 · Q12), (Exam 2 · Q34). The bandwidth win is Protobuf vs JSON; REST isn't limited to HTTP/1.1 (Exam 2 · Q12).
+- **Header-based routing** across service implementations on VMs/instance groups in several regions → **Traffic Director**, now part of **Cloud Service Mesh** (Exam 2 · Q25). Internal Application LBs can also route on headers; see questionable answers.
 - **Async decoupling**: publish to a **Pub/Sub topic** so multiple services can consume (Exam 6 · Q5).
 - **SPA calling a slow third-party API**: make the request **asynchronous** so it doesn't block rendering, and **hide the widget** on timeout or error (Exam 1 · Q21).
 
@@ -239,7 +239,7 @@
 - "Deployer" in the stem → grant **act-as** on the runtime SA (Exam 1 · Q25).
 - "External IdP" + "console access for employees" → **Workforce** Identity Federation (Exam 6 · Q4).
 - Many developers across projects → **groups**, never per-user bindings (Exam 3 · Q10). The same goes for app access: restrict an IAP app to a **Google Group** of the finance department (Exam 5 · Q55).
-- A Windows VM using the Cloud SQL Auth Proxy: the keyed answer is a custom role with `cloudsql.instances.connect` plus the instance connection name in the proxy command, and `--unix-socket` is wrong on Windows (Exam 6 · Q6). See questionable answers.
+- A Windows VM using the Cloud SQL Auth Proxy: **`roles/cloudsql.client`** plus the instance connection name in the proxy command. `--unix-socket` is wrong because Unix sockets aren't supported on Windows (Exam 6 · Q6).
 
 ### Traps
 - Basic roles (Owner, Editor) are always wrong in least-privilege questions (Exam 1 · Q25), (Exam 2 · Q38), (Exam 4 · Q36).
@@ -257,9 +257,9 @@
 - **Internal web app for a Google Workspace org, minimal infrastructure** → deploy on **Cloud Run** and protect it with **IAP**, granting users **`roles/iap.httpsResourceAccessor`**. `iap.tunnelResourceAccessor` is for TCP forwarding (SSH/RDP) (Exam 5 · Q43).
 - **Only one department** may use a tool → IAP on the HTTP(S) LB restricted to a **Google Group**, and the app **validates the IAP-signed JWT** (`x-goog-iap-jwt-assertion` header) so requests that bypass IAP are rejected (Exam 5 · Q55).
 - **PII in Cloud SQL and Cloud Storage** → **private IP** for Cloud SQL plus a **VPC Service Controls perimeter containing both** the database and the bucket, to block data exfiltration. Firewall rules + IAM or Private Google Access alone are weaker (Exam 5 · Q30).
-- **SSH for maintenance** without public IPs → **IAP TCP forwarding for SSH**, web servers on **private IPs behind an HTTP(S) load balancer**. Better than a bastion host or public IPs (Exam 3 · Q53).
-- **Encrypt pod-to-pod traffic in GKE** with minimal app changes → a **service mesh (Istio) with sidecar injection and mutual TLS**. Network Policies restrict traffic but don't encrypt it (Exam 2 · Q41).
-- **Lowest TTFB** for thousands of devices calling a single-region REST backend on Premium Tier → **MIG behind an external Application Load Balancer**, not DNS round-robin or a passthrough Network Load Balancer (Exam 6 · Q8).
+- **SSH for maintenance** without public IPs → **IAP TCP forwarding for SSH**, web servers on **private IPs behind an HTTP(S) load balancer**. Better than a bastion host or public IPs. The two paths are separate: the load balancer carries web traffic, IAP carries SSH (Exam 3 · Q53).
+- **Encrypt pod-to-pod traffic in GKE** with minimal app changes → **Cloud Service Mesh** (Google's managed Istio) **with sidecar injection and mutual TLS**. Network Policies restrict traffic but don't encrypt it (Exam 2 · Q41).
+- **Lowest TTFB** for thousands of devices calling a single-region REST backend on Premium Tier → **MIG behind an external Application Load Balancer**, not DNS round-robin or a passthrough Network Load Balancer (Exam 6 · Q8). With one backend region, the gain comes from terminating connections at Google's edge on Premium Tier, not from choosing a closer backend (Exam 6 · Q8).
 - **App in one project, AlloyDB in another, keep projects isolated** → keyed answer is a **Shared VPC** with both as service projects (Exam 6 · Q15).
 
 ### Comparison: who can reach the app
@@ -269,9 +269,9 @@
 | Anyone, no login, encrypted | HTTPS LB + Google-managed cert | (Exam 1 · Q36), (Exam 4 · Q15) |
 | Only company Workspace users, anywhere | HTTPS LB + IAP (or Cloud Run + IAP) | (Exam 2 · Q55), (Exam 5 · Q12), (Exam 5 · Q43) |
 | Only one department | IAP + Google Group + JWT validation in the app | (Exam 5 · Q55) |
-| Some Cloud Run services public, others for signed-in Google identities | Keyed: IAP on all services; see questionable answers | (Exam 5 · Q9) |
+| Some Cloud Run services public, others for signed-in Google identities | Separate services: public ones with `allUsers` invoker; restricted ones behind an LB with IAP and ingress "Internal and Cloud Load Balancing" | (Exam 5 · Q9) |
 | Admin SSH, no public IPs | IAP for TCP/SSH | (Exam 3 · Q53) |
-| Service-to-service encryption in GKE | Istio mTLS | (Exam 2 · Q41) |
+| Service-to-service encryption in GKE | Cloud Service Mesh (Istio) mTLS | (Exam 2 · Q41) |
 
 ### Decision rules
 - "Without authentication" → **not IAP**; use TLS on the load balancer (Exam 1 · Q36).
@@ -286,6 +286,7 @@
 - Let's Encrypt certificates baked into every app = lots of app changes (Exam 2 · Q41).
 - Weighted or plain round-robin Cloud DNS gives no proximity optimization (Exam 6 · Q8).
 - A home-grown auth proxy on Compute Engine, a users/password-hash table in Cloud SQL, or per-request credential checks in the app all lose to IAP (Exam 5 · Q12), (Exam 5 · Q43). A custom "access-checking" microservice is the same mistake (Exam 5 · Q9).
+- `allAuthenticatedUsers` is not "public": it still requires a Google sign-in. Truly open Cloud Run services get `allUsers` (Exam 5 · Q9).
 - Cloud Armor IP allowlists don't prove who the user is, and client certificates add management overhead; neither replaces IAP + group membership (Exam 5 · Q55).
 - Putting the database and the bucket in **separate** VPC-SC perimeters blocks the app's own data path and adds complexity (Exam 5 · Q30).
 - A service account JSON key passed as `--credentials-file` doesn't solve network connectivity and adds key-management risk (Exam 6 · Q15).
@@ -336,24 +337,11 @@
 
 | Item | Issue |
 |---|---|
-| **(Exam 2 · Q31)** | Keys **II + IV** (scheduled job *and* lifecycle rule, which do the same thing) and rejects Bucket Lock as "expensive". Bucket Lock has no extra charge, and the stem requires 7-year retention. The same scenario in (Exam 1 · Q2) keys **Bucket Lock + Coldline lifecycle**. **Prefer I + IV.** |
-| **(Exam 3 · Q20)** | Keys "views inside the Master dataset". Google's **authorized view** pattern puts the views in a **separate dataset** that users can access, then authorizes those views on the source dataset (option I). Granting dataset-level access inside "Master" risks exposing the base tables. |
-| **(Exam 6 · Q6)** | Keys a custom role with only `cloudsql.instances.connect`. Google's documentation recommends **`roles/cloudsql.client`** for the Auth Proxy (as in (Exam 2 · Q38) and (Exam 4 · Q36)), and the proxy also needs `cloudsql.instances.get`. The real eliminator for option B is that `--unix-socket` doesn't apply on Windows. |
-| **(Exam 1 · Q29)** | The answer (Cloud Run) is right, but the explanation says App Engine **standard** doesn't scale to zero. It does; only flexible keeps minimum instances. |
-| **(Exam 2 · Q36)** | The key is fine, but the explanation calls `nam3` a "regional" config. `nam3` is a **multi-region** config limited to North America. "3 nodes so one can fail" also misdescribes Spanner: replication comes from the instance configuration, not the node count. |
-| **(Exam 2 · Q25)** | Traffic Director is now part of **Cloud Service Mesh**. The claim that internal HTTP(S) load balancing can't route on headers is wrong; internal Application LBs support header-based routing. |
-| **(Exam 2 · Q41)** | The "Istio on GKE" add-on the references point to is deprecated. Today the Google-supported route is **Cloud Service Mesh** (managed Istio). The mTLS-via-sidecar idea still holds. |
 | **(Exam 3 · Q17)** | "Anthos" is now **GKE Enterprise**, and "Cloud Run for Anthos" became **Knative serving**, which is no longer offered as a managed add-on. Learn the key, but expect newer wording. |
 | **(Exam 4 · Q42)** | The stem has no scenario (no current database, no workload) and the key ("migrate to Cloud SQL, then import into Firestore Native") isn't justified. Don't build rules from it. |
-| **(Exam 3 · Q53)** | The key is fine, but the explanation says one HTTP(S) LB "handles both web traffic and SSH". IAP TCP forwarding for SSH is separate from the load balancer. |
-| **(Exam 6 · Q8)** | The key (external Application LB) is fine, but the reasoning is off. The backend is in one region, so the gain comes from terminating connections at Google's edge on Premium Tier, not from "routing to the closest backend". |
+| **(Exam 2 · Q25)** | Traffic Director and Anthos Service Mesh (options I and III) are now both **Cloud Service Mesh**, and cross-region internal Application LBs can route on headers too, so option IV is less clearly wrong than it used to be. Answer Traffic Director. |
 | **(Exam 6 · Q15)** | Shared VPC is keyed, but it puts both projects on one network, which weakens the "keep projects isolated" requirement. Private Service Connect is the newer cross-project option for AlloyDB. Answer the key if PSC isn't offered. |
-| **(Exam 3 · Q15)** | Firestore Native is right (real-time). The claim that Datastore mode is "less performant" is not the real difference: Datastore mode lacks the real-time and offline client features. |
-| **(Exam 2 · Q12)** | "REST uses HTTP/1.1" is an overgeneralization. The bandwidth argument for gRPC rests on Protobuf, not on REST being limited to HTTP/1.1. |
-| **(Exam 5 · Q9)** | Keys "IAP on all services, `allAuthenticatedUsers` for public ones". That contradicts the stem: `allAuthenticatedUsers` still forces a Google sign-in, so the public services aren't unrestricted. The explanation also claims the "Internal and Cloud Load Balancing" ingress blocks public access, but an external LB is allowed under that setting. **Prefer D**: separate services, public ones open (`allUsers` invoker), restricted ones behind an LB with IAP and ingress limited to internal + load balancing. |
-| **(Exam 5 · Q3)** | The diagram is missing from the bank, so the step labels are inferred. The key (Pub/Sub → Dataflow → Firestore → BigQuery) is plausible, but the explanations are muddled: option C is rejected because "Dataflow is better than BigQuery", and B and C are both said to fail because Firestore "isn't for streaming data", although the key itself stores the data in Firestore. Learn the Pub/Sub → Dataflow → BigQuery pattern. |
-| **(Exam 5 · Q19)** | Option IV's text is garbled: it adds a third step that routes to an unmanaged instance group. Answer it for the bucket + backend bucket + CDN part. "Multi-regional" is the legacy class name; today it's a Standard bucket in a multi-region location. |
-| **(Exam 5 · Q54)** | The key is fine, but it rejects option III for the wrong reason. Background work after the response is an anti-pattern because Cloud Run throttles CPU once the response is sent (with request-based billing), not because it's "complex". Keep secrets out of the image; only non-sensitive config and static data belong there. |
+| **(Exam 5 · Q3)** | The diagram is missing from the bank, so the step labels are inferred. The key (Pub/Sub → Dataflow → Firestore → BigQuery) is plausible, but some explanations are muddled (e.g. Firestore "isn't for streaming data", although the key itself stores the data in Firestore). Learn the Pub/Sub → Dataflow → BigQuery pattern. |
 
 ---
 
@@ -376,7 +364,7 @@
 - Monolith migration → **phased (Strangler Fig)**, start with the **product catalog** (Exam 1 · Q16), (Exam 1 · Q10).
 - Microservice design → **API contract + versioning**; expose versions via **Ingress URL routing** (Exam 2 · Q22), (Exam 3 · Q54).
 - Mobile API, low bandwidth → **gRPC** (Exam 2 · Q12).
-- Header-based routing across regions → **Traffic Director** (Exam 2 · Q25).
+- Header-based routing across regions → **Traffic Director** / Cloud Service Mesh (Exam 2 · Q25).
 - Dedicated **user-managed SA**, narrowest role; deployer gets **act-as** (Exam 1 · Q25), (Exam 3 · Q2).
 - Cross-project write → SA in the **function's** project + `objectCreator` on the **other** bucket (Exam 4 · Q12).
 - Cloud SQL from apps → **Cloud SQL Client** (Exam 2 · Q38), (Exam 4 · Q36).

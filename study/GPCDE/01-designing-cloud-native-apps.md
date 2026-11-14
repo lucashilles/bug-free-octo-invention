@@ -393,7 +393,7 @@ Let's break down why this is the ideal choice:
 
   * **II. App Engine Flexible Environment:** While suitable for web applications, the flexible environment has a minimum number of instances, incurring costs even during periods of inactivity.
 
-  * **III. App Engine Standard Environment:** The standard environment doesn't scale down to zero, and Cloud SQL, as a managed SQL database, is not as ideal a fit for a serverless application as Firestore.
+  * **III. App Engine Standard Environment:** App Engine standard can scale to zero, so the platform isn't the problem. The weak point is Cloud SQL: an instance keeps running (and billing) on days with no traffic, and its connection limits make it a poorer fit for sudden spikes than Firestore, which is serverless and billed per operation.
 
   * **IV. Compute Engine Managed Instance Groups:** While Compute Engine offers autoscaling, it involves overhead in managing VMs and is less cost-effective for unpredictable workloads than a serverless solution like Cloud Run.
 
@@ -613,7 +613,7 @@ gRPC-based APIs:
 
 Other options and why they are less suitable:
 
-  * **I. RESTful APIs** : While REST is widely used and supports HTTPS, it relies on **JSON** for data exchange, which is bulkier than Protobuf. REST also uses HTTP/1.1, which is not as efficient as HTTP/2 in terms of bandwidth usage and performance, particularly in mobile environments.
+  * **I. RESTful APIs** : While REST is widely used and supports HTTPS, it relies on **JSON** for data exchange, which is bulkier than Protobuf. REST can run over HTTP/2 as well, so the main bandwidth difference is the payload format: binary Protobuf messages are much smaller than the equivalent JSON.
 
   * **II. MQTT for APIs** : MQTT is a lightweight protocol primarily designed for messaging in IoT systems. It is not ideal for APIs intended for mobile applications as it focuses more on **publish/subscribe messaging** rather than standard request/response patterns that are common in APIs. While it minimizes bandwidth, it's not designed to integrate seamlessly with mobile app APIs.
 
@@ -823,13 +823,15 @@ Here's why Traffic Director is the best fit:
 
   * **III. Anthos Service Mesh:** Anthos Service Mesh offers advanced traffic management but introduces complexity in this case. Traffic Director is a more streamlined solution for your specific requirement.
 
-  * **IV. Internal HTTP(S) Load Balancing:** Internal HTTP(S) Load Balancing lacks the ability to make routing decisions based on HTTP headers.
+  * **IV. Internal HTTP(S) Load Balancing:** Internal Application Load Balancers do support header-based routing through URL maps. The question, though, is about services calling each other across regions with loose coupling, which is the service-mesh use case Traffic Director was built for; a classic regional internal load balancer only reaches backends in its own region.
 
 **References:**
 
 [https://cloud.google.com/traffic-director/docs/set-up-gce-vms](https://cloud.google.com/traffic-director/docs/set-up-gce-vms  https://cloud.google.com/traffic-director/docs/overview#traffic_management)
 
 [https://cloud.google.com/traffic-director/docs/overview#traffic_management](https://cloud.google.com/traffic-director/docs/set-up-gce-vms  https://cloud.google.com/traffic-director/docs/overview#traffic_management)
+
+**⚠️ Note:** Traffic Director and Anthos Service Mesh have both been merged into **Cloud Service Mesh**, so newer versions of this question may name that instead. A cross-region internal Application Load Balancer can now also route on headers across regions, so this question reflects the older product lineup.
 
 </details>
 
@@ -935,40 +937,32 @@ III. Set up a "Customers" table with an Array field to store phone numbers for e
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. Establish a lifecycle management policy to transition objects older than 14 days to the Coldline storage class. **|** II. Schedule a job to transition objects older than 14 days to the Coldline storage class.
+**Correct:** I. Apply the Bucket Lock feature to enforce a retention policy on the data. **|** IV. Establish a lifecycle management policy to transition objects older than 14 days to the Coldline storage class.
 
 **Correct Answers:**
 
-  * **II. Schedule a job to transition objects older than 14 days to the Coldline storage class.**
+  * **I. Apply the Bucket Lock feature to enforce a retention policy on the data.**
 
   * **IV. Establish a lifecycle management policy to transition objects older than 14 days to the Coldline storage class.**
 
 **Justification:**
 
-  * **Tiered Storage:** Both approaches leverage Cloud Storage's different storage classes. Since recent logs (<= 14 days) are accessed frequently, keeping them on Standard storage makes sense. Older logs can safely transition to the less expensive Coldline storage class.
+  * **Retention (I):** The stem requires keeping the data for at least 7 years. A bucket retention policy (locked with Bucket Lock) guarantees that no object can be deleted or overwritten before it reaches that age. Bucket Lock itself has no extra charge; you only pay for the storage you keep, which you would have to keep anyway.
 
-  * **Automation:** While scheduling a job is possible, lifecycle management policies provide a more declarative and automated way to enforce the storage tiering.
-
-  * **Data Retention:** Neither of these solutions directly address the 7-year retention requirement. That could be handled with Object Lifecycle Management (e.g., deleting after 7 years) or Bucket Lock.
+  * **Tiering (IV):** Logs are reviewed often during the first two weeks, then only once a year. A lifecycle rule that moves objects older than 14 days to Coldline (designed for data accessed less than once a quarter) cuts storage cost, and it runs automatically with no code to maintain.
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. Apply the Bucket Lock feature to enforce a retention policy on the data.**
+  * **II. Schedule a job to transition objects older than 14 days to the Coldline storage class.** This does the same thing as IV, but you have to write, schedule and monitor the job yourself. Object Lifecycle Management is the managed, declarative way to do it, and choosing both II and IV would leave the retention requirement unmet.
 
-    * **Cost:** Bucket Lock is designed for legal holds and compliance, not primarily for cost optimization. It can become expensive for large datasets with long retention periods.
+  * **III. Generate a JSON Web Token (JWT) for users requiring access to the Coldline storage buckets.** Access is handled with IAM; JWTs do nothing for cost or retention.
 
-  * **III. Generate a JSON Web Token (JWT) for users requiring access to the Coldline storage buckets.**
-
-    * **Relevance:** JWTs are for authentication, not directly related to cost optimization of storage.
-
-  * **V. Configure a lifecycle management policy to transition objects older than 14 days to the Nearline storage class.**
-
-    * **Cost:** Nearline, while less expensive than Standard, is still more costly than Coldline for infrequently accessed data.
+  * **V. Configure a lifecycle management policy to transition objects older than 14 days to the Nearline storage class.** Nearline suits data read about once a month. For data read once a year, Coldline is cheaper.
 
 **References** :  
-[https://cloud.google.com/storage/docs/bucket-lock ](https://cloud.google.com/storage/docs/bucket-lock   https://cloud.google.com/storage/docs/lifecycle)
+<https://cloud.google.com/storage/docs/bucket-lock>
 
-[https://cloud.google.com/storage/docs/lifecycle](https://cloud.google.com/storage/docs/bucket-lock   https://cloud.google.com/storage/docs/lifecycle)
+<https://cloud.google.com/storage/docs/lifecycle>
 
 </details>
 
@@ -1092,13 +1086,13 @@ Ref:
 
 **III. Establish a cluster comprising a minimum of 3 Spanner nodes.**
 
-  * **Having a cluster with multiple nodes improves database availability and fault tolerance. With a minimum of 3 Spanner nodes, the system can maintain availability even if one node fails. This redundancy ensures that the database remains accessible and operational, contributing to the goal of achieving 99.999% availability.**
+  * **Nodes add serving and storage capacity to every replica in the instance. Replication, and therefore fault tolerance, comes from the instance configuration (here a multi-region one), not from the node count. Google has long recommended at least 3 nodes for production instances so a global workload has enough capacity to keep latency low, which makes this the better of the two node-count options.**
 
 Options II, IV, V, and VI are not the optimal choices for achieving the stated objectives:
 
 II. Implement a multi-regional Cloud Spanner instance with the "nam3" configuration.
 
-  * "nam3" configuration refers to a regional instance in North America, which may not provide the desired global availability and latency improvements compared to a multi-regional configuration.
+  * "nam3" is a multi-region configuration too, but all of its regions are in North America. It gives 99.999% availability, yet users in Europe and Asia would read from far-away replicas, so it doesn't minimize read latency worldwide.
 
 IV. Set up a cluster with at least 1 Spanner node.
 
@@ -1206,26 +1200,26 @@ Here's why it's particularly well-suited to this situation:
 
 - III. Establish Trusted Network ranges within the application, allowing traffic exclusively from these networks.
 - IV. Employ an automated procedure to procure SSL Certificates for applications from Let's Encrypt and integrate them into the applications.
-- II. Deploy Istio, activate proxy injection in the application namespace, and then implement mutual TLS (mTLS).
+- II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS).
 - I. Implement Network Policies to restrict traffic between applications.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Deploy Istio, activate proxy injection in the application namespace, and then implement mutual TLS (mTLS).
+**Correct:** II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS).
 
 **Correct Option:**
 
-**II. Deploy Istio, activate proxy injection in the application namespace, and then implement mutual TLS (mTLS).**
+**II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS).**
 
 **Justification:**
 
-  * **Istio is a service mesh explicitly engineered for managing, securing, and observing microservices-based applications.** It accomplishes this by adding sidecar proxies next to each application instance (injected automatically). These sidecars regulate the flow of traffic within the cluster.
+  * **Cloud Service Mesh is Google's supported distribution of Istio, a service mesh explicitly engineered for managing, securing, and observing microservices-based applications.** It accomplishes this by adding sidecar proxies next to each application instance (injected automatically). These sidecars regulate the flow of traffic within the cluster.
 
   * **Mutual TLS offers robust encryption and identity verification for service-to-service communication.** This guarantees the confidentiality and integrity of data exchanged between applications.
 
-  * **The use of Istio and mTLS satisfies the requirement for minimal modifications to the applications themselves.** The proxies manage encryption transparently.
+  * **The use of the mesh and mTLS satisfies the requirement for minimal modifications to the applications themselves.** The proxies manage encryption transparently.
 
-  * **Istio is widely used with Kubernetes and offers robust Google support.**
+  * **Cloud Service Mesh is fully supported by Google on GKE.** (The older "Istio on GKE" add-on is deprecated.)
 
 **Why Other Options are Less Ideal:**
 
@@ -1241,9 +1235,9 @@ Here's why it's particularly well-suited to this situation:
 
 **References:**
 
-[https://cloud.google.com/istio/docs/istio-on-gke/installing](https://cloud.google.com/istio/docs/istio-on-gke/installing  https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits)
+<https://cloud.google.com/service-mesh/docs/overview>
 
-[https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits](https://cloud.google.com/istio/docs/istio-on-gke/installing  https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits)
+<https://cloud.google.com/service-mesh/docs/security/configuring-mtls>
 
 </details>
 
@@ -1528,7 +1522,7 @@ Let's look at why the other options are less suitable:
 
   * **III. Cloud SQL employing a SQL SELECT statement:** Cloud SQL is a relational database that provides structured data storage and querying but might not be the most efficient for handling real-time updates and diverse data formats.
 
-  * **IV. Firestore in Datastore mode utilizing a global query:** While Firestore in Datastore mode supports global queries, it is generally less performant than Native mode for common use cases like this one.
+  * **IV. Firestore in Datastore mode utilizing a global query:** Datastore mode is built for server-side workloads. It lacks Native mode's real-time listeners and mobile/web client libraries with offline support, which is what lets customers see their purchases right after submitting them.
 
 **In summary:** Firestore in Native mode provides the real-time updates, flexible querying, and diverse data format support needed to meet the requirements of storing and accessing customer purchase history effectively.
 
@@ -1576,6 +1570,8 @@ Ref:
 
 <https://cloud.google.com/anthos/run/docs/deploy-application>
 
+**⚠️ Note:** "Anthos" is now **GKE Enterprise**, and "Cloud Run for Anthos" became **Knative serving**, which is no longer offered as a Google-managed add-on. Learn the key (one managed platform across both environments plus a serverless deployment layer), but expect newer product names on the real exam.
+
 </details>
 
 ---
@@ -1584,36 +1580,38 @@ Ref:
 
 **In your company's BigQuery environment, the "Master" dataset stores employee travel and expense data, categorized by department. To ensure employees only access relevant departmental information, you seek to implement a streamlined security framework. What's the optimal approach?**
 
-- I. Establish distinct datasets for each department, creating views with appropriate WHERE clauses in the "Master" dataset to filter records. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.
+- I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the "Master" dataset. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.
 - III. Create a "Master" dataset and develop individual views for each department within it. Grant employees access to the relevant departmental views.
 - II. Set up separate datasets for each department and implement data pipelines to copy relevant data from the "Master" dataset to department-specific datasets. Grant employees access to these department-specific datasets.
 - IV. Create a "Master" dataset and segregate data into separate tables for each department. Grant employees access to their department's specific table.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Create a "Master" dataset and develop individual views for each department within it. Grant employees access to the relevant departmental views.
+**Correct:** I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the "Master" dataset. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.
 
-**III. Create a "Master" dataset and develop individual views for each department within it. Grant employees access to the relevant departmental views.**
+**I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the "Master" dataset. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.**
 
-Let's break down why this approach offers the best balance of security, efficiency, and maintainability:
+This is BigQuery's **authorized view** pattern:
 
-  * **Centralized Data:** Maintaining a single "Master" dataset ensures data consistency and simplifies updates.
+  * **No data copies:** The data stays in the "Master" dataset. Each department dataset only holds a view that selects that department's rows.
 
-  * **Fine-grained Access Control:** Views provide a secure mechanism to filter data based on department without duplication. Each view acts as a virtual table, exposing only the necessary subset of data.
+  * **Access to the view, not the tables:** Authorizing the view on the "Master" dataset lets the view read the source tables on the users' behalf. Employees get access only to their department's dataset, so they can query the view without any permission on the "Master" tables.
 
-  * **Efficiency:** Views don't replicate data, saving storage costs and avoiding the overhead of data synchronization.
+  * **Separate dataset is required:** An authorized view must live in a different dataset from the source data. Putting the views in their own datasets is what keeps the base tables out of reach.
 
-  * **Maintainability:** Changes to the underlying data in the "Master" dataset will automatically propagate to the relevant departmental views without the need to update multiple separate datasets.
+  * **Simple to manage:** Granting a team access to one dataset is one IAM binding, and changes in "Master" show up in the views immediately.
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. Establish distinct datasets for each department ...** This approach introduces data duplication and increases storage costs. It also creates overhead in keeping these datasets synchronized with the "Master" dataset.
+  * **II. Set up separate datasets for each department and implement data pipelines ...** This copies the data, adds storage cost, and adds pipelines to build and keep in sync.
 
-  * **II. Set up separate datasets for each department and implement data pipelines ...** Similar to option I, this approach leads to data redundancy and the added complexity of managing data pipelines.
+  * **III. Create a "Master" dataset and develop individual views for each department within it ...** A view in the same dataset as its source can't be an authorized view. Without authorization, a user querying the view also needs read access to the underlying "Master" tables, which would expose every department's records.
 
-  * **IV. Create a "Master" dataset and segregate data into separate tables for each department ...** While this avoids data duplication, it makes queries more complex since you'll likely need to use `UNION ALL` across multiple tables.
+  * **IV. Create a "Master" dataset and segregate data into separate tables for each department ...** Splitting the data into per-department tables complicates loading and cross-department queries, and you still have to manage table-level permissions inside the shared dataset.
 
 **Reference:**
+
+<https://cloud.google.com/bigquery/docs/authorized-views>
 
 <https://cloud.google.com/bigquery/docs/dataset-access-controls>
 
@@ -1779,7 +1777,7 @@ Let's break down why this is the most secure and streamlined option:
 
   * **Manageability:**
 
-    * A single HTTP(S) load balancer handles both web traffic and SSH access (tunneled through IAP), simplifying your networking setup.
+    * The HTTP(S) load balancer handles web traffic, while SSH goes through IAP TCP forwarding, a separate path that needs only a firewall rule allowing IAP's range (35.235.240.0/20) on port 22. Neither needs public IPs on the instances.
 
     * You avoid the overhead of managing bastion hosts or additional firewall rules.
 
@@ -2280,6 +2278,8 @@ Therefore, option III is the most suitable approach for quickly gathering data p
 
   * Firestore: <https://cloud.google.com/firestore>
 
+**⚠️ Note:** The question is missing its scenario (no current database or workload is described), so the key can't be justified from the stem. Don't build rules from it; if it appears, pick the answer that moves to a managed Google Cloud database.
+
 </details>
 
 ---
@@ -2468,6 +2468,8 @@ Option B is incorrect because Firestore is not typically used for storing stream
 
 Option C is incorrect because Dataflow is better suited for stream processing before analysis, rather than BigQuery, which is optimized for performing SQL queries on stored data. Additionally, Firestore is not typically used for storing streaming data.
 
+**⚠️ Note:** The diagram this question refers to is missing, so the meaning of steps 1 to 4 is inferred. The key is plausible, but some of the explanations are muddled (option C is rejected because "Dataflow is better than BigQuery", and B and C are said to fail because Firestore isn't for streaming data, although the key stores data in Firestore too). The pattern to remember is Pub/Sub → Dataflow → BigQuery.
+
 </details>
 
 ---
@@ -2483,38 +2485,42 @@ Option C is incorrect because Dataflow is better suited for stream processing be
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** B. Enable **Identity-Aware Proxy (IAP)** for all microservices. Use **access control lists (ACLs)** to restrict access to specific services and grant **allAuthenticatedUsers** access to public services.
+**Correct:** D. Set up separate **Cloud Run services** for public and restricted microservices. Enable **IAP** only for restricted services, and set the Cloud Run **ingress settings** to **‘Internal and Cloud Load Balancing’** for these services.
 
 The correct answer is
 
-**B. Enable Identity-Aware Proxy (IAP) for all microservices. Manage access control lists (ACLs) for the restricted services, and configure allAuthenticatedUsers access to the public services.**
+**D. Set up separate Cloud Run services for public and restricted microservices. Enable IAP only for restricted services, and set the Cloud Run ingress settings to 'Internal and Cloud Load Balancing' for these services.**
 
 Explanation:
 
-**Identity-Aware Proxy (IAP)** is the recommended way to secure access to applications running on Google Cloud by controlling access based on Google identity. Enabling IAP for all microservices allows you to easily manage access control for each service using **Access Control Lists (ACLs)** :
+  1. **Public services** : Deployed as their own Cloud Run services with the `roles/run.invoker` role granted to `allUsers`, so anyone can call them with no sign-in.
 
-  1. **Restricted Services** : Use ACLs to grant access only to specific, authenticated Google identities for services that require authentication.
+  2. **Restricted services** : Put behind an external Application Load Balancer with **Identity-Aware Proxy (IAP)** enabled, and grant the IAP-secured Web App User role only to the Google identities that need access.
 
-  2. **Public Services** : Configure `allAuthenticatedUsers` to allow access to users who have authenticated with any Google account, or alternatively, you can configure these services with `allUsers` if truly unrestricted access is required.
+  3. **Ingress 'Internal and Cloud Load Balancing'** : This setting still allows traffic that arrives through the external Application Load Balancer, but it blocks requests sent straight to the service's `run.app` URL. Users therefore can't bypass IAP.
 
-This approach provides **secure, identity-based access** for the restricted services and easy configuration for public services, while avoiding additional infrastructure or complex access control implementations.
+This keeps each service's access rule simple and uses managed Google features only, with no custom code.
 
 Justifications for Incorrect Options:
 
   * **Option A: Develop a new microservice to manage access**  
-Creating a custom access management microservice introduces unnecessary complexity and management overhead, especially when IAP natively supports Google identity-based access control.
+Writing your own access-checking service adds code to build, secure and operate, when IAP already does identity-based access natively.
+
+  * **Option B: IAP for all services with allAuthenticatedUsers for public ones**  
+`allAuthenticatedUsers` still requires every caller to sign in with a Google account, so the public services would not be unrestricted as the requirement asks. Putting IAP in front of services that should be open also adds configuration for no benefit.
 
   * **Option C: Use Cloud Endpoints with Firebase Authentication**  
-Cloud Endpoints and Firebase Authentication can control access, but they add complexity and require more setup than IAP. IAP provides a simpler, built-in approach for managing identity-based access for Google Cloud services.
-
-  * **Option D: Configure separate Cloud Run services with IAP and ‘Internal and Cloud Load Balancing’ ingress**  
-Using `Internal and Cloud Load Balancing` ingress restricts access to only internal Google Cloud traffic, which doesn’t meet the requirement for public access. IAP provides a more flexible solution, allowing both public and restricted access within the same framework.
+Cloud Endpoints and Firebase Authentication can control access, but they need more setup than IAP, and Firebase Security Rules protect Firebase data, not Cloud Run services.
 
 **Relevant Documentation:**
 
 For more details, refer to:
 
   * [Identity-Aware Proxy (IAP) Overview](https://cloud.google.com/iap/docs/concepts-overview)
+
+  * [Cloud Run ingress settings](https://cloud.google.com/run/docs/securing/ingress)
+
+  * [Allowing public (unauthenticated) access to Cloud Run](https://cloud.google.com/run/docs/authenticating/public)
 
 </details>
 
@@ -2571,11 +2577,9 @@ For more details, refer to:
 
 **You are developing a highly available and globally accessible application to deliver static content to users. What configuration should you implement for the storage and serving components to minimize management overhead, reduce latency, and maximize reliability for users?**
 
-- IV. 1. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.
+- IV. 1. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.
     2\. Reserve an external IP address and set up an external HTTP(S) load balancer.
     Enable Cloud CDN and direct traffic to the backend bucket.
-    3\. Set up an external HTTP(S) load balancer.
-    Enable Cloud CDN and route traffic to the unmanaged instance group.
 - II. 1. Create an unmanaged instance group and replicate the static content across the VMs.
     2\. Set up an external HTTP(S) load balancer.
     Enable Cloud CDN and route traffic to the unmanaged instance group.
@@ -2588,27 +2592,27 @@ For more details, refer to:
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. 1. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.
+**Correct:** IV. 1. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.
 
 The most suitable configuration for this scenario is **IV** :
 
-  * **1\. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.** Multi-regional Cloud Storage provides the highest level of availability and geographic redundancy for your content. This ensures reliability even if a single region experiences issues.
+  * **1\. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.** A multi-region bucket provides the highest level of availability and geographic redundancy for your content. This ensures reliability even if a single region experiences issues.
 
   * **2\. Reserve an external IP address and set up an external HTTP(S) load balancer. Enable Cloud CDN and direct traffic to the backend bucket.** The load balancer distributes traffic for global reach, and Cloud CDN optimizes for low-latency content delivery.
 
 **Here's why this combination is the best:**
 
-  * **Maximizes reliability:** Multi-regional storage and load balancing mitigate the risk of regional outages impacting content availability.
+  * **Maximizes reliability:** Multi-region storage and load balancing mitigate the risk of regional outages impacting content availability.
 
   * **Minimizes latency:** Cloud CDN caches the content at edge locations worldwide, placing it closer to users for faster delivery.
 
-  * **Reduces management overhead:** Using fully managed services like multi-regional Cloud Storage and Cloud CDN eliminates the need to manage infrastructure like VMs.
+  * **Reduces management overhead:** Using fully managed services like multi-region Cloud Storage and Cloud CDN eliminates the need to manage infrastructure like VMs.
 
 **Why other options are less ideal:**
 
   * **I & II**: Using instance groups (managed or unmanaged) introduces the overhead of managing VM infrastructure, patching, and scaling. This is less efficient for static content.
 
-  * **III:** A regional Cloud Storage bucket offers less redundancy than a multi-regional one, increasing the risk of downtime if a regional issue occurs.
+  * **III:** A regional Cloud Storage bucket offers less redundancy than a multi-region one, increasing the risk of downtime if a regional issue occurs.
 
 </details>
 
@@ -2984,6 +2988,8 @@ Here's a breakdown of why option **B (Use Account_id_Event_timestamp as the key)
 
   * This approach optimizes the startup time of new instances, allowing the service to efficiently handle traffic spikes and provide a better user experience.
 
+  * Only non-sensitive configuration and static data belong in the image. Secrets such as passwords and API keys should stay in Secret Manager and be mounted or read at runtime.
+
 The other options can be explained as follows:
 
 I. Retrieve application configuration and static data from the database on application startup.
@@ -2992,7 +2998,7 @@ I. Retrieve application configuration and static data from the database on appli
 
 III. Execute as much work as feasible in the background after the response has been delivered to the user.
 
-  * While executing background tasks after the response has been delivered can help offload some processing from the request handling phase, it might not directly address the issue of enhancing user experience during traffic spikes. Additionally, this approach might not be suitable for all types of tasks and could introduce complexity into the application architecture.
+  * With request-based billing (the default), Cloud Run throttles an instance's CPU almost to zero once the response is sent, so background work after the response may stall or never finish. Google lists it as an anti-pattern; use Cloud Tasks, Pub/Sub or a Cloud Run job for deferred work instead.
 
 IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to exit swiftly, facilitating the initiation of a replacement instance.
 
@@ -3195,29 +3201,29 @@ For more details, refer to:
 
 **What is your next step?**
 
-- A. Create a custom role for the service account, granting only the cloudsql.instances.connect permission. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.
+- A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.
 - B. Assign the roles/cloudsql.client role to the custom service account. Modify the Cloud SQL Auth Proxy startup command to include the --unix-socket option.
 - C. Grant the custom service account the roles/cloudsql.editor role for broad permissions.
 - D. Assign the roles/cloudsql.viewer role to the custom service account and adjust the Cloud SQL Auth Proxy command to specify your instance connection name.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** A. Create a custom role for the service account, granting only the cloudsql.instances.connect permission. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.
+**Correct:** A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.
 
 The correct answer is 
 
-**A. Create a custom role for the service account, granting only the cloudsql.instances.connect permission. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.**
+**A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.**
 
 Explanation:
 
-According to Google’s best practices and the **principle of least privilege** , it is recommended to create a custom role that grants only the permissions necessary for the task. For connecting to Cloud SQL using the **Cloud SQL Auth Proxy** , the `**cloudsql.instances.connect**` permission is sufficient to establish a secure connection to the Cloud SQL instance. By limiting the permissions to only what’s necessary, you enhance security by reducing the potential for unintended access.
+Google's documentation says that a service account connecting through the **Cloud SQL Auth Proxy** needs the **Cloud SQL Client** role (`roles/cloudsql.client`). It is the predefined role made for this job: it lets the account connect to instances (and read the instance metadata the proxy needs) without letting it change or delete them, so it meets the **principle of least privilege** with no custom role to maintain.
 
-Additionally, updating the **Cloud SQL Auth Proxy startup command** with the instance connection name is essential to correctly establish the connection to your Cloud SQL instance.
+The proxy then needs to know which instance to reach, so you start it with the **instance connection name** (`project:region:instance`). On Windows, the application connects to the proxy over TCP on localhost.
 
 Justifications for Incorrect Options:
 
-  * **Option B: Assign the roles/cloudsql.client role with the --unix-socket option**  
-While the `roles/cloudsql.client` role includes the `cloudsql.instances.connect` permission, it also includes other permissions that may not be necessary, which doesn’t align with the principle of least privilege. The `--unix-socket` option is specific to UNIX-based systems and is not applicable to Windows.
+  * **Option B: Assign roles/cloudsql.client and use the --unix-socket option**  
+The role is right, but Google's documentation states that Unix sockets aren't supported for the Windows environment. On a Windows VM you connect to the proxy over a TCP port instead.
 
   * **Option C: Grant the roles/cloudsql.editor role**  
 The `roles/cloudsql.editor` role provides broad permissions, including modifying database instances, which violates the principle of least privilege and poses a security risk.
@@ -3230,6 +3236,8 @@ The `roles/cloudsql.viewer` role allows read-only access to Cloud SQL resources 
 For more information, refer to:
 
   * [Using the Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy)
+
+  * [Cloud SQL roles and permissions](https://cloud.google.com/sql/docs/mysql/roles-and-permissions)
 
 </details>
 
@@ -3264,7 +3272,7 @@ Explanation:
 
 To achieve minimal latency and optimize **Time to First Byte (TTFB)** for a RESTful backend with thousands of devices, the best approach is to:
 
-  1. **Use an external Application Load Balancer** : Google Cloud's external **Application Load Balancer** is built on the **Premium Tier network** , offering global load balancing with proximity-based routing. This setup reduces latency by routing each request to the backend instance closest to the device, minimizing TTFB.
+  1. **Use an external Application Load Balancer** : With **Premium Tier**, the global external **Application Load Balancer** terminates the TCP and TLS connections at the Google edge location closest to each device, then carries the request to the backend over Google's private network. The backend is in a single region, so the gain doesn't come from picking a closer backend: it comes from shorter handshakes (connection setup happens near the device) and reused connections from the edge to the backend, which lowers TTFB.
 
   2. **Managed Instance Group** : Using a managed instance group for the backend ensures scalability and resilience, as it can automatically scale based on demand and distribute traffic efficiently.
 
@@ -3279,7 +3287,7 @@ Cloud DNS round-robin routing lacks proximity-based routing and does not optimiz
 Basic round-robin DNS routing does not provide latency optimization or failover, and Cloud DNS does not route based on geographic proximity, making it unsuitable for minimizing TTFB across a large number of devices.
 
   * **Option C: Network Load Balancer with a managed instance group**  
-The Network Load Balancer operates at Layer 4 (TCP/UDP) and does not support HTTP(S) protocols natively. It also lacks advanced features like proximity-based routing, which is crucial for reducing TTFB for a geographically dispersed user base.
+The passthrough Network Load Balancer is regional and operates at Layer 4: it forwards the HTTP traffic, but connections aren't terminated at the edge, so every TCP and TLS handshake travels all the way to the backend region. That gives a higher TTFB than the Application Load Balancer.
 
 **Relevant Documentation:**
 
@@ -3368,6 +3376,8 @@ Consolidating resources in a single project reduces isolation, making it harder 
 For more information, refer to:
 
   * [Shared VPC Overview](https://cloud.google.com/vpc/docs/shared-vpc)
+
+**⚠️ Note:** Shared VPC puts both projects on one network, which weakens the "keep projects isolated" requirement. Private Service Connect is now the cleaner way to reach AlloyDB from another project or network. Answer Shared VPC when PSC isn't offered.
 
 </details>
 

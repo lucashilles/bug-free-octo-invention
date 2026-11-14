@@ -46,7 +46,7 @@
 - A safer rollout reduces deployment risk, but it does not lift an error-budget freeze. *(Q3.11)*
 - For native Kubernetes Deployments, rollback scope follows the Deployment boundary. *(Q3.13)*
 - Measure successful requests and sufficiently fast requests, then set targets and alerts for both. *(Q3.17)*
-- Production readiness combines operational visibility, resilience, and early reliability review. *(Q3.19)*
+- Design phase: guidelines, co-design, consultation. Active development: redundancy, monitoring, alerting. *(Q3.19)*
 - To measure whether operations work, divide successful attempts by total attempts. *(Q3.29)*
 - Budget nearly gone → freeze features, spend the time on reliability — not on a safer release and not on a bigger feature backlog. *(Q3.42)*
 - When a canary degrades service, restore traffic to the healthy baseline before pursuing detailed diagnosis. *(Q3.56)*
@@ -279,6 +279,8 @@ When asked to pick an “appropriate SLI” to drive autoscaling for a user-faci
 [**Google Cloud — GKE native support for custom metrics (Horizontal Pod Autoscaler):**](https://cloud.google.com/blog/products/containers-kubernetes/gke-now-supports-custom-metrics-natively) Supports: the correct-answer mechanism of scaling HPA on Cloud Monitoring/load-balancer metrics without deploying a separate custom-metrics adapter
 
 [**Google Cloud — Configuring horizontal Pod autoscaling in GKE:**](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/horizontal-pod-autoscaling) Supports: autoscaling based on load balancer traffic and external/custom metrics as the appropriate signal for request-driven frontend workloads
+
+**⚠️ Note:** GKE's native custom-metrics support covers metrics your Pods export. For a Cloud Monitoring metric such as the load balancer's request count, Google's HPA documentation still uses the Custom Metrics - Stackdriver Adapter, so the adapter-based wording of the same question (Exam 5 · Q12) is also correct. Either way, the key is scaling the HPA on the load balancer's request count.
 
 </details>
 
@@ -3403,81 +3405,63 @@ Your organization is actively developing a new web service and preparing it for 
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** A. Establish monitoring and alerting for the service. **|** E. Provide early SRE consultation to review architecture and design decisions in detail.
+**Correct:** A. Establish monitoring and alerting for the service. **|** D. Implement redundant resources within the service environment.
 
 **Correct Answer**
 
-The supplied answer key selects:
-
 **A. Establish monitoring and alerting for the service.**
 
-**E. Provide early SRE consultation to review architecture and design decisions in detail.**
-
-However, **this pair is not uniquely supported by the wording**. Google’s guidance also directly supports D during active-development productionalization. 
+**D. Implement redundant resources within the service environment.**
 
 **Exam Reasoning Explanation**
 
-A and E address operational visibility and early identification of architectural risks. Both are recommended practices. However, the scenario specifically identifies active development and productionalization, for which Google also explicitly recommends redundancy. Therefore, the supplied key is plausible, but eliminating D requires additional context. 
+The stem places the service in a specific lifecycle phase: it is being **actively developed** and **prepared for production**. Google's SRE engagement model ties different SRE activities to different phases. In the **active development** phase, SRE starts productionalizing the service: capacity planning, setting up extra resources for **redundancy**, planning for high availability and load balancing, and putting **monitoring and alerting** in place. Picking the two activities that belong to this phase gives A and D.
 
 **Key Exam Clues**
 
-  * **“Actively developing” — Technical signal:** Identifies the service’s lifecycle stage.
+  * **“Actively developing” — Technical signal:** The design is already done, so this is the active development phase, not architecture and design.
 
-  * **“Preparing it for production” — Required outcome:** Calls for operational readiness work.
+  * **“Preparing it for production” — Required outcome:** Calls for productionalization work (redundancy, monitoring, alerting).
 
-  * **“Google-recommended practices” — Hard constraint:** Requires authoritative support for the selected activities.
+  * **“Google-recommended practices” — Hard constraint:** Points to the phase-by-phase activities in the SRE engagement model.
 
-  * **“Choose two” — Cardinality instruction:** Requires a defensible distinction between the selected pair and the remaining options.
+  * **“Choose two” — Cardinality instruction:** Pick the two activities the model lists for this phase.
 
 **Why This Is Correct**
 
-  * **A:** Monitoring and alerting provide visibility into service behavior and enable detection of operational problems.
+  * **A:** Monitoring and alerting are listed productionalization tasks for active development. They make the service observable before it takes production traffic.
 
-  * **E:** Early consultation identifies architectural risks while design changes are comparatively easier to make. Google’s early-engagement model extends through design and implementation, so this activity remains relevant during development.
-
-These activities complement each other, but their validity does not establish that they are the only appropriate pair. 
+  * **D:** Adding resources for redundancy is also listed for active development. It is how the service gets the availability it will need in production.
 
 **Why the Other Options Are Not the Best Fit**
 
-  * **Option B — Technically Possible but Not Best:** Infrastructure guidelines support consistent engineering decisions. Google associates this activity primarily with architecture and design, making it less directly aligned with the stated productionalization work. 
+  * **Option B — Wrong phase:** Guidelines for using infrastructure systems belong to the architecture and design phase.
 
-  * **Option C — Technically Possible but Not Best:** Collaborative design is legitimate SRE work. The stem provides no specific design problem that makes codesign the immediate priority, although it should not be described as an incorrect practice. 
+  * **Option C — Wrong phase:** Collaborating with the product team on the service's design is also architecture and design work. In active development the design already exists.
 
-  * **Option D — Best Fit under a phase-specific interpretation:** Google explicitly includes additional resources for redundancy in active-development productionalization. Consequently, D cannot be reliably eliminated, and A/D is another defensible selection. 
+  * **Option E — Wrong phase:** Early consultation on architecture and design decisions is valuable, but it belongs before development starts. It is not the next priority for a service already being built and prepared for production.
 
 **Exam Trap**
 
-Distinguish an intended answer key from a uniquely validated answer. Treating redundancy as unnecessary would introduce an assumption absent from the scenario.
-
-**Foundation Concept**
-
-SRE combines early design influence with operational readiness. Lifecycle phases guide priorities, while consultation, documentation, monitoring, and resilience work can overlap.
-
-**Real-World Connection**
-
-An SRE team could review architectural failure modes, establish actionable alerts, and validate redundant capacity before launch. Actual priorities depend on existing controls, reliability objectives, and identified risks.
+Early SRE engagement is good practice, so E sounds right. The question asks what to do **next** for a service that is already in active development, and design-phase activities (B, C, E) are past that point.
 
 **Memory Hook**
 
-Production readiness combines operational visibility, resilience, and early reliability review.
+Design phase: guidelines, co-design, consultation. Active development: redundancy, monitoring, alerting.
 
 **30-Second Exam Takeaway**
 
-**A/E is the supplied key, while A/D has direct lifecycle-specific support.** This item needs clarification before it can be published as a uniquely graded two-answer question.
+Match the activity to the lifecycle phase. For a service in active development being prepared for production, choose monitoring/alerting and redundancy.
 
 **Official References**
 
   * [**Google SRE Workbook — SRE Engagement Model:**](https://sre.google/workbook/engagement-model/)
 
-Supports: Monitoring, alerting, and redundancy during active development; infrastructure guidance during architecture and design.
+Supports: Redundancy, monitoring, and alerting during active development; infrastructure guidelines and co-design during architecture and design.
 
   * [**Google SRE Book — The Evolving SRE Engagement Model:**](https://sre.google/sre-book/evolving-sre-engagement-model/)
 
-Supports: Early consultation, collaborative design, and SRE participation during implementation.
-
-  * [**Google Cloud — Professional Cloud DevOps Engineer Exam Guide:**](https://services.google.com/fh/files/misc/professional_cloud_devops_engineer_exam_guide_english.pdf)
-
-Supports: Objective 3.2, managing the service lifecycle.
+Supports: Early consultation as a design-phase engagement.
 
 </details>
 
@@ -4903,7 +4887,7 @@ Core SRE fundamentals behind this step:
 
   * **Scalability:** As more responders join, they can quickly get context without interrupting mitigation work.
 
-Google SRE explicitly defines this as an _early, mandatory step_ before mitigation actions begin.
+With the IC, OL, and CL already assigned, mitigation belongs to the Operations Lead and stakeholder updates belong to the Communications Lead. The IC's own job is coordination, which needs a shared place for responders to talk, so setting up that channel is the IC's next step.
 
 **Authoritative documentation:**  
 <https://sre.google/sre-book/managing-incidents/>
@@ -5278,7 +5262,7 @@ Cloud Trace is for **latency analysis and request tracing** , not for determinin
 Selecting a machine type alone does not ensure availability. Without confirming **regional quota capacity** , instances may fail to launch entirely.
 
 **III. Deploy across multiple regions using an internal load balancer.**  
-Internal load balancers are **regional** , not global. They cannot distribute traffic across regions and are inappropriate for multi-region production access.
+Multi-region deployment behind a load balancer is a traffic-distribution choice, not capacity planning. It does not check whether each region has the quota and capacity to run large instances, which is the actual concern in the question. (Most internal load balancers are regional, although a cross-region internal Application Load Balancer exists, so don't reject the option on that ground alone.)
 
 **Final answer:** **IV**
 
@@ -5420,7 +5404,7 @@ Therefore option I, which identifies the benefit as $900 and rejects the $2 000 
 
   * **II. “Assess the value at $1 000 and conclude the investment is not justified.”**
 
-    * The conclusion (not justified) is fine, but the _benefit figure_ is wrong. Correct math gives ≈ $900, not $1 000; an extra $100 appears from rounding far beyond two significant digits.
+    * The conclusion (not justified) is fine, but the _benefit figure_ is wrong. Correct math gives ≈ $900, not $1 000. The $1 000 figure comes from multiplying revenue by 0.1% (the old unavailability) instead of by the 0.09-point difference between 99.9% and 99.99%.
 
   * **III. “Determine the value at $1 000 and conclude the investment is justified.”**
 
@@ -5491,85 +5475,41 @@ Here's why and a breakdown of the other options:
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** B. Opt for more frequent or potentially risky application releases. **|** D. Introduce and assess additional Service Level Indicators (SLIs) for the application.
+**Correct:** B. Opt for more frequent or potentially risky application releases. **|** E. Schedule planned downtime to utilize more of the error budget, ensuring users aren't reliant on a stricter SLO.
 
-**Correct Answers: B and D**
+**Correct Answers: B and E**
 
 **Reasoning**
 
-Your application has consistently consumed **less than 5%** of its error budget over six months.  
-This means:
-
-  * The service is **more reliable than required** by the current SLO.
-
-  * You are **under-utilizing your error budget**.
-
-  * You can afford to **move faster** without hurting users or violating SLOs.
-
-Google SRE guidance states:
-
-  * **If your error budget is consistently under-consumed** , you should **increase the release velocity**.
-
-  * **If your SLO is appropriate and not too strict** , you should **NOT tighten it** , but instead improve value delivery or observability by adding meaningful SLIs.
-
-This leads to the two correct choices.
+Your application has consistently consumed **less than 5%** of its error budget over six months, and stakeholders have just confirmed that the SLO is set correctly. So the SLO is fixed, and what has to move is the **observed reliability**, which is far above what the SLO requires. The goal is met by deliberately spending some of the unused error budget, not by changing the target or adding reliability.
 
 **Correct Answer 1: B. Opt for more frequent or potentially risky application releases.**
 
-Why this is correct
+Releases are a major source of outages. Releasing more often, or taking somewhat more risk per release, spends unused error budget in exchange for velocity, while the SLO still limits how far you can go. This is the core idea of an error budget: unreliability you are allowed to spend on change.
 
-Underused error budget means:
+**Correct Answer 2: E. Schedule planned downtime to utilize more of the error budget, ensuring users aren't reliant on a stricter SLO.**
 
-  * You can ship faster
-
-  * You can take more risk
-
-  * You can accelerate innovation
-
-This is exactly what Google’s **Error Budget Policy** recommends.
-
-**Reference:**  
-**Google SRE Book - Error Budget Policy**  
-<https://sre.google/sre-book/availability-table/>
-
-**Correct Answer 2: D. Introduce and assess additional Service Level Indicators (SLIs) for the application.**
-
-**Why this is correct**
-
-If your system appears _too reliable_ , you might not be measuring **all** important aspects of user experience.
-
-Adding or refining SLIs can:
-
-  * Improve understanding of real reliability
-
-  * Ensure all critical user interactions are measured
-
-  * Align reliability signals with business needs
-
-This is a standard SRE practice when reliability seems artificially high.
-
-**Reference:**  
-**Google SRE Workbook – Implementing SLIs**  
-<https://sre.google/workbook/implementing-slos/>
+Users come to depend on the reliability they actually see, not the reliability you promised. A service that greatly exceeds its SLO effectively creates a tighter, implicit SLO. The SRE book describes this with Google's Chubby lock service: SRE makes sure the service meets, but does not greatly exceed, its SLO, and uses **planned outages** so that dependent teams don't assume it never fails. Any planned downtime must stay within the error budget and be announced in advance.
 
 **Why the Other Options Are Incorrect**
 
 **A. Increase serving capacity**
 
-This increases cost and does not improve alignment with SLOs.  
-Your system is already exceeding expectations.
+This raises reliability and cost even further, which widens the gap between the SLO and observed reliability. It is the opposite of the goal.
 
 **C. Adjust the SLO**
 
-You **already confirmed** the SLO is appropriate.  
-Tightening it would reduce error budget artificially and may slow velocity without business need.
+You **already confirmed** the SLO is appropriate. Tightening it to match observed reliability shrinks the error budget, slows velocity, and commits the team to a level of reliability nobody asked for.
 
-**E. Schedule planned downtime**
+**D. Introduce and assess additional SLIs**
 
-This is anti-SRE and harmful.  
-Never reduce reliability intentionally just to “use up” error budget.
+More SLIs help when the current indicators miss important user journeys. Nothing in the scenario says the SLIs are inadequate, and measuring more does not close the gap between a confirmed SLO and an unused error budget.
 
-**Final Answer: B and D**
+**References:**  
+[Google SRE Book – Service Level Objectives](https://sre.google/sre-book/service-level-objectives/) (the Chubby planned-outage example)  
+[Google SRE Workbook – Implementing SLOs](https://sre.google/workbook/implementing-slos/)
+
+**Final Answer: B and E**
 
 </details>
 
@@ -5805,7 +5745,7 @@ Configuring a maintenance exclusion window with a scope of "No minor or node upg
 
 **III. Establishing a "PodDisruptionBudget" object with maxUnavailable specified as 100%:**
 
-  * Specifying maxUnavailable as 100% in a PodDisruptionBudget would effectively prevent any Pod disruptions during maintenance activities. However, it wouldn't prevent node upgrades or other maintenance tasks that could still impact the database's operation. Additionally, this approach may not align with best practices for managing Pod disruptions.
+  * Specifying maxUnavailable as 100% in a PodDisruptionBudget allows **all** of the Pods to be disrupted at once, so it gives no protection at all. A PDB that blocks evictions would use maxUnavailable: 0 (or minAvailable equal to the replica count), and even that only delays node drains; GKE still upgrades the node after a timeout. It doesn't stop the upgrades that cause the disruption.
 
 **References:**
 

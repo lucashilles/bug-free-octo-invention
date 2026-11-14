@@ -87,7 +87,7 @@
 - Impersonation setup: Google SA + KSA, grant KSA `roles/iam.workloadIdentityUser` on the GSA, annotate KSA with `iam.gke.io/gcp-service-account`, run Pods as the KSA (E4 · Q3). Current guidance generally prefers direct IAM grants to federated principals where supported, but if the stem says "impersonation", use this (E4 · Q3).
 - Node service accounts are shared by every Pod on the node → violates least privilege (E2 · Q20, E4 · Q3).
 - Kubernetes Secrets are only base64-encoded; mounting a key in a Secret still distributes a long-lived credential (E2 · Q20, E4 · Q3).
-- For a CI tool on a Compute Engine VM (Jenkins + Terraform), attach a service account with the needed IAM permissions to the VM (E5 · Q33).
+- For a CI tool on a Compute Engine VM (Jenkins + Terraform), attach a service account with the needed IAM permissions to the VM; it gets short-lived tokens from the metadata server, no keys (E5 · Q33). This is fine because the VM is dedicated to Jenkins, unlike a GKE node SA shared by many Pods (E2 · Q20).
 - Time-boxed access → **group** + IAM binding with an **IAM Condition** (date/time expression); access ends automatically (E5 · Q62).
 - Grant roles to **groups**, not individuals (E4 · Q56, E5 · Q62).
 - **Change risk recommendations** (Recommender/Active Assist) surface risk of an IAM policy change *before* applying it (E3 · Q44).
@@ -190,21 +190,21 @@
 - **Crossplane**: CRD-based too, but community project → no Google Cloud Support path (E4 · Q10).
 - **Config Sync**: continuously syncs/reconciles cluster objects from Git (installs things and keeps them matching) (E2 · Q18, E5 · Q24).
 - **Policy Controller** (Gatekeeper-based): admission control + audit of constraints — decides what is *allowed*, doesn't install resources (E2 · Q18, E4 · Q33).
-- **Anthos Config Management** = Config Sync + Policy Controller; constraint templates/parameters in Git → synced and enforced across clusters (E4 · Q33, E5 · Q37).
+- **Config Sync + Policy Controller** (formerly sold together as Anthos Config Management): constraint templates/parameters in Git → synced and enforced across clusters (E4 · Q33, E5 · Q37).
 - Pods and Jobs run once; Cloud Build runs on triggers — neither is a reconciler (E4 · Q27).
 
 **Decision rules**
 - "CRDs" + "Google Cloud Support" → Config Connector (E4 · Q10).
 - "GitOps devs create cloud resources" + "reconcile periodically / prevent drift" → Config Connector (E4 · Q27, E5 · Q38).
 - "Git is source of truth, install & keep network policies + DaemonSet consistent across clusters" → Config Sync (E2 · Q18, E5 · Q24).
-- "Constraint templates + parameters in GitHub, auto-applied" → ACM (Policy Controller + Config Sync) (E4 · Q33, E5 · Q37).
+- "Constraint templates + parameters in GitHub, auto-applied" → Config Sync + Policy Controller (E4 · Q33, E5 · Q37).
 - "Prevent Pods that violate a security standard" → Policy Controller (E2 · Q18 trap note).
 
 **Traps**
 - "Enforce" ≠ Policy Controller automatically — enforcing *existence* is Config Sync (E2 · Q18).
 - Config Connector synced to Git still only manages GCP resources, not policy constraints (E4 · Q33).
 - Monitoring alerts + Cloud Run functions remediation = custom plumbing duplicating Config Sync (E2 · Q18).
-- Anthos Service Mesh is traffic/mTLS, irrelevant to policy sync (E4 · Q33).
+- Cloud Service Mesh is traffic/mTLS, irrelevant to policy sync (E4 · Q33).
 
 | Tool | Manages | Source | Reconciles? |
 |---|---|---|---|
@@ -267,7 +267,7 @@
 
 ## 10. Networking between departments
 
-- Many departments, many apps, minimal management, flexibility → **VPC per department + VPC Network Peering** (E2 · Q56).
+- Many departments, many apps, minimal management, flexibility → **VPC per department + VPC Network Peering** (E2 · Q56). Best of the listed options only; at real scale Shared VPC or hub-and-spoke is usual (see ⚠️).
 - **Private Service Connect** exposes one published service at a time — not general VPC-to-VPC connectivity (E2 · Q56).
 - **Cloud VPN** encrypts over the public internet, suited to hybrid links, not linking Google Cloud VPCs (E2 · Q56).
 - VPC per application = unmanageable at the stated scale (E2 · Q56).
@@ -318,14 +318,10 @@
 
 | Q | Issue |
 |---|---|
-| (E5 · Q33) | Answer (attach SA to Jenkins VM) is fine, but the explanation is wrong in places: it says "Workload Identity is designed for VM-to-Google Cloud communication" (VMs use the attached SA via the metadata server; Workload Identity is a GKE/federation feature), and claims `gcloud auth application-default login` needs "manual key rotation" (it's an interactive *user* credential flow — the real problem is using a human's credentials in automation). Also note the tension with (E2 · Q20): a shared node SA is rejected there because many Pods share it; a dedicated Jenkins VM doesn't have that problem. |
-| (E2 · Q60) | KMS key rotation creates a new primary version for **new** encryptions; old versions stay enabled to decrypt existing data, so rotation alone doesn't shrink what a compromised old version exposes unless data is re-encrypted. Treat as "best of the options"; the reasoning overstates rotation. |
+| (E2 · Q60) | Rotation only bounds what one compromised key **version** exposes; older versions stay enabled to decrypt existing data until it is re-encrypted and the old version disabled. For secrets themselves, Secret Manager is the modern store but isn't offered. Best of the options. |
 | (E2 · Q56) | VPC Peering is non-transitive and has per-network peering limits, so a mesh across "a large number of departments" is not low-maintenance in practice; Google landing-zone guidance commonly points to Shared VPC or hub-and-spoke (e.g., Network Connectivity Center). Correct only relative to the listed options. |
 | (E4 · Q5) | Exempted principals are identity-based: those principals become exempt wherever the org-level config applies, not just inside the CustomerService folder. Works only if those principals are used solely by that folder's projects. |
-| (E2 · Q18, E5 · Q24) | The "correct" option has Cloud Build *deploy* the resources **and** Config Sync sync them — redundant in pure GitOps (Config Sync applies from Git). E5's explanation reframes Cloud Build as validating/rendering before the repo. Pick it for "Config Sync", not for the Cloud Build deploy step. |
-| (E4 · Q26, E4 · Q33, E5 · Q37) | "Anthos Config Management" is legacy branding; the components are now Config Sync and Policy Controller. Concepts still hold. |
-| (E1 · Q4) | Cites Cloud Source Repositories as a Git host; CSR is closed to new customers — use GitHub/GitLab/Secure Source Manager. The VCS principle is unaffected. |
-| (E4 · Q3) | Explanation itself notes current guidance prefers direct IAM grants to Workload Identity principals over GSA impersonation; the answer is right only because the stem demands impersonation. |
+| (E2 · Q18, E5 · Q24) | The "correct" option has Cloud Build *deploy* the resources **and** Config Sync sync them — redundant in pure GitOps (Cloud Build should only render/validate and commit; Config Sync applies from Git). Pick it for "Config Sync", not for the Cloud Build deploy step. |
 
 ---
 

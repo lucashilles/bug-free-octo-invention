@@ -988,6 +988,8 @@ Supports: Manual approval gates, `requireApproval: true`, and approving or rejec
 
 Supports: Standard deployment behavior and canary deployments that progressively expose users to a release.
 
+**⚠️ Note:** Option C is also defensible: a QA stage with a manual approval gate followed by a production canary meets the requirement too. D is preferred only because it is the simplest design that literally matches the stem.
+
 ---
 
 ## Question 13
@@ -1499,84 +1501,66 @@ Your organization is actively developing a new web service and preparing it for 
 - [x] A. Establish monitoring and alerting for the service.
 - [ ] B. Begin preparing guidelines for using infrastructure systems.
 - [ ] C. Collaborate with the product team on the service’s design.
-- [ ] D. Implement redundant resources within the service environment.
-- [x] E. Provide early SRE consultation to review architecture and design decisions in detail.
+- [x] D. Implement redundant resources within the service environment.
+- [ ] E. Provide early SRE consultation to review architecture and design decisions in detail.
 
 ### Explanation
 
 **Correct Answer**
 
-The supplied answer key selects:
-
 **A. Establish monitoring and alerting for the service.**
 
-**E. Provide early SRE consultation to review architecture and design decisions in detail.**
-
-However, **this pair is not uniquely supported by the wording**. Google’s guidance also directly supports D during active-development productionalization. 
+**D. Implement redundant resources within the service environment.**
 
 **Exam Reasoning Explanation**
 
-A and E address operational visibility and early identification of architectural risks. Both are recommended practices. However, the scenario specifically identifies active development and productionalization, for which Google also explicitly recommends redundancy. Therefore, the supplied key is plausible, but eliminating D requires additional context. 
+The stem places the service in a specific lifecycle phase: it is being **actively developed** and **prepared for production**. Google's SRE engagement model ties different SRE activities to different phases. In the **active development** phase, SRE starts productionalizing the service: capacity planning, setting up extra resources for **redundancy**, planning for high availability and load balancing, and putting **monitoring and alerting** in place. Picking the two activities that belong to this phase gives A and D.
 
 **Key Exam Clues**
 
-  * **“Actively developing” — Technical signal:** Identifies the service’s lifecycle stage.
+  * **“Actively developing” — Technical signal:** The design is already done, so this is the active development phase, not architecture and design.
 
-  * **“Preparing it for production” — Required outcome:** Calls for operational readiness work.
+  * **“Preparing it for production” — Required outcome:** Calls for productionalization work (redundancy, monitoring, alerting).
 
-  * **“Google-recommended practices” — Hard constraint:** Requires authoritative support for the selected activities.
+  * **“Google-recommended practices” — Hard constraint:** Points to the phase-by-phase activities in the SRE engagement model.
 
-  * **“Choose two” — Cardinality instruction:** Requires a defensible distinction between the selected pair and the remaining options.
+  * **“Choose two” — Cardinality instruction:** Pick the two activities the model lists for this phase.
 
 **Why This Is Correct**
 
-  * **A:** Monitoring and alerting provide visibility into service behavior and enable detection of operational problems.
+  * **A:** Monitoring and alerting are listed productionalization tasks for active development. They make the service observable before it takes production traffic.
 
-  * **E:** Early consultation identifies architectural risks while design changes are comparatively easier to make. Google’s early-engagement model extends through design and implementation, so this activity remains relevant during development.
-
-These activities complement each other, but their validity does not establish that they are the only appropriate pair. 
+  * **D:** Adding resources for redundancy is also listed for active development. It is how the service gets the availability it will need in production.
 
 **Why the Other Options Are Not the Best Fit**
 
-  * **Option B — Technically Possible but Not Best:** Infrastructure guidelines support consistent engineering decisions. Google associates this activity primarily with architecture and design, making it less directly aligned with the stated productionalization work. 
+  * **Option B — Wrong phase:** Guidelines for using infrastructure systems belong to the architecture and design phase.
 
-  * **Option C — Technically Possible but Not Best:** Collaborative design is legitimate SRE work. The stem provides no specific design problem that makes codesign the immediate priority, although it should not be described as an incorrect practice. 
+  * **Option C — Wrong phase:** Collaborating with the product team on the service's design is also architecture and design work. In active development the design already exists.
 
-  * **Option D — Best Fit under a phase-specific interpretation:** Google explicitly includes additional resources for redundancy in active-development productionalization. Consequently, D cannot be reliably eliminated, and A/D is another defensible selection. 
+  * **Option E — Wrong phase:** Early consultation on architecture and design decisions is valuable, but it belongs before development starts. It is not the next priority for a service already being built and prepared for production.
 
 **Exam Trap**
 
-Distinguish an intended answer key from a uniquely validated answer. Treating redundancy as unnecessary would introduce an assumption absent from the scenario.
-
-**Foundation Concept**
-
-SRE combines early design influence with operational readiness. Lifecycle phases guide priorities, while consultation, documentation, monitoring, and resilience work can overlap.
-
-**Real-World Connection**
-
-An SRE team could review architectural failure modes, establish actionable alerts, and validate redundant capacity before launch. Actual priorities depend on existing controls, reliability objectives, and identified risks.
+Early SRE engagement is good practice, so E sounds right. The question asks what to do **next** for a service that is already in active development, and design-phase activities (B, C, E) are past that point.
 
 **Memory Hook**
 
-Production readiness combines operational visibility, resilience, and early reliability review.
+Design phase: guidelines, co-design, consultation. Active development: redundancy, monitoring, alerting.
 
 **30-Second Exam Takeaway**
 
-**A/E is the supplied key, while A/D has direct lifecycle-specific support.** This item needs clarification before it can be published as a uniquely graded two-answer question.
+Match the activity to the lifecycle phase. For a service in active development being prepared for production, choose monitoring/alerting and redundancy.
 
 **Official References**
 
   * [**Google SRE Workbook — SRE Engagement Model:**](https://sre.google/workbook/engagement-model/)
 
-Supports: Monitoring, alerting, and redundancy during active development; infrastructure guidance during architecture and design.
+Supports: Redundancy, monitoring, and alerting during active development; infrastructure guidelines and co-design during architecture and design.
 
   * [**Google SRE Book — The Evolving SRE Engagement Model:**](https://sre.google/sre-book/evolving-sre-engagement-model/)
 
-Supports: Early consultation, collaborative design, and SRE participation during implementation.
-
-  * [**Google Cloud — Professional Cloud DevOps Engineer Exam Guide:**](https://services.google.com/fh/files/misc/professional_cloud_devops_engineer_exam_guide_english.pdf)
-
-Supports: Objective 3.2, managing the service lifecycle.
+Supports: Early consultation as a design-phase engagement.
 
 ---
 

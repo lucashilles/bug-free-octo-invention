@@ -177,7 +177,7 @@
     {
       "term": "Authorized view",
       "definition": "A BigQuery view that is granted access to a source dataset so users can query the view's filtered rows without access to the underlying tables.",
-      "exam_context": "Used to limit employees to their own department's rows in a shared Master dataset.",
+      "exam_context": "Limits employees to their own department's rows in a shared Master dataset. The views live in a separate dataset per department and are authorized on Master; a view in the same dataset as its source can't be authorized.",
       "lesson": 5
     },
     {
@@ -398,7 +398,7 @@
     },
     {
       "term": "Traffic Director",
-      "definition": "Google Cloud's managed control plane for service mesh traffic, supporting advanced routing such as HTTP header matching across regions.",
+      "definition": "Google Cloud's managed control plane for service mesh traffic, supporting advanced routing such as HTTP header matching across regions. It is now part of Cloud Service Mesh.",
       "exam_context": "Chosen to call different backend implementations based on an HTTP header value.",
       "lesson": 6
     },

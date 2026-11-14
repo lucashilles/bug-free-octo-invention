@@ -8,36 +8,38 @@
 
 **Your code, operating on Cloud Functions within project A, aims to write an object to a Cloud Storage bucket owned by project B. Unfortunately, the write operation fails with a "403 Forbidden" error. How can you address this issue effectively?**
 
-- III. Allocate the roles/storage.objectCreator role to the service-PROJECTA@gcf-admin-robot.iam.gserviceaccount.com service account for the Cloud Storage bucket.
+- III. Allocate the roles/storage.objectCreator role to the Cloud Function's runtime service account for the Cloud Storage bucket.
 - IV. Ensure the Cloud Storage API is enabled within project B.
-- II. Provide your user account with the roles/iam.serviceAccountUser role for the service-PROJECTA@gcf-admin-robot.iam.gserviceaccount.com service account.
+- II. Provide your user account with the roles/iam.serviceAccountUser role for the Cloud Function's runtime service account.
 - I. Grant your user account the roles/storage.objectCreator role for the Cloud Storage bucket.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Allocate the roles/storage.objectCreator role to the service-PROJECTA@gcf-admin-robot.iam.gserviceaccount.com service account for the Cloud Storage bucket.
+**Correct:** III. Allocate the roles/storage.objectCreator role to the Cloud Function's runtime service account for the Cloud Storage bucket.
 
-**III. Allocate the roles/storage.objectCreator role to the service-PROJECTA@gcf-admin-robot.iam.gserviceaccount.com service account for the Cloud Storage bucket.**
+**III. Allocate the roles/storage.objectCreator role to the Cloud Function's runtime service account for the Cloud Storage bucket.**
 
 Here's why this is the correct approach:
 
-  * **Service Account Permissions:** Cloud Functions execute using a service account. It is this service account that needs the necessary permissions to write to the Cloud Storage bucket in project B.
+  * **Service Account Permissions:** Your function's code runs as its runtime service account (a dedicated service account you choose at deploy time, or the default one). That identity is what Cloud Storage checks, so it needs permission to write to the bucket in project B.
 
-  * **Principle of Least Privilege:** Granting the specific role `roles/storage.objectCreator` provides the minimal permission required, limiting the potential security impact.
+  * **Principle of Least Privilege:** Granting `roles/storage.objectCreator` on the bucket only provides the minimal permission required, limiting the potential security impact.
 
-  * **Cross-Project Access:** This approach addresses the issue of cross-project communication, the core reason why the write operation fails.
+  * **Cross-Project Access:** The role is granted on the bucket in project B to a service account from project A, which is how cross-project access works.
+
+  * **Not the service agent:** `service-PROJECT_NUMBER@gcf-admin-robot.iam.gserviceaccount.com` is the Cloud Functions *service agent*, which Google uses to manage your functions. Your code doesn't run as it, so granting it bucket access isn't the fix.
 
 **Why Other Options are Not Ideal:**
 
-  * **I. Grant your user account the roles/storage.objectCreator role ...** While this might work, it's overly broad and ties permissions to your personal user account rather than the function's identity.
+  * **I. Grant your user account the roles/storage.objectCreator role ...** The function doesn't run as your user account, so this doesn't change what the function can do.
 
-  * **II. Provide your user account with the roles/iam.serviceAccountUser ...** This role grants you the ability to impersonate service accounts, but doesn't directly give the function's service account the needed bucket permissions.
+  * **II. Provide your user account with the roles/iam.serviceAccountUser ...** This lets you deploy functions that run as (act as) that service account, but doesn't give the service account any permission on the bucket.
 
-  * **IV. Ensure the Cloud Storage API is enabled for project B** This is a prerequisite for any interaction with Cloud Storage, but does not address the specific permissions issue.
+  * **IV. Ensure the Cloud Storage API is enabled within project B** The bucket already exists and the error is a 403 permission error, so the API isn't the problem.
 
 Ref:
 
-<https://cloud.google.com/functions/docs/concepts/iam#troubleshooting_permission_errors>
+<https://cloud.google.com/functions/docs/securing/function-identity>
 
 </details>
 
@@ -123,6 +125,8 @@ Here's why this approach is superior:
 [https://cloud.google.com/architecture/migrating-a-monolithic-app-to-microservices-gke#versioning](https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible  https://cloud.google.com/architecture/migrating-a-monolithic-app-to-microservices-gke#versioning  https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible)
 
 [https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible](https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible  https://cloud.google.com/architecture/migrating-a-monolithic-app-to-microservices-gke#versioning  https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible)
+
+**⚠️ Note:** Cloud Endpoints still works, but Google's current API-management products are API Gateway (for serverless backends such as Cloud Run functions) and Apigee. If they appear as options, treat them the same way: an API gateway in front of the backend.
 
 </details>
 
@@ -397,28 +401,28 @@ This creates a reverse dependency, where project B would manage credentials used
 
 **You aim to move files from an on-premises virtual machine to Google Cloud Storage for utilization within a Cloud DataProc Hadoop cluster in a GCP environment. Which command is the appropriate choice for this task?**
 
-- I. `**gsutil cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
+- I. `**gcloud storage cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
 - IV. `**gcloud dataproc cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
 - II. `**gcloud cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
 - III. `**hadoop fs cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** I. `**gsutil cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
+**Correct:** I. `**gcloud storage cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`
 
-**I. gsutil cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**
+**I. gcloud storage cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**
 
 **Explanation:**
 
-  * `gsutil` is the command-line tool specifically designed to interact with Google Cloud Storage. It's the most efficient and reliable way to transfer files between your local machine and Google Cloud Storage buckets.
+  * `gcloud storage` is Google's recommended command-line tool for Cloud Storage, and `gcloud storage cp` uploads local files to a bucket. Once the files are in Cloud Storage, the Dataproc cluster reads them through the built-in Cloud Storage connector using `gs://` paths. (The older `gsutil cp` does the same job but is now a legacy tool.)
 
 **Why Other Options Are Not Suitable:**
 
-  * **II. gcloud cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** While the `gcloud` tool has a `cp` command, it's intended for more general-purpose copying operations within the Google Cloud environment. For interacting specifically with Cloud Storage, `gsutil` is the preferred tool.
+  * **II. gcloud cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** There is no top-level `gcloud cp` command. Copying to Cloud Storage is done with `gcloud storage cp`.
 
-  * **III. hadoop fs cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** The `hadoop fs` command with a `gs://` destination can work, but it requires the Google Cloud Storage connector for Hadoop. This adds a layer of setup and might be less efficient than using `gsutil` directly.
+  * **III. hadoop fs cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** The on-premises VM would need Hadoop and the Cloud Storage connector installed, and the actual syntax is `hadoop fs -cp`. It's not the straightforward choice.
 
-  * **IV. gcloud dataproc cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** The `gcloud dataproc` tool doesn't have a `cp` command. It's designed for managing Cloud Dataproc clusters, not general data transfer tasks.
+  * **IV. gcloud dataproc cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** The `gcloud dataproc` command group doesn't have a `cp` command. It's for managing Dataproc clusters and jobs, not data transfer.
 
 Ref:
 
@@ -557,6 +561,8 @@ Here's why Cloud Endpoints is the optimal choice:
 
 [https://cloud.google.com/endpoints/docs/openapi/monitoring-your-api](https://cloud.google.com/endpoints/docs/openapi/quotas-configure  https://cloud.google.com/endpoints/docs/openapi/monitoring-your-api)
 
+**⚠️ Note:** Cloud Endpoints still works, but Google's current API-management products are API Gateway (for serverless backends such as Cloud Run functions) and Apigee. If they appear as options, treat them the same way: an API gateway in front of the backend.
+
 </details>
 
 ---
@@ -565,41 +571,37 @@ Here's why Cloud Endpoints is the optimal choice:
 
 **To ensure proper authentication of services accessing various Google Cloud APIs within a Google Kubernetes Engine (GKE) cluster, adhering to Google's recommended best practices, which approaches should you implement? (Choose two)**
 
-- V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser, which is a feasible approach but not as endorsed as enabling Workload Identity directly on the cluster.
+- V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser.
 - IV. Storing Google service account keys in Secret Manager (as mentioned) could be a method, but it's not a recommended best practice by Google for authenticating services within a GKE cluster.
 - I. Employ the service account linked to the GKE node, enabling services to authenticate with Google Cloud APIs using the node's identity.
 - III. Accessing Google service account keys from Secret Manager (as mentioned) could be a method, but it's not a recommended best practice by Google for authenticating services within a GKE cluster.
-- II. Enable Workload Identity on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.
+- II. Enable Workload Identity Federation for GKE on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser, which is a feasible approach but not as endorsed as enabling Workload Identity directly on the cluster. **|** II. Enable Workload Identity on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.
+**Correct:** V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser. **|** II. Enable Workload Identity Federation for GKE on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.
 
 The recommended approaches for ensuring proper authentication of services accessing various Google Cloud APIs within a Google Kubernetes Engine (GKE) cluster are:
 
-**II. Enable Workload Identity on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.**
+**II. Enable Workload Identity Federation for GKE on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.**
 
-**V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser, which is a feasible approach but not as endorsed as enabling Workload Identity directly on the cluster.**
+**V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser.**
 
 Explanation:
 
-  * Option II suggests enabling Workload Identity on the GKE cluster, which is a recommended best practice by Google. Workload Identity allows GKE workloads to securely access Google Cloud services with fine-grained IAM permissions, without the need to manage service account keys directly.
+  * Option II enables Workload Identity Federation for GKE (formerly called Workload Identity) on the cluster, which is Google's recommended way for GKE workloads to access Google Cloud APIs with fine-grained IAM permissions, without managing service account keys.
 
-  * Option V proposes binding Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser. While it's a feasible approach, it's not as endorsed as enabling Workload Identity directly on the cluster, but it still provides a secure mechanism for service authentication.
+  * Option V is the second half of the same setup: granting `roles/iam.workloadIdentityUser` on the Google service account to the Kubernetes service account lets Pods that use that Kubernetes service account act as the Google service account. (You can also grant IAM roles directly to the Kubernetes service account as a principal.)
 
 Options I, III, and IV are not recommended best practices:
 
-  * Option I suggests employing the service account linked to the GKE node for authentication. While this might work, it's not the recommended approach because it lacks granularity and control over IAM permissions.
+  * Option I uses the service account linked to the GKE node. Every Pod on the node shares it, so it lacks granularity and breaks least privilege.
 
-  * Option III mentions accessing Google service account keys from Secret Manager, which is not a recommended best practice by Google for authenticating services within a GKE cluster. It introduces unnecessary complexity and potential security risks.
-
-  * Option IV suggests storing Google service account keys in Secret Manager, which again is not a recommended best practice. Managing service account keys manually introduces security risks and operational overhead.
+  * Options III and IV keep Google service account keys in Secret Manager. They are still long-lived keys that must be stored, rotated and protected, which Workload Identity Federation for GKE avoids.
 
 **References:**
 
-[https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_existing_cluster)
-
-[https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_existing_cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_existing_cluster)
+<https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>
 
 </details>
 
@@ -809,7 +811,7 @@ Explanation:
 
   * **Efficiency:** Accessing this built-in metadata server is the most direct and performant way to retrieve information about the Cloud Run environment.
 
-  * **Specificity:** You can query specific values like `computeMetadata/v1/project/project-id` and `computeMetadata/v1/instance/zone` for the project ID and region respectively.
+  * **Specificity:** You can query specific values like `computeMetadata/v1/project/project-id` and `computeMetadata/v1/instance/region` for the project ID and region respectively.
 
   * **Security:** The metadata server is only accessible from within the service instance itself, enhancing security.
 
@@ -1219,41 +1221,39 @@ Why the other options are less suitable:
 
 **As you develop a microservice-based application to operate on Google Kubernetes Engine (GKE), certain services require access to various Google Cloud APIs. How should you configure authentication for these services within the cluster, adhering to Google's recommended best practices? (Select two.)**
 
-- II. Activate Workload Identity within the cluster via the gcloud command-line tool.
-- V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentity with gcloud.
+- II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool.
+- V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.
 - I. Utilize the service account associated with the GKE node.
 - IV. Centralize the storage of Google service account keys within a secret management service.
 - III. Retrieve the Google service account keys from a secret management service.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Activate Workload Identity within the cluster via the gcloud command-line tool. **|** V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentity with gcloud.
+**Correct:** II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool. **|** V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.
 
 **The two most suitable approaches are:**
 
-  * **II. Activate Workload Identity within the cluster via the gcloud command-line tool.**
+  * **II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool.**
 
-  * **V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentity with gcloud.**
+  * **V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.**
 
 **Explanation:**
 
-  * **Workload Identity:** This is the preferred method for authentication in GKE. It eliminates the need to manage service account keys directly within your pods. Instead, Kubernetes service accounts are securely mapped to Google service accounts, simplifying permissions management.
+  * **Workload Identity Federation for GKE** (formerly called Workload Identity): This is the preferred method for authentication in GKE. It eliminates the need to manage service account keys within your Pods. Instead, Kubernetes service accounts are mapped to Google service accounts (or granted IAM roles directly), simplifying permissions management.
 
-  * **IAM Binding:** The `roles/iam.workloadIdentity` binding is the mechanism that associates the Kubernetes and Google service accounts, enabling your pods to use the correct Google Cloud permissions.
+  * **IAM Binding:** Granting `roles/iam.workloadIdentityUser` on the Google service account to the Kubernetes service account is what lets Pods using that Kubernetes service account act as the Google service account.
 
 **Why Other Options Aren't as Suitable**
 
-  * **I. GKE Node Service Account:** While technically possible, this is strongly discouraged. It grants broad permissions to all pods on a node, violating the principle of least privilege.
+  * **I. GKE Node Service Account:** While technically possible, this is strongly discouraged. It grants broad permissions to all Pods on a node, violating the principle of least privilege.
 
-  * **III & IV. Service Account Key Management:** Managing keys directly creates overhead. Keys can be revoked, rotated, and potentially leaked. Workload Identity eliminates these concerns.
+  * **III & IV. Service Account Key Management:** Managing keys directly creates overhead. Keys must be rotated and can leak. Workload Identity Federation for GKE eliminates these concerns.
 
 **References:**
 
-[https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity  https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts)
+<https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>
 
-[https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity  https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts)
-
-[https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity  https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts)
+<https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts>
 
 </details>
 
@@ -1361,31 +1361,35 @@ IV. Create a new dataset in BigQuery, copy the source table to the new dataset, 
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. Modify the API to function as a multipart file upload API.
+**Correct:** III. Implement signed URLs for file uploads.
 
-**The optimal approach for transferring an internal file upload API to App Engine with a 500-MB file size limit would be:**
-
-**IV. Modify the API to function as a multipart file upload API.**
+**III. Implement signed URLs for file uploads.**
 
 Explanation:
 
+  * App Engine limits the size of an HTTP request to 32 MB, so a 500-MB file can't be uploaded through the App Engine app itself, multipart or not.
+
+  * With **signed URLs**, the App Engine app authenticates the user and returns a time-limited URL that allows a PUT of one specific object in a Cloud Storage bucket. The client then uploads the file **directly to Cloud Storage**, which handles objects far larger than 500 MB. The app can still enforce the 500-MB limit (for example with an `x-goog-content-length-range` header in the signed URL) and keeps the bytes out of its instances.
+
+**Why the other options are wrong:**
+
 I. Utilize FTP for uploading files.
 
-  * Using FTP (File Transfer Protocol) for uploading files might not be the best option for App Engine as it is a platform-as-a-service (PaaS) offering by Google Cloud Platform, and direct FTP access is not typically supported. Additionally, managing file uploads through FTP might introduce complexities in terms of security, scalability, and integration with the App Engine environment.
+  * App Engine doesn't offer FTP access, and running your own FTP server adds security and operational work.
 
 II. Use CPanel for file uploads.
 
-  * CPanel is a web hosting control panel that allows users to manage their website and server settings. While it provides file management capabilities, it's not directly applicable to App Engine, which is a managed platform for building and deploying applications. CPanel is more suitable for traditional web hosting environments rather than cloud platforms like App Engine.
+  * cPanel is a control panel for traditional web hosting and has no role in App Engine.
 
-III. Implement signed URLs for file uploads.
+IV. Modify the API to function as a multipart file upload API.
 
-  * Signed URLs can be useful for providing temporary, secure access to resources stored in cloud storage services like Google Cloud Storage. However, App Engine itself is capable of handling file uploads, and implementing signed URLs might add unnecessary complexity to the solution. Additionally, signed URLs don't inherently address the multipart file upload requirement.
+  * Multipart encoding only changes how the request body is formatted. The whole request still passes through App Engine and still hits its 32-MB request limit.
 
-**IV. Modify the API to function as a multipart file upload API.**
+**References:**
 
-  * **This option is the most appropriate as it involves adapting the existing API to support multipart file uploads, which is a common approach for handling large file uploads in web applications. By modifying the API to support multipart file uploads, you can ensure compatibility with the App Engine environment and adhere to the specified file size limit. This approach allows you to leverage the capabilities of App Engine for handling file uploads while ensuring efficient and scalable processing of large files.**
+<https://cloud.google.com/storage/docs/access-control/signed-urls>
 
-**Therefore, option IV is the optimal approach for transferring the internal file upload API to App Engine with a 500-MB file size limit.**
+<https://cloud.google.com/appengine/docs/standard/quotas#Requests>
 
 </details>
 
@@ -1707,12 +1711,12 @@ The correct answer is **B. Use the committed type to create a write stream**.
 
 Explanation:
 
-Using the **committed** type to create a write stream with the **BigQuery Storage Write API** is the recommended approach to prevent duplicate data. The committed stream type ensures that data written to BigQuery is immediately visible to queries and that each write operation is atomic. The BigQuery Storage Write API handles duplicate checks internally, making it a straightforward solution to avoid duplicate entries without additional infrastructure or deduplication logic.
+Using the **committed** type to create a write stream with the **BigQuery Storage Write API** is the recommended approach to prevent duplicate data. In committed type, records are available for reading as soon as each write is acknowledged, and every append can carry a **stream offset**. If a write is retried with an offset that was already written, the API rejects it with an `ALREADY_EXISTS` error instead of writing the rows again, which gives **exactly-once** semantics without additional infrastructure or deduplication logic.
 
 Justifications for Incorrect Options:
 
   * **Option A: Use the default type to create a write stream**  
-The default stream type is **buffered** , which means data is not immediately visible and requires a flush operation to make it available in BigQuery. Buffered streams are more prone to duplicates because they don’t enforce atomic writes as the committed type does.
+The default stream gives **at-least-once** semantics: it doesn't support stream offsets, so a retried write can be written twice and produce duplicates. (Buffered is a separate stream type, in which rows become visible only after a flush.)
 
   * **Option C: Set up a Kafka cluster and use a unique identifier (UUID) to filter out duplicate messages**  
 This would require additional infrastructure (Kafka) and a more complex deduplication setup, which is unnecessary given BigQuery’s built-in capabilities with the committed stream type.
@@ -1743,25 +1747,31 @@ For more details on the **BigQuery Storage Write API** and stream types, refer t
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.
+**Correct:** II. Create a pull subscription with both ordering and exactly-once delivery disabled.
 
-**III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.**
+**Correct Answer:**
+
+**II. Create a pull subscription with both ordering and exactly-once delivery disabled.**
 
 **Explanation:**
 
-  * **Pull Subscriptions:** Provide better control over message consumption, beneficial when updating an in-memory database.
+  * **The timestamp makes ordering unnecessary:** every message carries the stock symbol, the price and the time of that price. Before writing, the consumer compares the message's timestamp with the one stored for that symbol and ignores the message if it is older. An out-of-order message can never overwrite a newer price.
 
-  * **Ordering:** Ensures stock price updates for the same symbol are processed sequentially, maintaining accuracy in your in-memory database.
+  * **Duplicates are harmless:** applying the same price with the same timestamp twice leaves the database unchanged, so the update is idempotent and exactly-once delivery adds nothing.
 
-  * **Stock Symbol as Ordering Key:** Guarantees that updates for a specific stock are applied in the correct order, preventing outdated values from overwriting newer ones.
+  * **Pull suits a stream of price updates:** a pull subscriber controls its own flow and can process messages in large batches, which suits a high, steady volume of updates. This is Google's own sample question for this exam, and its answer is a pull subscription with both features off.
+
+  * **Leaving both features off keeps throughput and latency at their best:** ordering keys limit how messages for one key are dispatched, and exactly-once delivery adds acknowledgement overhead. Neither is needed here.
 
 **Why Other Options Are Less Suitable:**
 
-  * **I. Set up a push subscription with exactly-once delivery enabled.** While push subscriptions can be useful, they relinquish control over message processing order, which might lead to inconsistencies in your in-memory database.
+  * **I. Set up a push subscription with exactly-once delivery enabled.** Exactly-once delivery is supported only on pull subscriptions, so this combination isn't possible. It also wouldn't be needed, because duplicates are harmless here.
 
-  * **II. Create a pull subscription with both ordering and exactly-once delivery disabled.** No ordering means you could update your in-memory database with older stock prices over newer ones.
+  * **III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.** This works, but the timestamp already solves the ordering problem. Ordering keys add publisher-side requirements (the publisher must set the key, and per-key delivery is serialized), which only cost throughput.
 
-  * **IV. Establish a push subscription with both ordering and exactly-once delivery disabled.** Combines the drawbacks of push subscriptions (lack of ordering control) with the potential for duplicate messages.
+  * **IV. Establish a push subscription with both ordering and exactly-once delivery disabled.** The feature settings are right, but push delivers each message as a separate HTTP request to an endpoint. For a high-volume stream of small updates, a pull subscriber that controls its own flow is the better fit.
+
+**Remember:** If messages carry a timestamp or version, the consumer can discard stale updates itself, so you don't need ordering keys. Exactly-once delivery is a pull-only feature.
 
 </details>
 
@@ -1786,17 +1796,23 @@ For more details on the **BigQuery Storage Write API** and stream types, refer t
 
 **Explanation:**
 
-  * **Cloud Scheduler:** Designed specifically for scheduling tasks on Google Cloud. It has the necessary permissions to work with Cloud Run.
+  * **Cloud Scheduler:** The managed Google Cloud service for running jobs on a schedule. A Cloud Scheduler job publishes a message to a Pub/Sub topic on each run.
 
-  * **Pub/Sub:** A decoupling mechanism between Cloud Scheduler and Cloud Run, ensuring the security of your internal ingress settings. Cloud Scheduler can publish a message to a Pub/Sub topic, which your Cloud Run service can subscribe to.
+  * **Pub/Sub:** A **push subscription** on that topic delivers each message to the Cloud Run service as an authenticated HTTP request. Pub/Sub push is one of the Google Cloud sources that Cloud Run accepts with **internal** ingress (when it's in the same project or VPC Service Controls perimeter), so you keep the internal ingress setting. Give the push subscription's service account the **`roles/run.invoker`** role on the service; a missing invoker role is the usual cause of a 403 when calling Cloud Run.
 
 **Why Other Options Might Not Be the Best Fit:**
 
-  * **I. Assign the roles/run.developer IAM role to the service account.** Giving the `roles/run.developer` role to an external service account might loosen security too much for an internally facing Cloud Run instance.
+  * **I. Assign the roles/run.developer IAM role to the service account.** `roles/run.developer` is for deploying and managing services, which is broader than needed. Invoking a service needs `roles/run.invoker`.
 
-  * **II. Set up a cron job on the Compute Engine VMs to trigger Cloud Run based on the schedule.** While possible, it introduces more management overhead and potential points of failure compared to dedicated services like Cloud Scheduler.
+  * **II. Set up a cron job on the Compute Engine VMs to trigger Cloud Run based on the schedule.** While possible, it introduces more management overhead and potential points of failure compared to a managed service like Cloud Scheduler.
 
-  * **III. Modify the Cloud Run ingress setting to 'Internal and Cloud Load Balancing.'** This would expose your Cloud Run instance, breaking your internal ingress requirement.
+  * **III. Modify the Cloud Run ingress setting to 'Internal and Cloud Load Balancing.'** This loosens the internal ingress requirement and doesn't by itself fix the scheduling or the permission problem.
+
+**References:**
+
+<https://cloud.google.com/run/docs/triggering/using-scheduler>
+
+<https://cloud.google.com/run/docs/securing/ingress>
 
 </details>
 
@@ -1821,15 +1837,11 @@ The **recommended approach is:**
 
 ✅ **Explanation for Correct Option:**
 
-**II. Eventarc + Cloud Run (✅ Recommended)**
+  * **Eventarc** routes many kinds of events (direct Cloud Storage events such as `google.cloud.storage.object.v1.finalized`, Cloud Audit Logs events, Pub/Sub messages and more) to targets like **Cloud Run**, so different trigger types use the same mechanism.
 
-  * **Eventarc** allows you to configure triggers for **specific Cloud Storage events** , such as `google.cloud.storage.object.v1.finalized` or `metadataUpdated`, and you can **filter by object name** (i.e., specific file).
+  * Direct Cloud Storage triggers filter by **bucket** and event type. To react to one specific file, the Cloud Run service checks the object name in the event (or you can use a Cloud Audit Logs trigger, which supports a **path pattern** on the resource name).
 
-  * Eventarc supports **advanced filtering** , **multiple trigger types** , and **targeting services like Cloud Run** , which is suitable for modern, scalable apps.
-
-  * It enables **simple YAML-based configuration** , so multiple team members can manage/update triggers easily.
-
-  * This is the **most flexible** , **scalable** , and **modern** approach recommended by Google Cloud.
+  * Triggers are simple, declarative resources (`gcloud eventarc triggers create/update`), so several team members can update them easily.
 
 **Official Documentation:**
 
@@ -1841,35 +1853,15 @@ The **recommended approach is:**
 
 **I. Cloud Storage → Pub/Sub → Cloud Build**
 
-  * **Pub/Sub only supports event types like**`**OBJECT_FINALIZE**`**, not specific filename filtering**.
-
-  * Involving **Cloud Build** to execute your app is **not ideal** , as Cloud Build is primarily for **CI/CD** , not app runtime execution.
-
-  * **More complex** , and managing filters in Pub/Sub is harder and less maintainable.
-
-**Docs:**  
-<https://cloud.google.com/storage/docs/pubsub-notifications>  
-<https://cloud.google.com/build/docs/automating-builds/create-pubsub-triggers>
+  * Cloud Build is a **CI/CD** service, not a runtime for your application, and chaining three services is harder to maintain.
 
 **III. Cloud Function triggered by Cloud Storage**
 
-  * Cloud Functions can be triggered by Cloud Storage events, but they **don’t support advanced filtering** , such as matching **specific filenames** directly.
-
-  * Also, if your app grows in complexity, Cloud Run offers better scalability and control compared to Cloud Functions.
-
-  * Not as configurable or scalable as Eventarc + Cloud Run.
-
-**Docs:**  
-<https://cloud.google.com/functions/docs/calling/storage>
+  * This works for a single fixed event source, but Eventarc routing to Cloud Run is the more flexible option when trigger types vary. (Event-driven Cloud Run functions, formerly Cloud Functions 2nd gen, use Eventarc triggers under the hood.)
 
 **IV. Firebase Functions with Cloud Storage**
 
-  * **Firebase Functions** are typically used in conjunction with **Firebase Storage** , not general-purpose **Cloud Storage** buckets.
-
-  * This option is **not recommended** for enterprise or team workflows unless the application is Firebase-based.
-
-**Docs:**  
-<https://firebase.google.com/docs/functions/gcp-storage-events>
+  * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.
 
 </details>
 
@@ -2017,25 +2009,31 @@ Therefore, option B is the most suitable approach for conducting near real-time 
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Configure a push subscription with exactly-once delivery enabled.
+**Correct:** IV. Establish a pull subscription with both ordering and exactly-once delivery disabled.
 
-**Given the context of an application monitoring numerous stock prices and updating the current stock price in a single large in-memory database, considering each message includes the stock symbol, price, and timestamp, the most suitable configuration for the Pub/Sub subscription would be:**
-
-**III. Configure a push subscription with exactly-once delivery enabled.**
+**IV. Establish a pull subscription with both ordering and exactly-once delivery disabled.**
 
 Here's why:
 
-  1. **Push Subscription** : Push subscriptions are generally preferred for high-volume message processing because they can handle a large number of incoming messages more efficiently than pull subscriptions. Push subscriptions allow Google Cloud Pub/Sub to push messages to the subscriber, reducing the need for the subscriber to continuously poll the Pub/Sub topic.
+  * **Pull for high volume:** A single large in-memory database is updated by subscribers that pull (ideally with StreamingPull) at their own pace. Pull subscriptions give the highest throughput and let the consumer control flow; push subscriptions are less suited to very large volumes.
 
-  2. **Exactly-once Delivery Enabled** : Ensuring exactly-once delivery helps prevent duplicate processing of messages, which is crucial for maintaining data consistency, especially in scenarios where updates to the stock prices need to be accurate and not duplicated. This ensures that each message is processed exactly once, avoiding potential issues with data integrity.
+  * **The timestamp makes ordering unnecessary:** Each message carries the stock symbol, price and timestamp, so the subscriber can simply keep the price with the newest timestamp for each symbol and ignore older ones. Ordering keys would only add latency and limit throughput.
 
-Option I is less suitable because pull subscriptions might not be as efficient for managing a high volume of messages, as they require the subscriber to actively pull messages from the Pub/Sub topic.
+  * **Duplicates are harmless:** Writing the same price for the same symbol and timestamp twice gives the same result (the update is idempotent), so exactly-once delivery isn't needed. Exactly-once delivery also adds significant publish-to-subscribe latency.
 
-Option II is not ideal because push subscriptions are generally preferred for high-volume message processing, and disabling exactly-once delivery could lead to potential issues with data consistency.
+**Why the other options are wrong:**
 
-Option IV might not be the most efficient choice for managing a high volume of messages, and disabling exactly-once delivery could lead to potential issues with data consistency.
+  * **I. Pull with exactly-once enabled:** Works, but pays the extra latency and throughput cost of exactly-once delivery for no benefit, since duplicate updates are idempotent.
 
-**Therefore, option III, configuring a push subscription with exactly-once delivery enabled, is the most appropriate choice for efficiently managing a high volume of messages and ensuring data consistency in updating the current stock prices.**
+  * **II. Push with both disabled:** Push subscriptions are less suited to very high message volumes than pull, and the endpoint must absorb whatever rate Pub/Sub pushes.
+
+  * **III. Push with exactly-once enabled:** Not possible. Exactly-once delivery is supported only on pull subscriptions (including StreamingPull); push and export subscriptions don't support it.
+
+**References:**
+
+<https://cloud.google.com/pubsub/docs/exactly-once-delivery>
+
+<https://cloud.google.com/pubsub/docs/subscriber>
 
 </details>
 
@@ -2191,21 +2189,21 @@ Here's the breakdown of why the correct answer is
 
 **In deploying an application on a Google Kubernetes Engine (GKE) cluster, it needs to connect to a legacy REST service spread across two GKE clusters in different regions. The objective is to establish a resilient connection with minimal steps and enable probe-based health checks on the legacy service via a separate port. How should the connection be configured? (Select two options.)**
 
-- V. Configure the legacy service's firewall to allow health checks initiated from the Traffic Director control plane.
+- V. Configure the legacy service's firewall to allow health checks initiated from the Cloud Service Mesh control plane.
 - III. Configure the legacy service's firewall to allow health checks initiated from the sidecar proxy.
-- II. Implement a proxyless Traffic Director configuration for the application.
-- I. Utilize Traffic Director alongside a sidecar proxy to link the application to the service.
+- II. Implement a proxyless Cloud Service Mesh configuration for the application.
+- I. Utilize Cloud Service Mesh alongside a sidecar proxy to link the application to the service.
 - IV. Configure the legacy service's firewall to allow health checks initiated from the application.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Configure the legacy service's firewall to allow health checks initiated from the sidecar proxy. **|** I. Utilize Traffic Director alongside a sidecar proxy to link the application to the service.
+**Correct:** III. Configure the legacy service's firewall to allow health checks initiated from the sidecar proxy. **|** I. Utilize Cloud Service Mesh alongside a sidecar proxy to link the application to the service.
 
 **To configure the connection between the application deployed on a Google Kubernetes Engine (GKE) cluster and the legacy REST service spread across two GKE clusters in different regions, while enabling probe-based health checks on the legacy service via a separate port, the following options would be suitable:**
 
-**I. Utilize Traffic Director alongside a sidecar proxy to link the application to the service.**
+**I. Utilize Cloud Service Mesh alongside a sidecar proxy to link the application to the service.**
 
-  * **Traffic Director can help manage traffic between different services and clusters. Using a sidecar proxy alongside Traffic Director can facilitate connectivity and resilience between the application and the legacy service.**
+  * **Cloud Service Mesh can help manage traffic between different services and clusters. Using a sidecar proxy alongside Cloud Service Mesh can facilitate connectivity and resilience between the application and the legacy service.**
 
 **III. Configure the legacy service's firewall to allow health checks initiated from the sidecar proxy.**
 
@@ -2213,17 +2211,19 @@ Here's the breakdown of why the correct answer is
 
 Explanation for excluding other options:
 
-II. Implement a proxyless Traffic Director configuration for the application.
+II. Implement a proxyless Cloud Service Mesh configuration for the application.
 
-  * Proxyless Traffic Director configuration might not provide the necessary flexibility and control required for connecting to the legacy service, especially when dealing with health checks on a separate port.
+  * Proxyless Cloud Service Mesh configuration might not provide the necessary flexibility and control required for connecting to the legacy service, especially when dealing with health checks on a separate port.
 
 IV. Configure the legacy service's firewall to allow health checks initiated from the application.
 
   * It's not typically recommended to directly initiate health checks from the application, as it may introduce complexities and potential issues with managing health checks separately from the networking infrastructure.
 
-V. Configure the legacy service's firewall to allow health checks initiated from the Traffic Director control plane.
+V. Configure the legacy service's firewall to allow health checks initiated from the Cloud Service Mesh control plane.
 
-  * Health checks initiated from the Traffic Director control plane might not directly interact with the legacy service's firewall. The health checks are typically initiated from proxies or other agents deployed alongside the application, which then communicate with the legacy service. Therefore, configuring the firewall to allow health checks from the sidecar proxy (option III) is more appropriate.
+  * Health checks initiated from the Cloud Service Mesh control plane might not directly interact with the legacy service's firewall. The health checks are typically initiated from proxies or other agents deployed alongside the application, which then communicate with the legacy service. Therefore, configuring the firewall to allow health checks from the sidecar proxy (option III) is more appropriate.
+
+**⚠️ Note:** In Cloud Service Mesh, backend health checks are sent by Google Cloud's health-check probers (35.191.0.0/16 and 130.211.0.0/22), so the firewall really needs to allow those ranges; none of the options says that exactly. Learn the key (sidecar proxy + allow health checks), but it's shaky.
 
 </details>
 
@@ -2233,18 +2233,18 @@ V. Configure the legacy service's firewall to allow health checks initiated from
 
 **In your mobile web application where global users vote on popular topics, with a very high volume of votes expected during each 30-minute voting window for each topic, you need to capture and count votes within these intervals while also storing them for future analysis and reporting. How should you approach this?**
 
-- I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Google Data Studio.
-- III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Google Data Studio.
+- I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Looker Studio.
+- III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Looker Studio.
 - IV. Implement Firebase for user authentication, enabling the direct publication of votes to Firestore. Export the votes to a CSV file and import them into Sheets for reporting purposes.
-- II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Google Data Studio.
+- II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Google Data Studio.
+**Correct:** II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.
 
 Given the high volume of votes expected during each voting window for each topic in your mobile web application, along with the need to capture, count, and store votes for future analysis and reporting, the most suitable approach would be:
 
-**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Google Data Studio.**
+**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.**
 
 Explanation:
 
@@ -2254,7 +2254,7 @@ Option III proposes publishing votes to Pub/Sub and using Cloud Functions to ins
 
 Option IV suggests using Firebase for user authentication and Firestore for storing votes. While Firebase and Firestore are suitable for real-time data synchronization and user authentication, exporting votes to a CSV file and importing them into Sheets for reporting purposes might not be the most efficient or scalable solution for large volumes of data.
 
-Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Google Data Studio allows for easy and customizable reporting and visualization.
+Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Looker Studio allows for easy and customizable reporting and visualization.
 
 Therefore, option II is the most appropriate approach for capturing, counting, and storing votes in your mobile web application while also facilitating future analysis and reporting.
 
@@ -2266,7 +2266,7 @@ Therefore, option II is the most appropriate approach for capturing, counting, a
 
   * BigQuery: <https://cloud.google.com/bigquery/docs>
 
-  * Google Data Studio: <https://datastudio.google.com/>
+  * Looker Studio: <https://lookerstudio.google.com/>
 
 </details>
 
@@ -2285,35 +2285,27 @@ Therefore, option II is the most appropriate approach for capturing, counting, a
 
 **Correct:** C. Return an HTTP 500 Internal Server Error response.
 
-Here's why the best approach is a combination of 
-
-**C. Return an HTTP 500 Internal Server Error response** and **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.**
+**C. Return an HTTP 500 Internal Server Error response.**
 
 **Explanation:**
 
-  * **C. Return an HTTP 500 Internal Server Error response.** This clearly signals to API consumers that a server-side error has occurred, indicating the client request was likely valid, but the server failed to process it correctly.
+  * The question asks how to make sure your API's consumers are **notified** of the failure. Returning **HTTP 500** clearly tells them a server-side error occurred: their request was likely valid, but the server couldn't complete it, so they can retry later or report it.
 
-  * **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.** Retries with exponential backoff (increasing wait times between attempts) help handle potential transient errors and improve the likelihood of successful writes. However, make sure to limit retries to prevent infinite loops.
+  * It's still good practice to retry transient 5xx errors from Firestore internally with **bounded** exponential backoff first. If the write still fails after a limited number of attempts, return the 500.
 
-**Why Other Options are Less Ideal:**
+**Why Other Options are Wrong:**
 
-  * **A. Return an HTTP 204 No Content response.** A 204 response implies success, which would be misleading in this case, preventing API consumers from taking corrective actions.
+  * **A. Return an HTTP 204 No Content response.** A 204 response means success, which would mislead API consumers into thinking the write worked.
 
-  * **B. Return an HTTP 406 Not Acceptable response.** A 406 response typically indicates issues with content negotiation. It's not the most accurate representation of a server-side failure during a write request.
+  * **B. Return an HTTP 406 Not Acceptable response.** A 406 response indicates a content-negotiation problem with the client's request, not a server-side failure.
 
-**Important Considerations:**
-
-  * **Logging and Monitoring:** Implement robust logging and monitoring to help pinpoint the root cause of the 5xx errors, allowing you to address them proactively.
-
-  * **Idempotency:** If possible, design API operations to be idempotent (producing the same result with multiple executions) to make retries safer.
-
-  * **User Feedback:** If retry strategies fail after a reasonable number of attempts, provide informative error messages to the API user.
+  * **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.** Retrying without a limit never notifies the consumer, and the request can hang indefinitely during a longer outage. Retries help, but they don't replace reporting the failure.
 
 **Documentation:**
 
   * **HTTP Status Codes:** <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status>
 
-  * **Exponential Backoff:** <https://en.wikipedia.org/wiki/Exponential_backoff>
+  * **Retry strategy:** <https://cloud.google.com/datastore/docs/concepts/errors>
 
 </details>
 
@@ -2338,7 +2330,7 @@ Here's why the best approach is a combination of
 
 **Reasoning:**
 
-  * **Cost-effective and Efficient:** Batch jobs in BigQuery are the ideal solution for this scenario. They are executed when resources are available, ensuring other workloads are not impacted. Batch jobs are also generally less expensive than on-demand queries.
+  * **Cost-effective and Efficient:** Batch jobs in BigQuery are the ideal solution for this scenario. They are executed when resources are available, ensuring other workloads are not impacted. Batch priority doesn't change the price (batch and interactive queries are billed the same), but it avoids the cost and effort of extra projects, reservations or manual scheduling.
 
   * **Minimal Overhead:** This option minimizes administrative effort, as batch jobs require no extra project setup or advanced permissions. It's a straightforward way to accommodate the user's needs.
 
@@ -2358,7 +2350,7 @@ Here's why the best approach is a combination of
 
 **Supporting Documentation:**
 
-  * **BigQuery Batch Queries:** <https://cloud.google.com/batch/docs/get-started>
+  * **BigQuery Batch Queries:** <https://cloud.google.com/bigquery/docs/running-queries#batch>
 
   * **BigQuery Pricing** <https://cloud.google.com/bigquery/pricing>
 
@@ -2589,7 +2581,7 @@ E. is incorrect. This will allow the system to scale, however it will require ea
 
 **Justification:**
 
-  * **Cost-Effectiveness:** In BigQuery, batch queries are significantly more cost-effective compared to on-demand queries. They are the best option if time efficiency is not a concern.
+  * **Cost-Effectiveness:** Batch queries cost the same as interactive queries, but they need no extra project, reservation or monitoring, so they're the cheapest way to meet the request when time efficiency is not a concern.
 
   * **Workload Prioritization:** Batch jobs run when there is available BigQuery capacity, ensuring they won't disrupt critical workloads.
 
@@ -2718,9 +2710,9 @@ For more information, refer to:
 
 Here's why Cloud Endpoints is a good fit for your requirements:
 
-  * **Authentication Management:** Cloud Endpoints integrates with Cloud Identity and Access Management (IAM) to handle user authentication and authorization for your API.
+  * **Authentication Management:** Cloud Endpoints (through its Extensible Service Proxy) validates API keys and JSON Web Tokens, for example from Firebase Authentication, Auth0 or Google ID tokens, to authenticate API consumers.
 
-  * **Usage Quotas:** Cloud Endpoints allows you to define and enforce quotas on API calls based on various metrics like request rate, project, or API method.
+  * **Usage Quotas:** Cloud Endpoints lets you define and enforce quotas on API calls per consumer project (identified by API key) and per API method.
 
   * **Metrics Tracking:** Cloud Endpoints provides built-in monitoring and logging capabilities that you can use to track API usage metrics and analyze API performance.
 
@@ -2734,7 +2726,9 @@ Let's analyze the other options and why they are not ideal:
 
 **Reference:**
 
-<https://cloud.google.com/kubernetes-engine/docs/concepts/ingress>
+<https://cloud.google.com/endpoints/docs/openapi/authentication-method>
+
+<https://cloud.google.com/endpoints/docs/openapi/quotas-overview>
 
 </details>
 
@@ -2767,7 +2761,7 @@ Let's analyze the other options and why they are not ideal:
 
   * **Using Dataflow with Apache Beam's PubSubIO package ensures efficient processing of messages from the Pub/Sub topic in a streaming fashion.**
 
-  * **Dataflow automatically handles aspects like scaling, fault tolerance, and data deduplication, ensuring that each message is processed only once without the need for manual intervention.**
+  * **Dataflow automatically handles scaling and fault tolerance, and deduplicates Pub/Sub redeliveries of the same message (by message ID), so each message is processed once without manual intervention. If the publisher itself can send the same data as separate messages, set a unique ID attribute and read it with `PubSubIO`'s ID attribute option (`withIdAttribute`) so Dataflow can deduplicate those too.**
 
   * **Dataflow also integrates seamlessly with various storage options provided by Google Cloud Platform, allowing you to save the output to storage in a cost-effective manner.**
 
@@ -3321,31 +3315,25 @@ Manual reviews are inefficient, prone to human error, and do not scale effective
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** B. Publish the seat reservation to a Pub/Sub topic and configure the backend service to use Eventarc for processing the reservation on GKE.
+**Correct:** D. Send the seat reservation as an HTTP POST request to an Application Load Balancer, which distributes it to a Compute Engine managed instance group that processes the reservation.
 
-The most suitable approach to ensure immediate confirmation and efficient processing of seat reservations is:
+The approach that gives customers immediate confirmation is:
 
-**B. Publish the seat reservation to a Pub/Sub topic and configure the backend service to use Eventarc for processing the reservation on GKE.**
+**D. Send the seat reservation as an HTTP POST request to an Application Load Balancer, which distributes it to a Compute Engine managed instance group that processes the reservation.**
 
 **Explanation:**
 
-  * **Immediate confirmation:** Pub/Sub ensures a reliable and scalable messaging system. The reservation request is immediately published to the topic, allowing the client to receive confirmation as soon as the request is acknowledged.
+  * **Immediate confirmation needs a synchronous call:** The customer has to know right away whether *their specific seat* was reserved. With a synchronous HTTP request, the backend checks and reserves the seat (for example in a transactional database) and returns success or "seat taken" in the same response.
 
-  * **Efficient processing:** Eventarc triggers the backend service on GKE automatically when a new message arrives on the Pub/Sub topic. This eliminates the need for polling or constant monitoring of the queue, leading to efficient processing.
-
-  * **Scalability:** Pub/Sub and Eventarc are highly scalable, allowing the system to handle increased load during peak booking times.
-
-  * **Reliability:** Pub/Sub ensures reliable message delivery, reducing the risk of lost reservations.
+  * **Scalability and availability:** The Application Load Balancer spreads requests across a managed instance group that autoscales during busy on-sale periods and replaces unhealthy instances.
 
 **Why other options are not suitable:**
 
-  * **A. Cloud Tasks and Workflow:** While this approach can be used, it might introduce latency as the reservation request is first queued and then processed by Workflow. This could delay the confirmation process.
+  * **A. Cloud Tasks and Workflow:** Queuing the request makes processing asynchronous. The client only learns that the task was queued, not whether the seat was reserved.
 
-  * **C. Cloud Storage:** Storing the reservation in Cloud Storage and triggering a Cloud Run service is not the most efficient way to handle real-time processing. It might introduce unnecessary delays.
+  * **B. Pub/Sub and Eventarc:** Publishing is asynchronous too. Pub/Sub acknowledges that it *received the message*, not that the seat was reserved, so the customer can't get an immediate reservation result (and the seat might already be taken when the message is processed).
 
-  * **D. HTTP POST and Load Balancer:** While this approach can work, it relies on polling the load balancer for new requests, which can be less efficient than event-driven architectures. Additionally, it might introduce complexities in scaling the backend service.
-
-By using Pub/Sub and Eventarc, you can achieve a reliable, scalable, and efficient seat reservation process, ensuring immediate confirmation for your customers.
+  * **C. Cloud Storage:** Writing an object and reacting to the storage event is asynchronous and adds latency, so there's no immediate answer for the customer.
 
 </details>
 

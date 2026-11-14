@@ -94,7 +94,7 @@
       ]
     },
     "7": {
-      "summary": "This lesson covers how to reduce Cloud Logging cost from verbose GKE workload logs while keeping GKE operational logs. The bank's answer is disputed, so the lesson focuses on what each option (logging component settings, sink changes, exclusion filters) actually does and which one the guide recommends for the exam.",
+      "summary": "This lesson covers how to reduce Cloud Logging cost from verbose GKE workload logs while keeping GKE operational logs. The answer is --logging=SYSTEM, and the lesson explains what each option (logging component settings, sink changes, exclusion filters) actually does and why the others fall short.",
       "objectives": [
         "After this lesson you can explain what the GKE --logging=SYSTEM and --logging=WORKLOAD settings do.",
         "After this lesson you can explain why disabling the _Default sink is too broad.",
@@ -210,7 +210,7 @@
     {
       "term": "Exclusion filter",
       "definition": "A filter on a log sink that drops matching log entries so they are not stored, reducing log volume and cost.",
-      "exam_context": "Appears as the bank's answer for verbose GKE dev logs, but for that exact scenario the guide recommends --logging=SYSTEM instead.",
+      "exam_context": "A distractor for verbose GKE dev logs: the filter severity >= DEBUG matches nearly every container log, and --logging=SYSTEM is the answer for that scenario.",
       "lesson": 7
     },
     {

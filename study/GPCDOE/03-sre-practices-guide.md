@@ -69,12 +69,12 @@ Goal: "requests handled in under 300 ms at least 90% of the time per calendar mo
 ### Don't over-deliver on the SLO
 - **Meet the SLO, but don't greatly exceed it.** Users depend on the reliability they actually *observe*, which creates a hidden, tighter implicit SLO. The source cites Google's Chubby example: planned outages keep dependents from assuming the service never fails (Exam 2 · Q33).
 - SLO consistently met, customers happy, toil low: **raise deployment velocity or accepted risk**, and **move engineers to services that need reliability** (Exam 2 · Q31), (Exam 5 · Q44).
-- Under 5% of the budget used for 6 months, and stakeholders confirmed the SLO is right: **release more often or take more risk**, and **announce planned downtime** (Exam 2 · Q33). Exam 5 · Q49 keys this differently (see ⚠️).
+- Under 5% of the budget used for 6 months, and stakeholders confirmed the SLO is right: **release more often or take more risk**, and **announce planned downtime** (Exam 2 · Q33), (Exam 5 · Q49). Adding SLIs is a distractor here: it only helps when the current SLIs miss user journeys.
 
 | Situation | Do | Don't |
 |---|---|---|
 | SLO met, users happy, low toil | Raise velocity, reassign engineers (Exam 2 · Q31) | Tighten the SLO, put reliability ahead of features, rework SLIs without a trigger |
-| SLO greatly exceeded, SLO confirmed appropriate | Riskier or faster releases, planned downtime (Exam 2 · Q33) | Tighten the SLO to match observed reliability, add capacity |
+| SLO greatly exceeded, SLO confirmed appropriate | Riskier or faster releases, planned downtime (Exam 2 · Q33), (Exam 5 · Q49) | Tighten the SLO to match observed reliability, add capacity, add SLIs without a reason |
 | SLO met but **users unhappy** | Tighten the SLO or improve SLI coverage (Exam 2 · Q31 trap note) | — |
 | SLI falls short of the SLO | Fix the service (Exam 1 · Q2) | Lower the SLO to match the SLI |
 
@@ -276,7 +276,7 @@ Rule: change only the field the new property drives.
 ### Scaling signal for an LB-fronted GKE frontend (Exam 1 · Q9), (Exam 5 · Q12)
 - **HPA on the GCLB request-count metric** from Cloud Monitoring.
 - Reject probe response times (they measure health, not load), VPA + CA (that is right-sizing, not replica count), and NGINX stats (they duplicate the LB signal and add maintenance).
-- Exam 1 · Q9 says to use GKE's **native** custom metrics support. Exam 5 · Q12 says to install the custom metrics adapter (see ⚠️).
+- Exam 1 · Q9 phrases it as GKE's **native** custom metrics support. Exam 5 · Q12 phrases it as installing the Cloud Monitoring (Stackdriver) custom metrics adapter. Both are correct: native support covers metrics your Pods export, while reading an LB metric from Cloud Monitoring is still documented through the adapter. The key is the LB request-count metric either way.
 
 ### Pub/Sub consumer backlog (Exam 1 · Q60), (Exam 5 · Q51)
 - Oldest unacked age went from 347 ms to 8,074 ms and undelivered messages from 5 to 14,705, while CPU went from 20% to 30% and memory stayed at 10%. Answer: **scale out Pod replicas**.
@@ -300,7 +300,7 @@ Rule: change only the field the new property drives.
 
 ### GKE maintenance for an interruption-intolerant legacy DB (Exam 5 · Q60)
 - Use a **maintenance exclusion** with scope **"No minor or node upgrades"**.
-- The Stable channel still upgrades. `max-surge-upgrade=0` still upgrades. The PDB option is rejected (see ⚠️ for the explanation's error).
+- The Stable channel still upgrades. `max-surge-upgrade=0` still upgrades. A PDB with `maxUnavailable: 100%` allows *all* Pods to be disrupted at once, so it protects nothing.
 
 ---
 
@@ -308,7 +308,7 @@ Rule: change only the field the new property drives.
 
 - **PRR finds the service can't meet its SLOs:** decide on reliability improvements and **get them done before handover**. Reject lowering the SLOs, launching without SLOs, and sending support back to developers. That last one is legitimate only if dev can't make the fixes (Exam 1 · Q29).
 - **Early operational input on a new product** (data ingestion with unpredictable volume and high cost): **review the design with the product team early in the design phase**. Prototype load tests, staging metrics and production logs all come after design is fixed (Exam 4 · Q38).
-- **Service in active development, productionalization (choose 2):** keyed **monitoring/alerting + early SRE design consultation** (Exam 3 · Q19, see ⚠️).
+- **Service in active development, productionalization (choose 2):** **monitoring/alerting + redundant resources**. Google's engagement model puts both in the active development phase. Early design consultation, co-design and infrastructure guidelines belong to the earlier architecture and design phase (Exam 3 · Q19).
 - **API version retirement** (least disruption): **introduce the new version → announce deprecation → deprecate → contact remaining users → best-effort support → turn down** (Exam 2 · Q34).
   - Rules: the replacement exists before any announcement, outreach comes after the announcement, and **turn-down is always last**. Support after turn-down is illogical.
 
@@ -318,15 +318,8 @@ Rule: change only the field the new property drives.
 
 | Item | Issue |
 |---|---|
-| **(Exam 5 · Q49)** vs **(Exam 2 · Q33)** | Same scenario, different keys. Exam 2 keys **B + E** (riskier releases + announced planned downtime) and cites the SRE book's Chubby planned-outage practice. Exam 5 keys **B + D** (add SLIs) and calls planned downtime "anti-SRE", which contradicts the Chubby example its counterpart cites. Exam 2 · Q33's own explanation says D (more SLIs) fits only when SLIs miss user journeys, which the stem doesn't say. **Prefer B + E**, but expect either key to show up. |
-| **(Exam 5 · Q60)** | Answer IV (maintenance exclusion) is fine, but the explanation says a PDB with `maxUnavailable: 100%` "would effectively prevent any Pod disruptions." That is backwards: 100% max unavailable permits all Pods to be disrupted. |
-| **(Exam 5 · Q12)** vs **(Exam 1 · Q9)** | Exam 5 keys "install the Stackdriver custom metrics adapter". Exam 1 · Q9 says that adapter step has been superseded by GKE's native custom metrics support and treats self-managed adapters as extra overhead. Pick the option with the LB request-count metric. If both adapter and native versions appear, choose native. |
 | **(Exam 3 · Q13)** | The bank's own trap and takeaway say restoring the Pod template on a *shared* Deployment can't roll back just one zone. C is valid only if each zone has its own Deployment, which the stem doesn't state. Learn the key, but know that it is shaky. |
-| **(Exam 3 · Q19)** | The bank flags it: the key is **A + E**, but Google's lifecycle guidance directly supports **A + D** (redundancy during active development). The item is ambiguous. |
 | **(Exam 2 · Q7)** | The key is internal-stakeholder request (C) over external (A). Google's SRE text says "any stakeholder", and the bank admits the internal/external split is the item's weak point. The solid lesson is rejecting D and E (automation working is not a trigger). |
-| **(Exam 5 · Q46)** | The answer ($900) is right, but the explanation says the $1,000 distractor comes from "rounding". The real error is using 0.1% (the old unavailability) instead of the 0.09-point difference (Exam 2 · Q10). |
-| **(Exam 5 · Q32)** | The answer (verify quota) is right, but the claim that internal load balancers are strictly regional and can't span regions is presented without qualification. Don't rely on it as a general fact. The rejection of option III holds anyway because it doesn't address quota or capacity. |
-| **(Exam 5 · Q6)** | The answer (dedicated channel) matches Exam 1 · Q27. The claim that Google "explicitly defines this as an early, mandatory step before mitigation actions begin" overstates the source. The reasoning in Exam 1 · Q27 is that mitigation belongs to the OL. |
 
 ---
 

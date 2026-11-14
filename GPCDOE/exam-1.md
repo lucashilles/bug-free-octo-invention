@@ -238,7 +238,7 @@ The hard requirement here is two-fold: true code _versioning_ (a history of chan
 
 **Why This Is Correct**
 
-A VCS (Git, typically hosted on Cloud Source Repositories, GitHub, or GitLab) stores every change as a discrete, reversible commit tied to an author and timestamp, which is the textbook definition of “code versioning.” Branching and merge workflows let multiple engineers work in parallel on the same Terraform configuration without overwriting each other’s changes, and establishing a push/merge procedure (e.g., feature branches plus pull requests into `main`) adds the review gate needed to keep shared infrastructure code trustworthy as the team scales. This is also the foundation Google Cloud’s own recommended practices build on: CI/CD pipelines for Terraform (via Cloud Build or similar) are triggered from VCS commits, so starting with a VCS is the prerequisite for everything that follows in a mature IaC workflow.
+A VCS (Git, typically hosted on GitHub, GitLab, Bitbucket, or Secure Source Manager) stores every change as a discrete, reversible commit tied to an author and timestamp, which is the textbook definition of “code versioning.” Branching and merge workflows let multiple engineers work in parallel on the same Terraform configuration without overwriting each other’s changes, and establishing a push/merge procedure (e.g., feature branches plus pull requests into `main`) adds the review gate needed to keep shared infrastructure code trustworthy as the team scales. This is also the foundation Google Cloud’s own recommended practices build on: CI/CD pipelines for Terraform (via Cloud Build or similar) are triggered from VCS commits, so starting with a VCS is the prerequisite for everything that follows in a mature IaC workflow.
 
 **Why the Other Options Are Not the Best Fit**
 
@@ -272,7 +272,7 @@ Whenever a DevOps scenario mentions a growing team needing to version and share 
 
 [**Google Cloud — Infrastructure as Code with Terraform (best practices):**](https://cloud.google.com/docs/terraform/best-practices/general-style-structure) Supports: why Terraform configurations should live in a VCS with branching/merge workflows as the basis for IaC management
 
-[**Google Cloud — Cloud Source Repositories overview:**](https://cloud.google.com/source-repositories/docs) Supports: Google Cloud’s own recommended Git-based version-control service for storing and collaborating on infrastructure code
+[**Google Cloud — Secure Source Manager overview:**](https://cloud.google.com/secure-source-manager/docs/overview) Supports: Google Cloud’s managed Git-based version-control service for storing and collaborating on code (Cloud Source Repositories is closed to new customers)
 
 ---
 
@@ -342,6 +342,8 @@ When matching workloads to Spot VMs, look past “has durable storage” or “i
 [**Google Cloud — Spot VMs overview:**](https://cloud.google.com/compute/docs/instances/spot) Supports: the correct-answer mechanism (Spot VMs can be reclaimed at any time, making fault-tolerant/interruption-tolerant workloads the right fit) and the terminology update from the legacy Preemptible VM model
 
 [**Google Cloud — Preemptible VM instances (legacy) and GPU preemption behavior:**](https://docs.cloud.google.com/compute/docs/instances/preemptible) Supports: the distractor elimination for Option D — GPUs on preemptible/Spot instances persist only for the life of the instance, so in-progress render work is lost on preemption
+
+**⚠️ Note:** Google's Spot VM documentation lists rendering and media processing as typical Spot workloads, so D is not a poor fit in general. C wins here because its fault tolerance (sufficient quorum) is stated explicitly.
 
 ---
 
@@ -551,6 +553,8 @@ When a question asks for low-effort, centralized collection of resource-utilizat
 
 [**Google Cloud — Cloud Debugger deprecation notice:**](https://docs.cloud.google.com/stackdriver/docs/deprecations/debugger-deprecation) Supports: the elimination of Option B as both an outdated and now-nonexistent service
 
+**⚠️ Note:** Cloud Profiler gives code-level CPU and heap profiles, not system resource-utilization metrics. It is the best of these options, but if an option offers the Ops Agent with Cloud Monitoring, choose that.
+
 ---
 
 ## Question 9
@@ -619,6 +623,8 @@ When asked to pick an “appropriate SLI” to drive autoscaling for a user-faci
 [**Google Cloud — GKE native support for custom metrics (Horizontal Pod Autoscaler):**](https://cloud.google.com/blog/products/containers-kubernetes/gke-now-supports-custom-metrics-natively) Supports: the correct-answer mechanism of scaling HPA on Cloud Monitoring/load-balancer metrics without deploying a separate custom-metrics adapter
 
 [**Google Cloud — Configuring horizontal Pod autoscaling in GKE:**](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/horizontal-pod-autoscaling) Supports: autoscaling based on load balancer traffic and external/custom metrics as the appropriate signal for request-driven frontend workloads
+
+**⚠️ Note:** GKE's native custom-metrics support covers metrics your Pods export. For a Cloud Monitoring metric such as the load balancer's request count, Google's HPA documentation still uses the Custom Metrics - Stackdriver Adapter, so the adapter-based wording of the same question (Exam 5 · Q12) is also correct. Either way, the key is scaling the HPA on the load balancer's request count.
 
 ---
 
@@ -722,7 +728,7 @@ Two decisions drive this question: _where_ to enable Flow Logs and _at what samp
 
 **Why This Is Correct**
 
-VPC Flow Logs record metadata about IP traffic sent from and received by VM instances, and the sampling rate parameter controls what fraction of eligible flows are actually logged — a setting of 1.0 logs 100% of flows, which is what a security investigation needs to avoid missing the very traffic you’re hunting for. Scoping the logs to the production VPC’s frontend and backend subnets targets exactly the environment and both tiers where the suspicious communication could be occurring, without burdening the unrelated testing environment with unnecessary logging overhead and cost.
+VPC Flow Logs record metadata about IP traffic sent from and received by VM instances, and the sampling rate parameter controls what fraction of eligible flows are actually logged — a setting of 1.0 keeps every flow record produced by the primary sampling (the most complete Flow Logs setting, though Flow Logs still sample packets and can't guarantee every packet or connection), which is what a security investigation needs to avoid missing the very traffic you’re hunting for. Scoping the logs to the production VPC’s frontend and backend subnets targets exactly the environment and both tiers where the suspicious communication could be occurring, without burdening the unrelated testing environment with unnecessary logging overhead and cost.
 
 **Why the Other Options Are Not the Best Fit**
 
@@ -1448,6 +1454,8 @@ When a CI/CD question asks how to securely provide and easily rotate secrets, fa
 [**Google Cloud — Cloud KMS overview:**](https://cloud.google.com/kms/docs/key-management-service) Supports: the correct-answer mechanism of encrypting secrets with centrally managed, rotatable Cloud KMS keys and controlling access via IAM
 
 [Google Cloud — Secret Manager overview: ](https://cloud.google.com/secret-manager/docs/overview)Supports: the current, purpose-built Google Cloud service for application secret storage, access control, and rotation referenced as the broader best-practice context
+
+**⚠️ Note:** This is the best of the four options, but none of them is Secret Manager, which is Google's recommended store for pipeline secrets today. Choose Cloud Storage plus Cloud KMS only when Secret Manager is not offered.
 
 ---
 

@@ -88,6 +88,8 @@ When matching workloads to Spot VMs, look past “has durable storage” or “i
 
 [**Google Cloud — Preemptible VM instances (legacy) and GPU preemption behavior:**](https://docs.cloud.google.com/compute/docs/instances/preemptible) Supports: the distractor elimination for Option D — GPUs on preemptible/Spot instances persist only for the life of the instance, so in-progress render work is lost on preemption
 
+**⚠️ Note:** Google's Spot VM documentation lists rendering and media processing as typical Spot workloads, so D is not a poor fit in general. C wins here because its fault tolerance (sufficient quorum) is stated explicitly.
+
 </details>
 
 ---
@@ -848,6 +850,8 @@ When profiling data shows a container’s heap climbing until an OOM-style resta
 
 [Google Cloud — Put it all together: Example GKE troubleshooting scenario: ](https://docs.cloud.google.com/kubernetes-engine/docs/troubleshooting/introduction-example)Supports: the exact diagnostic pattern of climbing container memory usage leading to an OOMKilled restart, and raising the container’s configured memory limit as a documented response
 
+**⚠️ Note:** Heap that grows steadily after a release suggests a memory leak. Raising the memory limit is the expected exam answer but only a stopgap: it delays the OOM kill while the code is fixed.
+
 </details>
 
 ---
@@ -1001,6 +1005,8 @@ When a question pairs Cloud Profiler’s CPU-time-versus-wall-time comparison wi
 
 [**Google Cloud — Professional Cloud DevOps Engineer exam guide (Section 5.1, Collecting performance information in Google Cloud):**](https://services.google.com/fh/files/misc/professional_cloud_devops_engineer_exam_guide_english.pdf) Supports: domain alignment — application performance monitoring as the basis for identifying optimization candidates
 
+**⚠️ Note:** Cloud Profiler describes wall time much larger than CPU time as time spent waiting (I/O, locks, downstream calls), which more CPU usually doesn't fix. Option A matches the published sample answer, so expect it on the exam, but don't treat it as a general diagnostic rule.
+
 </details>
 
 ---
@@ -1121,7 +1127,7 @@ Shared VPC improves **network governance and IAM separation** , not runtime netw
 Private clusters improve **security** by removing public node IPs. They do not reduce inbound HTTP traffic costs and may even introduce additional NAT costs.
 
 **IV. Implement a Google Cloud HTTP Load Balancer as Ingress.**  
-While this is architecturally recommended for HTTP workloads, **external HTTP(S) Load Balancing runs on Premium Tier by default** , which is **more expensive** , not cheaper. It optimizes performance, not cost.
+An HTTP load balancer as Ingress is a **traffic-distribution** choice: it gives routing and scaling features but does not make egress cheaper, and it has its own charges. (A regional external Application Load Balancer can run in Standard Tier, so the tier is not the reason to reject it.)
 
 **Final answer:** **II**
 
@@ -1218,17 +1224,17 @@ What should you do?
   1. **Assign labels to Compute Engine instances** for each system:
         
                     1. bash
-            2. CopyEditgcloud compute instances add-labels instance-name --labels=system=my-system
+            2. gcloud compute instances add-labels instance-name --labels=system=my-system
 
   2. **Enable BigQuery billing export** to **store billing data**.
 
   3. **Query costs per system using BigQuery** :
         
                     1. sql
-            2. CopyEditSELECT service.description, labels.system, SUM(cost) AS total_cost
-            3. FROM `billing_dataset.gcp_billing_export`
-            4. WHERE usage_start_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
-            5. GROUP BY service.description, labels.system
+            2. SELECT service.description, l.value AS system, SUM(cost) AS total_cost
+            3. FROM `billing_dataset.gcp_billing_export`, UNNEST(labels) AS l
+            4. WHERE l.key = 'system' AND usage_start_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+            5. GROUP BY service.description, system
             6. ORDER BY total_cost DESC;
 
 **Why Other Options Are Incorrect:**
@@ -1356,37 +1362,39 @@ Here's why this is the most direct and effective approach:
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. Implement an exclusion filter on the default logging sink within the project tied to the development environment with: severity >= DEBUG resource.type = "k8s_container".
+**Correct:** I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.
 
 **Correct Option:**
 
-**IV. Implement an exclusion filter on the default logging sink within the project tied to the development environment with: severity >= DEBUG resource.type = "k8s_container".**
+**I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.**
 
 **Justification:**
 
-  * **Targeted Filtering:** Directly addresses the verbose application logs by filtering out DEBUG and lower severity log entries from Kubernetes containers, significantly reducing log volume.
+  * **Two requirements:** cut the cost of application logs in Cloud Logging, and keep collecting GKE operational logs.
 
-  * **Retains Operational Logs:** Keeps essential GKE system logs flowing to Cloud Logging for operational visibility.
+  * **Nobody reads the application logs in Cloud Logging:** developers use `kubectl logs`, which reads from the node and does not depend on Cloud Logging, and the logs have no uniform structure, so they are hard to query anyway.
 
-  * **Minimal Change:** Minimizes disruption, requiring just a filter update on the existing logging sink.
-
-  * **Cost-Effective:** Reduces the volume of ingested logs, directly impacting logging costs.
+  * **`--logging=SYSTEM` controls collection at the source:** it collects logs from system namespaces (such as kube-system), node services such as kubelet and containerd, and Kubernetes events, and stops collecting application (workload) logs. The verbose application logs are never ingested, so you don't pay for them, and operational logs keep flowing.
 
 **Why Other Options Are Less Suitable:**
 
-  * **I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.**
+  * **II. `--logging=WORKLOAD`**
 
-    * **Too Broad:** Disables application logging entirely, potentially hindering necessary debugging for developers.
+    * Workload logs are the application logs, the very thing you want to stop collecting. Google also documents SYSTEM as required for all clusters, so WORKLOAD alone isn't a valid way to express this.
 
-    * **Loses Valuable Developer Insights:** May eliminate useful troubleshooting logs generated by developer-side applications.
+  * **III. Disable the `_Default` sink**
 
-  * **II. Modify the logging configuration for the development cluster with: gcloud container clusters update --logging=WORKLOAD.**
+    * Stops routing almost all project logs to the `_Default` bucket, including the GKE operational logs you must keep. (The `_Required` sink still keeps audit logs, but that doesn't cover GKE system logs.)
 
-    * **No Filtering:** Doesn't address the verbosity issue. Logs would still be sent to Cloud Logging, incurring costs.
+  * **IV. Exclusion filter `severity >= DEBUG resource.type = "k8s_container"`**
 
-  * **III. Disable the default logging sink within the project associated with the development environment using: gcloud logging sinks update _Default --disabled.**
+    * `severity >= DEBUG` matches essentially **every** container log entry, not only DEBUG ones, and `k8s_container` also covers system Pods, so it can drop operational logs too. It also filters after collection instead of avoiding collection. Exclusion filters fit when you want to keep part of the application logs.
 
-    * **Extreme Measure:** Completely disables all logging, including crucial GKE operational logs, hindering monitoring and troubleshooting.
+**References:**
+
+<https://cloud.google.com/kubernetes-engine/docs/concepts/about-logs>
+
+<https://cloud.google.com/logging/docs/routing/overview>
 
 </details>
 
@@ -1480,7 +1488,7 @@ Deploying the application to each region and serving it from a global anycast IP
 
 **III. Deploy the application to one region per continent, utilizing a regional external HTTP(S) load balancer in each region, and assign the same global IP address to all regional load balancers.**
 
-  * While deploying the application to one region per continent can improve latency compared to a single region deployment, it may not provide the most optimal response times as users within continents may still experience latency due to regional distances.
+  * Regional external load balancers can't share one global anycast IP address. A global IP address requires the global external Application Load Balancer (Premium Tier), so this design can't be built as described.
 
 **IV. Deploy the application to a single region and configure Google Cloud Armor in the frontend to permit traffic from all IP addresses.**
 

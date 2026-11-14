@@ -17,7 +17,7 @@ replace any already in questions.json (keeping an existing explanation when the 
 text is unchanged); other exams are kept.
 """
 import json, os, re, sys
-from certs import cert_dir
+from certs import cert_dir, apply_fixes
 
 Q_RE = re.compile(r'^## Question (\d+)\s*$', re.M)
 OPT_RE = re.compile(r'^- \[( |x)\] (.*)$')
@@ -52,29 +52,6 @@ def parse_file(path):
     return exam, out
 
 
-def apply_fixes(cid, parsed):
-    """Apply <CODE>/fixes.json corrections (stem replacements, option text, keyed letter)."""
-    path = os.path.join(cert_dir(cid), 'fixes.json')
-    if not os.path.exists(path):
-        return
-    fixes = {k: v for k, v in json.load(open(path, encoding='utf-8')).items() if not k.startswith('_')}
-    for qs in parsed.values():
-        for q in qs:
-            fix = fixes.get(f"{q['exam']}-{q['n']}")
-            if not fix:
-                continue
-            for old, new in fix.get('question', []):
-                if old not in q['question']:
-                    raise ValueError(f"{path}: {q['exam']}-{q['n']}: stem text not found: {old!r}")
-                q['question'] = q['question'].replace(old, new)
-            letters = {a['text'][0]: a for a in q['answers']}
-            for letter, text in fix.get('answers', {}).items():
-                letters[letter]['text'] = text
-            if 'correct' in fix:
-                for letter, a in letters.items():
-                    a['correct'] = letter == fix['correct']
-
-
 def main():
     cid, files = sys.argv[1], sys.argv[2:]
     path = os.path.join(cert_dir(cid), 'questions.json')
@@ -84,7 +61,8 @@ def main():
         exam, qs = parse_file(f)
         parsed[exam] = qs
         print(f'{f}: exam {exam}, {len(qs)} questions')
-    apply_fixes(cid, parsed)
+    for qs in parsed.values():
+        apply_fixes(cid, qs, strict=False)  # before matching explanations, which are keyed on the fixed stem
     # Dumps have no explanations; keep ones already written for the same question.
     kept = {(x['exam'], x['n'], x['question']): x['explanation'] for x in existing if x['explanation']}
     for qs in parsed.values():
@@ -92,6 +70,7 @@ def main():
             q['explanation'] = kept.get((q['exam'], q['n'], q['question']), '')
     merged = [x for x in existing if x['exam'] not in parsed] + [q for qs in parsed.values() for q in qs]
     merged.sort(key=lambda x: (int(x['exam']), x['n']))
+    apply_fixes(cid, merged)
     json.dump(merged, open(path, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
     print(f'{path}: {len(merged)} questions')
 

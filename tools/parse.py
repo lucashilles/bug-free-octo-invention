@@ -8,7 +8,7 @@ selections and scores are deliberately not recorded.
 import json, os, sys
 import html2text
 from bs4 import BeautifulSoup
-from certs import cert_dir
+from certs import cert_dir, apply_fixes
 
 
 def h2md(el):
@@ -54,6 +54,7 @@ def main():
         print(f'{f}: exam {exam}, {len(qs)} questions')
     merged = [x for x in existing if x['exam'] not in parsed] + [q for qs in parsed.values() for q in qs]
     merged.sort(key=lambda x: (int(x['exam']), x['n']))
+    apply_fixes(cid, merged)
     json.dump(merged, open(path, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
     print(f'{path}: {len(merged)} questions')
 

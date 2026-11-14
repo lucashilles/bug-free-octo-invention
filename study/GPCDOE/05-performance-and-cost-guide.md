@@ -80,6 +80,7 @@
 
 - If users are worldwide and should reach the **nearest region** → **deploy the service to every region**, behind **one global anycast IP on a global external HTTP(S) load balancer** (Exam 5 · Q59).
 - A single region behind a global load balancer is not enough. Neither is Cloud Armor, which is a security control, not a latency tool (Exam 5 · Q59).
+- Regional external load balancers in each region **can't share one global anycast IP**. A global IP needs the global, Premium Tier load balancer (Exam 2 · Q24, Exam 5 · Q59).
 - This is the opposite of the cost rule in section 2: when **latency for global users** is the goal, choose global + Premium; when **cost for local users** is the goal, choose regional + Standard.
 
 ---
@@ -100,6 +101,7 @@
 ## 5. Cost attribution: labels + billing export to BigQuery
 
 - **Labels** are key/value pairs that are **forwarded to Cloud Billing**. **Billing export to BigQuery** writes cost line items, including their labels, into a dataset you can query (Exam 2 · Q48, Exam 5 · Q18).
+  - In the export, `labels` is a repeated key/value field: query it with `UNNEST(labels)` and filter on `key = 'system'`, not `labels.system` (Exam 5 · Q18).
 - If several systems share **one project** → the project cannot separate them. **Label each system's resources, export billing to BigQuery, and group cost by label** (Exam 2 · Q48).
 - **Not billing dimensions:** instance **metadata**, **Cloud Logging exports** (they contain log entries, not charges) and **VM names** (Exam 2 · Q48, Exam 5 · Q18).
 - The console billing reports *can* group by label, **but only after the labels exist**. Without labels, a "cost breakdown report" cannot split costs by system (Exam 2 · Q48, option A).
@@ -120,17 +122,15 @@
 
 ## 7. Logging cost control (GKE)
 
-- Scenario: a dev cluster has verbose application logs, developers read them with `kubectl logs` (not Cloud Logging), and GKE operational logs must be kept. The bank's answer is an **exclusion filter on the `_Default` sink** for `k8s_container` logs (Exam 5 · Q35).
-- What each option does, per the bank's explanation:
+- Scenario: a dev cluster has verbose application logs, developers read them with `kubectl logs` (not Cloud Logging), and GKE operational logs must be kept. Answer: **`gcloud container clusters update --logging=SYSTEM`** on the dev cluster (Exam 4 · Q41, Exam 5 · Q35).
+- What each option does:
 
 | Option | Effect |
 |---|---|
-| `--logging=SYSTEM` | Sends system logs only; workload logs no longer go to Cloud Logging |
-| `--logging=WORKLOAD` | Does not reduce verbosity |
-| Disable the `_Default` sink | Too broad: GKE operational logs are lost too |
-| Exclusion filter on `_Default` | Targeted cut in log volume, which lowers cost |
-
-- ⚠️ The bank's answer is questionable. See the final section.
+| `--logging=SYSTEM` | **Correct.** Collects system logs only; verbose workload logs are never ingested, and `kubectl logs` still works because it doesn't use Cloud Logging |
+| `--logging=WORKLOAD` | Workload logs *are* the application logs, so this keeps the cost. SYSTEM is required for all clusters anyway |
+| Disable the `_Default` sink | Too broad: GKE operational logs are lost too (only the `_Required` sink's audit logs survive) |
+| Exclusion filter `severity >= DEBUG resource.type = "k8s_container"` | `severity >= DEBUG` matches essentially **every** container log, and `k8s_container` includes system Pods. It also filters after collection. Use exclusion filters when you want to keep *part* of the application logs |
 
 ---
 
@@ -171,11 +171,6 @@
 
 ## ⚠️ Questionable answers
 
-- **Exam 5 · Q35 (logging).** The bank's answer is weak in two ways.
-  - The filter `severity >= DEBUG` matches essentially **all** container logs at DEBUG or above. It does not, as the explanation claims, exclude only "DEBUG and lower." The explanation misreads the filter.
-  - Developers read logs with `kubectl logs`, which does not depend on Cloud Logging. GKE operational logs must be kept. That fits **`--logging=SYSTEM`** (option I), which many sources treat as the intended answer.
-  - Disabling `_Default` also does not remove *all* logging, because the `_Required` sink still keeps audit logs.
-  - On the exam, prefer **SYSTEM** for this exact scenario.
 - **Exam 4 · Q45, option A (large wall-clock/CPU gap → add CPU).** Cloud Profiler's own concepts describe wall time much larger than CPU time as time spent **waiting** (I/O, locks, downstream calls). Adding CPU usually does not fix that.
   - The bank's answer matches the published sample question, so remember it for the exam.
   - It is not a general rule for real diagnosis.
@@ -185,9 +180,6 @@
 - **Exam 1 · Q5 (Spot VM workload).** Google's Spot documentation lists batch and **rendering / media-processing** jobs as typical Spot workloads. Rejecting option D (a GPU render job that reads from and writes to a bucket) because "checkpointing isn't stated" is a stretch.
   - Compare Exam 3 · Q54, where resumable processing makes Spot correct.
   - Learn the exam's decisive cue: "sufficient quorum" is stated explicitly. Do not conclude that rendering is a poor fit for Spot.
-- **Exam 5 · Q59, reasoning for option III.** The real reason option III fails is that **regional external load balancers cannot share one global anycast IP**; global IPs require the global, Premium-Tier load balancer (Exam 2 · Q24). The explanation's "latency within continents" argument is not the real reason. The answer itself (II) is fine.
-- **Exam 5 · Q18, sample SQL.** In the billing export, `labels` is a repeated key/value field. You need `UNNEST(labels)` and a filter on `key = 'system'`. Selecting `labels.system` directly will not work. The answer (B) is still correct.
-- **Exam 5 · Q4, option IV.** "The HTTP load balancer is Premium-only and therefore more expensive" is an overstatement. A regional external Application Load Balancer can run in Standard Tier (Exam 2 · Q24). The correct reason to reject option IV is that it solves traffic distribution, not cost (Exam 1 · Q41).
 
 ---
 
@@ -211,4 +203,4 @@
 - Heap climbs until restart on GKE → **raise the container memory limit** (not node size, CPU or Trace).
 - Wall-clock vs CPU time: big gap → add CPU (exam answer); small gap + error budget burning → optimize the code.
 - Prepare for a busy season: **load test first**, then size autoscaling and capacity.
-- Dev GKE logs read with `kubectl logs`, system logs must be kept → prefer `--logging=SYSTEM` (the bank says exclusion filter; see ⚠️).
+- Dev GKE logs read with `kubectl logs`, system logs must be kept → `--logging=SYSTEM` (Exam 4 · Q41, Exam 5 · Q35).

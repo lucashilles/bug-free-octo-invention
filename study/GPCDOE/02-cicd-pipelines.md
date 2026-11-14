@@ -422,6 +422,8 @@ When a CI/CD question asks how to securely provide and easily rotate secrets, fa
 
 [Google Cloud — Secret Manager overview: ](https://cloud.google.com/secret-manager/docs/overview)Supports: the current, purpose-built Google Cloud service for application secret storage, access control, and rotation referenced as the broader best-practice context
 
+**⚠️ Note:** This is the best of the four options, but none of them is Secret Manager, which is Google's recommended store for pipeline secrets today. Choose Cloud Storage plus Cloud KMS only when Secret Manager is not offered.
+
 </details>
 
 ---
@@ -2467,6 +2469,8 @@ Supports: Manual approval gates, `requireApproval: true`, and approving or rejec
 
 Supports: Standard deployment behavior and canary deployments that progressively expose users to a release.
 
+**⚠️ Note:** Option C is also defensible: a QA stage with a manual approval gate followed by a production canary meets the requirement too. D is preferred only because it is the simplest design that literally matches the stem.
+
 </details>
 
 ---
@@ -4069,7 +4073,7 @@ Your company runs a GKE application composed of 12 microservices across developm
 
 You need a cost-effective approach that gives developers stable environments for testing their microservice changes independently of other development work. What should you do?
 
-- A. Use Cloud Build to build container images and update Kubernetes manifests from main-branch merge requests. Use Config Sync to deploy the images for testing in dynamically created namespaces within the autoscaling Dev cluster. Delete the namespaces after testing.
+- A. Use Cloud Build to build container images and update Kubernetes manifests only after changes are merged into the main branch. Use Config Sync to deploy the images for testing in dynamically created namespaces within the autoscaling Dev cluster. Delete the namespaces after testing.
 - B. Use Cloud Build to build container images and update Kubernetes manifests for each commit. Use Cloud Deploy to progressively deliver changes to the Dev, Staging, and Prod clusters. Use Config Sync to maintain consistent Kubernetes configurations across environments.
 - C. Use Cloud Build to build container images and update Kubernetes manifests from feature-branch commits. Use Config Sync to deploy the images for testing in dynamically created namespaces within the autoscaling Dev cluster. Delete the namespaces after testing.
 - D. Use Cloud Build to build container images and update Kubernetes manifests from feature-branch commits. Use Config Sync to deploy the images into a separate, dynamically provisioned Dev cluster for each feature branch. Delete the clusters during the merge-request workflow.
@@ -4104,7 +4108,7 @@ Within each environment, use known versions of required dependencies and namespa
 
 **Why the Other Options Are Not the Best Fit**
 
-  * **A — Technically Possible but Ambiguous:** Its namespace approach is appropriate, but “main-branch merge requests” does not clearly specify the intended feature-branch workflow. Importantly, pre-merge pull-request triggers can also test feature-branch commits, so this wording can overlap with C. 
+  * **A — Violates Requirement:** Its namespace approach is appropriate, but it builds only after changes are merged into main. By then the features are already integrated, so developers cannot test their changes independently of other development work, which is the stated goal. 
 
   * **B — Different Use Case:** This describes promotion through shared environments. It does not establish separate environments for concurrent feature branches, leaving the stated Dev deployment conflicts unresolved.
 
@@ -4113,8 +4117,6 @@ Within each environment, use known versions of required dependencies and namespa
 **Exam Trap**
 
 A namespace alone does not guarantee stable dependencies or complete isolation. Dependency versions, service routing, shared test data, resource quotas, and policies must also be scoped appropriately.
-
-For an unambiguous question, A should explicitly distinguish mainline integration from pre-merge feature testing.
 
 **Foundation Concept**
 
@@ -4130,7 +4132,7 @@ For economical feature testing, give each branch its own namespace before giving
 
 **30-Second Exam Takeaway**
 
-Choose **C** as the clearest intended answer: feature-branch triggers, temporary namespaces, stable dependencies, and cleanup. A’s merge-request wording should be clarified because pre-merge testing can implement the same pattern.
+Choose **C**: feature-branch triggers, temporary namespaces, stable dependencies, and cleanup. A builds only after merging to main, which is too late for independent feature testing.
 
 **Official References**
 
@@ -4144,7 +4146,7 @@ Supports: Namespace-scoped configuration and Git branch or revision selection.
 Supports: Shared-cluster isolation, reduced management overhead, and reduced resource fragmentation.
 
   * [**Create and manage build triggers**](https://docs.cloud.google.com/build/docs/automating-builds/create-manage-triggers)  
-Supports: Branch-push and pull-request triggers, including the ambiguity in option A.
+Supports: Branch-push and pull-request triggers.
 
 </details>
 
@@ -5350,7 +5352,7 @@ Here's why this stands out as the most secure and manageable approach:
 
   * **Secret Isolation:** Separates secret management from source code repositories, reducing the risk of accidental exposure.
 
-  * **Secret Rotation:** Cloud KMS simplifies secret rotation, enhancing security in case of a breach.
+  * **Rotation and revocation:** After a breach you replace the secret object in Cloud Storage and can revoke IAM access to the bucket or key at once. (Rotating the KMS key only creates a new key version for future encryptions; it does not change the secret value itself.)
 
 Let's analyze the shortcomings of the other options:
 
@@ -5364,6 +5366,8 @@ Let's analyze the shortcomings of the other options:
 
 <https://cloud.google.com/security-key-management>
 
+**⚠️ Note:** This is the best of the four options, but none of them is Secret Manager, which is Google's recommended store for pipeline secrets today. Choose Cloud Storage plus Cloud KMS only when Secret Manager is not offered.
+
 </details>
 
 ---
@@ -5372,20 +5376,20 @@ Let's analyze the shortcomings of the other options:
 
 **Your organization recently shifted to a container-based workflow for application development. Within this setup, your team continuously deploys multiple applications via an automated build pipeline to the production environment. However, a recent security audit flagged concerns about potential vulnerabilities in the code deployed to production. The conventional tooling for virtual machine (VM) vulnerabilities is inadequate for the containerized environment. How can you ensure the security and patch level of all code processed through the pipeline?**
 
-- I. Implement Container Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).
+- I. Implement Artifact Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).
 - II. Configure the containers within the build pipeline to autonomously update themselves before release.
 - III. Adapt existing operating system vulnerability software to function within the containerized environment.
 - IV. Integrate static code analysis tooling to scrutinize the Docker files utilized in creating the containers.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** I. Implement Container Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).
+**Correct:** I. Implement Artifact Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).
 
-**I. Implement Container Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).**
+**I. Implement Artifact Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).**
 
 Here's why this stands out:
 
-  * **Container-Focused:** Container Analysis is specifically designed to identify vulnerabilities within container images, offering a more accurate and targeted approach than traditional VM-based tools.
+  * **Container-Focused:** Artifact Analysis is specifically designed to identify vulnerabilities within container images, offering a more accurate and targeted approach than traditional VM-based tools.
 
   * **Pipeline Integration:** Seamlessly integrates into your CI/CD pipeline, providing security checks at multiple stages of the development process.
 
@@ -5403,7 +5407,7 @@ Here's why this stands out:
 
   * **Proactive Security:** Implement vulnerability scanning early in your build pipeline to discover issues before they reach production.
 
-  * **Image Repository Integration:** Consider integrating Container Analysis with your image repository (e.g., Google Container Registry) for continuous monitoring of stored images.
+  * **Image Repository Integration:** Consider integrating Artifact Analysis with your image repository (Artifact Registry) for continuous monitoring of stored images.
 
 **Additional Considerations:**
 
@@ -5412,7 +5416,7 @@ Here's why this stands out:
   * **Dependency Scanning:** Use tools to scan for outdated dependencies with known vulnerabilities in your container images.
 
 **Reference:**  
-<https://cloud.google.com/container-analysis/docs/container-analysis>
+<https://cloud.google.com/artifact-analysis/docs/artifact-analysis>
 
 </details>
 
@@ -5488,7 +5492,7 @@ Here's why this choice is optimal:
 
   * **Controlled Rollout:** Partitioned rolling updates allow you to release your new feature in increments. You can update half of your web server pods, validate functionality, and then proceed with the remaining pods if everything looks good.
 
-  * **Kubernetes Native:** This method is directly supported within Kubernetes Deployment objects, ensuring a streamlined process.
+  * **Kubernetes Native:** Partitioned rolling updates are a native Kubernetes feature: the `partition` field of a **StatefulSet**'s `RollingUpdate` strategy updates only the Pods whose ordinal is at or above the partition value. (Deployments have no `partition` field; with a Deployment you would get a similar effect with two Deployments or by pausing a rollout.)
 
   * **Phase Control:** You have granular control over the percentage of pods updated in each phase, enabling the targeted 50% rollout.
 
@@ -5498,7 +5502,7 @@ Here's why this choice is optimal:
 
   * **III. Utilize a replica set within the deployment specification.** Replica sets simply control the number of running pods, not the rollout strategy of updates.
 
-  * **IV. Opt for a stateful set with parallel pod management policy.** Stateful sets are used for workloads requiring persistent storage and stable identifiers, not for phased rollouts of web servers.
+  * **IV. Opt for a stateful set with parallel pod management policy.** The parallel Pod management policy only controls whether Pods are created and deleted in order or all at once during scaling. It does not limit an update to half of the Pods. The phased rollout comes from the StatefulSet `partition` setting in option I, not from the Pod management policy.
 
 **Reference:**
 
@@ -5512,30 +5516,30 @@ Here's why this choice is optimal:
 
 ### Exam 5 · Q21
 
-**During the migration of an on-premises containerized web application to Google Cloud, considering specific traffic direction and testing needs, which deployment strategy and platform should you opt for?**
+**During the migration of an on-premises containerized web application to Google Cloud, where the platform must route traffic from Android devices to an Android-specific microservice, support arbitrary percentage-based traffic splitting, and allow continuous testing of multiple versions of any microservice, which deployment strategy and platform should you opt for?**
 
 - I. Implement the canary release on Cloud Run, employing traffic splitting to route 10% of user traffic to the canary release based on the revision tag.
 - II. Choose App Engine for deploying the canary release, utilizing traffic splitting to direct a subset of user traffic to the new version based on IP address.
-- III. Deploy the canary release on Compute Engine, utilizing Anthos Service Mesh with Compute Engine to direct 10% of user traffic to the canary release via virtual service configuration.
-- IV. Opt for Google Kubernetes Engine with Anthos Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.
+- III. Deploy the canary release on Compute Engine, utilizing Cloud Service Mesh with Compute Engine to direct 10% of user traffic to the canary release via virtual service configuration.
+- IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. Opt for Google Kubernetes Engine with Anthos Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.
+**Correct:** IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.
 
 **Correct option: IV**
 
 **Why option IV is correct**
 
-**IV. Opt for Google Kubernetes Engine with Anthos Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.**
+**IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.**
 
 This is the **most appropriate and exam-accurate choice** given all constraints in the question:
 
   * The application is **containerized** and being migrated from **on-premises** → GKE is the natural target platform.
 
-  * The question explicitly mentions **specific traffic direction and testing needs** , which implies **advanced traffic control** , not just percentage-based splitting.
+  * The question requires routing **Android devices to an Android-specific microservice**, which needs **request-attribute (header) routing**, not just percentage-based splitting.
 
-  * **Anthos Service Mesh (ASM)** provides **Layer-7 traffic management** using Istio, enabling:
+  * **Cloud Service Mesh** provides **Layer-7 traffic management** using Istio, enabling:
 
     * Header-based routing (such as `User-Agent`)
 
@@ -5555,8 +5559,8 @@ Cloud Run supports **percentage-based traffic splitting only**. It does **not su
 **II. App Engine with IP-based traffic splitting**  
 IP-based routing is coarse, unreliable (NAT, mobile users), and not suitable for controlled canary testing. Additionally, App Engine is less aligned with migrating an existing **containerized** on-prem application.
 
-**III. Compute Engine with Anthos Service Mesh**  
-Anthos Service Mesh is designed for **Kubernetes workloads**. While traffic shaping on Compute Engine is possible, ASM does not manage non-GKE VM workloads for application-level canary routing.
+**III. Compute Engine with Cloud Service Mesh**  
+Cloud Service Mesh can include Compute Engine VMs, so the platform is not the problem. The option only configures a 10% split and gives **no rule for identifying Android traffic**, so it misses the header-routing requirement. Running a containerized microservice app on VMs also adds management overhead compared with GKE.
 
 **Final answer:** **IV**
 
@@ -5726,7 +5730,7 @@ This aligns perfectly with Google’s guidance: _use Secret Manager for applicat
 **Why the other options are not suitable**
 
 **II. Mount the key under**`**/sys/api_key**`**and decrypt it in the app.**  
-Cloud Run does not support arbitrary filesystem secret mounts like this, and manual decryption is unnecessary and error-prone. This is not a supported or recommended pattern.
+Cloud Run can mount Secret Manager secrets as files in a volume, so mounting is not the problem. The problem is the extra step: Secret Manager returns the secret already decrypted, so decrypting it again in the app is unnecessary, adds custom code, and makes no sense. (A system path such as `/sys` is also a poor mount location.)
 
 **III. Store the API key directly in Cloud KMS and reference it as an environment variable.**  
 Cloud KMS is designed for **encryption keys** , not for storing application secrets. Google explicitly recommends using **Secret Manager on top of KMS** for secret storage.
@@ -6074,7 +6078,7 @@ Adjusting the selector on the Service to target the blue version specifically wo
 
 **B. Rolling back the Deployment green-app to use the prior version of the application:**
 
-  * While rolling back the green version would address the immediate issue, it may impact user experience as the application would revert to a potentially outdated version. Additionally, it doesn't provide developers with a controlled environment to diagnose the issue.
+  * Rolling back green would stop the errors, but it is slower than switching traffic (Pods must be replaced) and it destroys the failing version, so developers can no longer inspect it. Switching the Service selector to blue is instant and leaves green running for debugging.
 
 **C. Modifying the selector on the Service appservice to app: my-app:**
 
@@ -6117,11 +6121,11 @@ Let's break down why this is the most suitable solution and discuss the other op
 
 **D. Employ the create_before_destroy meta-argument within the instance template's lifecycle block, setting it to true.**
 
-  * **How it works:** create_before_destroy forces Terraform to create a new instance template (with the updated machine type) _before_ destroying the old template. This allows the managed instance group to seamlessly transition to the new resource, avoiding downtime.
+  * **How it works:** create_before_destroy forces Terraform to create a new instance template (with the updated machine type) _before_ destroying the old template. Terraform then points the managed instance group at the new template and only afterwards deletes the old one, so the "template is in use" error goes away and everything happens in a single `terraform apply`. (The template must use `name_prefix` or a generated name so the old and new templates can exist at the same time.)
 
   * **Advantages**
 
-    * **Minimizes application disruption:** The managed instance group can continue serving traffic from the old instances while new ones with the updated machine type are spun up.
+    * **Minimizes application disruption:** Swapping the template does not touch running instances. How and when existing VMs move to the new machine type depends on the MIG's update policy (for example a proactive rolling update), not on `create_before_destroy` itself.
 
     * **Maintains CI/CD pipeline consistency:** Your pipeline won't need major modifications, allowing for smooth continuous deployment.
 
@@ -6133,7 +6137,7 @@ Let's break down why this is the most suitable solution and discuss the other op
 
   * **B. Introduce a new instance template, update the managed instance group to use this new template, and subsequently delete the old instance template.**
 
-    * While less disruptive, it involves more manual steps and could cause temporary inconsistencies due to a mix of instance types.
+    * This reaches the same end state, but done as separate steps it needs several code changes and pipeline runs (add the new template, switch the MIG, then remove the old template). That raises pipeline execution frequency, which the question asks you to minimize. `create_before_destroy` does the same sequence automatically in one run.
 
   * **C. Eliminate the managed instance group from your Terraform state file, update the instance template, and then re-import the managed instance group.**
 

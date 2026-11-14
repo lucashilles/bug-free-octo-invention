@@ -217,23 +217,31 @@ Therefore, option I is the most appropriate approach for testing conversion rate
 
 ### Explanation
 
-The most suitable action to ensure that the Cloud Function is deleted even if the test fails during the automated testing process is:
+**Correct Answer:**
 
 **III. Have the Cloud Build step write the Cloud Function results to a file and return 0. Add a step after the Cloud Function deletion that checks whether the file contains the expected results and fails if it doesn't.**
 
-Explanation:
+**Why:**
 
-Option I suggests changing the order of the steps to delete the Cloud Function before performing the test. While this might ensure that the Cloud Function is deleted regardless of the test outcome, it doesn't address the issue of handling a failed test effectively.
+  * By default, Cloud Build stops the build as soon as a step fails, so a failing test step would skip the deletion step.
 
-Option II proposes including a waitFor option in the Cloud Build step that deletes the Cloud Function test step as a required preceding step. This approach might ensure that the Cloud Function is deleted only if the test step succeeds, but it doesn't provide a mechanism to handle a failed test and still delete the Cloud Function.
+  * If the test step always returns 0 and records its outcome in a file, the deletion step always runs.
 
-Option IV suggests having the Cloud Build test step set its outcome in an environment variable and adding a final step to check whether the variable contains the expected results. While this approach allows for capturing the test outcome, it doesn't ensure that the Cloud Function is deleted if the test fails.
+  * All steps share the `/workspace` directory, so the final step can read the file, check the results and fail the build if the test did not pass. Cleanup happens and the build still reports the test failure.
 
-Option III is the recommended approach because it involves writing the Cloud Function results to a file during the Cloud Build step and then adding a subsequent step to check whether the file contains the expected results. If the test fails, the subsequent step can still execute and verify whether the Cloud Function was deleted as expected, ensuring cleanup regardless of the test outcome.
+**Why the other options are wrong:**
 
-Therefore, option III is the most suitable action to ensure that the Cloud Function is deleted even if the test fails during the automated testing process.
+  * **I.** Deleting the Cloud Function before the test means there is nothing left to test.
 
-**Documentation** :
+  * **II.** `waitFor` only controls ordering and parallelism. If the test step fails, the build still stops and the deletion step never runs.
+
+  * **IV.** Environment variables set inside one step do not persist to later steps (each step runs in its own container), so the final step cannot read the outcome. Only files in `/workspace` are shared between steps.
+
+**Note:** Cloud Build steps now also support `allowFailure` and `allowExitCodes`, which let the build continue after a failed test step. If such an option is offered, it is a cleaner design.
+
+**Documentation:**
+
+  * Build configuration file schema: <https://cloud.google.com/build/docs/build-config-file-schema>
 
   * Cloud Build: <https://cloud.google.com/build/docs/automating-builds/create-manage-triggers>
 
@@ -322,42 +330,44 @@ For more information on using emulators in Google Cloud, refer to:
 
 **Your company recently deployed a new API to the App Engine Standard environment. However, during testing, the API isn't functioning as anticipated. You aim to continuously monitor the application to diagnose potential issues within the application code without necessitating redeployment. Which tool is most suitable for this purpose?**
 
-- [x] IV. Implement Stackdriver Debug Logpoints to dynamically insert log statements into the running application code for real-time debugging.
-- [ ] III. Make use of Stackdriver Debug Snapshots to capture and analyze application state and variables at specific points in time.
-- [ ] II. Employ Stackdriver Monitoring to track and monitor the health and performance metrics of the deployed API.
-- [ ] I. Utilize Stackdriver Trace to trace and analyze request latency and performance across the application.
+- [x] IV. Implement Cloud Debugger logpoints to dynamically insert log statements into the running application code for real-time debugging.
+- [ ] III. Make use of Cloud Debugger snapshots to capture and analyze application state and variables at specific points in time.
+- [ ] II. Employ Cloud Monitoring to track and monitor the health and performance metrics of the deployed API.
+- [ ] I. Utilize Cloud Trace to trace and analyze request latency and performance across the application.
 
 ### Explanation
 
 **Correct Option:**
 
-  * **IV. Implement Stackdriver Debug Logpoints to dynamically insert log statements into the running application code for real-time debugging.**
+  * **IV. Implement Cloud Debugger logpoints to dynamically insert log statements into the running application code for real-time debugging.**
 
 **Reasoning:**
 
-  * **Dynamic Logging:** Stackdriver Debug Logpoints provide the most appropriate approach in this scenario because they allow you to add detailed log statements directly into your running code without the need for code changes or redeployment. This enables you to gather real-time insights into the application's behavior and pinpoint the root cause of the unexpected issues.
+  * **Dynamic Logging:** Cloud Debugger logpoints provide the most appropriate approach in this scenario because they allow you to add detailed log statements directly into your running code without the need for code changes or redeployment. This enables you to gather real-time insights into the application's behavior and pinpoint the root cause of the unexpected issues.
 
 **Incorrect Options and Why:**
 
-  * **I. Utilize Stackdriver Trace to trace and analyze request latency and performance across the application.**
+  * **I. Utilize Cloud Trace to trace and analyze request latency and performance across the application.**
 
-    * While Stackdriver Trace is valuable, it focuses on tracing requests and uncovering latency bottlenecks within a distributed system. It's less suited for diagnosing issues within the code itself without changes.
+    * While Cloud Trace is valuable, it focuses on tracing requests and uncovering latency bottlenecks within a distributed system. It's less suited for diagnosing issues within the code itself without changes.
 
-  * **II. Employ Stackdriver Monitoring to track and monitor the health and performance metrics of the deployed API.**
+  * **II. Employ Cloud Monitoring to track and monitor the health and performance metrics of the deployed API.**
 
-    * Stackdriver Monitoring provides insights into the API's overall health and resource usage. It's helpful for general health checks but doesn't offer the granular code-level debugging needed in this case.
+    * Cloud Monitoring provides insights into the API's overall health and resource usage. It's helpful for general health checks but doesn't offer the granular code-level debugging needed in this case.
 
-  * **III. Make use of Stackdriver Debug Snapshots to capture and analyze application state and variables at specific points in time.**
+  * **III. Make use of Cloud Debugger snapshots to capture and analyze application state and variables at specific points in time.**
 
-    * Although Stackdriver Debug Snapshots are useful for debugging, they provide a static view of the application's state at a given moment. Logpoints offer a more dynamic and real-time perspective, which is better suited to finding issues in a continuously running application.
+    * Although Cloud Debugger snapshots are useful for debugging, they provide a static view of the application's state at a given moment. Logpoints offer a more dynamic and real-time perspective, which is better suited to finding issues in a continuously running application.
 
 **Supporting Documentation:**
 
-  * **Stackdriver Debugger (Logpoints):** <https://cloud.google.com/blog/products/gcp/add-log-statements-to-your-application-on-the-fly-with-stackdriver-debugger-logpoints/>
+  * **Cloud Debugger (Logpoints, retired):** <https://cloud.google.com/blog/products/gcp/add-log-statements-to-your-application-on-the-fly-with-stackdriver-debugger-logpoints/>
 
-  * **Stackdriver Trace:** <https://cloud.google.com/trace>
+  * **Cloud Trace:** <https://cloud.google.com/trace>
 
-  * **Stackdriver Monitoring:** <https://cloud.google.com/monitoring>
+  * **Cloud Monitoring:** <https://cloud.google.com/monitoring>
+
+**⚠️ Note:** Cloud Debugger (logpoints and snapshots) was shut down in May 2023, and its open-source successor Snapshot Debugger is archived and unsupported. The bank keys logpoints because the question predates the shutdown; today you would add structured logging and redeploy, or use Cloud Trace and Cloud Profiler.
 
 ---
 
@@ -369,20 +379,20 @@ For more information on using emulators in Google Cloud, refer to:
 
 - [ ] IV. Enable managed instance group health checks to monitor the health of your instances.
 - [ ] I. Implement smoke tests to detect application unavailability.
-- [x] II. Set up Stackdriver uptime checks to monitor the availability of your application.
+- [x] II. Set up Cloud Monitoring uptime checks to monitor the availability of your application.
 - [ ] III. Configure Cloud Load Balancing health checks to monitor the health of your instances.
 
 ### Explanation
 
-**Option II, "Set up Stackdriver uptime checks to monitor the availability of your application," is the most suitable choice for setting up monitoring to receive alerts when the application becomes unavailable.**
+**Option II, "Set up Cloud Monitoring uptime checks to monitor the availability of your application," is the most suitable choice for setting up monitoring to receive alerts when the application becomes unavailable.**
 
 Justification:
 
-  * Stackdriver uptime checks provide a straightforward method to monitor the availability of your application by periodically pinging its endpoints. This directly addresses the need to monitor application unavailability.
+  * Cloud Monitoring uptime checks provide a straightforward method to monitor the availability of your application by periodically pinging its endpoints. This directly addresses the need to monitor application unavailability.
 
-  * Stackdriver integrates seamlessly with Google Cloud Platform's monitoring and alerting capabilities, allowing you to configure alerts based on the results of uptime checks.
+  * Cloud Monitoring integrates seamlessly with Google Cloud Platform's monitoring and alerting capabilities, allowing you to configure alerts based on the results of uptime checks.
 
-  * By setting up Stackdriver uptime checks, you can quickly detect when your application becomes unavailable and receive timely alerts to take necessary actions.
+  * By setting up Cloud Monitoring uptime checks, you can quickly detect when your application becomes unavailable and receive timely alerts to take necessary actions.
 
   * This option focuses specifically on monitoring application availability, which is crucial for ensuring a good user experience.
 
@@ -409,12 +419,12 @@ The correct answer is **B. Use the committed type to create a write stream**.
 
 Explanation:
 
-Using the **committed** type to create a write stream with the **BigQuery Storage Write API** is the recommended approach to prevent duplicate data. The committed stream type ensures that data written to BigQuery is immediately visible to queries and that each write operation is atomic. The BigQuery Storage Write API handles duplicate checks internally, making it a straightforward solution to avoid duplicate entries without additional infrastructure or deduplication logic.
+Using the **committed** type to create a write stream with the **BigQuery Storage Write API** is the recommended approach to prevent duplicate data. In committed type, records are available for reading as soon as each write is acknowledged, and every append can carry a **stream offset**. If a write is retried with an offset that was already written, the API rejects it with an `ALREADY_EXISTS` error instead of writing the rows again, which gives **exactly-once** semantics without additional infrastructure or deduplication logic.
 
 Justifications for Incorrect Options:
 
   * **Option A: Use the default type to create a write stream**  
-The default stream type is **buffered** , which means data is not immediately visible and requires a flush operation to make it available in BigQuery. Buffered streams are more prone to duplicates because they don’t enforce atomic writes as the committed type does.
+The default stream gives **at-least-once** semantics: it doesn't support stream offsets, so a retried write can be written twice and produce duplicates. (Buffered is a separate stream type, in which rows become visible only after a flush.)
 
   * **Option C: Set up a Kafka cluster and use a unique identifier (UUID) to filter out duplicate messages**  
 This would require additional infrastructure (Kafka) and a more complex deduplication setup, which is unnecessary given BigQuery’s built-in capabilities with the committed stream type.
@@ -486,29 +496,35 @@ Therefore, option II is the recommended approach for creating a Cloud Function i
 **To facilitate updating the current stock price in an in-memory database for an application monitoring stock prices, how should you configure the Pub/Sub subscription, given each message includes the stock symbol, price, and timestamp?**
 
 - [ ] IV. Establish a push subscription with both ordering and exactly-once delivery disabled.
-- [x] III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.
+- [ ] III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.
 - [ ] I. Set up a push subscription with exactly-once delivery enabled.
-- [ ] II. Create a pull subscription with both ordering and exactly-once delivery disabled.
+- [x] II. Create a pull subscription with both ordering and exactly-once delivery disabled.
 
 ### Explanation
 
-**III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.**
+**Correct Answer:**
+
+**II. Create a pull subscription with both ordering and exactly-once delivery disabled.**
 
 **Explanation:**
 
-  * **Pull Subscriptions:** Provide better control over message consumption, beneficial when updating an in-memory database.
+  * **The timestamp makes ordering unnecessary:** every message carries the stock symbol, the price and the time of that price. Before writing, the consumer compares the message's timestamp with the one stored for that symbol and ignores the message if it is older. An out-of-order message can never overwrite a newer price.
 
-  * **Ordering:** Ensures stock price updates for the same symbol are processed sequentially, maintaining accuracy in your in-memory database.
+  * **Duplicates are harmless:** applying the same price with the same timestamp twice leaves the database unchanged, so the update is idempotent and exactly-once delivery adds nothing.
 
-  * **Stock Symbol as Ordering Key:** Guarantees that updates for a specific stock are applied in the correct order, preventing outdated values from overwriting newer ones.
+  * **Pull suits a stream of price updates:** a pull subscriber controls its own flow and can process messages in large batches, which suits a high, steady volume of updates. This is Google's own sample question for this exam, and its answer is a pull subscription with both features off.
+
+  * **Leaving both features off keeps throughput and latency at their best:** ordering keys limit how messages for one key are dispatched, and exactly-once delivery adds acknowledgement overhead. Neither is needed here.
 
 **Why Other Options Are Less Suitable:**
 
-  * **I. Set up a push subscription with exactly-once delivery enabled.** While push subscriptions can be useful, they relinquish control over message processing order, which might lead to inconsistencies in your in-memory database.
+  * **I. Set up a push subscription with exactly-once delivery enabled.** Exactly-once delivery is supported only on pull subscriptions, so this combination isn't possible. It also wouldn't be needed, because duplicates are harmless here.
 
-  * **II. Create a pull subscription with both ordering and exactly-once delivery disabled.** No ordering means you could update your in-memory database with older stock prices over newer ones.
+  * **III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.** This works, but the timestamp already solves the ordering problem. Ordering keys add publisher-side requirements (the publisher must set the key, and per-key delivery is serialized), which only cost throughput.
 
-  * **IV. Establish a push subscription with both ordering and exactly-once delivery disabled.** Combines the drawbacks of push subscriptions (lack of ordering control) with the potential for duplicate messages.
+  * **IV. Establish a push subscription with both ordering and exactly-once delivery disabled.** The feature settings are right, but push delivers each message as a separate HTTP request to an endpoint. For a high-volume stream of small updates, a pull subscriber that controls its own flow is the better fit.
+
+**Remember:** If messages carry a timestamp or version, the consumer can discard stale updates itself, so you don't need ordering keys. Exactly-once delivery is a pull-only feature.
 
 ---
 
@@ -531,17 +547,23 @@ Therefore, option II is the recommended approach for creating a Cloud Function i
 
 **Explanation:**
 
-  * **Cloud Scheduler:** Designed specifically for scheduling tasks on Google Cloud. It has the necessary permissions to work with Cloud Run.
+  * **Cloud Scheduler:** The managed Google Cloud service for running jobs on a schedule. A Cloud Scheduler job publishes a message to a Pub/Sub topic on each run.
 
-  * **Pub/Sub:** A decoupling mechanism between Cloud Scheduler and Cloud Run, ensuring the security of your internal ingress settings. Cloud Scheduler can publish a message to a Pub/Sub topic, which your Cloud Run service can subscribe to.
+  * **Pub/Sub:** A **push subscription** on that topic delivers each message to the Cloud Run service as an authenticated HTTP request. Pub/Sub push is one of the Google Cloud sources that Cloud Run accepts with **internal** ingress (when it's in the same project or VPC Service Controls perimeter), so you keep the internal ingress setting. Give the push subscription's service account the **`roles/run.invoker`** role on the service; a missing invoker role is the usual cause of a 403 when calling Cloud Run.
 
 **Why Other Options Might Not Be the Best Fit:**
 
-  * **I. Assign the roles/run.developer IAM role to the service account.** Giving the `roles/run.developer` role to an external service account might loosen security too much for an internally facing Cloud Run instance.
+  * **I. Assign the roles/run.developer IAM role to the service account.** `roles/run.developer` is for deploying and managing services, which is broader than needed. Invoking a service needs `roles/run.invoker`.
 
-  * **II. Set up a cron job on the Compute Engine VMs to trigger Cloud Run based on the schedule.** While possible, it introduces more management overhead and potential points of failure compared to dedicated services like Cloud Scheduler.
+  * **II. Set up a cron job on the Compute Engine VMs to trigger Cloud Run based on the schedule.** While possible, it introduces more management overhead and potential points of failure compared to a managed service like Cloud Scheduler.
 
-  * **III. Modify the Cloud Run ingress setting to 'Internal and Cloud Load Balancing.'** This would expose your Cloud Run instance, breaking your internal ingress requirement.
+  * **III. Modify the Cloud Run ingress setting to 'Internal and Cloud Load Balancing.'** This loosens the internal ingress requirement and doesn't by itself fix the scheduling or the permission problem.
+
+**References:**
+
+<https://cloud.google.com/run/docs/triggering/using-scheduler>
+
+<https://cloud.google.com/run/docs/securing/ingress>
 
 ---
 
@@ -601,15 +623,11 @@ The **recommended approach is:**
 
 ✅ **Explanation for Correct Option:**
 
-**II. Eventarc + Cloud Run (✅ Recommended)**
+  * **Eventarc** routes many kinds of events (direct Cloud Storage events such as `google.cloud.storage.object.v1.finalized`, Cloud Audit Logs events, Pub/Sub messages and more) to targets like **Cloud Run**, so different trigger types use the same mechanism.
 
-  * **Eventarc** allows you to configure triggers for **specific Cloud Storage events** , such as `google.cloud.storage.object.v1.finalized` or `metadataUpdated`, and you can **filter by object name** (i.e., specific file).
+  * Direct Cloud Storage triggers filter by **bucket** and event type. To react to one specific file, the Cloud Run service checks the object name in the event (or you can use a Cloud Audit Logs trigger, which supports a **path pattern** on the resource name).
 
-  * Eventarc supports **advanced filtering** , **multiple trigger types** , and **targeting services like Cloud Run** , which is suitable for modern, scalable apps.
-
-  * It enables **simple YAML-based configuration** , so multiple team members can manage/update triggers easily.
-
-  * This is the **most flexible** , **scalable** , and **modern** approach recommended by Google Cloud.
+  * Triggers are simple, declarative resources (`gcloud eventarc triggers create/update`), so several team members can update them easily.
 
 **Official Documentation:**
 
@@ -621,35 +639,15 @@ The **recommended approach is:**
 
 **I. Cloud Storage → Pub/Sub → Cloud Build**
 
-  * **Pub/Sub only supports event types like**`**OBJECT_FINALIZE**`**, not specific filename filtering**.
-
-  * Involving **Cloud Build** to execute your app is **not ideal** , as Cloud Build is primarily for **CI/CD** , not app runtime execution.
-
-  * **More complex** , and managing filters in Pub/Sub is harder and less maintainable.
-
-**Docs:**  
-<https://cloud.google.com/storage/docs/pubsub-notifications>  
-<https://cloud.google.com/build/docs/automating-builds/create-pubsub-triggers>
+  * Cloud Build is a **CI/CD** service, not a runtime for your application, and chaining three services is harder to maintain.
 
 **III. Cloud Function triggered by Cloud Storage**
 
-  * Cloud Functions can be triggered by Cloud Storage events, but they **don’t support advanced filtering** , such as matching **specific filenames** directly.
-
-  * Also, if your app grows in complexity, Cloud Run offers better scalability and control compared to Cloud Functions.
-
-  * Not as configurable or scalable as Eventarc + Cloud Run.
-
-**Docs:**  
-<https://cloud.google.com/functions/docs/calling/storage>
+  * This works for a single fixed event source, but Eventarc routing to Cloud Run is the more flexible option when trigger types vary. (Event-driven Cloud Run functions, formerly Cloud Functions 2nd gen, use Eventarc triggers under the hood.)
 
 **IV. Firebase Functions with Cloud Storage**
 
-  * **Firebase Functions** are typically used in conjunction with **Firebase Storage** , not general-purpose **Cloud Storage** buckets.
-
-  * This option is **not recommended** for enterprise or team workflows unless the application is Firebase-based.
-
-**Docs:**  
-<https://firebase.google.com/docs/functions/gcp-storage-events>
+  * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.
 
 ---
 
@@ -908,7 +906,7 @@ Correct answer
 
 I is not correct because Cloud Run connects to Memorystore via the Serverless VPC Connector. Connections are over private networks. Public addresses are not required.  
 II is correct. All of the components must be in the same region.  
-III is not correct because for connectivity between Cloud Run and Memorystore all that is required is a Serverless VPN Connector.  
+III is not correct because for connectivity between Cloud Run and Memorystore all that is required is a Serverless VPC Access connector.  
 IV is not correct. The Serverless VPC Connector is configured with a non-overlapping subnet that is not associated with the VPC.  
   
 **References:**
@@ -919,16 +917,18 @@ IV is not correct. The Serverless VPC Connector is configured with a non-overlap
 
 [https://cloud.google.com/vpc/docs/configure-serverless-vpc-access#creating_a_connector](%0d https:/cloud.google.com/vpc/docs/configure-serverless-vpc-access#creating_a_connector)
 
+**⚠️ Note:** Cloud Run can now also use Direct VPC egress instead of a connector; the same-region rule applies there too (the subnet must be in the Cloud Run service's region).
+
 ---
 
 ## Question 23
 
 *Domain 3: Configuring and Deploying Applications*
 
-**You're deploying an application to a Compute Engine virtual machine instance equipped with the Stackdriver Monitoring Agent. The application, a Unix process, needs monitoring to alert if it hasn't run for at least 5 minutes. However, you can't modify the application to generate metrics or logs. Which alert condition is most appropriate for this scenario?**
+**You're deploying an application to a Compute Engine virtual machine instance equipped with the Ops Agent (which replaces the legacy Monitoring agent). The application, a Unix process, needs monitoring to alert if it hasn't run for at least 5 minutes. However, you can't modify the application to generate metrics or logs. Which alert condition is most appropriate for this scenario?**
 
-- [ ] II. Configure process health monitoring to detect any issues with the Unix process.
-- [x] III. Utilize metric absence detection to alert when the Unix process hasn't been active for the specified duration.
+- [x] II. Configure process health monitoring to detect any issues with the Unix process.
+- [ ] III. Utilize metric absence detection to alert when the Unix process hasn't been active for the specified duration.
 - [ ] I. Set up an uptime check to monitor the availability of the virtual machine instance.
 - [ ] IV. Establish a metric threshold to trigger an alert when the Unix process activity falls below the defined threshold.
 
@@ -936,31 +936,25 @@ IV is not correct. The Serverless VPC Connector is configured with a non-overlap
 
 **Correct Option:**
 
-  * **III. Utilize metric absence detection to alert when the Unix process hasn't been active for the specified duration.**
+  * **II. Configure process health monitoring to detect any issues with the Unix process.**
 
 **Justification:**
 
-Metric absence detection perfectly aligns with the scenario where the application doesn't generate custom metrics or logs. Since most Unix processes utilize system resources, their activity often reflects in system-level metrics like CPU or memory usage. Metric absence allows you to configure an alert that triggers if these metrics haven't been reported for a certain timeframe (5 minutes in this case). This signifies that the process is likely inactive.
+  * **Built for this case:** A process-health condition counts the processes on the VM that match a name or command line and alerts when the count drops below a value (here, fewer than 1 for 5 minutes). The agent collects the process data itself, so the application doesn't need to emit any metrics or logs.
 
-  * Supporting Documentation: <https://stackoverflow.com/questions/53095774/stackdriver-monitoring-metric-absent>
+  * This is also the answer Google gives for this scenario in its sample questions, and the bank keys it the same way in (Exam 5 · Q47).
 
 **Incorrect Options:**
 
-  * **I. Set up an uptime check to monitor the availability of the virtual machine instance.**
+  * **I. Uptime check:** It probes the VM or an endpoint from outside. The VM can be up while the process is not running, and a process that serves no endpoint can't be checked this way.
 
-  * Justification: Uptime checks are effective for ensuring the entire VM is operational, but they don't provide insight into the status of individual processes running within the VM. A VM can be online while a specific process within it might be inactive.
+  * **III. Metric absence:** It fires when a time series stops arriving. The application emits no metrics of its own, and the VM's system metrics (CPU, memory) keep arriving whether or not the process runs, so there's no series whose absence reliably means "the process stopped".
 
-  * **II. Configure process health monitoring to detect any issues with the Unix process.**
+  * **IV. Metric threshold:** There's no metric for this process's activity to put a threshold on, and thresholds on system-wide CPU or memory would fire on normal load changes.
 
-  * Justification: While this might seem like a suitable solution, Stackdriver Monitoring Agent has limitations when monitoring arbitrary Unix processes. It requires the application to send custom metrics for effective process health monitoring. In this scenario, the application doesn't emit such metrics.
+**References:**
 
-  * Supporting Documentation: <https://cloud.google.com/monitoring/custom-metrics>
-
-  * **IV. Establish a metric threshold to trigger an alert when the Unix process activity falls below the defined threshold.**
-
-  * Justification: This approach could be viable if the Unix process has a metric explicitly indicating its activity level. However, if the only available metrics are system-level ones (CPU, memory), a complete drop to zero is a more reliable indicator of process inactivity compared to a specific low threshold.
-
-Setting a threshold on these system metrics might trigger alerts due to normal process behavior (e.g., the process might sleep occasionally, causing a temporary dip in CPU usage).
+<https://cloud.google.com/monitoring/alerts/types-of-conditions>
 
 ---
 
@@ -1052,30 +1046,36 @@ Therefore, option B is the most suitable approach for conducting near real-time 
 
 **In the context of an application monitoring numerous stock prices, how should the Pub/Sub subscription be configured to manage a high volume of messages and update the current stock price in a single large in-memory database, considering each message includes the stock symbol, price, and timestamp?**
 
-- [ ] IV. Establish a pull subscription with both ordering and exactly-once delivery disabled.
+- [x] IV. Establish a pull subscription with both ordering and exactly-once delivery disabled.
 - [ ] II. Create a push subscription with both ordering and exactly-once delivery disabled.
 - [ ] I. Set up a pull subscription with exactly-once delivery enabled.
-- [x] III. Configure a push subscription with exactly-once delivery enabled.
+- [ ] III. Configure a push subscription with exactly-once delivery enabled.
 
 ### Explanation
 
-**Given the context of an application monitoring numerous stock prices and updating the current stock price in a single large in-memory database, considering each message includes the stock symbol, price, and timestamp, the most suitable configuration for the Pub/Sub subscription would be:**
-
-**III. Configure a push subscription with exactly-once delivery enabled.**
+**IV. Establish a pull subscription with both ordering and exactly-once delivery disabled.**
 
 Here's why:
 
-  1. **Push Subscription** : Push subscriptions are generally preferred for high-volume message processing because they can handle a large number of incoming messages more efficiently than pull subscriptions. Push subscriptions allow Google Cloud Pub/Sub to push messages to the subscriber, reducing the need for the subscriber to continuously poll the Pub/Sub topic.
+  * **Pull for high volume:** A single large in-memory database is updated by subscribers that pull (ideally with StreamingPull) at their own pace. Pull subscriptions give the highest throughput and let the consumer control flow; push subscriptions are less suited to very large volumes.
 
-  2. **Exactly-once Delivery Enabled** : Ensuring exactly-once delivery helps prevent duplicate processing of messages, which is crucial for maintaining data consistency, especially in scenarios where updates to the stock prices need to be accurate and not duplicated. This ensures that each message is processed exactly once, avoiding potential issues with data integrity.
+  * **The timestamp makes ordering unnecessary:** Each message carries the stock symbol, price and timestamp, so the subscriber can simply keep the price with the newest timestamp for each symbol and ignore older ones. Ordering keys would only add latency and limit throughput.
 
-Option I is less suitable because pull subscriptions might not be as efficient for managing a high volume of messages, as they require the subscriber to actively pull messages from the Pub/Sub topic.
+  * **Duplicates are harmless:** Writing the same price for the same symbol and timestamp twice gives the same result (the update is idempotent), so exactly-once delivery isn't needed. Exactly-once delivery also adds significant publish-to-subscribe latency.
 
-Option II is not ideal because push subscriptions are generally preferred for high-volume message processing, and disabling exactly-once delivery could lead to potential issues with data consistency.
+**Why the other options are wrong:**
 
-Option IV might not be the most efficient choice for managing a high volume of messages, and disabling exactly-once delivery could lead to potential issues with data consistency.
+  * **I. Pull with exactly-once enabled:** Works, but pays the extra latency and throughput cost of exactly-once delivery for no benefit, since duplicate updates are idempotent.
 
-**Therefore, option III, configuring a push subscription with exactly-once delivery enabled, is the most appropriate choice for efficiently managing a high volume of messages and ensuring data consistency in updating the current stock prices.**
+  * **II. Push with both disabled:** Push subscriptions are less suited to very high message volumes than pull, and the endpoint must absorb whatever rate Pub/Sub pushes.
+
+  * **III. Push with exactly-once enabled:** Not possible. Exactly-once delivery is supported only on pull subscriptions (including StreamingPull); push and export subscriptions don't support it.
+
+**References:**
+
+<https://cloud.google.com/pubsub/docs/exactly-once-delivery>
+
+<https://cloud.google.com/pubsub/docs/subscriber>
 
 ---
 
@@ -1165,6 +1165,8 @@ For more on Apigee environment groups and hostnames, refer to:
   * **II. Set up a Cloud Source Repositories repository and employ feature-based development.** Feature branches, while common, increase the potential for larger merge conflicts, especially in rapid release environments.
 
   * **IV. Create a GitHub repository, mirror it to a Cloud Source Repositories repository, and employ feature-based development.** Adds the complexity of mirroring on top of the merge conflict concerns with feature branches.
+
+**⚠️ Note:** Cloud Source Repositories is closed to new customers. Today the same goal is met with a GitHub, GitLab or Bitbucket repository connected to Cloud Build (or Secure Source Manager), still using trunk-based development. Expect the bank's key on older exam versions.
 
 ---
 
@@ -1448,19 +1450,19 @@ For more details, refer to:
 
 **In deploying an application on a Google Kubernetes Engine (GKE) cluster, it needs to connect to a legacy REST service spread across two GKE clusters in different regions. The objective is to establish a resilient connection with minimal steps and enable probe-based health checks on the legacy service via a separate port. How should the connection be configured? (Select two options.)**
 
-- [ ] V. Configure the legacy service's firewall to allow health checks initiated from the Traffic Director control plane.
+- [ ] V. Configure the legacy service's firewall to allow health checks initiated from the Cloud Service Mesh control plane.
 - [x] III. Configure the legacy service's firewall to allow health checks initiated from the sidecar proxy.
-- [ ] II. Implement a proxyless Traffic Director configuration for the application.
-- [x] I. Utilize Traffic Director alongside a sidecar proxy to link the application to the service.
+- [ ] II. Implement a proxyless Cloud Service Mesh configuration for the application.
+- [x] I. Utilize Cloud Service Mesh alongside a sidecar proxy to link the application to the service.
 - [ ] IV. Configure the legacy service's firewall to allow health checks initiated from the application.
 
 ### Explanation
 
 **To configure the connection between the application deployed on a Google Kubernetes Engine (GKE) cluster and the legacy REST service spread across two GKE clusters in different regions, while enabling probe-based health checks on the legacy service via a separate port, the following options would be suitable:**
 
-**I. Utilize Traffic Director alongside a sidecar proxy to link the application to the service.**
+**I. Utilize Cloud Service Mesh alongside a sidecar proxy to link the application to the service.**
 
-  * **Traffic Director can help manage traffic between different services and clusters. Using a sidecar proxy alongside Traffic Director can facilitate connectivity and resilience between the application and the legacy service.**
+  * **Cloud Service Mesh can help manage traffic between different services and clusters. Using a sidecar proxy alongside Cloud Service Mesh can facilitate connectivity and resilience between the application and the legacy service.**
 
 **III. Configure the legacy service's firewall to allow health checks initiated from the sidecar proxy.**
 
@@ -1468,17 +1470,19 @@ For more details, refer to:
 
 Explanation for excluding other options:
 
-II. Implement a proxyless Traffic Director configuration for the application.
+II. Implement a proxyless Cloud Service Mesh configuration for the application.
 
-  * Proxyless Traffic Director configuration might not provide the necessary flexibility and control required for connecting to the legacy service, especially when dealing with health checks on a separate port.
+  * Proxyless Cloud Service Mesh configuration might not provide the necessary flexibility and control required for connecting to the legacy service, especially when dealing with health checks on a separate port.
 
 IV. Configure the legacy service's firewall to allow health checks initiated from the application.
 
   * It's not typically recommended to directly initiate health checks from the application, as it may introduce complexities and potential issues with managing health checks separately from the networking infrastructure.
 
-V. Configure the legacy service's firewall to allow health checks initiated from the Traffic Director control plane.
+V. Configure the legacy service's firewall to allow health checks initiated from the Cloud Service Mesh control plane.
 
-  * Health checks initiated from the Traffic Director control plane might not directly interact with the legacy service's firewall. The health checks are typically initiated from proxies or other agents deployed alongside the application, which then communicate with the legacy service. Therefore, configuring the firewall to allow health checks from the sidecar proxy (option III) is more appropriate.
+  * Health checks initiated from the Cloud Service Mesh control plane might not directly interact with the legacy service's firewall. The health checks are typically initiated from proxies or other agents deployed alongside the application, which then communicate with the legacy service. Therefore, configuring the firewall to allow health checks from the sidecar proxy (option III) is more appropriate.
+
+**⚠️ Note:** In Cloud Service Mesh, backend health checks are sent by Google Cloud's health-check probers (35.191.0.0/16 and 130.211.0.0/22), so the firewall really needs to allow those ranges; none of the options says that exactly. Learn the key (sidecar proxy + allow health checks), but it's shaky.
 
 ---
 
@@ -1645,16 +1649,16 @@ By choosing Option B, the organization can balance security, flexibility, and de
 
 **In your mobile web application where global users vote on popular topics, with a very high volume of votes expected during each 30-minute voting window for each topic, you need to capture and count votes within these intervals while also storing them for future analysis and reporting. How should you approach this?**
 
-- [ ] I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Google Data Studio.
-- [ ] III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Google Data Studio.
+- [ ] I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Looker Studio.
+- [ ] III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Looker Studio.
 - [ ] IV. Implement Firebase for user authentication, enabling the direct publication of votes to Firestore. Export the votes to a CSV file and import them into Sheets for reporting purposes.
-- [x] II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Google Data Studio.
+- [x] II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.
 
 ### Explanation
 
 Given the high volume of votes expected during each voting window for each topic in your mobile web application, along with the need to capture, count, and store votes for future analysis and reporting, the most suitable approach would be:
 
-**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Google Data Studio.**
+**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.**
 
 Explanation:
 
@@ -1664,7 +1668,7 @@ Option III proposes publishing votes to Pub/Sub and using Cloud Functions to ins
 
 Option IV suggests using Firebase for user authentication and Firestore for storing votes. While Firebase and Firestore are suitable for real-time data synchronization and user authentication, exporting votes to a CSV file and importing them into Sheets for reporting purposes might not be the most efficient or scalable solution for large volumes of data.
 
-Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Google Data Studio allows for easy and customizable reporting and visualization.
+Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Looker Studio allows for easy and customizable reporting and visualization.
 
 Therefore, option II is the most appropriate approach for capturing, counting, and storing votes in your mobile web application while also facilitating future analysis and reporting.
 
@@ -1676,7 +1680,7 @@ Therefore, option II is the most appropriate approach for capturing, counting, a
 
   * BigQuery: <https://cloud.google.com/bigquery/docs>
 
-  * Google Data Studio: <https://datastudio.google.com/>
+  * Looker Studio: <https://lookerstudio.google.com/>
 
 ---
 
@@ -1684,28 +1688,28 @@ Therefore, option II is the most appropriate approach for capturing, counting, a
 
 *Domain 3: Configuring and Deploying Applications*
 
-**Your application logs to Stackdriver, and you need to obtain the count of all requests made to endpoints starting with /api/alpha/. How can you achieve this?**
+**Your application logs to Cloud Logging, and you need to obtain the count of all requests made to endpoints starting with /api/alpha/. How can you achieve this?**
 
 - [ ] IV. Export the logs to Cloud Pub/Sub and count the lines matching the pattern /api/alpha.
-- [ ] I. Create a Stackdriver counter metric for the path /api/alpha/.
-- [x] II. Create a Stackdriver counter metric for the endpoint /api/alpha/*.
+- [ ] I. Create a logs-based counter metric for the path /api/alpha/.
+- [x] II. Create a logs-based counter metric for the endpoint /api/alpha/*.
 - [ ] III. Export the logs to Cloud Storage and count the lines matching the pattern /api/alpha.
 
 ### Explanation
 
 **The most suitable approaches:**
 
-  * **II. Create a Stackdriver counter metric for the endpoint /api/alpha/*.** This is the most direct and efficient way. Steps involved:
+  * **II. Create a logs-based counter metric for the endpoint /api/alpha/*.** This is the most direct and efficient way. Steps involved:
 
-    1. Go to Stackdriver Monitoring.
+    1. Go to Cloud Logging (Logs-based Metrics).
 
-    2. Create a custom counter metric.
+    2. Create a counter metric.
 
     3. Filter this metric with the HTTP request path `/api/alpha/*`
 
 **Why the other options aren't the best fit:**
 
-  * **I. Create a Stackdriver counter metric for the path /api/alpha/.** This is too specific. It won't count requests to sub-endpoints like `/api/alpha/resource1`.
+  * **I. Create a logs-based counter metric for the path /api/alpha/.** This is too specific. It won't count requests to sub-endpoints like `/api/alpha/resource1`.
 
   * **III. Export the logs to Cloud Storage and count the lines matching the pattern /api/alpha.** This method works, but it's less efficient for real-time monitoring:
 
@@ -1732,35 +1736,27 @@ Use tools (like command-line tools or a script) to count the matching lines.
 
 ### Explanation
 
-Here's why the best approach is a combination of 
-
-**C. Return an HTTP 500 Internal Server Error response** and **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.**
+**C. Return an HTTP 500 Internal Server Error response.**
 
 **Explanation:**
 
-  * **C. Return an HTTP 500 Internal Server Error response.** This clearly signals to API consumers that a server-side error has occurred, indicating the client request was likely valid, but the server failed to process it correctly.
+  * The question asks how to make sure your API's consumers are **notified** of the failure. Returning **HTTP 500** clearly tells them a server-side error occurred: their request was likely valid, but the server couldn't complete it, so they can retry later or report it.
 
-  * **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.** Retries with exponential backoff (increasing wait times between attempts) help handle potential transient errors and improve the likelihood of successful writes. However, make sure to limit retries to prevent infinite loops.
+  * It's still good practice to retry transient 5xx errors from Firestore internally with **bounded** exponential backoff first. If the write still fails after a limited number of attempts, return the 500.
 
-**Why Other Options are Less Ideal:**
+**Why Other Options are Wrong:**
 
-  * **A. Return an HTTP 204 No Content response.** A 204 response implies success, which would be misleading in this case, preventing API consumers from taking corrective actions.
+  * **A. Return an HTTP 204 No Content response.** A 204 response means success, which would mislead API consumers into thinking the write worked.
 
-  * **B. Return an HTTP 406 Not Acceptable response.** A 406 response typically indicates issues with content negotiation. It's not the most accurate representation of a server-side failure during a write request.
+  * **B. Return an HTTP 406 Not Acceptable response.** A 406 response indicates a content-negotiation problem with the client's request, not a server-side failure.
 
-**Important Considerations:**
-
-  * **Logging and Monitoring:** Implement robust logging and monitoring to help pinpoint the root cause of the 5xx errors, allowing you to address them proactively.
-
-  * **Idempotency:** If possible, design API operations to be idempotent (producing the same result with multiple executions) to make retries safer.
-
-  * **User Feedback:** If retry strategies fail after a reasonable number of attempts, provide informative error messages to the API user.
+  * **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.** Retrying without a limit never notifies the consumer, and the request can hang indefinitely during a longer outage. Retries help, but they don't replace reporting the failure.
 
 **Documentation:**
 
   * **HTTP Status Codes:** <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status>
 
-  * **Exponential Backoff:** <https://en.wikipedia.org/wiki/Exponential_backoff>
+  * **Retry strategy:** <https://cloud.google.com/datastore/docs/concepts/errors>
 
 ---
 
@@ -1799,6 +1795,8 @@ Therefore, option III is the most suitable approach for quickly gathering data p
 
   * Firestore: <https://cloud.google.com/firestore>
 
+**⚠️ Note:** The question is missing its scenario (no current database or workload is described), so the key can't be justified from the stem. Don't build rules from it; if it appears, pick the answer that moves to a managed Google Cloud database.
+
 ---
 
 ## Question 43
@@ -1820,7 +1818,7 @@ Therefore, option III is the most suitable approach for quickly gathering data p
 
 **Reasoning:**
 
-  * **Cost-effective and Efficient:** Batch jobs in BigQuery are the ideal solution for this scenario. They are executed when resources are available, ensuring other workloads are not impacted. Batch jobs are also generally less expensive than on-demand queries.
+  * **Cost-effective and Efficient:** Batch jobs in BigQuery are the ideal solution for this scenario. They are executed when resources are available, ensuring other workloads are not impacted. Batch priority doesn't change the price (batch and interactive queries are billed the same), but it avoids the cost and effort of extra projects, reservations or manual scheduling.
 
   * **Minimal Overhead:** This option minimizes administrative effort, as batch jobs require no extra project setup or advanced permissions. It's a straightforward way to accommodate the user's needs.
 
@@ -1840,7 +1838,7 @@ Therefore, option III is the most suitable approach for quickly gathering data p
 
 **Supporting Documentation:**
 
-  * **BigQuery Batch Queries:** <https://cloud.google.com/batch/docs/get-started>
+  * **BigQuery Batch Queries:** <https://cloud.google.com/bigquery/docs/running-queries#batch>
 
   * **BigQuery Pricing** <https://cloud.google.com/bigquery/pricing>
 
@@ -1961,8 +1959,8 @@ Therefore, leveraging Cloud Profiler to identify the functions within the applic
 
 **As a developer within a large organization utilizing Git for source code management (SCM), you aim to align your team with Google-recommended best practices to enhance software delivery efficiency. Which SCM process should your team adopt?**
 
-- [ ] III. Each developer creates a branch for their individual work, commits their changes to their branch, and merges their code into the main branch on a daily basis.
-- [x] IV. Groups of developers create a feature branch from the main branch for their work, commit their changes to their branch, and merge their code into the main branch following approval from the change advisory board.
+- [x] III. Each developer creates a branch for their individual work, commits their changes to their branch, and merges their code into the main branch on a daily basis.
+- [ ] IV. Groups of developers create a feature branch from the main branch for their work, commit their changes to their branch, and merge their code into the main branch following approval from the change advisory board.
 - [ ] II. Groups of developers copy the repository, commit their changes to their respective repositories, and merge their code into the main repository before each product release.
 - [ ] I. Developers commit their code to the main branch before each product release, conduct testing, and initiate rollbacks if integration issues arise.
 
@@ -1970,31 +1968,39 @@ Therefore, leveraging Cloud Profiler to identify the functions within the applic
 
 **Correct Option:**
 
-  * **IV. Groups of developers create a feature branch from the main branch for their work, commit their changes to their branch, and merge their code into the main branch following approval from the change advisory board.**
+  * **III. Each developer creates a branch for their individual work, commits their changes to their branch, and merges their code into the main branch on a daily basis.**
 
 **Justification:**
 
-  * **Feature Branch Workflow:** This approach is the core of GitFlow (and similar branching strategies), a widely-adopted model that aligns with Google's best SCM practices. Feature branches promote collaboration while isolating changes, reducing the risk of conflicts and errors in the main branch.
+  * **Trunk-based development:** Google's DORA research (the "Trunk-based development" capability in Google Cloud's DevOps guidance) identifies short-lived branches merged into the main branch (trunk) at least once a day as a key predictor of high software delivery performance.
 
-  * **Change Approval:** Having a change advisory board ensures code quality and adherence to standards before integrating features into the main branch.
+  * **Small, frequent merges:** Merging daily keeps each change small, so merge conflicts are rare and easy to resolve, and integration problems are found early by CI instead of right before a release.
 
-  * **Collaboration and Isolation:** This process fosters teamwork while keeping unreviewed code safely out of the main branch, aiding quality control.
+  * **Fast feedback:** Combined with automated builds and tests on every merge, this keeps the main branch always releasable.
 
 **Why Other Options Are Not Ideal:**
 
-  * **I. Developers commit their code to the main branch...**
+  * **I. Developers commit their code to the main branch before each product release...**
 
-    * **High Risk:** Directly committing to the main branch increases the likelihood of introducing errors and breaking the build.
+    * **Big-bang integration:** Code is integrated only before a release, so conflicts and integration bugs pile up and are found late, forcing rollbacks.
 
   * **II. Groups of developers copy the repository...**
 
-    * **Inefficient Merging:** Merging changes from separate repositories adds complexity and increases the risk of conflicts.
+    * **Long-lived forks:** Merging separate copies only before each release creates large, risky merges and extra coordination.
 
-    * **Coordination Overhead:** Maintaining multiple repositories for a single project demands extra coordination.
+  * **IV. Groups of developers create a feature branch... following approval from the change advisory board.**
 
-  * **III. Each developer creates a branch...**
+    * **Long-lived feature branches:** Feature branches that live until a release grow large and conflict-prone.
 
-    * **Code Review:** Lacks a formal code review process, which could lead to quality issues slipping into the main branch.
+    * **Heavyweight approval:** DORA research found that approval by an external change advisory board slows delivery without improving stability. Lightweight peer review (for example, pull request review) is the recommended alternative.
+
+**References:**
+
+  * <https://cloud.google.com/architecture/devops/devops-tech-trunk-based-development>
+
+  * <https://dora.dev/capabilities/trunk-based-development/>
+
+  * <https://dora.dev/capabilities/streamlining-change-approval/>
 
 ---
 
@@ -2028,13 +2034,15 @@ Following Google’s recommended practices for load testing a **Cloud Run** serv
 **Justifications for Incorrect Options:**
 
   * **Option A: Install JMeter on your local machine, set up a log sink to BigQuery, and use Looker to analyze the test results**  
-Running JMeter on a local machine is not recommended for load testing at scale. Using a Compute Engine instance provides more consistent resources and scalability. Additionally, Google recommends using **Looker Studio** rather than Looker for direct integration with BigQuery for reporting.
+Running JMeter on a local machine is not recommended for load testing at scale. Using a Compute Engine instance provides more consistent resources and scalability. Looker can also analyze BigQuery data, but Looker Studio is the simpler, no-cost choice for ad hoc test reports.
 
   * **Option B: Set up a Compute Engine instance, install JMeter, create a log sink to a Cloud Storage bucket, and use Looker Studio for analysis**  
 Storing logs in **BigQuery** is preferred over Cloud Storage because BigQuery offers efficient querying and analysis capabilities, which are essential for analyzing large volumes of load test data.
 
   * **Option C: Set up a Compute Engine instance, install JMeter, create a log sink to Cloud Storage, and use Looker for analysis**  
 This approach is incorrect due to both the use of **Cloud Storage** (instead of BigQuery) for logs and **Looker** (instead of Looker Studio) for analysis. BigQuery and Looker Studio are better suited for handling and visualizing large-scale load testing data.
+
+**⚠️ Note:** For load testing at scale, Google's documented pattern is distributed load generation (Locust or JMeter) on GKE, scaled with Pods. A single Compute Engine VM is only the best of these four options.
 
 ---
 
@@ -2335,7 +2343,7 @@ Option A, confirming that the Java application includes the necessary Cloud Moni
 
 Option B, ensuring that the application logs are correctly directed to the appropriate regional storage bucket, is not the recommended approach for Cloud Run. Cloud Run automatically manages logs and directs them to Cloud Logging, where they can be viewed and analyzed, including error messages.
 
-Option D, implementing logging of exceptions using appropriate logging mechanisms rather than System.out.println, is good practice for improving logging clarity and maintainability. However, it does not guarantee that errors will appear in the Error Reporting console unless they are written to stderr.
+Option D, logging exceptions with a proper logging framework rather than System.out.println, also helps: Error Reporting groups an entry as an error only when it contains a stack trace (or is a structured log entry in the Error Reporting format), and System.out.println writes to stdout without one. However, D alone does not say where the output goes. C is the bank's answer because Cloud Run picks up errors written to stderr; in practice, make sure errors go to stderr *and* include the exception's stack trace.
 
 Therefore, option C is the correct approach to ensure that error messages from your Java application appear in the Error Reporting console on Cloud Run.
 
@@ -2461,7 +2469,7 @@ When you **resize a Compute Engine persistent disk** , GKE does **not automatica
 
   * Kubernetes supports **expanding PVCs** if the underlying StorageClass allows volume expansion (`allowVolumeExpansion: true`).
 
-  * After expanding the PVC, **GKE will automatically resize the file system** when the Pod is restarted or rescheduled.
+  * After expanding the PVC, the Compute Engine persistent disk CSI driver **resizes the disk and the file system**, usually online without restarting the Pod.
 
 **Official Documentation:**
 
@@ -2518,6 +2526,8 @@ requests:
 storage: 100Gi # Update to new size
 
 Kubernetes will handle the rest, especially if the StorageClass has `allowVolumeExpansion: true`.
+
+**⚠️ Note:** The normal flow is the reverse of the stem: edit the PVC and let the CSI driver grow the disk, which only works when the StorageClass has `allowVolumeExpansion: true`. With a manually created PV and a disk resized by hand, PVC expansion may not apply at all. C is still the best of the options.
 
 ---
 

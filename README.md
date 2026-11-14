@@ -28,7 +28,8 @@ Progress is saved per certification in each visitor's browser (localStorage), so
 GPCDOE/, GPCDE/, GCDL/    one folder per certification
   questions.json          canonical question bank (question, options with correct flags, explanation, domain label)
   domain-map.json         question → domain overrides ("<exam>-<n>": domain) for questions without a usable label
-  fixes.json              GCDL only: corrections to the raw dumps (wrong keys, broken stems/options), applied by parse_md.py
+  fixes.json              corrections to the bank (wrong keys, bad explanations, outdated wording, ⚠️ notes),
+                          applied by the parsers and by tools/fix.py
   exam-N.md               readable copy of each practice exam ([x] marks the correct options)
 study/<CODE>/             per-domain study guides (*-guide.md) and question banks, plus a README index
 content/<cert-id>/        lesson summaries/objectives/takeaways + glossary per domain (domain-N.json)
@@ -48,6 +49,9 @@ python3 parse.py gpcde ../GPCDE/5.html
 #    Markdown dumps ("## Question N" + "- [x] **B. ...** *(correct answer)*") use parse_md.py;
 #    the exam number is the file name's leading digits (03-Practice Test 3 ... .md → exam 3).
 python3 parse_md.py gcdl ../GCDL/0*.md
+
+#    Corrections live in <CODE>/fixes.json and are re-applied on every parse. After editing it:
+python3 fix.py gpcde
 
 # 2. Untagged questions need a domain: add "<exam>-<n>": <domain> to <CODE>/domain-map.json.
 

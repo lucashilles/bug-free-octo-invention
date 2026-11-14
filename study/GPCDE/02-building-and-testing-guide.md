@@ -1,6 +1,6 @@
 # Domain 2 Study Guide — Building and Testing Applications
 
-> Condensed from the 57-question bank in [`02-building-and-testing.md`](02-building-and-testing.md). Citations look like (Exam N · QM). Several questions repeat across exams with different wording, so look for the paired citations. Many explanations use older product names (Stackdriver, Container Registry, Cloud Debugger); see the questionable-answers section before trusting those.
+> Condensed from the 57-question bank in [`02-building-and-testing.md`](02-building-and-testing.md). Citations look like (Exam N · QM). Several questions repeat across exams with different wording, so look for the paired citations. A few items still depend on retired products (Cloud Debugger, Cloud Source Repositories); see the questionable-answers section before trusting those.
 
 ---
 
@@ -12,7 +12,7 @@
 - **Cloud Code** is the IDE extension for VS Code and IntelliJ. It adds Kubernetes-aware completion and snippets, debugging against the cluster, deploy workflows and cluster resource management (Exam 3 · Q18).
 - **Cloud Workstations** are managed development environments that can reach resources inside a VPC. They are built from base images that you can extend with custom images (Exam 4 · Q38).
 - A **kubeconfig** file holds clusters, users and contexts. `kubectl config` switches between contexts, so one file can cover several GKE clusters (Exam 3 · Q37).
-- **Trunk-based development** means small, frequent commits to the main branch. This keeps merge conflicts small when releases are frequent (Exam 4 · Q28).
+- **Trunk-based development** means small, frequent commits to the main branch. This keeps merge conflicts small when releases are frequent (Exam 4 · Q28). Google's DORA research recommends short-lived branches merged into main **at least daily**, and finds that change advisory board approval slows delivery without improving stability (Exam 4 · Q47).
 
 ### Which developer environment?
 
@@ -29,7 +29,7 @@
 - IDE named (VS Code, IntelliJ) and GKE or Cloud Run work: use **Cloud Code** (Exam 3 · Q18).
 - Security baseline plus custom tooling: use **centrally managed images that get rebuilt on a schedule**, not images developers create freely (Exam 4 · Q38).
 - Multiple clusters: the bank's key is **one shared config file defining clusters, users and contexts + `kubectl config`** (Exam 3 · Q37). This key is debatable; see the questionable-answers section.
-- Rapid releases with few merge conflicts: use **trunk-based development** (Exam 4 · Q28).
+- Rapid releases with few merge conflicts, or "Google-recommended SCM process": use **trunk-based development**, with each developer merging into main daily (Exam 4 · Q28), (Exam 4 · Q47).
 
 ### Coding fundamentals that show up
 
@@ -40,7 +40,7 @@
 - "Open three terminals, one per cluster" is never the best practice (Exam 3 · Q37).
 - Cloud Storage bucket mounted as a drive "linked to Git" is a distractor (Exam 1 · Q45).
 - Cloud Workstations is for long-lived managed dev environments. For a one-off urgent fix it is slower and costlier than Cloud Shell (Exam 5 · Q6).
-- Feature-branch options exist alongside trunk-based ones. Exam 4 · Q28 prefers trunk-based, but Exam 4 · Q47 keys feature branches plus CAB approval. Expect conflicting keys (see the questionable-answers section).
+- Feature branches merged only after **change advisory board** approval, or code merged only before each release, are distractors. Daily merges to main win (Exam 4 · Q47).
 
 ---
 
@@ -111,7 +111,7 @@
 - "Upload source code to Artifact Registry" doesn't build anything. "A Cloud Build job to push" assumes an image already exists. `--platform=kubernetes` has nothing to do with building (Exam 1 · Q59).
 - Downloading the binary during the build hurts security and reproducibility. Committing it to the repo bloats the repo. A feature request gives you no control (Exam 2 · Q20).
 - `gcloud run deploy --image` deploys an existing image, `gcloud container images add-tag` only retags, and a `cloudbuild.yaml` that runs `app deploy` targets App Engine. None of them builds and pushes an image (Exam 5 · Q37).
-- Migrate for Anthos and Migrate for Compute Engine are VM migration tools. A raw disk import is lift-and-shift (Exam 3 · Q51).
+- Migrate to Containers (formerly Migrate for Anthos) and Migrate to Virtual Machines (formerly Migrate for Compute Engine) are VM migration tools. A raw disk import is lift-and-shift (Exam 3 · Q51).
 
 ---
 
@@ -134,7 +134,7 @@
 - Ops wants one central, secure image registry: use a **registry in a dedicated ops project + IAM for each team's Cloud Build service account**. Never store keys or passwords in the repo (Exam 1 · Q40).
 - A test resource must be cleaned up even if the test fails: the **test step writes results to a file and exits 0, the cleanup step runs, and a final step checks the file and fails the build** (Exam 4 · Q6).
 - Per-commit performance tests against Spanner that can run concurrently: **create a new Spanner instance per build, load data, run the tests, delete the instance** (Exam 4 · Q52).
-- Catch bugs before production with automated feedback: the key is **Cloud Build triggered by Git tags**, not Spinnaker. Spinnaker is for CD (Exam 2 · Q51).
+- Catch bugs before production with automated feedback: the key is **Cloud Build triggered by Git tags**, not Spinnaker. Spinnaker is for CD (Exam 2 · Q51). In practice, building on every commit or push gives faster feedback; see the questionable-answers section.
 
 ### Traps
 
@@ -151,8 +151,8 @@
 
 ### Key facts
 
-- **Artifact Registry + the Container Scanning API (Container Analysis)** scans images automatically when they are pushed for OS-package CVEs. It is managed and doesn't slow developers down (Exam 1 · Q6), (Exam 1 · Q49), (Exam 2 · Q11).
-- Older items name **Container Registry vulnerability scanning** for the same need (Exam 2 · Q6).
+- **Artifact Registry + the Container Scanning API (Artifact Analysis, formerly Container Analysis)** scans images automatically when they are pushed for OS-package CVEs. It is managed and doesn't slow developers down (Exam 1 · Q6), (Exam 1 · Q49), (Exam 2 · Q11).
+- Managed CVE scanning of images built from many open-source base OSes: **turn on vulnerability scanning in Artifact Registry** (Exam 2 · Q6).
 - **Web Security Scanner** (older name: Cloud Security Scanner) scans running web apps on App Engine, GKE or Compute Engine for XSS and outdated or vulnerable libraries (Exam 1 · Q20), (Exam 1 · Q58).
 
 ### Which security tool?
@@ -168,7 +168,7 @@
 ### Decision rules
 
 - Scan images inside the pipeline without disrupting other teams: **enable Container Scanning in Artifact Registry**. Don't use Docker Hub, an external Aqua instance, or Binary Authorization alone (Exam 2 · Q11).
-- Know about OS vulnerabilities before each daily deploy: **enable Container Analysis, store images in Artifact Registry, review the results before deploying** (Exam 1 · Q6).
+- Know about OS vulnerabilities before each daily deploy: **enable Artifact Analysis, store images in Artifact Registry, review all the results before deploying**. Calling the scanner by hand per image is extra work, and reviewing only critical results misses the rest (Exam 1 · Q6).
 - Check a web app for XSS or known-vulnerable libraries: use **Web Security Scanner** (Exam 1 · Q58).
 
 ### Traps
@@ -210,7 +210,7 @@
 - On **Cloud Run, anything written to stdout or stderr goes to Cloud Logging automatically**. Use your language's normal logger. No client library or log files are needed (Exam 4 · Q3).
 - On **GKE**, writing **single-line JSON to stdout** makes the logging agent ingest each line as a **structured log** (`jsonPayload`), with no Logging API code needed (Exam 5 · Q24).
 - A **log sink to BigQuery** exports logs for SQL analytics (Exam 5 · Q24).
-- **Error Reporting** reads from Cloud Logging. For Cloud Run, make sure errors are written to **stderr** (Exam 4 · Q55).
+- **Error Reporting** reads from Cloud Logging. For Cloud Run, make sure errors are written to **stderr** (Exam 4 · Q55). Error Reporting groups an entry as an error only if it carries a **stack trace** (or uses the Error Reporting structured format), so log exceptions with a logging framework, not `System.out.println`.
 - Raising the **log level to DEBUG or INFO** during local reproduction gives the most diagnostic detail (Exam 2 · Q26).
 - **Logpoints** (the legacy Stackdriver or Cloud Debugger feature) inject log statements into running code without redeploying. **Snapshots** capture state and variables at a single moment (Exam 4 · Q9).
 
@@ -218,7 +218,7 @@
 
 - App writes logs to local files on Cloud Run: **switch to stdout and stderr**. Don't use the logging library, cron jobs that copy to Cloud Storage, or public URLs (Exam 4 · Q3).
 - Java errors missing from Error Reporting on Cloud Run: **check that they go to stderr** (Exam 4 · Q55).
-- Standardize log data across GKE services: **single-line JSON on stdout as structured logs**, plus (per the bank's key) **a log export to BigQuery** for analytics (Exam 5 · Q24).
+- Standardize GKE log data and make it more useful for analysis: **single-line JSON on stdout as structured logs**, plus **a log export to BigQuery** for analytics (Exam 5 · Q24).
 - Ongoing code-level diagnosis with no redeploy: the bank's key is **Debugger logpoints** (Exam 4 · Q9). The product has been retired; see the questionable-answers section.
 
 ### Traps
@@ -237,7 +237,7 @@
 - Instrument microservices with **OpenTelemetry**, export spans to **Cloud Trace**, and use Trace analysis reports to find slow HTTP requests (Exam 3 · Q11).
 - OpenTelemetry instruments the **application code** itself, producing traces, metrics and logs, including timing for calls to **third-party APIs** (Exam 5 · Q51).
 - Trace samples requests. Sending the **`X-Cloud-Trace-Context` header with the right parameters** forces a specific request to be traced (Exam 2 · Q28).
-- For backends spread across clouds, a **Zipkin collector** gathers spans and **Cloud Trace** (the old Stackdriver Trace) produces latency reports (Exam 2 · Q48).
+- For backends spread across clouds, a **Zipkin collector** gathers spans and **Cloud Trace** (the old Stackdriver Trace) produces latency reports (Exam 2 · Q48). Zipkin is a legacy path; OpenTelemetry (which replaced OpenCensus) is the current way to instrument (Exam 3 · Q16).
 - Trace measures **request latency**. It doesn't show CPU or memory per function (Exam 3 · Q16), (Exam 2 · Q17).
 
 ### Decision rules
@@ -281,7 +281,7 @@
 
 - SSH + `top` shows processes, not functions. Monitoring dashboards are too high-level. A Fluent Bit daemonset plus log analysis is indirect (Exam 1 · Q28).
 - Print statements or log-timestamp scripts are manual and imprecise (Exam 4 · Q53), (Exam 2 · Q17).
-- OpenTelemetry tracing or OpenCensus metrics measure latency, not resource use per method (Exam 3 · Q16), (Exam 4 · Q53).
+- OpenTelemetry tracing or latency metrics measure latency, not resource use per method (Exam 3 · Q16), (Exam 4 · Q53).
 
 ---
 
@@ -289,21 +289,13 @@
 
 | Item | Issue |
 |---|---|
-| **(Exam 4 · Q47)** | Keys feature branches + **change advisory board** approval as "Google-recommended". Google's DORA research recommends **trunk-based development** with small daily merges and finds heavyweight CAB approval slows delivery without improving stability. Option III (daily merge to main) fits DORA better. The key also contradicts (Exam 4 · Q28). |
-| **(Exam 4 · Q9)** | Keys **Stackdriver Debugger logpoints**. Cloud Debugger was shut down in 2023, and its successor Snapshot Debugger is archived and unsupported. On today's exam, prefer structured logging or Trace/Profiler options. Treat Debugger answers (also Exam 2 · Q17 option I) as legacy. |
-| **(Exam 2 · Q6)**, **(Exam 1 · Q40)** | Key on **Container Registry**. Container Registry is deprecated and replaced by **Artifact Registry**, which also covers scanning (Exam 2 · Q11) and central repositories. If both appear, choose Artifact Registry. |
-| **(Exam 3 · Q37)** | Keys "hand out a kubeconfig file". GKE docs recommend each developer run `gcloud container clusters get-credentials` (which writes contexts to their own kubeconfig) and switch with `kubectl config use-context`. Sharing a credentials file is weaker practice. The claim that gcloud is an "extra dependency" is also wrong, because GKE authentication uses the gcloud auth plugin. |
+| **(Exam 4 · Q9)** | Keys **Cloud Debugger logpoints**. Cloud Debugger was shut down in 2023, and its successor Snapshot Debugger is archived and unsupported. On today's exam, prefer structured logging or Trace/Profiler options. Treat Debugger answers (also Exam 2 · Q17 option I) as legacy. |
+| **(Exam 3 · Q37)** | Keys "define clusters, users and contexts in a config file and distribute it". GKE docs recommend each developer run `gcloud container clusters get-credentials` (which writes contexts to their own kubeconfig) and switch with `kubectl config use-context`. The bank's explanation now drops the false claim that gcloud is an "extra dependency" (GKE authentication uses the gcloud auth plugin anyway), but the key itself is a judgement call. |
 | **(Exam 2 · Q51)** | "Swiftly pinpoint bugs" with fast developer feedback usually means building and testing on **every commit or push**. Git tags usually mark releases. The real lesson is Cloud Build (CI) over Spinnaker (CD). |
-| **(Exam 4 · Q48)** vs **(Exam 2 · Q2)**, **(Exam 1 · Q9)** | Exam 4 calls JMeter on a single Compute Engine VM "recommended practice", but the other two items key distributed load generation on GKE as the Google pattern. The explanation's claim that Looker Studio is preferred over Looker "for BigQuery integration" is also unsupported. |
-| **(Exam 4 · Q6)** | The answer is fine, but the explanation's reasoning is muddled. The actual reason IV fails is that env vars don't persist across steps. Cloud Build also has `allowFailure` and `allowExitCodes` on steps today, which would be a cleaner design if offered. |
-| **(Exam 4 · Q55)** | stderr routing is necessary, but Error Reporting also needs the **stack trace or error format** to group an error. Rejecting "log exceptions properly instead of System.out.println" (D) as irrelevant overstates the case. |
-| **(Exam 2 · Q48)**, **(Exam 3 · Q16)** | Old names: Stackdriver Trace is now **Cloud Trace**, and OpenCensus has been merged into **OpenTelemetry**, which is the current instrumentation path. Zipkin ingestion is legacy. |
-| **(Exam 1 · Q20)**, **(Exam 3 · Q51)**, **(Exam 1 · Q6)** | Renamed products: Cloud Security Scanner is now **Web Security Scanner**, Migrate for Anthos is now **Migrate to Containers**, and Container Analysis is now **Artifact Analysis**. Also, (Exam 1 · Q6)'s explanation says option III lacks review "before each deployment" when it clearly includes that review. The difference between options is trivial. |
-| **(Exam 5 · Q2)** | Keys `$(gcloud beta emulators pubsub env-init)` and rejects option IV (export `PUBSUB_EMULATOR_HOST`) with a false claim that IV "doesn't mention" the variable. `env-init` only prints the `export PUBSUB_EMULATOR_HOST=...` line, so both options are valid and (Exam 4 · Q21) keys IV. Either works on the exam; pick whichever is offered. |
-| **(Exam 5 · Q24)** | "Select two" for *standardizing* logs, but exporting to BigQuery (I) is analytics, not standardization. The structured-JSON-on-stdout part (III) is solid. Expect I as the bank's second answer, but don't treat "BigQuery export standardizes logs" as a rule. |
-| **(Exam 5 · Q37)** | Says it pushes to **Artifact Registry**, but every image path is `gcr.io/...` (Container Registry style). Real Artifact Registry paths look like `REGION-docker.pkg.dev/PROJECT/REPO/IMAGE`. The `cloudbuild.yaml` + `gcloud builds submit` pattern is right; `gcloud builds submit --tag` (or an `images:` field) would also work. |
-| **(Exam 5 · Q56)** | The stem asks to "eliminate unnecessary steps", but no option removes one. `--cache-from` speeds up the build, but only works if the cached image is pulled first (or BuildKit inline cache is used). The explanation's example skips the pull. |
-| **(Exam 4 · Q28)**, **(Exam 3 · Q48)** | They justify **Cloud Source Repositories** as the IAM-auditable choice. CSR is closed to new customers. Current guidance is GitHub, GitLab or Bitbucket connected to Cloud Build (or Secure Source Manager). |
+| **(Exam 4 · Q48)** vs **(Exam 2 · Q2)**, **(Exam 1 · Q9)** | Exam 4 keys JMeter on a single Compute Engine VM, but that is only the best of its four options. The Google pattern for load testing at scale is distributed load generation on GKE, as the other two items key. |
+| **(Exam 5 · Q2)** | Keys `$(gcloud beta emulators pubsub env-init)`, but option IV (export `PUBSUB_EMULATOR_HOST`) does the same thing: `env-init` only prints that export line, and (Exam 4 · Q21) keys IV. Either works on the exam; pick whichever is offered. |
+| **(Exam 2 · Q48)** | Keys a **Zipkin collector** + Cloud Trace. Cloud Trace still accepts Zipkin data, but **OpenTelemetry** is the current instrumentation path; prefer it if offered. |
+| **(Exam 4 · Q28)** | Justifies **Cloud Source Repositories** as the IAM-auditable choice. CSR is closed to new customers. Current guidance is GitHub, GitLab or Bitbucket connected to Cloud Build (or Secure Source Manager), still with trunk-based development. |
 
 ---
 

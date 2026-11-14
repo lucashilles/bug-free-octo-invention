@@ -76,16 +76,16 @@
       ]
     },
     "6": {
-      "summary": "Pub/Sub decouples producers from consumers. Topic and subscription design decides whether every consumer gets a copy of each message or the consumers share the work. This lesson covers fan-out, competing consumers, ordering keys, durability and log sinks.",
+      "summary": "Pub/Sub decouples producers from consumers. Topic and subscription design decides whether every consumer gets a copy of each message or the consumers share the work. This lesson covers fan-out, competing consumers, when ordering keys are worth it, durability and log sinks.",
       "objectives": [
         "Design topic and subscription layouts for fan-out versus load sharing",
-        "Use ordering keys to keep per-entity updates in order",
+        "Decide when ordering keys are needed and when timestamps in the messages make them unnecessary",
         "Introduce Pub/Sub to prevent loss when a downstream consumer fails",
         "Route Cloud Logging entries to several real-time consumers through a Pub/Sub sink"
       ],
       "takeaways": [
         "One subscription per consumer that needs every message. One shared pull subscription for workers that split the load.",
-        "Per-key ordering means a pull subscription with message ordering and an ordering key such as the stock symbol.",
+        "Timestamped updates such as stock prices: a pull subscription with ordering and exactly-once both off; the consumer drops stale prices itself. Exactly-once is pull-only.",
         "To stop losing emails or events, publish to Pub/Sub and let the consumer read from it.",
         "Pay only when messages arrive by using a function with a Pub/Sub trigger.",
         "Multiple real-time log consumers, including third-party tools, read from a Logging sink to Pub/Sub.",
@@ -199,7 +199,7 @@
     {"term": "Metadata server", "definition": "An endpoint inside each instance (metadata.google.internal, header Metadata-Flavor: Google) that serves project and instance metadata and access tokens.", "exam_context": "Read the project ID and region on Cloud Run, or get a token for raw REST calls when no client library exists.", "lesson": 1},
     {"term": "OAuth 2.0 authorization-code flow", "definition": "Flow in which the user consents on Google's screen, the app receives an authorization code, and the app exchanges the code for an access token.", "exam_context": "The correct option includes the code-for-token exchange. Options that use the code directly or collect passwords are wrong.", "lesson": 3},
     {"term": "OAuth client ID", "definition": "Credentials that identify an application in OAuth 2.0 flows, used to obtain user-authorized access tokens.", "exam_context": "Required when a web app accesses users' Google Drive. API keys, service accounts and SAML are distractors.", "lesson": 3},
-    {"term": "Ordering key", "definition": "A Pub/Sub message attribute. On a subscription with ordering enabled, messages that share the key are delivered in publish order.", "exam_context": "Use the stock symbol as the ordering key so price updates per symbol apply in order.", "lesson": 6},
+    {"term": "Ordering key", "definition": "A Pub/Sub message attribute. On a subscription with ordering enabled, messages that share the key are delivered in publish order.", "exam_context": "A distractor for timestamped stock prices, where the timestamp already lets the consumer drop stale updates. Use one only when nothing in the message shows which update is newer.", "lesson": 6},
     {"term": "Private Google Access", "definition": "A subnet setting that lets VMs with only internal IPs reach Google APIs and services.", "exam_context": "The answer for a VM without an external IP calling Cloud Storage, rather than any peering option.", "lesson": 11},
     {"term": "PubSubIO", "definition": "Apache Beam I/O connector for reading from and writing to Pub/Sub in a pipeline, such as one running on Dataflow.", "exam_context": "Read Pub/Sub messages in a Dataflow streaming pipeline so each message is processed once and stored cost-effectively.", "lesson": 10},
     {"term": "Pull subscription", "definition": "A Pub/Sub subscription where subscribers request messages. Several subscribers on one subscription share the messages.", "exam_context": "One shared pull subscription lets a pool of workers split the load without duplicates.", "lesson": 6},

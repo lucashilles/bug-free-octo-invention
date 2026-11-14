@@ -106,9 +106,9 @@ References:
 
 **II. Shorten the cooldown period for newly added instances in the group.**
 
-  * **Faster Readiness:** A shorter cooldown period lets new instances handle traffic sooner after being created, reducing the time where existing instances are overloaded.
+  * **Faster, more accurate scale-out:** The cooldown (now called the initialization period) is how long the autoscaler ignores a new VM's usage data while it starts up. If it is much longer than the real startup time, the autoscaler discards valid load signals and can underestimate how many VMs the group needs, so the existing VMs stay overloaded longer. Matching it to the real startup time lets the autoscaler react to the load sooner. It does not change when a VM starts receiving traffic; the load balancer's health check decides that.
 
-  * **Cooldown Considerations:** Choose a cooldown period that allows for your application's initialization time. Too short, and new instances will receive traffic before they're ready.
+  * **Cooldown Considerations:** Set the period to roughly how long your application takes to initialize. Too short, and the autoscaler reads the usage of VMs that are still booting, which can skew its decisions.
 
 **IV. Decrease the target CPU usage threshold for the instance group autoscaler.**
 
@@ -149,19 +149,21 @@ Here's why:
 
   * **LivenessProbe:** A livenessProbe is specifically designed to monitor the health of a container. If it cannot connect to the database, Kubernetes will recognize the container as unhealthy and automatically restart it, potentially re-establishing the connection.
 
-  * **PreStop Lifecycle Handler:** This hook is triggered before the container is terminated. It's the perfect place to execute your graceful shutdown script, ensuring any in-process tasks are completed cleanly.
+  * **PreStop Lifecycle Handler:** This hook is triggered before the container is terminated, including when the kubelet kills it after a failed liveness probe. It's the perfect place to execute your graceful shutdown script, ensuring any in-process tasks are completed cleanly.
 
 Here's why the other options aren't as ideal:
 
   * **I. Separate Jobs:** This approach adds complexity and might introduce delays. Jobs might not run with the frequency needed to detect connectivity issues promptly.
 
-  * **III. PostStart Handler:** PostStart is executed once after container startup. It wouldn't provide continuous monitoring, and a PreStop hook doesn't automatically trigger if a liveness probe fails.
+  * **III. PostStart Handler:** PostStart is executed once after container startup. It wouldn't provide continuous monitoring, so a database connection lost after startup would go unnoticed.
 
   * **IV. InitContainer:** An initContainer runs to completion before the main container starts. It might not accurately reflect ongoing connectivity issues after startup and delays the main application container.
 
 References:
 
 <https://cloud.google.com/architecture/best-practices-for-running-cost-effective-kubernetes-applications-on->
+
+**⚠️ Note:** In real deployments, checking an external dependency such as a database in a liveness probe is risky: a database outage makes every Pod restart in a loop. A readiness probe (which takes the Pod out of Service endpoints without restarting it) is the usual tool for dependency checks. The liveness answer fits here because the question wants the shutdown script to run when the check fails.
 
 </details>
 
@@ -653,30 +655,30 @@ Here's why this is the best approach:
 
 **You're managing an analytics application that executes numerous queries on BigQuery via the BigQuery API at regular intervals. How can you determine the execution time of these queries?**
 
-- IV. Utilize Stackdriver Monitoring to monitor query execution times.
-- I. Utilize Stackdriver Monitoring to visualize slot usage.
-- III. Utilize Stackdriver Trace to monitor query execution time.
-- II. Employ Stackdriver Trace to track API execution time.
+- IV. Utilize Cloud Monitoring to monitor query execution times.
+- I. Utilize Cloud Monitoring to visualize slot usage.
+- III. Utilize Cloud Trace to monitor query execution time.
+- II. Employ Cloud Trace to track API execution time.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. Utilize Stackdriver Monitoring to monitor query execution times.
+**Correct:** IV. Utilize Cloud Monitoring to monitor query execution times.
 
-**IV. Utilize Stackdriver Monitoring to monitor query execution times.**
+**IV. Utilize Cloud Monitoring to monitor query execution times.**
 
 Here's why:
 
-  * **Query-Centric Metrics:** Stackdriver Monitoring (now called Cloud Monitoring) provides metrics specifically tailored to BigQuery, including query execution time. Using it allows you to track and visualize this information as time-series data.
+  * **Query-Centric Metrics:** Cloud Monitoring provides metrics specifically tailored to BigQuery, including query execution time. Using it allows you to track and visualize this information as time-series data.
 
   * **Alerts and Analysis:** You can set alerts based on query execution time thresholds and analyze trends over time to identify performance bottlenecks.
 
-  * **BigQuery Integration:** These metrics are collected directly from BigQuery by Stackdriver Monitoring.
+  * **BigQuery Integration:** These metrics are collected directly from BigQuery by Cloud Monitoring.
 
 **Why Other Options Are Not Ideal**
 
-  * **I. Utilize Stackdriver Monitoring to visualize slot usage.** Slot usage shows your BigQuery query resource utilization, which can _indirectly_ relate to performance, but isn't a direct measure of execution time.
+  * **I. Utilize Cloud Monitoring to visualize slot usage.** Slot usage shows your BigQuery query resource utilization, which can _indirectly_ relate to performance, but isn't a direct measure of execution time.
 
-  * **II & III. Utilize Stackdriver Trace...** Stackdriver Trace is primarily used for distributed tracing and performance profiling within applications. While you might instrument your application code to include parts that interact with BigQuery, it's unnecessary overhead for simply measuring query execution time.
+  * **II & III. Utilize Cloud Trace...** Cloud Trace is primarily used for distributed tracing and performance profiling within applications. While you might instrument your application code to include parts that interact with BigQuery, it's unnecessary overhead for simply measuring query execution time.
 
 **Reference** :
 
@@ -770,7 +772,7 @@ Ref:
 
 - IV. Introduce a startup script to the GKE instance group to mount the NFS share during node startup, transferring the configuration files into the container, and activate the service via an ENTRYPOINT script.
 - II. Establish a PersistentVolumeClaim (PVC) on the GKE cluster, accessing configuration files from the volume, and commence the service via an ENTRYPOINT script.
-- I. Utilize the gsutil utility within the Docker container at startup, copying files, and initiate the service via an ENTRYPOINT script.
+- I. Utilize the gcloud storage CLI within the Docker container at startup, copying files, and initiate the service via an ENTRYPOINT script.
 - III. Incorporate the COPY statement in the Dockerfile to inject the configuration into the container image, validating its availability, and launch the service using an ENTRYPOINT script.
 
 <details><summary>Answer &amp; explanation</summary>
@@ -789,7 +791,7 @@ Here's why this stands out as the ideal choice:
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. gsutil within the container:** While possible, it adds complexity and potential security risks due to embedding credentials within the container.
+  * **I. Cloud Storage CLI within the container:** The configuration lives on an NFS share, not in Cloud Storage, so this needs a separate process to put it there, and it bakes a storage tool and copy logic into the image. (With Workload Identity it wouldn't need embedded credentials.)
 
   * **III. Embedding config in the image:** This makes image management less flexible, requiring rebuilds for configuration changes.
 
@@ -803,15 +805,17 @@ Here's why this stands out as the ideal choice:
 
 [https://cloud.google.com/storage/docs/gcs-fuse](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes  https://cloud.google.com/filestore/docs/accessing-fileshares  https://cloud.google.com/storage/docs/gcs-fuse)
 
+**⚠️ Note:** In Kubernetes, the standard way to keep a Pod from receiving traffic until it's ready is a readiness probe. The ENTRYPOINT check works here because the server doesn't start listening until the config is found.
+
 </details>
 
 ---
 
 ### Exam 2 · Q5
 
-**Upon installing the Stackdriver Logging Agent to transmit an application's log file to Stackdriver from a Compute Engine virtual machine instance, what is the initial step you should take?**
+**Upon installing the Cloud Logging agent to transmit an application's log file to Cloud Logging from a Compute Engine virtual machine instance, what is the initial step you should take?**
 
-- IV. Establish a Stackdriver Logs Export Sink with a filter aligning with the application's log entries.
+- IV. Establish a Cloud Logging sink with a filter aligning with the application's log entries.
 - III. Define the application log file as a custom source.
 - II. Provide the instance with complete access to all Cloud APIs.
 - I. Activate the Error Reporting API for the project.
@@ -820,7 +824,7 @@ Here's why this stands out as the ideal choice:
 
 **Correct:** III. Define the application log file as a custom source.
 
-**The initial step you should take upon installing the Stackdriver Logging Agent to transmit an application's log file to Stackdriver from a Compute Engine virtual machine instance is:**
+**The initial step you should take upon installing the Cloud Logging agent to transmit an application's log file to Cloud Logging from a Compute Engine virtual machine instance is:**
 
 **III. Define the application log file as a custom source.**
 
@@ -828,24 +832,26 @@ Here's why this stands out as the ideal choice:
 
 I. Activating the Error Reporting API for the project:
 
-  * While activating the Error Reporting API may be necessary for capturing and reporting errors, it is not the initial step for configuring log forwarding with the Stackdriver Logging Agent.
+  * While activating the Error Reporting API may be necessary for capturing and reporting errors, it is not the initial step for configuring log forwarding with the Cloud Logging agent.
 
 II. Providing the instance with complete access to all Cloud APIs:
 
-  * Providing the instance with complete access to all Cloud APIs is not necessary for configuring log forwarding with the Stackdriver Logging Agent. It is a security best practice to provide only the necessary permissions to instances.
+  * Providing the instance with complete access to all Cloud APIs is not necessary for configuring log forwarding with the Cloud Logging agent. It is a security best practice to provide only the necessary permissions to instances.
 
 **III. Defining the application log file as a custom source:**
 
-  * **This is the initial step in configuring log forwarding with the Stackdriver Logging Agent. By defining the application log file as a custom source, you specify which log files should be collected and forwarded to Stackdriver Logging.**
+  * **This is the initial step in configuring log forwarding with the Cloud Logging agent. By defining the application log file as a custom source, you specify which log files should be collected and forwarded to Cloud Logging.**
 
-IV. Establishing a Stackdriver Logs Export Sink with a filter aligning with the application's log entries:
+IV. Establishing a Cloud Logging sink with a filter aligning with the application's log entries:
 
-  * Establishing a Stackdriver Logs Export Sink with a filter aligning with the application's log entries is a subsequent step after defining the custom log source. It involves configuring the destination for the logs and specifying any filters to ensure only relevant log entries are exported.
+  * Establishing a Cloud Logging sink with a filter aligning with the application's log entries is a subsequent step after defining the custom log source. It involves configuring the destination for the logs and specifying any filters to ensure only relevant log entries are exported.
 
 **Therefore, the initial step you should take is to define the application log file as a custom source (Option III).**
 
 Ref:  
 <https://cloud.google.com/logging/docs/agent/configuration>
+
+**⚠️ Note:** The legacy Logging agent is replaced by the Ops Agent; there, you declare the application log file as a `files` receiver in the agent's config, which is the same idea as a custom source.
 
 </details>
 
@@ -891,12 +897,12 @@ Ref:
 
 ### Exam 2 · Q8
 
-**You're utilizing Cloud Build to create a new Docker image for each source code commit to a Cloud Source Repositories repository. Commits to the master branch trigger builds for your application. How can you automate the release process for specific commits to the master branch?**
+**You're utilizing Cloud Build to create a new Docker image for each source code commit to a Git repository connected to Cloud Build (for example, on GitHub). Commits to the master branch trigger builds for your application. How can you automate the release process for specific commits to the master branch?**
 
 - III. Configure a build trigger based on a Git branch name pattern, adhering to a Git branch naming convention for releases.
 - I. Trigger the build manually for new releases.
 - II. Set up a build trigger based on a Git tag pattern, following a Git tag convention for releases.
-- IV. Store your source code in a secondary Cloud Source Repositories repository with a distinct Cloud Build trigger solely for new releases.
+- IV. Store your source code in a secondary Git repository with a distinct Cloud Build trigger solely for new releases.
 
 <details><summary>Answer &amp; explanation</summary>
 
@@ -918,11 +924,11 @@ Why Other Options Are Less Ideal:
 
   * **III. Configure a build trigger based on a Git branch name pattern ...** Branch naming conventions might change or be less reliable than an explicit tagging strategy.
 
-  * **IV. Store your source code in a secondary Cloud Source Repositories repository ...** This adds unnecessary complexity, fragmenting your codebase and its history.
+  * **IV. Store your source code in a secondary Git repository ...** This adds unnecessary complexity, fragmenting your codebase and its history.
 
 **Reference:**
 
-<https://cloud.google.com/source-repositories/docs/integrating-with-cloud-build#create_a_build_trigger>
+<https://cloud.google.com/build/docs/automating-builds/create-manage-triggers>
 
 </details>
 
@@ -1144,10 +1150,12 @@ Here's why:
 
   * **II. Jenkins:** While powerful, Jenkins introduces the overhead of maintaining your own Jenkins server and its configuration.
 
-  * **III. Buildpacks:** Buildpacks can be a great option, but they might require additional configuration if you have specific build requirements beyond what buildpacks provide.
+  * **III. Continuous deployment with buildpacks:** This is also fully managed: Cloud Run's "continuously deploy from a repository" setup creates a Cloud Build trigger for you and can build the Go code with buildpacks. It is a reasonable answer in practice, but the bank prefers the explicit Cloud Build trigger, which gives full control over the build and deploy steps.
 
 **Reference:**  
 <https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build>
+
+**⚠️ Note:** Cloud Source Repositories is closed to new customers; the same Cloud Build trigger works with GitHub, GitLab or Bitbucket repositories connected to Cloud Build. Option III is a built-in, fully managed alternative that some would call simpler.
 
 </details>
 
@@ -1174,9 +1182,9 @@ Let's break down why this is the most effective choice:
 
   * **Full Load Testing:** Mirroring the entire production load ensures you're testing against the true scale of your traffic.
 
-  * **A/B Comparison:** Comparing the performance of your new application code against the existing version under identical load provides valuable insights for optimization.
+  * **Side-by-side comparison:** Comparing the performance of the new version against the existing one under identical load provides valuable insights. This is a shadow test: the mirrored responses are discarded, so users never see the new version. (Classic A/B testing is different: it sends real users to each variant to compare their behavior.)
 
-  * **Controlled Rollout:** Based on the results of your A/B tests, you can gradually and safely increase traffic to the new version.
+  * **Controlled Rollout:** Based on the results of the shadow test, you can then release the new version with confidence.
 
 **Why Other Options are Less Ideal:**
 
@@ -1189,6 +1197,8 @@ Let's break down why this is the most effective choice:
 **Reference:**
 
 <https://cloud.google.com/architecture/application-deployment-and-testing-strategies#shadow_test_pattern>
+
+**⚠️ Note:** The option calls this "A/B testing with traffic mirroring". The part that meets the requirement is the traffic mirroring (shadow test); the cue is "full production load before launch".
 
 </details>
 
@@ -1399,6 +1409,8 @@ Here's why the other options are less important initially:
 
 [https://cloud.google.com/deploy/docs/integrating#before_you_begin](https://cloud.google.com/functions/docs/calling/pubsub   https://cloud.google.com/deploy/docs/integrating#integrating_with_automated_testing  https://cloud.google.com/build/docs/automate-builds-pubsub-events#console_2  https://cloud.google.com/deploy/docs/integrating#before_you_begin)
 
+**⚠️ Note:** Cloud Deploy now has built-in automation: an automation resource with a promote-release rule promotes a release to the next target after a successful rollout, with no custom code. Pick it if it's offered; among these options, the Cloud Function on `clouddeploy-operations` is the best fit.
+
 </details>
 
 ---
@@ -1424,13 +1436,13 @@ Here's why the other options are less important initially:
 
   1. **Cloud Logging (formerly Stackdriver Logging)** : Cloud Logging is a fully managed service by Google Cloud Platform for collecting, viewing, and analyzing logs from applications and services. It offers customizable retention periods, making it an ideal solution for meeting specific compliance requirements.
 
-  2. **Customized retention duration** : With Cloud Logging, you can set retention periods tailored to your specific needs. In this scenario, you can set a retention period of 1 year for internal audits and 3 years to meet compliance standards.
+  2. **Customized retention duration** : A Cloud Logging log bucket has a single, configurable retention period (from 1 day up to 3650 days). Set it to 3 years: that meets the compliance need and also covers the 1-year internal-audit need, and the logs stay searchable in Logs Explorer and Log Analytics.
 
 Options I, II, and IV do not fully address the requirements and may introduce unnecessary complexity:
 
 I. Storing logs in a Cloud Storage bucket with bucket locking enabled can prevent deletion of objects but doesn't address the need for different retention periods for internal audits and compliance standards.
 
-II. Storing logs in a Cloud Storage bucket with a fixed 3-year retention period doesn't meet the requirement of retaining logs for 1 year for internal audits.
+II. A Cloud Storage bucket with a 3-year retention period would keep the logs long enough, but the logs aren't easily searchable there and you'd have to build the export yourself.
 
 IV. Initially storing logs in a Cloud Storage bucket with a 1-year retention period and then transferring logs to another bucket with a 2-year retention period after 1 year adds unnecessary complexity and management overhead. Using Cloud Logging with customized retention durations is a more straightforward solution.
 
@@ -1561,6 +1573,8 @@ Here's why this is the best option:
 Ref:
 
 <https://cloud.google.com/stackdriver/docs/solutions/agents/ops-agent>
+
+**⚠️ Note:** The Google-provided fluentd (legacy Logging agent) and collectd (legacy Monitoring agent) are replaced by the Ops Agent, which collects both logs and metrics. If the Ops Agent is offered, choose it for local log files.
 
 </details>
 
@@ -1756,25 +1770,23 @@ Ref:
 
 **Explanation:**
 
-  * **Serverless VPC Access:** This is the recommended way to connect Cloud Run to Cloud SQL using private IP addresses. It establishes a secure tunnel within your VPC network.
+  * **A path into the VPC:** A Cloud SQL private IP is reachable only from inside the VPC network (through private services access). Cloud Run runs outside your VPC, so it needs a way into the VPC first. A Serverless VPC Access connector provides that path. (Cloud Run can now also use **Direct VPC egress** for the same purpose, without a connector.)
 
-  * **Security:** Private IP connectivity enhances security by preventing database exposure to the public internet.
+  * **Security:** Private IP connectivity keeps database traffic off the public internet.
 
-  * **No code changes:** This method generally doesn't require any changes to your Java application code.
+  * **No code changes:** Once the connector is set, the application connects to the private IP as usual.
 
 **Why other options are less ideal:**
 
-  * **I. Cloud SQL connection:** While Cloud Run can connect to Cloud SQL, this usually uses public IP by default, not complying with the internal IP requirement.
+  * **I. Cloud SQL connection:** The Cloud Run Cloud SQL connection (the built-in Cloud SQL Auth Proxy over a Unix socket) doesn't give Cloud Run a route into the VPC. It can use the private IP only if a connector or Direct VPC egress is also configured.
 
-  * **III. Cloud SQL Java connector:** The connector is necessary, but on its own, it won't solve the private IP access issue.
+  * **III. Cloud SQL Java connector:** The connector can connect over private IP, but only once Cloud Run has a path into the VPC; on its own it doesn't provide that path, and it requires code changes.
 
-  * **IV. Cloud SQL Auth proxy:** The proxy is useful but adds an extra component. Serverless VPC Access is a more streamlined solution for private IP connections from Cloud Run.
+  * **IV. Cloud SQL Auth proxy instance:** Same limitation: a separate proxy adds a component to run and still needs network access to the private IP.
 
 **References:**
 
-[https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object](https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object  https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response we)
-
-[https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response we](https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object  https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response we)
+<https://cloud.google.com/sql/docs/mysql/connect-run#private-ip>
 
 </details>
 
@@ -1835,20 +1847,20 @@ Ref:
 
 **You are deploying a single website on App Engine, which must be accessible via the URL http://www.altostrat.com/. What steps should you take to achieve this?**
 
-- I. Verify domain ownership through Webmaster Central. Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.
+- I. Verify domain ownership through Search Console (formerly Webmaster Central). Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.
 - III. Configure a mapping in dispatch.yaml to link the domain www.altostrat.com to your App Engine service. Set up a DNS CNAME record pointing to the App Engine canonical name ghs.googlehosted.com.
-- II. Verify domain ownership via Webmaster Central. Configure an A record pointing to the singular global App Engine IP address.
+- II. Verify domain ownership via Search Console (formerly Webmaster Central). Configure an A record pointing to the singular global App Engine IP address.
 - IV. Set up a mapping in dispatch.yaml to direct the domain www.altostrat.com to your App Engine service. Establish an A record pointing to the singular global App Engine IP address.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** I. Verify domain ownership through Webmaster Central. Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.
+**Correct:** I. Verify domain ownership through Search Console (formerly Webmaster Central). Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.
 
-**I. Verify domain ownership through Webmaster Central. Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.**
+**I. Verify domain ownership through Search Console (formerly Webmaster Central). Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.**
 
 Explanation:
 
-  * **Domain Verification:** Webmaster Central allows you to prove ownership of your domain, a prerequisite for configuring custom domains with App Engine.
+  * **Domain Verification:** Search Console (formerly Webmaster Central) allows you to prove ownership of your domain, a prerequisite for configuring custom domains with App Engine.
 
   * **CNAME Record:** CNAME records create an alias. In this case, `www.altostrat.com` becomes an alias for your App Engine's `ghs.googlehosted.com` address.
 
@@ -1945,26 +1957,26 @@ References:
 
 **You seek to alert on-call engineers promptly about a service degradation in production, minimizing development time. Which option is the most efficient?**
 
-- IV. Employ Stackdriver Monitoring to monitor resources and generate alerts.
+- IV. Employ Cloud Monitoring to monitor resources and generate alerts.
 - II. Implement Cloud Pub/Sub to monitor resources and generate alerts.
-- III. Utilize Stackdriver Error Reporting to capture errors and generate alerts.
+- III. Utilize Error Reporting to capture errors and generate alerts.
 - I. Utilize Cloud Function to monitor resources and generate alerts.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** IV. Employ Stackdriver Monitoring to monitor resources and generate alerts.
+**Correct:** IV. Employ Cloud Monitoring to monitor resources and generate alerts.
 
-**IV. Employ Stackdriver Monitoring to monitor resources and generate alerts.**
+**IV. Employ Cloud Monitoring to monitor resources and generate alerts.**
 
 Here's why:
 
-  * **Purpose-Built:** Stackdriver Monitoring (now called Cloud Monitoring) is specifically designed for monitoring resources, metrics, and setting up alerting policies based on various conditions.
+  * **Purpose-Built:** Cloud Monitoring is specifically designed for monitoring resources, metrics, and setting up alerting policies based on various conditions.
 
   * **Wide Range of Metrics:** It offers comprehensive coverage of infrastructure and application-level metrics, allowing you to pinpoint relevant indicators of service degradation (e.g., error rates, latency, resource utilization).
 
-  * **Alerting Integration:** Stackdriver Monitoring seamlessly integrates with alerting mechanisms, allowing you to define thresholds and quickly notify on-call engineers.
+  * **Alerting Integration:** Cloud Monitoring seamlessly integrates with alerting mechanisms, allowing you to define thresholds and quickly notify on-call engineers.
 
-  * **Minimizes Development Effort:** Using Stackdriver Monitoring requires minimal development time compared to building a custom solution.
+  * **Minimizes Development Effort:** Using Cloud Monitoring requires minimal development time compared to building a custom solution.
 
 **Why Other Options are Less Ideal:**
 
@@ -1972,7 +1984,7 @@ Here's why:
 
   * **II. Implement Cloud Pub/Sub to monitor resources...** Cloud Pub/Sub is a messaging service. It would need to be integrated with other monitoring and alerting components, adding complexity.
 
-  * **III. Utilize Stackdriver Error Reporting...** Error Reporting is primarily focused on error analysis rather than general resource monitoring and alerting.
+  * **III. Utilize Error Reporting...** Error Reporting is primarily focused on error analysis rather than general resource monitoring and alerting.
 
 **References:**
 
@@ -2119,9 +2131,9 @@ Here's why this approach excels:
 
 ### Exam 3 · Q30
 
-**While running a containerized application on Google Kubernetes Engine with container images stored in Container Registry and employing CI/CD practices, how can you prevent the deployment of containers containing known critical vulnerabilities?**
+**While running a containerized application on Google Kubernetes Engine with container images stored in Artifact Registry and employing CI/CD practices, how can you prevent the deployment of containers containing known critical vulnerabilities?**
 
-- III. Enable the Container Scanning API for vulnerability scanning, review vulnerability reporting in Container Registry within the Cloud Console, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
+- III. Enable the Container Scanning API for vulnerability scanning, review vulnerability reporting in Artifact Registry within the Google Cloud console, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
 - I. Utilize Web Security Scanner to automatically crawl the application, review scan results in application logs, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
 - IV. Enable the Container Scanning API for vulnerability scanning, programmatically review vulnerability reporting through the Container Scanning API, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
 - II. Utilize Web Security Scanner to automatically crawl the application, review scan results in the Cloud Console's scan details page, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
@@ -2147,6 +2159,8 @@ Here's why this stands out:
   * **I & II. Web Security Scanner:** While useful for web application security, Web Security Scanner doesn't focus on container image vulnerability scanning.
 
   * **III. Manual Review in Console:** Relying on manual review in the Cloud Console slows down your CI/CD pipelines and is less scalable for larger deployments.
+
+**⚠️ Note:** Container Registry is deprecated in favor of Artifact Registry. Vulnerability scanning is now part of Artifact Analysis (still turned on with the Container Scanning API); the attestation + Binary Authorization logic is unchanged.
 
 </details>
 
@@ -2308,6 +2322,8 @@ Here's why this is the most streamlined, secure, and Google-recommended approach
 **References:**  
 [https://cloud.google.com/sql/docs/postgres/connect-run#configure https://cloud.google.com/sql/docs/postgres/connect-run#private-ip](https://cloud.google.com/sql/docs/postgres/connect-run#configure   https://cloud.google.com/sql/docs/postgres/connect-run#private-ip)
 
+**⚠️ Note:** Cloud Run can now also reach a VPC with Direct VPC egress, without a Serverless VPC Access connector. Both are valid; the connector is what this option describes.
+
 </details>
 
 ---
@@ -2355,32 +2371,32 @@ Here's why this is the most suitable approach:
 
 ### Exam 3 · Q42
 
-**As you deploy your application to a Compute Engine virtual machine instance, it logs its files to disk. You want to view these logs in Stackdriver Logging without modifying the application code. What's the recommended approach?**
+**As you deploy your application to a Compute Engine virtual machine instance, it logs its files to disk. You want to view these logs in Cloud Logging without modifying the application code. What's the recommended approach?**
 
-- I. Install the Stackdriver Logging Agent and set it up to transmit the application logs.
-- IV. Modify the application to log to /var/log so that its logs are automatically sent to Stackdriver Logging.
+- I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.
+- IV. Modify the application to log to /var/log so that its logs are automatically sent to Cloud Logging.
 - III. Specify the log file folder path in the instance's metadata to configure it for sending the application logs.
-- II. Utilize a Stackdriver Logging Library to directly log from the application to Stackdriver Logging.
+- II. Utilize a Cloud Logging client library to directly log from the application to Cloud Logging.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** I. Install the Stackdriver Logging Agent and set it up to transmit the application logs.
+**Correct:** I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.
 
-**I. Install the Stackdriver Logging Agent and set it up to transmit the application logs.**
+**I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.**
 
 **Explanation:**
 
-The Stackdriver Logging Agent (now called the Cloud Logging Agent) is the most flexible and least invasive way to achieve this:
+The Ops Agent (which replaces the legacy Logging agent) is the most flexible and least invasive way to achieve this:
 
   * **No Code Changes:** You don't have to modify your existing logging mechanisms, preserving your application logic.
 
   * **Customization:** The agent can monitor custom log files and even parse them to extract structured data, making it adaptable to your application's log format.
 
-  * **Centralization:** The agent reliably sends logs to Stackdriver Logging, giving you a unified view in the Google Cloud Console.
+  * **Centralization:** The agent reliably sends logs to Cloud Logging, giving you a unified view in the Google Cloud Console.
 
 **Why Other Options Are Less Ideal:**
 
-  * **II. Utilize a Stackdriver Logging Library...** This requires changes to your code, adding the library and potentially modifying your logging statements.
+  * **II. Utilize a Cloud Logging client library...** This requires changes to your code, adding the library and potentially modifying your logging statements.
 
   * **III. Specify the log file folder path...** This method relies on specific agent configurations and log formats, making it less flexible than actively configuring the agent.
 
@@ -2431,6 +2447,8 @@ III. Storing credentials in an encrypted volume mount is better than plain text 
 
 <https://cloud.google.com/kubernetes-engine/docs/how-to/encrypting-secrets#reencrypt-secrets>
 
+**⚠️ Note:** Secret Manager isn't among the options. When it is offered, Google's preferred answer for credentials that must be rotated is Secret Manager accessed with Workload Identity, which supports versions and rotation schedules. Application-layer secrets encryption with Cloud KMS protects Secrets at rest in etcd but doesn't rotate the credentials themselves.
+
 </details>
 
 ---
@@ -2456,7 +2474,7 @@ III. Storing credentials in an encrypted volume mount is better than plain text 
 
   * **Minimizing Downtime:** Rolling updates replace pods gradually, ensuring service availability during the update process.
 
-  * **Safety Net:** A PodDisruptionBudget (PDB) limits the number of pods that can be unavailable simultaneously. Setting it to 80% guarantees that at least 80% of your pods remain active, mitigating the risk of full service disruption.
+  * **Safety Net:** A PodDisruptionBudget (PDB) set to 80% (`minAvailable: 80%`) keeps at least 80% of the Pods running during **voluntary disruptions** such as node drains, node pool upgrades and cluster autoscaler scale-down, which can overlap with a release. It does not pace the rollout itself: the Deployment's rolling-update settings (`maxSurge`/`maxUnavailable`) control how many Pods are replaced at a time.
 
   * **Google-Recommended:** This strategy aligns with Google's best practices for production deployments on GKE.
 
@@ -2488,30 +2506,30 @@ III. Storing credentials in an encrypted volume mount is better than plain text 
 
 **You aim to monitor the memory usage of your application deployed on Compute Engine. What's the appropriate action?**
 
-- I. Implement the Stackdriver Client Library.
-- III. Utilize the Stackdriver Metrics Explorer.
-- II. Deploy the Stackdriver Monitoring Agent.
+- I. Implement the Cloud Monitoring client library.
+- III. Utilize Metrics Explorer in Cloud Monitoring.
+- II. Deploy the Ops Agent (which replaces the legacy Monitoring agent).
 - IV. Access the Google Cloud Platform Console.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Deploy the Stackdriver Monitoring Agent.
+**Correct:** II. Deploy the Ops Agent (which replaces the legacy Monitoring agent).
 
-**II. Deploy the Stackdriver Monitoring Agent.**
+**II. Deploy the Ops Agent (which replaces the legacy Monitoring agent).**
 
 Here's why this is the best option:
 
-  * **Comprehensive Metrics:** The Stackdriver Monitoring Agent automatically collects a wide range of system-level metrics, including memory usage, and sends them to Stackdriver Monitoring.
+  * **Comprehensive Metrics:** The Ops Agent automatically collects a wide range of system-level metrics, including memory usage, and sends them to Cloud Monitoring.
 
   * **Minimal Configuration:** Agent installation and basic configuration are relatively straightforward.
 
-  * **Visualization & Alerting:** Stackdriver Monitoring provides tools for visualizing memory usage data over time and creating alerts based on thresholds you define.
+  * **Visualization & Alerting:** Cloud Monitoring provides tools for visualizing memory usage data over time and creating alerts based on thresholds you define.
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. Implement the Stackdriver Client Library.** While this library _can_ be used for custom metrics, it's overkill for basic memory usage. The agent handles this automatically.
+  * **I. Implement the Cloud Monitoring client library.** While this library _can_ be used for custom metrics, it's overkill for basic memory usage. The agent handles this automatically.
 
-  * **III. Utilize the Stackdriver Metrics Explorer.** Metrics Explorer is for viewing and querying data collected by Stackdriver Monitoring – this relies on the agent collecting those metrics first.
+  * **III. Utilize Metrics Explorer in Cloud Monitoring.** Metrics Explorer is for viewing and querying data collected by Cloud Monitoring – this relies on the agent collecting those metrics first.
 
   * **IV. Access the Google Cloud Platform Console.** The GCP console offers a high-level overview of resources, but lacks the granular historical views and alerting capabilities you'd need for detailed memory monitoring.
 
@@ -2568,7 +2586,7 @@ Here's why this stands out as the best choice:
 
 ### Exam 3 · Q58
 
-**As you develop a new web application using Cloud Run and commit code to Cloud Source Repositories, you aim to deploy new code efficiently. You've already crafted a Cloud Build YAML file that builds a container and executes the command: gcloud run deploy. What's the next step?**
+**As you develop a new web application using Cloud Run and commit code to a GitHub repository connected to Cloud Build, you aim to deploy new code efficiently. You've already crafted a Cloud Build YAML file that builds a container and executes the command: gcloud run deploy. What's the next step?**
 
 - IV. Schedule a Cron job to run the command gcloud builds submit every 24 hours.
 - I. Establish a Pub/Sub topic to receive notifications when code is pushed to the repository. Set up a Pub/Sub trigger to execute the build file upon receiving an event on the topic.
@@ -2585,7 +2603,7 @@ Here's why this stands out as the best choice:
 
 **Justification:**
 
-  * **Direct Integration:** Cloud Build triggers offer the most seamless integration with Cloud Source Repositories. They directly monitor your repo for changes.
+  * **Direct Integration:** Cloud Build triggers integrate directly with connected repositories (GitHub, GitLab, Bitbucket). They directly monitor your repo for changes.
 
   * **Branch Specificity:** You can configure the trigger to activate only on pushes to the designated branch (development in this case), ensuring builds happen when you expect them.
 
@@ -2659,22 +2677,22 @@ Therefore, option I is the most appropriate approach for testing conversion rate
 
 - IV. Enable managed instance group health checks to monitor the health of your instances.
 - I. Implement smoke tests to detect application unavailability.
-- II. Set up Stackdriver uptime checks to monitor the availability of your application.
+- II. Set up Cloud Monitoring uptime checks to monitor the availability of your application.
 - III. Configure Cloud Load Balancing health checks to monitor the health of your instances.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Set up Stackdriver uptime checks to monitor the availability of your application.
+**Correct:** II. Set up Cloud Monitoring uptime checks to monitor the availability of your application.
 
-**Option II, "Set up Stackdriver uptime checks to monitor the availability of your application," is the most suitable choice for setting up monitoring to receive alerts when the application becomes unavailable.**
+**Option II, "Set up Cloud Monitoring uptime checks to monitor the availability of your application," is the most suitable choice for setting up monitoring to receive alerts when the application becomes unavailable.**
 
 Justification:
 
-  * Stackdriver uptime checks provide a straightforward method to monitor the availability of your application by periodically pinging its endpoints. This directly addresses the need to monitor application unavailability.
+  * Cloud Monitoring uptime checks provide a straightforward method to monitor the availability of your application by periodically pinging its endpoints. This directly addresses the need to monitor application unavailability.
 
-  * Stackdriver integrates seamlessly with Google Cloud Platform's monitoring and alerting capabilities, allowing you to configure alerts based on the results of uptime checks.
+  * Cloud Monitoring integrates seamlessly with Google Cloud Platform's monitoring and alerting capabilities, allowing you to configure alerts based on the results of uptime checks.
 
-  * By setting up Stackdriver uptime checks, you can quickly detect when your application becomes unavailable and receive timely alerts to take necessary actions.
+  * By setting up Cloud Monitoring uptime checks, you can quickly detect when your application becomes unavailable and receive timely alerts to take necessary actions.
 
   * This option focuses specifically on monitoring application availability, which is crucial for ensuring a good user experience.
 
@@ -2753,7 +2771,7 @@ Correct answer
 
 I is not correct because Cloud Run connects to Memorystore via the Serverless VPC Connector. Connections are over private networks. Public addresses are not required.  
 II is correct. All of the components must be in the same region.  
-III is not correct because for connectivity between Cloud Run and Memorystore all that is required is a Serverless VPN Connector.  
+III is not correct because for connectivity between Cloud Run and Memorystore all that is required is a Serverless VPC Access connector.  
 IV is not correct. The Serverless VPC Connector is configured with a non-overlapping subnet that is not associated with the VPC.  
   
 **References:**
@@ -2764,13 +2782,15 @@ IV is not correct. The Serverless VPC Connector is configured with a non-overlap
 
 [https://cloud.google.com/vpc/docs/configure-serverless-vpc-access#creating_a_connector](%0d https:/cloud.google.com/vpc/docs/configure-serverless-vpc-access#creating_a_connector)
 
+**⚠️ Note:** Cloud Run can now also use Direct VPC egress instead of a connector; the same-region rule applies there too (the subnet must be in the Cloud Run service's region).
+
 </details>
 
 ---
 
 ### Exam 4 · Q23
 
-**You're deploying an application to a Compute Engine virtual machine instance equipped with the Stackdriver Monitoring Agent. The application, a Unix process, needs monitoring to alert if it hasn't run for at least 5 minutes. However, you can't modify the application to generate metrics or logs. Which alert condition is most appropriate for this scenario?**
+**You're deploying an application to a Compute Engine virtual machine instance equipped with the Ops Agent (which replaces the legacy Monitoring agent). The application, a Unix process, needs monitoring to alert if it hasn't run for at least 5 minutes. However, you can't modify the application to generate metrics or logs. Which alert condition is most appropriate for this scenario?**
 
 - II. Configure process health monitoring to detect any issues with the Unix process.
 - III. Utilize metric absence detection to alert when the Unix process hasn't been active for the specified duration.
@@ -2779,35 +2799,29 @@ IV is not correct. The Serverless VPC Connector is configured with a non-overlap
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Utilize metric absence detection to alert when the Unix process hasn't been active for the specified duration.
+**Correct:** II. Configure process health monitoring to detect any issues with the Unix process.
 
 **Correct Option:**
 
-  * **III. Utilize metric absence detection to alert when the Unix process hasn't been active for the specified duration.**
+  * **II. Configure process health monitoring to detect any issues with the Unix process.**
 
 **Justification:**
 
-Metric absence detection perfectly aligns with the scenario where the application doesn't generate custom metrics or logs. Since most Unix processes utilize system resources, their activity often reflects in system-level metrics like CPU or memory usage. Metric absence allows you to configure an alert that triggers if these metrics haven't been reported for a certain timeframe (5 minutes in this case). This signifies that the process is likely inactive.
+  * **Built for this case:** A process-health condition counts the processes on the VM that match a name or command line and alerts when the count drops below a value (here, fewer than 1 for 5 minutes). The agent collects the process data itself, so the application doesn't need to emit any metrics or logs.
 
-  * Supporting Documentation: <https://stackoverflow.com/questions/53095774/stackdriver-monitoring-metric-absent>
+  * This is also the answer Google gives for this scenario in its sample questions, and the bank keys it the same way in (Exam 5 · Q47).
 
 **Incorrect Options:**
 
-  * **I. Set up an uptime check to monitor the availability of the virtual machine instance.**
+  * **I. Uptime check:** It probes the VM or an endpoint from outside. The VM can be up while the process is not running, and a process that serves no endpoint can't be checked this way.
 
-  * Justification: Uptime checks are effective for ensuring the entire VM is operational, but they don't provide insight into the status of individual processes running within the VM. A VM can be online while a specific process within it might be inactive.
+  * **III. Metric absence:** It fires when a time series stops arriving. The application emits no metrics of its own, and the VM's system metrics (CPU, memory) keep arriving whether or not the process runs, so there's no series whose absence reliably means "the process stopped".
 
-  * **II. Configure process health monitoring to detect any issues with the Unix process.**
+  * **IV. Metric threshold:** There's no metric for this process's activity to put a threshold on, and thresholds on system-wide CPU or memory would fire on normal load changes.
 
-  * Justification: While this might seem like a suitable solution, Stackdriver Monitoring Agent has limitations when monitoring arbitrary Unix processes. It requires the application to send custom metrics for effective process health monitoring. In this scenario, the application doesn't emit such metrics.
+**References:**
 
-  * Supporting Documentation: <https://cloud.google.com/monitoring/custom-metrics>
-
-  * **IV. Establish a metric threshold to trigger an alert when the Unix process activity falls below the defined threshold.**
-
-  * Justification: This approach could be viable if the Unix process has a metric explicitly indicating its activity level. However, if the only available metrics are system-level ones (CPU, memory), a complete drop to zero is a more reliable indicator of process inactivity compared to a specific low threshold.
-
-Setting a threshold on these system metrics might trigger alerts due to normal process behavior (e.g., the process might sleep occasionally, causing a temporary dip in CPU usage).
+<https://cloud.google.com/monitoring/alerts/types-of-conditions>
 
 </details>
 
@@ -2993,30 +3007,30 @@ Cloud Run natively supports traffic splitting, allowing you to precisely control
 
 ### Exam 4 · Q40
 
-**Your application logs to Stackdriver, and you need to obtain the count of all requests made to endpoints starting with /api/alpha/. How can you achieve this?**
+**Your application logs to Cloud Logging, and you need to obtain the count of all requests made to endpoints starting with /api/alpha/. How can you achieve this?**
 
 - IV. Export the logs to Cloud Pub/Sub and count the lines matching the pattern /api/alpha.
-- I. Create a Stackdriver counter metric for the path /api/alpha/.
-- II. Create a Stackdriver counter metric for the endpoint /api/alpha/*.
+- I. Create a logs-based counter metric for the path /api/alpha/.
+- II. Create a logs-based counter metric for the endpoint /api/alpha/*.
 - III. Export the logs to Cloud Storage and count the lines matching the pattern /api/alpha.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Create a Stackdriver counter metric for the endpoint /api/alpha/*.
+**Correct:** II. Create a logs-based counter metric for the endpoint /api/alpha/*.
 
 **The most suitable approaches:**
 
-  * **II. Create a Stackdriver counter metric for the endpoint /api/alpha/*.** This is the most direct and efficient way. Steps involved:
+  * **II. Create a logs-based counter metric for the endpoint /api/alpha/*.** This is the most direct and efficient way. Steps involved:
 
-    1. Go to Stackdriver Monitoring.
+    1. Go to Cloud Logging (Logs-based Metrics).
 
-    2. Create a custom counter metric.
+    2. Create a counter metric.
 
     3. Filter this metric with the HTTP request path `/api/alpha/*`
 
 **Why the other options aren't the best fit:**
 
-  * **I. Create a Stackdriver counter metric for the path /api/alpha/.** This is too specific. It won't count requests to sub-endpoints like `/api/alpha/resource1`.
+  * **I. Create a logs-based counter metric for the path /api/alpha/.** This is too specific. It won't count requests to sub-endpoints like `/api/alpha/resource1`.
 
   * **III. Export the logs to Cloud Storage and count the lines matching the pattern /api/alpha.** This method works, but it's less efficient for real-time monitoring:
 
@@ -3187,7 +3201,7 @@ When you **resize a Compute Engine persistent disk** , GKE does **not automatica
 
   * Kubernetes supports **expanding PVCs** if the underlying StorageClass allows volume expansion (`allowVolumeExpansion: true`).
 
-  * After expanding the PVC, **GKE will automatically resize the file system** when the Pod is restarted or rescheduled.
+  * After expanding the PVC, the Compute Engine persistent disk CSI driver **resizes the disk and the file system**, usually online without restarting the Pod.
 
 **Official Documentation:**
 
@@ -3245,6 +3259,8 @@ storage: 100Gi # Update to new size
 
 Kubernetes will handle the rest, especially if the StorageClass has `allowVolumeExpansion: true`.
 
+**⚠️ Note:** The normal flow is the reverse of the stem: edit the PVC and let the CSI driver grow the disk, which only works when the StorageClass has `allowVolumeExpansion: true`. With a manually created PV and a disk resized by hand, PVC expansion may not apply at all. C is still the best of the options.
+
 </details>
 
 ---
@@ -3270,35 +3286,25 @@ Kubernetes will handle the rest, especially if the StorageClass has `allowVolume
 
 **Correct Answer:**
 
-  * **C. Insert a build step in the**`**cloudbuild.yaml**`**file before the promotion step with the arguments:...**
-
-1.  name: gcr.io/cloud-builders/gsutil
-      2. args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']
-      3. waitFor: ['-']
+  * **C.** A build step using the `gsutil` builder with `args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']`, added before the promotion step.
 
 **Justification:**
 
-  * **Automation within the Build Pipeline:** Integrating the photo transfer into your Cloud Build pipeline ensures it happens automatically during the promotion process. This aligns with the goal of automating where feasible.
+  * **Automation within the build pipeline:** Copying the photos in a Cloud Build step makes the copy part of every promotion, with no manual work.
 
-  * **The 'gsutil' Cloud Builder:** The `gcr.io/cloud-builders/gsutil` image provides tools for efficient Cloud Storage operations.
+  * **Recursive copy (`-r`):** The photos are in several directories, so the copy must be recursive.
 
-  * **Recursive Copy (**`**-r**`**):** Ensures all photos and subdirectories within `webphotos-staging` are copied.
-
-  * `**waitFor: ['-']**`**:** Prevents subsequent build steps from running until the copy operation successfully completes.
+  * **About `waitFor: ['-']`:** This makes the step start at the beginning of the build, in parallel with other steps; it does **not** make later steps wait for it. To guarantee the photos are copied before promotion, the promotion step should list this step's `id` in its own `waitFor` (or leave `waitFor` out of both steps, since steps then run in order).
 
 **Incorrect Answers:**
 
-  * **A. Perform a manual copy of the photos to**`**webphotos-prod**`**.**
+  * **A. Manual copy:** It breaks the goal of automating the promotion and invites missed steps.
 
-    * **Reasoning:** This breaks the desired automation and introduces the potential for errors or missed steps in the promotion process.
+  * **B. Startup script in `app.yaml`:** `app.yaml` configures the runtime, not deployment tasks, and a copy at startup would run on every instance start. Deployment and data transfer are better kept in the pipeline.
 
-  * **B. Introduce a startup script in the application's**`**app.yaml**`**file...**
+  * **D. `cp -a`:** In `gsutil cp`, `-a` sets a **canned ACL** on the copied objects (it takes a value such as `public-read`); it is not an "archive" or recursive flag. Without `-r`, the directories of photos aren't copied.
 
-    * **Reasoning:** While possible, this mixes concerns. Deployment and data transfer are better separated; keeping the transfer in Cloud Build makes the process more independent and reusable.
-
-  * **D. Include a build step... `args: ['cp', '-a', 'gs://webphotos-staging', 'gs://webphotos-prod']...**
-
-    * **Reasoning:** The `-a` flag (archive mode) is usually for preserving file attributes. While it would work, the simpler `-r` (recursive) flag is more direct for this use case.
+**Note on tools:** `gsutil` is superseded by `gcloud storage` (for example `gcloud storage cp --recursive ...`), which the `gcr.io/cloud-builders/gcloud` builder can run.
 
 </details>
 
@@ -3333,7 +3339,7 @@ Kubernetes will handle the rest, especially if the StorageClass has `allowVolume
 
 **Justification:**
 
-  * **Authorized Networks for Public Clusters:** Even though your GKE cluster has a public endpoint, by default, access is restricted to a set of authorized IP addresses. Cloud Shell has a dynamic, ephemeral IP address that changes, making it likely it's not included in the allowed list. (GCP Documentation: [invalid URL removed])
+  * **Authorized Networks for Public Clusters:** A public endpoint accepts connections from any IP address unless control plane authorized networks are enabled. They are opt-in, but once enabled, only the listed IP ranges can reach the endpoint. Cloud Shell has a dynamic, ephemeral external IP address, so it is usually not in the list and its connections are dropped. The question assumes authorized networks were enabled, which is common in production.
 
   * **Timeout Behavior:** The lack of an explicit error message and a timeout is consistent with traffic simply being blocked without rejection at the network level.
 
@@ -3349,7 +3355,9 @@ Kubernetes will handle the rest, especially if the StorageClass has `allowVolume
 
   * **D. A VPC firewall is obstructing access to the cluster's endpoint**
 
-    * **Reasoning:** While possible, VPC firewalls would usually result in a more explicit connection failure rather than a silent timeout.
+    * **Reasoning:** VPC firewall rules filter traffic to and from resources in your VPC, such as the nodes; they don't control access to the Google-managed control plane's public endpoint.
+
+**⚠️ Note:** GKE now also offers a DNS-based control plane endpoint, which authorizes kubectl access with IAM instead of IP allowlists and avoids this problem for Cloud Shell.
 
 </details>
 
@@ -3712,17 +3720,17 @@ In the absence of a centralized logging solution, the task becomes more cumberso
 - I. Functional tests
 - III. Cloud Load Balancing - health probes
 - IV. Managed instance group - health evaluations
-- II. Stackdriver availability checks
+- II. Cloud Monitoring uptime (availability) checks
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Stackdriver availability checks
+**Correct:** II. Cloud Monitoring uptime (availability) checks
 
 The correct option for this scenario is:
 
-**II. Stackdriver availability checks**
+**II. Cloud Monitoring uptime (availability) checks**
 
-**Justification:** Stackdriver availability checks allow you to monitor the availability of your application from various locations globally. By configuring Stackdriver availability checks, you can receive alerts when your application becomes inaccessible, ensuring you're promptly notified of any issues affecting user access. This method directly addresses the goal of establishing a monitoring mechanism to detect when the application becomes inaccessible.
+**Justification:** Cloud Monitoring uptime checks allow you to monitor the availability of your application from various locations globally. By configuring Cloud Monitoring uptime checks, you can receive alerts when your application becomes inaccessible, ensuring you're promptly notified of any issues affecting user access. This method directly addresses the goal of establishing a monitoring mechanism to detect when the application becomes inaccessible.
 
 **Why the other options are not suitable:**
 
@@ -3830,13 +3838,13 @@ IV. Managed instance group - health evaluations: Managed instance group health e
 
   * **Google-Managed Services:** Cloud Build and Cloud Functions are fully-managed, easing operational burden. Terraform has excellent integration with GCP.
 
-  * **Serverless Alignment:** Cloud Functions is the ideal serverless compute choice for the application tier.
+  * **Serverless Alignment:** Cloud Functions is a serverless platform, so the requirement is met. (Cloud Run and App Engine are serverless too; this option wins because of infrastructure as code with Terraform and a fully managed pipeline, not because Cloud Functions is more serverless.)
 
 **Why Other Options Are Less Ideal:**
 
   * **II. Deploy Jenkins ... Deploy the application to App Engine ...**
 
-    * **Operational Overhead:** Jenkins introduces self-management of a VM compared to Cloud Build. App Engine is also less serverless than Cloud Functions.
+    * **Operational Overhead:** Jenkins runs on VMs you manage, unlike Cloud Build, and there's no infrastructure as code for versioned, auditable infrastructure changes. (App Engine itself is serverless; that is not the problem.)
 
   * **III. Set up a continuous integration pipeline on Cloud Build ... Deploy the container to a Compute Engine instance ...**
 
@@ -4078,9 +4086,9 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
 ### Exam 5 · Q45
 
-**You aim to restrict your App Engine standard configuration to a maximum of 5 instances while using the following setup:**
+**You aim to restrict your App Engine standard configuration to a maximum of 5 instances.**
 
-**Which code snippet should be integrated into your configuration to achieve this?**
+**Which scaling configuration should you use?**
 
 - I. Utilize manual scaling with a set number of instances and a minimum pending latency of 30ms.
 - III. Opt for basic scaling with a designated number of instances set at 5 and a minimum pending latency of 30ms.
@@ -4097,7 +4105,7 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
 **Explanation:**
 
-  * **Basic Scaling:** App Engine standard environment offers two scaling types: basic and automatic. Basic scaling allows you to directly control the maximum number of instances.
+  * **Basic Scaling:** App Engine standard offers three scaling types: automatic, basic and manual. Basic scaling sets a cap with `max_instances` and starts instances only when requests arrive. (Automatic scaling also accepts `max_instances`, but no option here uses it.)
 
   * **Maximum Instances:** The `max_instances` setting within your configuration file enables you to explicitly limit the number of instances to 5.
 
@@ -4128,7 +4136,7 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
 ### Exam 5 · Q47
 
-**You are setting up monitoring for your application deployed on a Compute Engine virtual machine instance equipped with the Stackdriver Monitoring Agent. The application functions as a Unix process on the instance. Your objective is to receive alerts if the Unix process remains inactive for at least 5 minutes. Given the limitation that you cannot modify the application to produce metrics or logs, what alert condition should you establish?**
+**You are setting up monitoring for your application deployed on a Compute Engine virtual machine instance equipped with the Ops Agent (which replaces the legacy Monitoring agent). The application functions as a Unix process on the instance. Your objective is to receive alerts if the Unix process remains inactive for at least 5 minutes. Given the limitation that you cannot modify the application to produce metrics or logs, what alert condition should you establish?**
 
 - II. Process status evaluation
 - IV. Metric level benchmark
@@ -4145,7 +4153,7 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
   * **Process Status Evaluation Focus:** Process status checks directly monitor whether a particular process is running or not, aligning precisely with the goal of detecting inactivity.
 
-  * **Monitoring Agent Capability:** The Stackdriver Monitoring Agent can track system-level metrics, including the existence and state of Unix processes. This makes process status evaluation a readily achievable monitoring method with the existing setup.
+  * **Monitoring Agent Capability:** The agent can track system-level metrics, including the existence and state of Unix processes. This makes process status evaluation a readily achievable monitoring method with the existing setup.
 
 **Reasons Why Other Options Are Incorrect:**
 

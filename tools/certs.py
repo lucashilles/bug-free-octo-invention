@@ -3,7 +3,7 @@
 Each certification lives in <CODE>/ (questions.json, domain-map.json, exam-N.md),
 study/<CODE>/ (guides + question banks) and content/<id>/ (lesson metadata + glossary).
 """
-import json, os
+import json, os, re
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -110,3 +110,70 @@ def domain_resolver(cid):
                 return n
         raise ValueError(f'{cid}: no domain for question {k}; add it to {path}')
     return dom
+
+
+LABEL_RE = re.compile(r'^\**\s*([A-Z]{1,4})[.:)]')
+
+
+def option_label(text):
+    """'B. ...' -> 'B', 'IV. ...' -> 'IV', '**A. ...' -> 'A'."""
+    m = LABEL_RE.match(text)
+    return m.group(1) if m else None
+
+
+def apply_fixes(cid, questions, strict=True, path=None):
+    """Apply <CODE>/fixes.json corrections in place. Idempotent, so it can run on a fresh parse
+    or on questions.json itself. Per "<exam>-<n>" entry:
+      question:    [[old, new], ...] text replacements in the stem
+      answers:     {label: full option text}
+      correct:     label or [labels] that are correct
+      explanation: [[old, new], ...] replacements, or a string replacing the whole explanation
+      note:        caveat appended to the explanation as "**⚠️ Note:** ..."
+      why:         reason (documentation only)
+    """
+    path = path or os.path.join(cert_dir(cid), 'fixes.json')
+    if not os.path.exists(path):
+        return 0
+    fixes = {k: v for k, v in json.load(open(path, encoding='utf-8')).items() if not k.startswith('_')}
+    seen = set()
+
+    def replace(q, field, pairs, k):
+        for old, new in pairs:
+            if old in new and new in q[field]:
+                continue  # already applied (the new text extends the old)
+            if old in q[field]:
+                q[field] = q[field].replace(old, new)
+            elif new not in q[field]:
+                raise ValueError(f'{path}: {k}: {field} text not found: {old!r}')
+
+    for q in questions:
+        k = f"{q['exam']}-{q['n']}"
+        fix = fixes.get(k)
+        if not fix:
+            continue
+        seen.add(k)
+        replace(q, 'question', fix.get('question', []), k)
+        labels = {option_label(a['text']): a for a in q['answers']}
+        for label, text in fix.get('answers', {}).items():
+            if label not in labels:
+                raise ValueError(f'{path}: {k}: no option {label}')
+            labels[label]['text'] = text
+        if 'correct' in fix:
+            want = fix['correct'] if isinstance(fix['correct'], list) else [fix['correct']]
+            if not set(want) <= set(labels):
+                raise ValueError(f'{path}: {k}: no option among {want}')
+            for label, a in labels.items():
+                a['correct'] = label in want
+        exp = fix.get('explanation')
+        if isinstance(exp, str):
+            q['explanation'] = exp
+        elif exp:
+            replace(q, 'explanation', exp, k)
+        if fix.get('note'):
+            note = f"**⚠️ Note:** {fix['note']}"
+            if note not in q['explanation']:
+                q['explanation'] = f"{q['explanation'].rstrip()}\n\n{note}"
+    missing = set(fixes) - seen
+    if strict and missing:
+        raise ValueError(f'{path}: fixes for unknown questions: {sorted(missing)}')
+    return len(seen)

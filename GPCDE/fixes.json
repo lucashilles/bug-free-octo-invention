@@ -1,0 +1,1136 @@
+{
+  "_comment": "Corrections applied by tools/fix.py and the parsers on top of the bank. Keys are <exam>-<n>. 'question'/'explanation' are lists of [old, new] replacements (or 'explanation' as a full replacement string), 'answers' replaces option text by label, 'correct' sets the correct label(s), 'note' appends a ⚠️ note, 'why' records the reason.",
+  "2-31": {
+    "correct": [
+      "I",
+      "IV"
+    ],
+    "why": "II and IV are duplicates (scheduled job vs lifecycle rule); Bucket Lock has no extra charge and is the only option covering the 7-year retention requirement. Matches the same scenario in 1-2.",
+    "explanation": "**Correct Answers:**\n\n  * **I. Apply the Bucket Lock feature to enforce a retention policy on the data.**\n\n  * **IV. Establish a lifecycle management policy to transition objects older than 14 days to the Coldline storage class.**\n\n\n\n\n**Justification:**\n\n  * **Retention (I):** The stem requires keeping the data for at least 7 years. A bucket retention policy (locked with Bucket Lock) guarantees that no object can be deleted or overwritten before it reaches that age. Bucket Lock itself has no extra charge; you only pay for the storage you keep, which you would have to keep anyway.\n\n  * **Tiering (IV):** Logs are reviewed often during the first two weeks, then only once a year. A lifecycle rule that moves objects older than 14 days to Coldline (designed for data accessed less than once a quarter) cuts storage cost, and it runs automatically with no code to maintain.\n\n\n\n\n**Why Other Options Are Less Ideal:**\n\n  * **II. Schedule a job to transition objects older than 14 days to the Coldline storage class.** This does the same thing as IV, but you have to write, schedule and monitor the job yourself. Object Lifecycle Management is the managed, declarative way to do it, and choosing both II and IV would leave the retention requirement unmet.\n\n  * **III. Generate a JSON Web Token (JWT) for users requiring access to the Coldline storage buckets.** Access is handled with IAM; JWTs do nothing for cost or retention.\n\n  * **V. Configure a lifecycle management policy to transition objects older than 14 days to the Nearline storage class.** Nearline suits data read about once a month. For data read once a year, Coldline is cheaper.\n\n\n\n\n**References** :  \n<https://cloud.google.com/storage/docs/bucket-lock>\n\n<https://cloud.google.com/storage/docs/lifecycle>"
+  },
+  "3-20": {
+    "correct": "I",
+    "answers": {
+      "I": "I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the \"Master\" dataset. Authorize these views to access records from the \"Master\" dataset, granting employees access to their respective departmental datasets."
+    },
+    "why": "Option I is Google's authorized-view pattern (views in a separate dataset, authorized on the source). Views inside Master (III) can't be authorized views and querying them needs access to the base tables. Option I reworded so the views clearly live in the department datasets.",
+    "explanation": "**I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the \"Master\" dataset. Authorize these views to access records from the \"Master\" dataset, granting employees access to their respective departmental datasets.**\n\nThis is BigQuery's **authorized view** pattern:\n\n  * **No data copies:** The data stays in the \"Master\" dataset. Each department dataset only holds a view that selects that department's rows.\n\n  * **Access to the view, not the tables:** Authorizing the view on the \"Master\" dataset lets the view read the source tables on the users' behalf. Employees get access only to their department's dataset, so they can query the view without any permission on the \"Master\" tables.\n\n  * **Separate dataset is required:** An authorized view must live in a different dataset from the source data. Putting the views in their own datasets is what keeps the base tables out of reach.\n\n  * **Simple to manage:** Granting a team access to one dataset is one IAM binding, and changes in \"Master\" show up in the views immediately.\n\n\n\n\n**Why Other Options Are Less Ideal:**\n\n  * **II. Set up separate datasets for each department and implement data pipelines ...** This copies the data, adds storage cost, and adds pipelines to build and keep in sync.\n\n  * **III. Create a \"Master\" dataset and develop individual views for each department within it ...** A view in the same dataset as its source can't be an authorized view. Without authorization, a user querying the view also needs read access to the underlying \"Master\" tables, which would expose every department's records.\n\n  * **IV. Create a \"Master\" dataset and segregate data into separate tables for each department ...** Splitting the data into per-department tables complicates loading and cross-department queries, and you still have to manage table-level permissions inside the shared dataset.\n\n\n\n\n**Reference:**\n\n<https://cloud.google.com/bigquery/docs/authorized-views>\n\n<https://cloud.google.com/bigquery/docs/dataset-access-controls>"
+  },
+  "6-6": {
+    "answers": {
+      "A": "A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name."
+    },
+    "why": "Option A (custom role with only cloudsql.instances.connect) contradicts Google's guidance that Auth Proxy accounts get roles/cloudsql.client (see 2-38, 4-36). Reworded A to the documented role so the key is right; B still fails because Unix sockets aren't supported on Windows.",
+    "explanation": "The correct answer is \n\n**A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.**\n\nExplanation:\n\nGoogle's documentation says that a service account connecting through the **Cloud SQL Auth Proxy** needs the **Cloud SQL Client** role (`roles/cloudsql.client`). It is the predefined role made for this job: it lets the account connect to instances (and read the instance metadata the proxy needs) without letting it change or delete them, so it meets the **principle of least privilege** with no custom role to maintain.\n\nThe proxy then needs to know which instance to reach, so you start it with the **instance connection name** (`project:region:instance`). On Windows, the application connects to the proxy over TCP on localhost.\n\nJustifications for Incorrect Options:\n\n  * **Option B: Assign roles/cloudsql.client and use the --unix-socket option**  \nThe role is right, but Google's documentation states that Unix sockets aren't supported for the Windows environment. On a Windows VM you connect to the proxy over a TCP port instead.\n\n  * **Option C: Grant the roles/cloudsql.editor role**  \nThe `roles/cloudsql.editor` role provides broad permissions, including modifying database instances, which violates the principle of least privilege and poses a security risk.\n\n  * **Option D: Assign the roles/cloudsql.viewer role**  \nThe `roles/cloudsql.viewer` role allows read-only access to Cloud SQL resources but does not grant the `cloudsql.instances.connect` permission needed for the Cloud SQL Auth Proxy to establish a connection.\n\n\n\n\n**Relevant Documentation:**\n\nFor more information, refer to:\n\n  * [Using the Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy)\n\n  * [Cloud SQL roles and permissions](https://cloud.google.com/sql/docs/mysql/roles-and-permissions)"
+  },
+  "1-29": {
+    "why": "App Engine standard does scale to zero; the real problem with III is Cloud SQL's always-on cost.",
+    "explanation": [
+      [
+        "  * **III. App Engine Standard Environment:** The standard environment doesn't scale down to zero, and Cloud SQL, as a managed SQL database, is not as ideal a fit for a serverless application as Firestore.",
+        "  * **III. App Engine Standard Environment:** App Engine standard can scale to zero, so the platform isn't the problem. The weak point is Cloud SQL: an instance keeps running (and billing) on days with no traffic, and its connection limits make it a poorer fit for sudden spikes than Firestore, which is serverless and billed per operation."
+      ]
+    ]
+  },
+  "2-36": {
+    "why": "nam3 is a multi-region config, not regional; Spanner replication comes from the instance configuration, not node count.",
+    "explanation": [
+      [
+        "  * **Having a cluster with multiple nodes improves database availability and fault tolerance. With a minimum of 3 Spanner nodes, the system can maintain availability even if one node fails. This redundancy ensures that the database remains accessible and operational, contributing to the goal of achieving 99.999% availability.**",
+        "  * **Nodes add serving and storage capacity to every replica in the instance. Replication, and therefore fault tolerance, comes from the instance configuration (here a multi-region one), not from the node count. Google has long recommended at least 3 nodes for production instances so a global workload has enough capacity to keep latency low, which makes this the better of the two node-count options.**"
+      ],
+      [
+        "  * \"nam3\" configuration refers to a regional instance in North America, which may not provide the desired global availability and latency improvements compared to a multi-regional configuration.",
+        "  * \"nam3\" is a multi-region configuration too, but all of its regions are in North America. It gives 99.999% availability, yet users in Europe and Asia would read from far-away replicas, so it doesn't minimize read latency worldwide."
+      ]
+    ]
+  },
+  "2-25": {
+    "why": "Explanation wrongly says internal HTTP(S) LB can't route on headers; product names are outdated. Key kept as best answer for multi-region VM backends.",
+    "explanation": [
+      [
+        "  * **IV. Internal HTTP(S) Load Balancing:** Internal HTTP(S) Load Balancing lacks the ability to make routing decisions based on HTTP headers.",
+        "  * **IV. Internal HTTP(S) Load Balancing:** Internal Application Load Balancers do support header-based routing through URL maps. The question, though, is about services calling each other across regions with loose coupling, which is the service-mesh use case Traffic Director was built for; a classic regional internal load balancer only reaches backends in its own region."
+      ]
+    ],
+    "note": "Traffic Director and Anthos Service Mesh have both been merged into **Cloud Service Mesh**, so newer versions of this question may name that instead. A cross-region internal Application Load Balancer can now also route on headers across regions, so this question reflects the older product lineup."
+  },
+  "2-41": {
+    "answers": {
+      "II": "II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS)."
+    },
+    "why": "The Istio on GKE add-on is deprecated; the Google-supported Istio is Cloud Service Mesh. Same answer logic.",
+    "explanation": [
+      [
+        "**II. Deploy Istio, activate proxy injection in the application namespace, and then implement mutual TLS (mTLS).**",
+        "**II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS).**"
+      ],
+      [
+        "  * **Istio is a service mesh explicitly engineered",
+        "  * **Cloud Service Mesh is Google's supported distribution of Istio, a service mesh explicitly engineered"
+      ],
+      [
+        "  * **The use of Istio and mTLS satisfies",
+        "  * **The use of the mesh and mTLS satisfies"
+      ],
+      [
+        "  * **Istio is widely used with Kubernetes and offers robust Google support.**",
+        "  * **Cloud Service Mesh is fully supported by Google on GKE.** (The older \"Istio on GKE\" add-on is deprecated.)"
+      ],
+      [
+        "[https://cloud.google.com/istio/docs/istio-on-gke/installing](https://cloud.google.com/istio/docs/istio-on-gke/installing  https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits)\n\n[https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits](https://cloud.google.com/istio/docs/istio-on-gke/installing  https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits)",
+        "<https://cloud.google.com/service-mesh/docs/overview>\n\n<https://cloud.google.com/service-mesh/docs/security/configuring-mtls>"
+      ]
+    ]
+  },
+  "3-17": {
+    "why": "Anthos / Cloud Run for Anthos renamed or retired; can't modernize without changing the answer.",
+    "note": "\"Anthos\" is now **GKE Enterprise**, and \"Cloud Run for Anthos\" became **Knative serving**, which is no longer offered as a Google-managed add-on. Learn the key (one managed platform across both environments plus a serverless deployment layer), but expect newer product names on the real exam."
+  },
+  "4-42": {
+    "why": "Stem has no scenario; key unjustified.",
+    "note": "The question is missing its scenario (no current database or workload is described), so the key can't be justified from the stem. Don't build rules from it; if it appears, pick the answer that moves to a managed Google Cloud database."
+  },
+  "3-53": {
+    "why": "IAP TCP forwarding for SSH is separate from the HTTP(S) load balancer.",
+    "explanation": [
+      [
+        "    * A single HTTP(S) load balancer handles both web traffic and SSH access (tunneled through IAP), simplifying your networking setup.",
+        "    * The HTTP(S) load balancer handles web traffic, while SSH goes through IAP TCP forwarding, a separate path that needs only a firewall rule allowing IAP's range (35.235.240.0/20) on port 22. Neither needs public IPs on the instances."
+      ]
+    ]
+  },
+  "6-8": {
+    "why": "Backend is in one region, so the gain is edge termination on Premium Tier, not routing to the closest backend; passthrough NLB does carry HTTP.",
+    "explanation": [
+      [
+        "  1. **Use an external Application Load Balancer** : Google Cloud's external **Application Load Balancer** is built on the **Premium Tier network** , offering global load balancing with proximity-based routing. This setup reduces latency by routing each request to the backend instance closest to the device, minimizing TTFB.",
+        "  1. **Use an external Application Load Balancer** : With **Premium Tier**, the global external **Application Load Balancer** terminates the TCP and TLS connections at the Google edge location closest to each device, then carries the request to the backend over Google's private network. The backend is in a single region, so the gain doesn't come from picking a closer backend: it comes from shorter handshakes (connection setup happens near the device) and reused connections from the edge to the backend, which lowers TTFB."
+      ],
+      [
+        "The Network Load Balancer operates at Layer 4 (TCP/UDP) and does not support HTTP(S) protocols natively. It also lacks advanced features like proximity-based routing, which is crucial for reducing TTFB for a geographically dispersed user base.",
+        "The passthrough Network Load Balancer is regional and operates at Layer 4: it forwards the HTTP traffic, but connections aren't terminated at the edge, so every TCP and TLS handshake travels all the way to the backend region. That gives a higher TTFB than the Application Load Balancer."
+      ]
+    ]
+  },
+  "6-15": {
+    "why": "Best-of-options; Shared VPC weakens isolation, PSC is the newer option.",
+    "note": "Shared VPC puts both projects on one network, which weakens the \"keep projects isolated\" requirement. Private Service Connect is now the cleaner way to reach AlloyDB from another project or network. Answer Shared VPC when PSC isn't offered."
+  },
+  "3-15": {
+    "why": "Datastore mode isn't 'less performant'; it lacks real-time listeners and offline client support.",
+    "explanation": [
+      [
+        "  * **IV. Firestore in Datastore mode utilizing a global query:** While Firestore in Datastore mode supports global queries, it is generally less performant than Native mode for common use cases like this one.",
+        "  * **IV. Firestore in Datastore mode utilizing a global query:** Datastore mode is built for server-side workloads. It lacks Native mode's real-time listeners and mobile/web client libraries with offline support, which is what lets customers see their purchases right after submitting them."
+      ]
+    ]
+  },
+  "2-12": {
+    "why": "REST isn't tied to HTTP/1.1; the bandwidth argument is Protobuf vs JSON.",
+    "explanation": [
+      [
+        "REST also uses HTTP/1.1, which is not as efficient as HTTP/2 in terms of bandwidth usage and performance, particularly in mobile environments.",
+        "REST can run over HTTP/2 as well, so the main bandwidth difference is the payload format: binary Protobuf messages are much smaller than the equivalent JSON."
+      ]
+    ]
+  },
+  "5-9": {
+    "correct": "D",
+    "why": "allAuthenticatedUsers still forces a Google sign-in, so B doesn't give unrestricted public access; ingress 'Internal and Cloud Load Balancing' still allows the external LB that fronts IAP. D is the documented pattern.",
+    "explanation": "The correct answer is\n\n**D. Set up separate Cloud Run services for public and restricted microservices. Enable IAP only for restricted services, and set the Cloud Run ingress settings to 'Internal and Cloud Load Balancing' for these services.**\n\nExplanation:\n\n  1. **Public services** : Deployed as their own Cloud Run services with the `roles/run.invoker` role granted to `allUsers`, so anyone can call them with no sign-in.\n\n  2. **Restricted services** : Put behind an external Application Load Balancer with **Identity-Aware Proxy (IAP)** enabled, and grant the IAP-secured Web App User role only to the Google identities that need access.\n\n  3. **Ingress 'Internal and Cloud Load Balancing'** : This setting still allows traffic that arrives through the external Application Load Balancer, but it blocks requests sent straight to the service's `run.app` URL. Users therefore can't bypass IAP.\n\n\n\n\nThis keeps each service's access rule simple and uses managed Google features only, with no custom code.\n\nJustifications for Incorrect Options:\n\n  * **Option A: Develop a new microservice to manage access**  \nWriting your own access-checking service adds code to build, secure and operate, when IAP already does identity-based access natively.\n\n  * **Option B: IAP for all services with allAuthenticatedUsers for public ones**  \n`allAuthenticatedUsers` still requires every caller to sign in with a Google account, so the public services would not be unrestricted as the requirement asks. Putting IAP in front of services that should be open also adds configuration for no benefit.\n\n  * **Option C: Use Cloud Endpoints with Firebase Authentication**  \nCloud Endpoints and Firebase Authentication can control access, but they need more setup than IAP, and Firebase Security Rules protect Firebase data, not Cloud Run services.\n\n\n\n\n**Relevant Documentation:**\n\nFor more details, refer to:\n\n  * [Identity-Aware Proxy (IAP) Overview](https://cloud.google.com/iap/docs/concepts-overview)\n\n  * [Cloud Run ingress settings](https://cloud.google.com/run/docs/securing/ingress)\n\n  * [Allowing public (unauthenticated) access to Cloud Run](https://cloud.google.com/run/docs/authenticating/public)"
+  },
+  "5-3": {
+    "why": "Diagram missing; explanations muddled; can't fix without the diagram.",
+    "note": "The diagram this question refers to is missing, so the meaning of steps 1 to 4 is inferred. The key is plausible, but some of the explanations are muddled (option C is rejected because \"Dataflow is better than BigQuery\", and B and C are said to fail because Firestore isn't for streaming data, although the key stores data in Firestore too). The pattern to remember is Pub/Sub → Dataflow → BigQuery."
+  },
+  "5-19": {
+    "answers": {
+      "IV": "IV. 1. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.\n\n2\\. Reserve an external IP address and set up an external HTTP(S) load balancer.\n\nEnable Cloud CDN and direct traffic to the backend bucket."
+    },
+    "why": "Option IV had a garbled extra step routing to an unmanaged instance group; 'multi-regional' is the legacy storage class name.",
+    "explanation": [
+      [
+        "  * **1\\. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.** Multi-regional Cloud Storage provides",
+        "  * **1\\. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.** A multi-region bucket provides"
+      ],
+      [
+        "  * **Maximizes reliability:** Multi-regional storage",
+        "  * **Maximizes reliability:** Multi-region storage"
+      ],
+      [
+        "fully managed services like multi-regional Cloud Storage",
+        "fully managed services like multi-region Cloud Storage"
+      ],
+      [
+        "A regional Cloud Storage bucket offers less redundancy than a multi-regional one",
+        "A regional Cloud Storage bucket offers less redundancy than a multi-region one"
+      ]
+    ]
+  },
+  "5-54": {
+    "why": "III is an anti-pattern because Cloud Run throttles CPU after the response (request-based billing); secrets don't belong in the image.",
+    "explanation": [
+      [
+        "  * While executing background tasks after the response has been delivered can help offload some processing from the request handling phase, it might not directly address the issue of enhancing user experience during traffic spikes. Additionally, this approach might not be suitable for all types of tasks and could introduce complexity into the application architecture.",
+        "  * With request-based billing (the default), Cloud Run throttles an instance's CPU almost to zero once the response is sent, so background work after the response may stall or never finish. Google lists it as an anti-pattern; use Cloud Tasks, Pub/Sub or a Cloud Run job for deferred work instead."
+      ],
+      [
+        "  * This approach optimizes the startup time of new instances, allowing the service to efficiently handle traffic spikes and provide a better user experience.",
+        "  * This approach optimizes the startup time of new instances, allowing the service to efficiently handle traffic spikes and provide a better user experience.\n\n  * Only non-sensitive configuration and static data belong in the image. Secrets such as passwords and API keys should stay in Secret Manager and be mounted or read at runtime."
+      ]
+    ]
+  },
+  "4-47": {
+    "correct": "III",
+    "explanation": "**Correct Option:**\n\n  * **III. Each developer creates a branch for their individual work, commits their changes to their branch, and merges their code into the main branch on a daily basis.**\n\n\n\n\n**Justification:**\n\n  * **Trunk-based development:** Google's DORA research (the \"Trunk-based development\" capability in Google Cloud's DevOps guidance) identifies short-lived branches merged into the main branch (trunk) at least once a day as a key predictor of high software delivery performance.\n\n  * **Small, frequent merges:** Merging daily keeps each change small, so merge conflicts are rare and easy to resolve, and integration problems are found early by CI instead of right before a release.\n\n  * **Fast feedback:** Combined with automated builds and tests on every merge, this keeps the main branch always releasable.\n\n\n\n\n**Why Other Options Are Not Ideal:**\n\n  * **I. Developers commit their code to the main branch before each product release...**\n\n    * **Big-bang integration:** Code is integrated only before a release, so conflicts and integration bugs pile up and are found late, forcing rollbacks.\n\n  * **II. Groups of developers copy the repository...**\n\n    * **Long-lived forks:** Merging separate copies only before each release creates large, risky merges and extra coordination.\n\n  * **IV. Groups of developers create a feature branch... following approval from the change advisory board.**\n\n    * **Long-lived feature branches:** Feature branches that live until a release grow large and conflict-prone.\n\n    * **Heavyweight approval:** DORA research found that approval by an external change advisory board slows delivery without improving stability. Lightweight peer review (for example, pull request review) is the recommended alternative.\n\n\n\n\n**References:**\n\n  * <https://cloud.google.com/architecture/devops/devops-tech-trunk-based-development>\n\n  * <https://dora.dev/capabilities/trunk-based-development/>\n\n  * <https://dora.dev/capabilities/streamlining-change-approval/>",
+    "why": "Feature branches + change advisory board contradicts DORA/Google guidance; daily merges to main (trunk-based development) is the recommended practice and matches Exam 4 Q28."
+  },
+  "4-28": {
+    "note": "Cloud Source Repositories is closed to new customers. Today the same goal is met with a GitHub, GitLab or Bitbucket repository connected to Cloud Build (or Secure Source Manager), still using trunk-based development. Expect the bank's key on older exam versions.",
+    "why": "CSR is retired for new customers; answer logic depends on it, so note only."
+  },
+  "4-9": {
+    "answers": {
+      "IV": "IV. Implement Cloud Debugger logpoints to dynamically insert log statements into the running application code for real-time debugging.",
+      "III": "III. Make use of Cloud Debugger snapshots to capture and analyze application state and variables at specific points in time.",
+      "II": "II. Employ Cloud Monitoring to track and monitor the health and performance metrics of the deployed API.",
+      "I": "I. Utilize Cloud Trace to trace and analyze request latency and performance across the application."
+    },
+    "explanation": [
+      [
+        "Stackdriver Debug Logpoints",
+        "Cloud Debugger logpoints"
+      ],
+      [
+        "Stackdriver Debug Snapshots",
+        "Cloud Debugger snapshots"
+      ],
+      [
+        "Stackdriver Debugger (Logpoints)",
+        "Cloud Debugger (Logpoints, retired)"
+      ],
+      [
+        "Stackdriver Trace",
+        "Cloud Trace"
+      ],
+      [
+        "Stackdriver Monitoring",
+        "Cloud Monitoring"
+      ]
+    ],
+    "note": "Cloud Debugger (logpoints and snapshots) was shut down in May 2023, and its open-source successor Snapshot Debugger is archived and unsupported. The bank keys logpoints because the question predates the shutdown; today you would add structured logging and redeploy, or use Cloud Trace and Cloud Profiler.",
+    "why": "Stackdriver renamed; Cloud Debugger retired, question only makes sense with it, so note."
+  },
+  "2-6": {
+    "answers": {
+      "I": "I. Activate the Vulnerability scanning feature within Artifact Registry."
+    },
+    "explanation": [
+      [
+        "Container Registry's vulnerability scanning feature",
+        "Artifact Registry's vulnerability scanning feature (Artifact Analysis)"
+      ],
+      [
+        "the Container Registry",
+        "Artifact Registry"
+      ],
+      [
+        "Container Registry",
+        "Artifact Registry"
+      ]
+    ],
+    "why": "Container Registry is deprecated; Artifact Registry provides the same managed vulnerability scanning."
+  },
+  "1-40": {
+    "question": [
+      [
+        "Container Registry",
+        "Artifact Registry"
+      ]
+    ],
+    "answers": {
+      "II": "II. Create a dedicated project for the operations team, equipped with Artifact Registry. Grant appropriate permissions to the Cloud Build service account in each developer team's project to enable access to the operations team's registry.",
+      "III": "III. Set up a separate project for the operations team, integrating Artifact Registry. Generate a Service Account for each development team and allocate necessary permissions to access the operations team's registry. Store the service account key file in the source code repository for authentication against the registry.",
+      "I": "I. Establish Artifact Registry within each development team's project. Configure Cloud Build builds to push Docker images to the respective project's registry. Provide the operations team access to each team's registry."
+    },
+    "explanation": [
+      [
+        "Container Registry",
+        "Artifact Registry"
+      ]
+    ],
+    "why": "Container Registry is deprecated; Artifact Registry is the drop-in replacement and the answer logic is unchanged."
+  },
+  "3-37": {
+    "explanation": [
+      [
+        "    * **Additional Overhead:** While the `gcloud` CLI is useful, it introduces an extra tool dependency. `kubectl` is the primary interface for Kubernetes interaction.",
+        "    * **Not a switching mechanism on its own:** Running `gcloud container clusters get-credentials` is how each developer adds a GKE cluster's entry to their own kubeconfig, and it is a valid, Google-documented approach. Note that gcloud is not an \"extra\" dependency: GKE authentication in kubeconfig relies on the gcloud-based `gke-gcloud-auth-plugin` anyway. The bank prefers a shared, consistent definition of clusters and contexts that developers switch between with `kubectl config use-context`."
+      ]
+    ],
+    "note": "This is a best-of-the-options judgement. GKE documentation recommends that each developer run `gcloud container clusters get-credentials` (which writes the contexts into their own kubeconfig) and switch with `kubectl config use-context`. A shared kubeconfig should not embed credentials; GKE kubeconfig user entries call the gcloud auth plugin.",
+    "why": "Explanation wrongly calls gcloud an extra dependency; key is debatable, so note."
+  },
+  "2-51": {
+    "question": [
+      [
+        "Storing your team's code in Cloud Source Repositories",
+        "Storing your team's code in a GitHub repository"
+      ]
+    ],
+    "explanation": [
+      [
+        "building container images directly from Cloud Source Repositories",
+        "building container images directly from connected repositories such as GitHub"
+      ]
+    ],
+    "note": "For fast developer feedback, building and testing on every commit or push is the usual practice; Git tags normally mark releases. The real lesson is Cloud Build (CI) rather than Spinnaker (CD).",
+    "why": "CSR closed to new customers; tag-based trigger rationale is weak, so note."
+  },
+  "4-48": {
+    "explanation": [
+      [
+        " Additionally, Google recommends using **Looker Studio** rather than Looker for direct integration with BigQuery for reporting.",
+        " Looker can also analyze BigQuery data, but Looker Studio is the simpler, no-cost choice for ad hoc test reports."
+      ]
+    ],
+    "note": "For load testing at scale, Google's documented pattern is distributed load generation (Locust or JMeter) on GKE, scaled with Pods. A single Compute Engine VM is only the best of these four options.",
+    "why": "Unsupported Looker Studio claim; single-VM JMeter is best-of-options, not the Google pattern."
+  },
+  "4-6": {
+    "explanation": "**Correct Answer:**\n\n**III. Have the Cloud Build step write the Cloud Function results to a file and return 0. Add a step after the Cloud Function deletion that checks whether the file contains the expected results and fails if it doesn't.**\n\n**Why:**\n\n  * By default, Cloud Build stops the build as soon as a step fails, so a failing test step would skip the deletion step.\n\n  * If the test step always returns 0 and records its outcome in a file, the deletion step always runs.\n\n  * All steps share the `/workspace` directory, so the final step can read the file, check the results and fail the build if the test did not pass. Cleanup happens and the build still reports the test failure.\n\n**Why the other options are wrong:**\n\n  * **I.** Deleting the Cloud Function before the test means there is nothing left to test.\n\n  * **II.** `waitFor` only controls ordering and parallelism. If the test step fails, the build still stops and the deletion step never runs.\n\n  * **IV.** Environment variables set inside one step do not persist to later steps (each step runs in its own container), so the final step cannot read the outcome. Only files in `/workspace` are shared between steps.\n\n**Note:** Cloud Build steps now also support `allowFailure` and `allowExitCodes`, which let the build continue after a failed test step. If such an option is offered, it is a cleaner design.\n\n**Documentation:**\n\n  * Build configuration file schema: <https://cloud.google.com/build/docs/build-config-file-schema>\n\n  * Cloud Build: <https://cloud.google.com/build/docs/automating-builds/create-manage-triggers>",
+    "why": "Original explanation was muddled (wrong reasons for II and IV); key unchanged."
+  },
+  "4-55": {
+    "explanation": [
+      [
+        "Option D, implementing logging of exceptions using appropriate logging mechanisms rather than System.out.println, is good practice for improving logging clarity and maintainability. However, it does not guarantee that errors will appear in the Error Reporting console unless they are written to stderr.",
+        "Option D, logging exceptions with a proper logging framework rather than System.out.println, also helps: Error Reporting groups an entry as an error only when it contains a stack trace (or is a structured log entry in the Error Reporting format), and System.out.println writes to stdout without one. However, D alone does not say where the output goes. C is the bank's answer because Cloud Run picks up errors written to stderr; in practice, make sure errors go to stderr *and* include the exception's stack trace."
+      ]
+    ],
+    "why": "Explanation overstated that D is irrelevant; Error Reporting also needs a stack trace or error format."
+  },
+  "2-48": {
+    "answers": {
+      "V": "V. Employ Cloud Profiler to identify performance bottlenecks and generate reports.",
+      "IV": "IV. Leverage Cloud Debugger to analyze network latency issues.",
+      "III": "III. Use Cloud Trace for generating comprehensive latency reports."
+    },
+    "explanation": [
+      [
+        "Stackdriver Trace",
+        "Cloud Trace"
+      ],
+      [
+        "Stackdriver Debugger",
+        "Cloud Debugger"
+      ],
+      [
+        "Stackdriver Profiler",
+        "Cloud Profiler"
+      ]
+    ],
+    "note": "Cloud Trace still accepts Zipkin data, but Zipkin is a legacy path: OpenTelemetry (which absorbed OpenCensus) is now the recommended instrumentation. If an OpenTelemetry option is offered, prefer it over Zipkin. Cloud Debugger was shut down in 2023.",
+    "why": "Stackdriver renamed; Zipkin legacy, so note."
+  },
+  "3-16": {
+    "answers": {
+      "IV": "IV. Utilize OpenTelemetry to instrument the service for measuring service latency, and subsequently, generate custom metrics in Cloud Monitoring."
+    },
+    "explanation": [
+      [
+        "Utilize OpenCensus to measure service latency",
+        "Utilize OpenTelemetry to measure service latency"
+      ],
+      [
+        "OpenCensus (now part of OpenTelemetry) is used",
+        "OpenTelemetry (the successor of OpenCensus) is used"
+      ]
+    ],
+    "why": "OpenCensus has been merged into OpenTelemetry; answer logic unchanged."
+  },
+  "1-20": {
+    "answers": {
+      "IV": "IV. Error Reporting",
+      "II": "II. Cloud Debugger",
+      "III": "III. Web Security Scanner"
+    },
+    "explanation": [
+      [
+        "Stackdriver Error Reporting",
+        "Error Reporting"
+      ],
+      [
+        "Stackdriver Debugger",
+        "Cloud Debugger"
+      ],
+      [
+        "Cloud Security Scanner",
+        "Web Security Scanner"
+      ]
+    ],
+    "why": "Renamed products: Cloud Security Scanner is Web Security Scanner; Stackdriver names dropped."
+  },
+  "3-51": {
+    "answers": {
+      "I": "I. Employ Migrate to Containers to transition the VM to your Google Kubernetes Engine (GKE) cluster as a container.",
+      "III": "III. Use Migrate to Virtual Machines to transfer the VM to a Compute Engine instance, and leverage Cloud Build for container conversion."
+    },
+    "explanation": [
+      [
+        "Migrate for Anthos",
+        "Migrate to Containers"
+      ],
+      [
+        "Migrate for Compute Engine",
+        "Migrate to Virtual Machines"
+      ]
+    ],
+    "why": "Renamed products: Migrate for Anthos is Migrate to Containers; Migrate for Compute Engine is Migrate to Virtual Machines."
+  },
+  "1-6": {
+    "answers": {
+      "III": "III. Enable Artifact Analysis, store new container images in Artifact Registry, and specifically review critical vulnerability results before each deployment.",
+      "IV": "IV. Utilize the Artifact Analysis REST API to invoke Artifact Analysis for scanning new container images, then review the vulnerability results before each deployment.",
+      "II": "II. Enable Artifact Analysis and store new container images in Artifact Registry, subsequently reviewing the vulnerability results before each deployment.",
+      "I": "I. Utilize the gcloud CLI to invoke Artifact Analysis for scanning new container images and review the vulnerability results before each deployment."
+    },
+    "explanation": [
+      [
+        "**Options I, III, and IV also involve utilizing Container Analysis for scanning container images, but they either lack the integration with Artifact Registry (option I) or do not emphasize the importance of reviewing vulnerability results before each deployment (options III and IV).**",
+        "**Options I and IV call the scanner on demand (through gcloud or the REST API) for each new image, which is manual work that automatic scanning on push to Artifact Registry avoids. Option III reviews only critical vulnerabilities, so it can miss other known OS vulnerabilities that you want to stay informed about.**"
+      ],
+      [
+        "Container Analysis",
+        "Artifact Analysis"
+      ]
+    ],
+    "why": "Container Analysis renamed Artifact Analysis; explanation mis-described why I, III, IV are wrong."
+  },
+  "5-2": {
+    "answers": {
+      "II": "II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through $(gcloud beta emulators pubsub env-init)."
+    },
+    "explanation": [
+      [
+        "${gcloud beta emulators pubsub env-init}",
+        "$(gcloud beta emulators pubsub env-init)"
+      ],
+      [
+        "Option IV is incorrect because it suggests deploying the Pub/Sub emulator using `**gcloud**`, which is unnecessary since the emulator can be started locally without deploying it. Additionally, the method of configuring the application to utilize the local emulator by exporting the `**PUBSUB_EMULATOR_HOST**` variable is not mentioned in this option.",
+        "Option IV is also a valid setup: `env-init` simply prints `export PUBSUB_EMULATOR_HOST=...`, so exporting that variable yourself has the same effect (Exam 4 · Q21 keys exactly this). The bank prefers II only because `env-init` sets the variable automatically."
+      ]
+    ],
+    "note": "Options II and IV are functionally equivalent; both end with PUBSUB_EMULATOR_HOST pointing at the local emulator. On the exam, pick whichever of the two is offered.",
+    "why": "Fixed broken ${...} shell syntax and the false claim about option IV; II and IV both valid, so note."
+  },
+  "5-24": {
+    "question": [
+      [
+        "standardizing log data for services running on Google Kubernetes Engine.",
+        "standardizing log data for services running on Google Kubernetes Engine and making that data more useful for analysis."
+      ]
+    ],
+    "why": "Stem asked only for standardization, which BigQuery export does not do; the original exam stem also asks to make the data more useful, which justifies option I."
+  },
+  "5-37": {
+    "answers": {
+      "B": "B. Run `gcloud run deploy app-name --image us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name` in the directory housing the application source code.",
+      "C": "C. Use `gcloud container images add-tag us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name:latest` in the application source directory.",
+      "D": "D. Create a file named `cloudbuild.yaml` in the application source directory, and include the following content:\n\nsteps:\n\n\\- name: 'gcr.io/cloud-builders/docker'\n\nargs: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name', '.']\n\n\\- name: 'gcr.io/cloud-builders/docker'\n\nargs: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name']"
+    },
+    "explanation": [
+      [
+        "gcr.io/$PROJECT_ID/app-name",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name"
+      ]
+    ],
+    "why": "Image paths used gcr.io (Container Registry) although the stem says Artifact Registry; changed to an Artifact Registry path."
+  },
+  "5-56": {
+    "question": [
+      [
+        "via Cloud Source Repositories and Cloud Build",
+        "via GitHub and Cloud Build"
+      ],
+      [
+        "You aim to optimize deployment times and eliminate unnecessary steps.",
+        "You aim to optimize deployment times by avoiding unnecessary work in the build."
+      ]
+    ],
+    "explanation": [
+      [
+        "          1.  steps:\n      2.   ... \n      3.   - name: 'gcr.io/cloud-builders/docker'",
+        "          1.  steps:\n      2.   - name: 'gcr.io/cloud-builders/docker'   # pull the previous image so its layers can be reused\n      3.     entrypoint: 'bash'\n      4.     args: ['-c', 'docker pull us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:latest || exit 0']\n      5.   - name: 'gcr.io/cloud-builders/docker'"
+      ],
+      [
+        "      4.     args: \n      5.       ['build', \n      6.        '--cache-from=us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:latest', # Example - adapt as needed\n      7.        '-t', 'us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:$(SHORT_SHA)', \n      8.        '.'] \n      9.   ...",
+        "      6.     args: \n      7.       ['build', \n      8.        '--cache-from=us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:latest',\n      9.        '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:$SHORT_SHA', \n      10.       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:latest', \n      11.       '.'] \n      12.  ...\n\n`--cache-from` only helps if the cached image is available locally, so the build first pulls the previous image (the `|| exit 0` keeps the first build from failing), and the build also tags and pushes `:latest` so the next build has a cache source. Kaniko cache or BuildKit inline cache are alternatives."
+      ]
+    ],
+    "why": "Stem asked to eliminate steps though no option removes one; CSR renamed; example skipped the pull needed for --cache-from."
+  },
+  "3-48": {
+    "question": [
+      [
+        "stores its source code in a Cloud Source Repositories repository",
+        "stores its source code in a GitHub repository"
+      ]
+    ],
+    "explanation": [
+      [
+        "Cloud Build has direct integration with Cloud Source Repositories, simplifying setup.",
+        "Cloud Build connects directly to GitHub (as well as GitLab and Bitbucket) repositories, simplifying setup."
+      ]
+    ],
+    "why": "Cloud Source Repositories closed to new customers; answer logic unchanged with GitHub."
+  },
+  "3-49": {
+    "explanation": [
+      [
+        "  * **Safety Net:** A PodDisruptionBudget (PDB) limits the number of pods that can be unavailable simultaneously. Setting it to 80% guarantees that at least 80% of your pods remain active, mitigating the risk of full service disruption.",
+        "  * **Safety Net:** A PodDisruptionBudget (PDB) set to 80% (`minAvailable: 80%`) keeps at least 80% of the Pods running during **voluntary disruptions** such as node drains, node pool upgrades and cluster autoscaler scale-down, which can overlap with a release. It does not pace the rollout itself: the Deployment's rolling-update settings (`maxSurge`/`maxUnavailable`) control how many Pods are replaced at a time."
+      ]
+    ],
+    "why": "PDB governs voluntary evictions, not Deployment rollouts; explanation claimed otherwise."
+  },
+  "3-46": {
+    "note": "Secret Manager isn't among the options. When it is offered, Google's preferred answer for credentials that must be rotated is Secret Manager accessed with Workload Identity, which supports versions and rotation schedules. Application-layer secrets encryption with Cloud KMS protects Secrets at rest in etcd but doesn't rotate the credentials themselves.",
+    "why": "Best of the offered options; Secret Manager + Workload Identity is the usual answer when offered."
+  },
+  "1-19": {
+    "explanation": [
+      [
+        "  * **PreStop Lifecycle Handler:** This hook is triggered before the container is terminated.",
+        "  * **PreStop Lifecycle Handler:** This hook is triggered before the container is terminated, including when the kubelet kills it after a failed liveness probe."
+      ],
+      [
+        "It wouldn't provide continuous monitoring, and a PreStop hook doesn't automatically trigger if a liveness probe fails.",
+        "It wouldn't provide continuous monitoring, so a database connection lost after startup would go unnoticed."
+      ]
+    ],
+    "note": "In real deployments, checking an external dependency such as a database in a liveness probe is risky: a database outage makes every Pod restart in a loop. A readiness probe (which takes the Pod out of Service endpoints without restarting it) is the usual tool for dependency checks. The liveness answer fits here because the question wants the shutdown script to run when the check fails.",
+    "why": "preStop does run on liveness-probe kills; liveness-on-dependency is an anti-pattern worth flagging."
+  },
+  "2-44": {
+    "note": "Cloud Deploy now has built-in automation: an automation resource with a promote-release rule promotes a release to the next target after a successful rollout, with no custom code. Pick it if it's offered; among these options, the Cloud Function on `clouddeploy-operations` is the best fit.",
+    "why": "Cloud Deploy automation (promote-release rule) is the current simpler answer."
+  },
+  "1-14": {
+    "explanation": [
+      [
+        "  * **Faster Readiness:** A shorter cooldown period lets new instances handle traffic sooner after being created, reducing the time where existing instances are overloaded.",
+        "  * **Faster, more accurate scale-out:** The cooldown (now called the initialization period) is how long the autoscaler ignores a new VM's usage data while it starts up. If it is much longer than the real startup time, the autoscaler discards valid load signals and can underestimate how many VMs the group needs, so the existing VMs stay overloaded longer. Matching it to the real startup time lets the autoscaler react to the load sooner. It does not change when a VM starts receiving traffic; the load balancer's health check decides that."
+      ],
+      [
+        "  * **Cooldown Considerations:** Choose a cooldown period that allows for your application's initialization time. Too short, and new instances will receive traffic before they're ready.",
+        "  * **Cooldown Considerations:** Set the period to roughly how long your application takes to initialize. Too short, and the autoscaler reads the usage of VMs that are still booting, which can skew its decisions."
+      ]
+    ],
+    "why": "Cooldown/initialization period controls when the autoscaler uses a new VM's metrics, not when it serves traffic."
+  },
+  "2-27": {
+    "explanation": [
+      [
+        "  * **A/B Comparison:** Comparing the performance of your new application code against the existing version under identical load provides valuable insights for optimization.",
+        "  * **Side-by-side comparison:** Comparing the performance of the new version against the existing one under identical load provides valuable insights. This is a shadow test: the mirrored responses are discarded, so users never see the new version. (Classic A/B testing is different: it sends real users to each variant to compare their behavior.)"
+      ],
+      [
+        "  * **Controlled Rollout:** Based on the results of your A/B tests, you can gradually and safely increase traffic to the new version.",
+        "  * **Controlled Rollout:** Based on the results of the shadow test, you can then release the new version with confidence."
+      ]
+    ],
+    "note": "The option calls this \"A/B testing with traffic mirroring\". The part that meets the requirement is the traffic mirroring (shadow test); the cue is \"full production load before launch\".",
+    "why": "Mirroring is shadow testing, not A/B testing."
+  },
+  "2-21": {
+    "explanation": [
+      [
+        "  * **III. Buildpacks:** Buildpacks can be a great option, but they might require additional configuration if you have specific build requirements beyond what buildpacks provide.",
+        "  * **III. Continuous deployment with buildpacks:** This is also fully managed: Cloud Run's \"continuously deploy from a repository\" setup creates a Cloud Build trigger for you and can build the Go code with buildpacks. It is a reasonable answer in practice, but the bank prefers the explicit Cloud Build trigger, which gives full control over the build and deploy steps."
+      ]
+    ],
+    "note": "Cloud Source Repositories is closed to new customers; the same Cloud Build trigger works with GitHub, GitLab or Bitbucket repositories connected to Cloud Build. Option III is a built-in, fully managed alternative that some would call simpler.",
+    "why": "Explanation dismissed a valid built-in option; CSR is retired."
+  },
+  "3-5": {
+    "explanation": "**Correct Option: II. Configure your Cloud Run service to utilize a Serverless VPC Access connector.**\n\n**Explanation:**\n\n  * **A path into the VPC:** A Cloud SQL private IP is reachable only from inside the VPC network (through private services access). Cloud Run runs outside your VPC, so it needs a way into the VPC first. A Serverless VPC Access connector provides that path. (Cloud Run can now also use **Direct VPC egress** for the same purpose, without a connector.)\n\n  * **Security:** Private IP connectivity keeps database traffic off the public internet.\n\n  * **No code changes:** Once the connector is set, the application connects to the private IP as usual.\n\n**Why other options are less ideal:**\n\n  * **I. Cloud SQL connection:** The Cloud Run Cloud SQL connection (the built-in Cloud SQL Auth Proxy over a Unix socket) doesn't give Cloud Run a route into the VPC. It can use the private IP only if a connector or Direct VPC egress is also configured.\n\n  * **III. Cloud SQL Java connector:** The connector can connect over private IP, but only once Cloud Run has a path into the VPC; on its own it doesn't provide that path, and it requires code changes.\n\n  * **IV. Cloud SQL Auth proxy instance:** Same limitation: a separate proxy adds a component to run and still needs network access to the private IP.\n\n**References:**\n\n<https://cloud.google.com/sql/docs/mysql/connect-run#private-ip>",
+    "why": "Explanation overstated that connectors 'won't solve' private IP; references pointed at CSEK docs; added Direct VPC egress."
+  },
+  "3-39": {
+    "note": "Cloud Run can now also reach a VPC with Direct VPC egress, without a Serverless VPC Access connector. Both are valid; the connector is what this option describes.",
+    "why": "Direct VPC egress is a newer alternative."
+  },
+  "4-22": {
+    "explanation": [
+      [
+        "Serverless VPN Connector",
+        "Serverless VPC Access connector"
+      ]
+    ],
+    "note": "Cloud Run can now also use Direct VPC egress instead of a connector; the same-region rule applies there too (the subnet must be in the Cloud Run service's region).",
+    "why": "Typo (VPN->VPC); Direct VPC egress is a newer alternative."
+  },
+  "2-5": {
+    "question": [
+      [
+        "Upon installing the Stackdriver Logging Agent to transmit an application's log file to Stackdriver from",
+        "Upon installing the Cloud Logging agent to transmit an application's log file to Cloud Logging from"
+      ]
+    ],
+    "answers": {
+      "IV": "IV. Establish a Cloud Logging sink with a filter aligning with the application's log entries."
+    },
+    "explanation": [
+      [
+        "Stackdriver Logging Agent",
+        "Cloud Logging agent"
+      ],
+      [
+        "Stackdriver Logs Export Sink",
+        "Cloud Logging sink"
+      ],
+      [
+        "Stackdriver Logging",
+        "Cloud Logging"
+      ],
+      [
+        "to Stackdriver from",
+        "to Cloud Logging from"
+      ]
+    ],
+    "note": "The legacy Logging agent is replaced by the Ops Agent; there, you declare the application log file as a `files` receiver in the agent's config, which is the same idea as a custom source.",
+    "why": "Stackdriver renamed; legacy agent replaced by Ops Agent."
+  },
+  "2-53": {
+    "note": "The Google-provided fluentd (legacy Logging agent) and collectd (legacy Monitoring agent) are replaced by the Ops Agent, which collects both logs and metrics. If the Ops Agent is offered, choose it for local log files.",
+    "why": "Options name legacy agents; Ops Agent is current."
+  },
+  "3-42": {
+    "question": [
+      [
+        "in Stackdriver Logging",
+        "in Cloud Logging"
+      ]
+    ],
+    "answers": {
+      "I": "I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.",
+      "IV": "IV. Modify the application to log to /var/log so that its logs are automatically sent to Cloud Logging.",
+      "II": "II. Utilize a Cloud Logging client library to directly log from the application to Cloud Logging."
+    },
+    "explanation": [
+      [
+        "**I. Install the Stackdriver Logging Agent and set it up to transmit the application logs.**",
+        "**I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.**"
+      ],
+      [
+        "The Stackdriver Logging Agent (now called the Cloud Logging Agent) is",
+        "The Ops Agent (which replaces the legacy Logging agent) is"
+      ],
+      [
+        "Utilize a Stackdriver Logging Library",
+        "Utilize a Cloud Logging client library"
+      ],
+      [
+        "Stackdriver Logging",
+        "Cloud Logging"
+      ]
+    ],
+    "why": "Stackdriver renamed; legacy agent replaced by Ops Agent."
+  },
+  "3-52": {
+    "answers": {
+      "I": "I. Implement the Cloud Monitoring client library.",
+      "III": "III. Utilize Metrics Explorer in Cloud Monitoring.",
+      "II": "II. Deploy the Ops Agent (which replaces the legacy Monitoring agent)."
+    },
+    "explanation": [
+      [
+        "**II. Deploy the Stackdriver Monitoring Agent.**",
+        "**II. Deploy the Ops Agent (which replaces the legacy Monitoring agent).**"
+      ],
+      [
+        "The Stackdriver Monitoring Agent automatically collects",
+        "The Ops Agent automatically collects"
+      ],
+      [
+        "Implement the Stackdriver Client Library.",
+        "Implement the Cloud Monitoring client library."
+      ],
+      [
+        "Utilize the Stackdriver Metrics Explorer.",
+        "Utilize Metrics Explorer in Cloud Monitoring."
+      ],
+      [
+        "Stackdriver Monitoring",
+        "Cloud Monitoring"
+      ]
+    ],
+    "why": "Stackdriver renamed; legacy agent replaced by Ops Agent."
+  },
+  "1-53": {
+    "answers": {
+      "IV": "IV. Utilize Cloud Monitoring to monitor query execution times.",
+      "I": "I. Utilize Cloud Monitoring to visualize slot usage.",
+      "III": "III. Utilize Cloud Trace to monitor query execution time.",
+      "II": "II. Employ Cloud Trace to track API execution time."
+    },
+    "explanation": [
+      [
+        "Stackdriver Monitoring (now called Cloud Monitoring)",
+        "Cloud Monitoring"
+      ],
+      [
+        "Stackdriver Monitoring",
+        "Cloud Monitoring"
+      ],
+      [
+        "Stackdriver Trace",
+        "Cloud Trace"
+      ]
+    ],
+    "why": "Stackdriver renamed."
+  },
+  "3-23": {
+    "answers": {
+      "IV": "IV. Employ Cloud Monitoring to monitor resources and generate alerts.",
+      "III": "III. Utilize Error Reporting to capture errors and generate alerts."
+    },
+    "explanation": [
+      [
+        "Stackdriver Monitoring (now called Cloud Monitoring)",
+        "Cloud Monitoring"
+      ],
+      [
+        "Stackdriver Monitoring",
+        "Cloud Monitoring"
+      ],
+      [
+        "Stackdriver Error Reporting",
+        "Error Reporting"
+      ]
+    ],
+    "why": "Stackdriver renamed."
+  },
+  "4-10": {
+    "answers": {
+      "II": "II. Set up Cloud Monitoring uptime checks to monitor the availability of your application."
+    },
+    "explanation": [
+      [
+        "Set up Stackdriver uptime checks",
+        "Set up Cloud Monitoring uptime checks"
+      ],
+      [
+        "Stackdriver uptime checks provide",
+        "Cloud Monitoring uptime checks provide"
+      ],
+      [
+        "Stackdriver integrates seamlessly",
+        "Cloud Monitoring integrates seamlessly"
+      ],
+      [
+        "setting up Stackdriver uptime checks",
+        "setting up Cloud Monitoring uptime checks"
+      ]
+    ],
+    "why": "Stackdriver renamed."
+  },
+  "4-23": {
+    "question": [
+      [
+        "equipped with the Stackdriver Monitoring Agent",
+        "equipped with the Ops Agent (which replaces the legacy Monitoring agent)"
+      ]
+    ],
+    "correct": "II",
+    "explanation": "**Correct Option:**\n\n  * **II. Configure process health monitoring to detect any issues with the Unix process.**\n\n**Justification:**\n\n  * **Built for this case:** A process-health condition counts the processes on the VM that match a name or command line and alerts when the count drops below a value (here, fewer than 1 for 5 minutes). The agent collects the process data itself, so the application doesn't need to emit any metrics or logs.\n\n  * This is also the answer Google gives for this scenario in its sample questions, and the bank keys it the same way in (Exam 5 · Q47).\n\n**Incorrect Options:**\n\n  * **I. Uptime check:** It probes the VM or an endpoint from outside. The VM can be up while the process is not running, and a process that serves no endpoint can't be checked this way.\n\n  * **III. Metric absence:** It fires when a time series stops arriving. The application emits no metrics of its own, and the VM's system metrics (CPU, memory) keep arriving whether or not the process runs, so there's no series whose absence reliably means \"the process stopped\".\n\n  * **IV. Metric threshold:** There's no metric for this process's activity to put a threshold on, and thresholds on system-wide CPU or memory would fire on normal load changes.\n\n**References:**\n\n<https://cloud.google.com/monitoring/alerts/types-of-conditions>",
+    "why": "Process health is the condition designed for this (Google sample question; same stem keyed II in 5-47). Old explanation wrongly said process health needs app-emitted metrics."
+  },
+  "4-40": {
+    "question": [
+      [
+        "Your application logs to Stackdriver,",
+        "Your application logs to Cloud Logging,"
+      ]
+    ],
+    "answers": {
+      "I": "I. Create a logs-based counter metric for the path /api/alpha/.",
+      "II": "II. Create a logs-based counter metric for the endpoint /api/alpha/*."
+    },
+    "explanation": [
+      [
+        "Create a Stackdriver counter metric",
+        "Create a logs-based counter metric"
+      ],
+      [
+        "    1. Go to Stackdriver Monitoring.",
+        "    1. Go to Cloud Logging (Logs-based Metrics)."
+      ],
+      [
+        "    2. Create a custom counter metric.",
+        "    2. Create a counter metric."
+      ]
+    ],
+    "why": "Stackdriver renamed; counter metrics are logs-based metrics in Cloud Logging."
+  },
+  "5-29": {
+    "answers": {
+      "II": "II. Cloud Monitoring uptime (availability) checks"
+    },
+    "explanation": [
+      [
+        "**II. Stackdriver availability checks**",
+        "**II. Cloud Monitoring uptime (availability) checks**"
+      ],
+      [
+        "Stackdriver availability checks",
+        "Cloud Monitoring uptime checks"
+      ]
+    ],
+    "why": "Stackdriver renamed."
+  },
+  "5-47": {
+    "question": [
+      [
+        "equipped with the Stackdriver Monitoring Agent",
+        "equipped with the Ops Agent (which replaces the legacy Monitoring agent)"
+      ]
+    ],
+    "explanation": [
+      [
+        "The Stackdriver Monitoring Agent can track",
+        "The agent can track"
+      ]
+    ],
+    "why": "Stackdriver renamed."
+  },
+  "3-30": {
+    "question": [
+      [
+        "container images stored in Container Registry",
+        "container images stored in Artifact Registry"
+      ]
+    ],
+    "answers": {
+      "III": "III. Enable the Container Scanning API for vulnerability scanning, review vulnerability reporting in Artifact Registry within the Google Cloud console, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment."
+    },
+    "note": "Container Registry is deprecated in favor of Artifact Registry. Vulnerability scanning is now part of Artifact Analysis (still turned on with the Container Scanning API); the attestation + Binary Authorization logic is unchanged.",
+    "why": "Container Registry retired."
+  },
+  "2-8": {
+    "question": [
+      [
+        "to a Cloud Source Repositories repository",
+        "to a Git repository connected to Cloud Build (for example, on GitHub)"
+      ]
+    ],
+    "answers": {
+      "IV": "IV. Store your source code in a secondary Git repository with a distinct Cloud Build trigger solely for new releases."
+    },
+    "explanation": [
+      [
+        "Store your source code in a secondary Cloud Source Repositories repository",
+        "Store your source code in a secondary Git repository"
+      ],
+      [
+        "<https://cloud.google.com/source-repositories/docs/integrating-with-cloud-build#create_a_build_trigger>",
+        "<https://cloud.google.com/build/docs/automating-builds/create-manage-triggers>"
+      ]
+    ],
+    "why": "Cloud Source Repositories is closed to new customers; trigger logic unchanged."
+  },
+  "3-58": {
+    "question": [
+      [
+        "commit code to Cloud Source Repositories",
+        "commit code to a GitHub repository connected to Cloud Build"
+      ]
+    ],
+    "explanation": [
+      [
+        "Cloud Build triggers offer the most seamless integration with Cloud Source Repositories.",
+        "Cloud Build triggers integrate directly with connected repositories (GitHub, GitLab, Bitbucket)."
+      ]
+    ],
+    "why": "Cloud Source Repositories is closed to new customers; trigger logic unchanged."
+  },
+  "4-58": {
+    "explanation": [
+      [
+        "  * After expanding the PVC, **GKE will automatically resize the file system** when the Pod is restarted or rescheduled.",
+        "  * After expanding the PVC, the Compute Engine persistent disk CSI driver **resizes the disk and the file system**, usually online without restarting the Pod."
+      ]
+    ],
+    "note": "The normal flow is the reverse of the stem: edit the PVC and let the CSI driver grow the disk, which only works when the StorageClass has `allowVolumeExpansion: true`. With a manually created PV and a disk resized by hand, PVC expansion may not apply at all. C is still the best of the options.",
+    "why": "Resize flow in stem is backwards; expansion needs allowVolumeExpansion."
+  },
+  "3-12": {
+    "answers": {
+      "I": "I. Verify domain ownership through Search Console (formerly Webmaster Central). Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.",
+      "II": "II. Verify domain ownership via Search Console (formerly Webmaster Central). Configure an A record pointing to the singular global App Engine IP address."
+    },
+    "explanation": [
+      [
+        "**I. Verify domain ownership through Webmaster Central.",
+        "**I. Verify domain ownership through Search Console (formerly Webmaster Central)."
+      ],
+      [
+        "  * **Domain Verification:** Webmaster Central allows you",
+        "  * **Domain Verification:** Search Console (formerly Webmaster Central) allows you"
+      ]
+    ],
+    "why": "Webmaster Central is now Search Console."
+  },
+  "2-4": {
+    "answers": {
+      "I": "I. Utilize the gcloud storage CLI within the Docker container at startup, copying files, and initiate the service via an ENTRYPOINT script."
+    },
+    "explanation": [
+      [
+        "  * **I. gsutil within the container:** While possible, it adds complexity and potential security risks due to embedding credentials within the container.",
+        "  * **I. Cloud Storage CLI within the container:** The configuration lives on an NFS share, not in Cloud Storage, so this needs a separate process to put it there, and it bakes a storage tool and copy logic into the image. (With Workload Identity it wouldn't need embedded credentials.)"
+      ]
+    ],
+    "note": "In Kubernetes, the standard way to keep a Pod from receiving traffic until it's ready is a readiness probe. The ENTRYPOINT check works here because the server doesn't start listening until the config is found.",
+    "why": "gsutil superseded; explanation's credentials claim was wrong; readiness probe caveat."
+  },
+  "2-45": {
+    "explanation": [
+      [
+        "  2. **Customized retention duration** : With Cloud Logging, you can set retention periods tailored to your specific needs. In this scenario, you can set a retention period of 1 year for internal audits and 3 years to meet compliance standards.",
+        "  2. **Customized retention duration** : A Cloud Logging log bucket has a single, configurable retention period (from 1 day up to 3650 days). Set it to 3 years: that meets the compliance need and also covers the 1-year internal-audit need, and the logs stay searchable in Logs Explorer and Log Analytics."
+      ],
+      [
+        "II. Storing logs in a Cloud Storage bucket with a fixed 3-year retention period doesn't meet the requirement of retaining logs for 1 year for internal audits.",
+        "II. A Cloud Storage bucket with a 3-year retention period would keep the logs long enough, but the logs aren't easily searchable there and you'd have to build the export yourself."
+      ]
+    ],
+    "why": "A log bucket has one retention value; 3 years covers both needs."
+  },
+  "5-5": {
+    "explanation": "**Correct Answer:**\n\n  * **C.** A build step using the `gsutil` builder with `args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']`, added before the promotion step.\n\n**Justification:**\n\n  * **Automation within the build pipeline:** Copying the photos in a Cloud Build step makes the copy part of every promotion, with no manual work.\n\n  * **Recursive copy (`-r`):** The photos are in several directories, so the copy must be recursive.\n\n  * **About `waitFor: ['-']`:** This makes the step start at the beginning of the build, in parallel with other steps; it does **not** make later steps wait for it. To guarantee the photos are copied before promotion, the promotion step should list this step's `id` in its own `waitFor` (or leave `waitFor` out of both steps, since steps then run in order).\n\n**Incorrect Answers:**\n\n  * **A. Manual copy:** It breaks the goal of automating the promotion and invites missed steps.\n\n  * **B. Startup script in `app.yaml`:** `app.yaml` configures the runtime, not deployment tasks, and a copy at startup would run on every instance start. Deployment and data transfer are better kept in the pipeline.\n\n  * **D. `cp -a`:** In `gsutil cp`, `-a` sets a **canned ACL** on the copied objects (it takes a value such as `public-read`); it is not an \"archive\" or recursive flag. Without `-r`, the directories of photos aren't copied.\n\n**Note on tools:** `gsutil` is superseded by `gcloud storage` (for example `gcloud storage cp --recursive ...`), which the `gcr.io/cloud-builders/gcloud` builder can run.",
+    "why": "Old explanation had waitFor and -a semantics wrong."
+  },
+  "5-45": {
+    "question": [
+      [
+        " while using the following setup:",
+        "."
+      ],
+      [
+        "Which code snippet should be integrated into your configuration to achieve this?",
+        "Which scaling configuration should you use?"
+      ]
+    ],
+    "explanation": [
+      [
+        "  * **Basic Scaling:** App Engine standard environment offers two scaling types: basic and automatic. Basic scaling allows you to directly control the maximum number of instances.",
+        "  * **Basic Scaling:** App Engine standard offers three scaling types: automatic, basic and manual. Basic scaling sets a cap with `max_instances` and starts instances only when requests arrive. (Automatic scaling also accepts `max_instances`, but no option here uses it.)"
+      ]
+    ],
+    "why": "Stem referenced a missing snippet; explanation said there are two scaling types."
+  },
+  "5-32": {
+    "explanation": [
+      [
+        "  * **Serverless Alignment:** Cloud Functions is the ideal serverless compute choice for the application tier.",
+        "  * **Serverless Alignment:** Cloud Functions is a serverless platform, so the requirement is met. (Cloud Run and App Engine are serverless too; this option wins because of infrastructure as code with Terraform and a fully managed pipeline, not because Cloud Functions is more serverless.)"
+      ],
+      [
+        "    * **Operational Overhead:** Jenkins introduces self-management of a VM compared to Cloud Build. App Engine is also less serverless than Cloud Functions.",
+        "    * **Operational Overhead:** Jenkins runs on VMs you manage, unlike Cloud Build, and there's no infrastructure as code for versioned, auditable infrastructure changes. (App Engine itself is serverless; that is not the problem.)"
+      ]
+    ],
+    "why": "Explanation claimed App Engine is less serverless and Cloud Functions is the ideal serverless target."
+  },
+  "5-8": {
+    "explanation": [
+      [
+        "  * **Authorized Networks for Public Clusters:** Even though your GKE cluster has a public endpoint, by default, access is restricted to a set of authorized IP addresses. Cloud Shell has a dynamic, ephemeral IP address that changes, making it likely it's not included in the allowed list. (GCP Documentation: [invalid URL removed])",
+        "  * **Authorized Networks for Public Clusters:** A public endpoint accepts connections from any IP address unless control plane authorized networks are enabled. They are opt-in, but once enabled, only the listed IP ranges can reach the endpoint. Cloud Shell has a dynamic, ephemeral external IP address, so it is usually not in the list and its connections are dropped. The question assumes authorized networks were enabled, which is common in production."
+      ],
+      [
+        "    * **Reasoning:** While possible, VPC firewalls would usually result in a more explicit connection failure rather than a silent timeout.",
+        "    * **Reasoning:** VPC firewall rules filter traffic to and from resources in your VPC, such as the nodes; they don't control access to the Google-managed control plane's public endpoint."
+      ]
+    ],
+    "note": "GKE now also offers a DNS-based control plane endpoint, which authorizes kubectl access with IAM instead of IP allowlists and avoids this problem for Cloud Shell.",
+    "why": "Authorized networks are opt-in, not default; firewall reasoning was wrong."
+  },
+  "4-26": {
+    "correct": "IV",
+    "explanation": "**IV. Establish a pull subscription with both ordering and exactly-once delivery disabled.**\n\nHere's why:\n\n  * **Pull for high volume:** A single large in-memory database is updated by subscribers that pull (ideally with StreamingPull) at their own pace. Pull subscriptions give the highest throughput and let the consumer control flow; push subscriptions are less suited to very large volumes.\n\n  * **The timestamp makes ordering unnecessary:** Each message carries the stock symbol, price and timestamp, so the subscriber can simply keep the price with the newest timestamp for each symbol and ignore older ones. Ordering keys would only add latency and limit throughput.\n\n  * **Duplicates are harmless:** Writing the same price for the same symbol and timestamp twice gives the same result (the update is idempotent), so exactly-once delivery isn't needed. Exactly-once delivery also adds significant publish-to-subscribe latency.\n\n**Why the other options are wrong:**\n\n  * **I. Pull with exactly-once enabled:** Works, but pays the extra latency and throughput cost of exactly-once delivery for no benefit, since duplicate updates are idempotent.\n\n  * **II. Push with both disabled:** Push subscriptions are less suited to very high message volumes than pull, and the endpoint must absorb whatever rate Pub/Sub pushes.\n\n  * **III. Push with exactly-once enabled:** Not possible. Exactly-once delivery is supported only on pull subscriptions (including StreamingPull); push and export subscriptions don't support it.\n\n**References:**\n\n<https://cloud.google.com/pubsub/docs/exactly-once-delivery>\n\n<https://cloud.google.com/pubsub/docs/subscriber>",
+    "why": "Exactly-once delivery is pull-only, so the keyed push + exactly-once option is impossible; the timestamp makes updates idempotent and order-independent, and pull suits high volume (matches Google's sample question)."
+  },
+  "4-13": {
+    "correct": "II",
+    "explanation": "**Correct Answer:**\n\n**II. Create a pull subscription with both ordering and exactly-once delivery disabled.**\n\n**Explanation:**\n\n  * **The timestamp makes ordering unnecessary:** every message carries the stock symbol, the price and the time of that price. Before writing, the consumer compares the message's timestamp with the one stored for that symbol and ignores the message if it is older. An out-of-order message can never overwrite a newer price.\n\n  * **Duplicates are harmless:** applying the same price with the same timestamp twice leaves the database unchanged, so the update is idempotent and exactly-once delivery adds nothing.\n\n  * **Pull suits a stream of price updates:** a pull subscriber controls its own flow and can process messages in large batches, which suits a high, steady volume of updates. This is Google's own sample question for this exam, and its answer is a pull subscription with both features off.\n\n  * **Leaving both features off keeps throughput and latency at their best:** ordering keys limit how messages for one key are dispatched, and exactly-once delivery adds acknowledgement overhead. Neither is needed here.\n\n\n\n\n**Why Other Options Are Less Suitable:**\n\n  * **I. Set up a push subscription with exactly-once delivery enabled.** Exactly-once delivery is supported only on pull subscriptions, so this combination isn't possible. It also wouldn't be needed, because duplicates are harmless here.\n\n  * **III. Configure a pull subscription with ordering enabled, utilizing the stock symbol as the ordering key.** This works, but the timestamp already solves the ordering problem. Ordering keys add publisher-side requirements (the publisher must set the key, and per-key delivery is serialized), which only cost throughput.\n\n  * **IV. Establish a push subscription with both ordering and exactly-once delivery disabled.** The feature settings are right, but push delivers each message as a separate HTTP request to an endpoint. For a high-volume stream of small updates, a pull subscriber that controls its own flow is the better fit.\n\n**Remember:** If messages carry a timestamp or version, the consumer can discard stale updates itself, so you don't need ordering keys. Exactly-once delivery is a pull-only feature.",
+    "why": "Keyed ordering by stock symbol, but the timestamp lets the consumer drop stale updates, so ordering isn't needed. Google's own sample question for this scenario keys a pull subscription with ordering and exactly-once both off; this also matches 4-26."
+  },
+  "1-13": {
+    "answers": {
+      "III": "III. Allocate the roles/storage.objectCreator role to the Cloud Function's runtime service account for the Cloud Storage bucket.",
+      "II": "II. Provide your user account with the roles/iam.serviceAccountUser role for the Cloud Function's runtime service account."
+    },
+    "explanation": "**III. Allocate the roles/storage.objectCreator role to the Cloud Function's runtime service account for the Cloud Storage bucket.**\n\nHere's why this is the correct approach:\n\n  * **Service Account Permissions:** Your function's code runs as its runtime service account (a dedicated service account you choose at deploy time, or the default one). That identity is what Cloud Storage checks, so it needs permission to write to the bucket in project B.\n\n  * **Principle of Least Privilege:** Granting `roles/storage.objectCreator` on the bucket only provides the minimal permission required, limiting the potential security impact.\n\n  * **Cross-Project Access:** The role is granted on the bucket in project B to a service account from project A, which is how cross-project access works.\n\n  * **Not the service agent:** `service-PROJECT_NUMBER@gcf-admin-robot.iam.gserviceaccount.com` is the Cloud Functions *service agent*, which Google uses to manage your functions. Your code doesn't run as it, so granting it bucket access isn't the fix.\n\n**Why Other Options are Not Ideal:**\n\n  * **I. Grant your user account the roles/storage.objectCreator role ...** The function doesn't run as your user account, so this doesn't change what the function can do.\n\n  * **II. Provide your user account with the roles/iam.serviceAccountUser ...** This lets you deploy functions that run as (act as) that service account, but doesn't give the service account any permission on the bucket.\n\n  * **IV. Ensure the Cloud Storage API is enabled within project B** The bucket already exists and the error is a 403 permission error, so the API isn't the problem.\n\nRef:\n\n<https://cloud.google.com/functions/docs/securing/function-identity>",
+    "why": "gcf-admin-robot is the Cloud Functions service agent, not the runtime identity the code uses; reworded options to the runtime service account so the key is accurate."
+  },
+  "3-43": {
+    "correct": "III",
+    "explanation": "**III. Implement signed URLs for file uploads.**\n\nExplanation:\n\n  * App Engine limits the size of an HTTP request to 32 MB, so a 500-MB file can't be uploaded through the App Engine app itself, multipart or not.\n\n  * With **signed URLs**, the App Engine app authenticates the user and returns a time-limited URL that allows a PUT of one specific object in a Cloud Storage bucket. The client then uploads the file **directly to Cloud Storage**, which handles objects far larger than 500 MB. The app can still enforce the 500-MB limit (for example with an `x-goog-content-length-range` header in the signed URL) and keeps the bytes out of its instances.\n\n**Why the other options are wrong:**\n\nI. Utilize FTP for uploading files.\n\n  * App Engine doesn't offer FTP access, and running your own FTP server adds security and operational work.\n\nII. Use CPanel for file uploads.\n\n  * cPanel is a control panel for traditional web hosting and has no role in App Engine.\n\nIV. Modify the API to function as a multipart file upload API.\n\n  * Multipart encoding only changes how the request body is formatted. The whole request still passes through App Engine and still hits its 32-MB request limit.\n\n**References:**\n\n<https://cloud.google.com/storage/docs/access-control/signed-urls>\n\n<https://cloud.google.com/appengine/docs/standard/quotas#Requests>",
+    "why": "App Engine requests are capped at 32 MB, so a multipart API can't take 500-MB files; direct-to-Cloud Storage signed URLs is Google's pattern and the commonly cited answer for this sample question."
+  },
+  "6-13": {
+    "correct": "D",
+    "explanation": "The approach that gives customers immediate confirmation is:\n\n**D. Send the seat reservation as an HTTP POST request to an Application Load Balancer, which distributes it to a Compute Engine managed instance group that processes the reservation.**\n\n**Explanation:**\n\n  * **Immediate confirmation needs a synchronous call:** The customer has to know right away whether *their specific seat* was reserved. With a synchronous HTTP request, the backend checks and reserves the seat (for example in a transactional database) and returns success or \"seat taken\" in the same response.\n\n  * **Scalability and availability:** The Application Load Balancer spreads requests across a managed instance group that autoscales during busy on-sale periods and replaces unhealthy instances.\n\n**Why other options are not suitable:**\n\n  * **A. Cloud Tasks and Workflow:** Queuing the request makes processing asynchronous. The client only learns that the task was queued, not whether the seat was reserved.\n\n  * **B. Pub/Sub and Eventarc:** Publishing is asynchronous too. Pub/Sub acknowledges that it *received the message*, not that the seat was reserved, so the customer can't get an immediate reservation result (and the seat might already be taken when the message is processed).\n\n  * **C. Cloud Storage:** Writing an object and reacting to the storage event is asynchronous and adds latency, so there's no immediate answer for the customer.",
+    "why": "Pub/Sub only acknowledges receipt; an immediate seat-specific confirmation needs synchronous processing (HTTP POST via ALB to a MIG), matching the widely cited answer for this sample question. Old explanation also wrongly said the LB option relies on polling."
+  },
+  "4-11": {
+    "explanation": [
+      [
+        "The committed stream type ensures that data written to BigQuery is immediately visible to queries and that each write operation is atomic. The BigQuery Storage Write API handles duplicate checks internally, making it a straightforward solution to avoid duplicate entries without additional infrastructure or deduplication logic.",
+        "In committed type, records are available for reading as soon as each write is acknowledged, and every append can carry a **stream offset**. If a write is retried with an offset that was already written, the API rejects it with an `ALREADY_EXISTS` error instead of writing the rows again, which gives **exactly-once** semantics without additional infrastructure or deduplication logic."
+      ],
+      [
+        "The default stream type is **buffered** , which means data is not immediately visible and requires a flush operation to make it available in BigQuery. Buffered streams are more prone to duplicates because they don’t enforce atomic writes as the committed type does.",
+        "The default stream gives **at-least-once** semantics: it doesn't support stream offsets, so a retried write can be written twice and produce duplicates. (Buffered is a separate stream type, in which rows become visible only after a flush.)"
+      ]
+    ],
+    "why": "Default stream is at-least-once (not buffered); committed type avoids duplicates via stream offsets, not internal duplicate checks."
+  },
+  "4-14": {
+    "explanation": "**The most likely solution is:**\n\n**IV. Utilize Cloud Scheduler in conjunction with Pub/Sub to invoke Cloud Run.**\n\n**Explanation:**\n\n  * **Cloud Scheduler:** The managed Google Cloud service for running jobs on a schedule. A Cloud Scheduler job publishes a message to a Pub/Sub topic on each run.\n\n  * **Pub/Sub:** A **push subscription** on that topic delivers each message to the Cloud Run service as an authenticated HTTP request. Pub/Sub push is one of the Google Cloud sources that Cloud Run accepts with **internal** ingress (when it's in the same project or VPC Service Controls perimeter), so you keep the internal ingress setting. Give the push subscription's service account the **`roles/run.invoker`** role on the service; a missing invoker role is the usual cause of a 403 when calling Cloud Run.\n\n**Why Other Options Might Not Be the Best Fit:**\n\n  * **I. Assign the roles/run.developer IAM role to the service account.** `roles/run.developer` is for deploying and managing services, which is broader than needed. Invoking a service needs `roles/run.invoker`.\n\n  * **II. Set up a cron job on the Compute Engine VMs to trigger Cloud Run based on the schedule.** While possible, it introduces more management overhead and potential points of failure compared to a managed service like Cloud Scheduler.\n\n  * **III. Modify the Cloud Run ingress setting to 'Internal and Cloud Load Balancing.'** This loosens the internal ingress requirement and doesn't by itself fix the scheduling or the permission problem.\n\n**References:**\n\n<https://cloud.google.com/run/docs/triggering/using-scheduler>\n\n<https://cloud.google.com/run/docs/securing/ingress>",
+    "why": "Old explanation said Cloud Run 'subscribes' to Pub/Sub and called run.developer an external account role; corrected to push subscription + run.invoker."
+  },
+  "4-16": {
+    "explanation": "The **recommended approach is:**\n\n✅ **II. Establish an Eventarc trigger to monitor your Cloud Storage bucket for a designated filename, with the target set as Cloud Run.**\n\n✅ **Explanation for Correct Option:**\n\n  * **Eventarc** routes many kinds of events (direct Cloud Storage events such as `google.cloud.storage.object.v1.finalized`, Cloud Audit Logs events, Pub/Sub messages and more) to targets like **Cloud Run**, so different trigger types use the same mechanism.\n\n  * Direct Cloud Storage triggers filter by **bucket** and event type. To react to one specific file, the Cloud Run service checks the object name in the event (or you can use a Cloud Audit Logs trigger, which supports a **path pattern** on the resource name).\n\n  * Triggers are simple, declarative resources (`gcloud eventarc triggers create/update`), so several team members can update them easily.\n\n**Official Documentation:**\n\n  * <https://cloud.google.com/eventarc/docs>\n\n  * <https://cloud.google.com/run/docs/tutorials/eventarc>\n\n❌ **Explanation for Incorrect Options:**\n\n**I. Cloud Storage → Pub/Sub → Cloud Build**\n\n  * Cloud Build is a **CI/CD** service, not a runtime for your application, and chaining three services is harder to maintain.\n\n**III. Cloud Function triggered by Cloud Storage**\n\n  * This works for a single fixed event source, but Eventarc routing to Cloud Run is the more flexible option when trigger types vary. (Event-driven Cloud Run functions, formerly Cloud Functions 2nd gen, use Eventarc triggers under the hood.)\n\n**IV. Firebase Functions with Cloud Storage**\n\n  * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.",
+    "why": "Old explanation claimed direct Cloud Storage Eventarc triggers filter by object name and that Cloud Functions can't; direct storage triggers filter by bucket, and Cloud Functions 2nd gen uses Eventarc."
+  },
+  "4-35": {
+    "answers": {
+      "V": "V. Configure the legacy service's firewall to allow health checks initiated from the Cloud Service Mesh control plane.",
+      "II": "II. Implement a proxyless Cloud Service Mesh configuration for the application.",
+      "I": "I. Utilize Cloud Service Mesh alongside a sidecar proxy to link the application to the service."
+    },
+    "explanation": [
+      [
+        "Traffic Director",
+        "Cloud Service Mesh"
+      ]
+    ],
+    "note": "In Cloud Service Mesh, backend health checks are sent by Google Cloud's health-check probers (35.191.0.0/16 and 130.211.0.0/22), so the firewall really needs to allow those ranges; none of the options says that exactly. Learn the key (sidecar proxy + allow health checks), but it's shaky.",
+    "why": "Rename Traffic Director to Cloud Service Mesh; health checks come from Google probers, no option matches cleanly, so note."
+  },
+  "4-43": {
+    "explanation": [
+      [
+        "Batch jobs are also generally less expensive than on-demand queries.",
+        "Batch priority doesn't change the price (batch and interactive queries are billed the same), but it avoids the cost and effort of extra projects, reservations or manual scheduling."
+      ],
+      [
+        "<https://cloud.google.com/batch/docs/get-started>",
+        "<https://cloud.google.com/bigquery/docs/running-queries#batch>"
+      ]
+    ],
+    "why": "Batch priority doesn't lower on-demand price; cited link was for the Google Cloud Batch product."
+  },
+  "5-14": {
+    "explanation": [
+      [
+        "In BigQuery, batch queries are significantly more cost-effective compared to on-demand queries. They are the best option if time efficiency is not a concern.",
+        "Batch queries cost the same as interactive queries, but they need no extra project, reservation or monitoring, so they're the cheapest way to meet the request when time efficiency is not a concern."
+      ]
+    ],
+    "why": "Batch priority doesn't lower on-demand price."
+  },
+  "5-17": {
+    "explanation": [
+      [
+        "Cloud Endpoints integrates with Cloud Identity and Access Management (IAM) to handle user authentication and authorization for your API.",
+        "Cloud Endpoints (through its Extensible Service Proxy) validates API keys and JSON Web Tokens, for example from Firebase Authentication, Auth0 or Google ID tokens, to authenticate API consumers."
+      ],
+      [
+        "Cloud Endpoints allows you to define and enforce quotas on API calls based on various metrics like request rate, project, or API method.",
+        "Cloud Endpoints lets you define and enforce quotas on API calls per consumer project (identified by API key) and per API method."
+      ],
+      [
+        "<https://cloud.google.com/kubernetes-engine/docs/concepts/ingress>",
+        "<https://cloud.google.com/endpoints/docs/openapi/authentication-method>\n\n<https://cloud.google.com/endpoints/docs/openapi/quotas-overview>"
+      ]
+    ],
+    "why": "Endpoints authenticates with API keys/JWTs, not IAM user auth; reference pointed to GKE Ingress."
+  },
+  "5-21": {
+    "explanation": [
+      [
+        "Dataflow automatically handles aspects like scaling, fault tolerance, and data deduplication, ensuring that each message is processed only once without the need for manual intervention.",
+        "Dataflow automatically handles scaling and fault tolerance, and deduplicates Pub/Sub redeliveries of the same message (by message ID), so each message is processed once without manual intervention. If the publisher itself can send the same data as separate messages, set a unique ID attribute and read it with `PubSubIO`'s ID attribute option (`withIdAttribute`) so Dataflow can deduplicate those too."
+      ]
+    ],
+    "why": "Dataflow's automatic dedup only covers redelivery of the same Pub/Sub message; publisher duplicates need an ID attribute."
+  },
+  "4-41": {
+    "explanation": "**C. Return an HTTP 500 Internal Server Error response.**\n\n**Explanation:**\n\n  * The question asks how to make sure your API's consumers are **notified** of the failure. Returning **HTTP 500** clearly tells them a server-side error occurred: their request was likely valid, but the server couldn't complete it, so they can retry later or report it.\n\n  * It's still good practice to retry transient 5xx errors from Firestore internally with **bounded** exponential backoff first. If the write still fails after a limited number of attempts, return the 500.\n\n**Why Other Options are Wrong:**\n\n  * **A. Return an HTTP 204 No Content response.** A 204 response means success, which would mislead API consumers into thinking the write worked.\n\n  * **B. Return an HTTP 406 Not Acceptable response.** A 406 response indicates a content-negotiation problem with the client's request, not a server-side failure.\n\n  * **D. Retry the Datastore API with exponential backoff until Firestore returns an HTTP 2xx response.** Retrying without a limit never notifies the consumer, and the request can hang indefinitely during a longer outage. Retries help, but they don't replace reporting the failure.\n\n**Documentation:**\n\n  * **HTTP Status Codes:** <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status>\n\n  * **Retry strategy:** <https://cloud.google.com/datastore/docs/concepts/errors>",
+    "why": "Old explanation recommended 'C and D' for a single-answer question; rewritten so C is the answer and D is explained as unbounded retries that never notify the caller."
+  },
+  "1-57": {
+    "answers": {
+      "V": "V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser.",
+      "II": "II. Enable Workload Identity Federation for GKE on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions."
+    },
+    "explanation": "The recommended approaches for ensuring proper authentication of services accessing various Google Cloud APIs within a Google Kubernetes Engine (GKE) cluster are:\n\n**II. Enable Workload Identity Federation for GKE on the cluster through the gcloud command-line tool, establishing a secure mechanism for workloads operating in the cluster to access Google Cloud services with fine-grained IAM permissions.**\n\n**V. Utilize gcloud to bind Google service accounts and Kubernetes service accounts using roles/iam.workloadIdentityUser.**\n\nExplanation:\n\n  * Option II enables Workload Identity Federation for GKE (formerly called Workload Identity) on the cluster, which is Google's recommended way for GKE workloads to access Google Cloud APIs with fine-grained IAM permissions, without managing service account keys.\n\n  * Option V is the second half of the same setup: granting `roles/iam.workloadIdentityUser` on the Google service account to the Kubernetes service account lets Pods that use that Kubernetes service account act as the Google service account. (You can also grant IAM roles directly to the Kubernetes service account as a principal.)\n\nOptions I, III, and IV are not recommended best practices:\n\n  * Option I uses the service account linked to the GKE node. Every Pod on the node shares it, so it lacks granularity and breaks least privilege.\n\n  * Options III and IV keep Google service account keys in Secret Manager. They are still long-lived keys that must be stored, rotated and protected, which Workload Identity Federation for GKE avoids.\n\n**References:**\n\n<https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>",
+    "why": "Option V called itself 'not as endorsed' though keyed correct; modernized Workload Identity name."
+  },
+  "3-31": {
+    "answers": {
+      "V": "V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.",
+      "II": "II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool."
+    },
+    "explanation": "**The two most suitable approaches are:**\n\n  * **II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool.**\n\n  * **V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.**\n\n**Explanation:**\n\n  * **Workload Identity Federation for GKE** (formerly called Workload Identity): This is the preferred method for authentication in GKE. It eliminates the need to manage service account keys within your Pods. Instead, Kubernetes service accounts are mapped to Google service accounts (or granted IAM roles directly), simplifying permissions management.\n\n  * **IAM Binding:** Granting `roles/iam.workloadIdentityUser` on the Google service account to the Kubernetes service account is what lets Pods using that Kubernetes service account act as the Google service account.\n\n**Why Other Options Aren't as Suitable**\n\n  * **I. GKE Node Service Account:** While technically possible, this is strongly discouraged. It grants broad permissions to all Pods on a node, violating the principle of least privilege.\n\n  * **III & IV. Service Account Key Management:** Managing keys directly creates overhead. Keys must be rotated and can leak. Workload Identity Federation for GKE eliminates these concerns.\n\n**References:**\n\n<https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>\n\n<https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts>",
+    "why": "Role name was roles/iam.workloadIdentity; real role is roles/iam.workloadIdentityUser. Modernized feature name."
+  },
+  "1-48": {
+    "answers": {
+      "I": "I. `**gcloud storage cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**`"
+    },
+    "explanation": "**I. gcloud storage cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/**\n\n**Explanation:**\n\n  * `gcloud storage` is Google's recommended command-line tool for Cloud Storage, and `gcloud storage cp` uploads local files to a bucket. Once the files are in Cloud Storage, the Dataproc cluster reads them through the built-in Cloud Storage connector using `gs://` paths. (The older `gsutil cp` does the same job but is now a legacy tool.)\n\n**Why Other Options Are Not Suitable:**\n\n  * **II. gcloud cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** There is no top-level `gcloud cp` command. Copying to Cloud Storage is done with `gcloud storage cp`.\n\n  * **III. hadoop fs cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** The on-premises VM would need Hadoop and the Cloud Storage connector installed, and the actual syntax is `hadoop fs -cp`. It's not the straightforward choice.\n\n  * **IV. gcloud dataproc cp [LOCAL_OBJECT] gs://[DESTINATION_BUCKET_NAME]/** The `gcloud dataproc` command group doesn't have a `cp` command. It's for managing Dataproc clusters and jobs, not data transfer.\n\nRef:\n\n<https://cloud.google.com/storage/docs/uploading-objects>",
+    "why": "gsutil is legacy; modernized option to gcloud storage cp. Old explanation also wrongly said gcloud has a general cp command."
+  },
+  "2-46": {
+    "explanation": [
+      [
+        "`computeMetadata/v1/instance/zone` for the project ID and region respectively",
+        "`computeMetadata/v1/instance/region` for the project ID and region respectively"
+      ]
+    ],
+    "why": "Cloud Run's metadata server exposes instance/region for the region."
+  },
+  "4-39": {
+    "answers": {
+      "I": "I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Looker Studio.",
+      "III": "III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Looker Studio.",
+      "II": "II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio."
+    },
+    "explanation": [
+      [
+        "Google Data Studio: <https://datastudio.google.com/>",
+        "Looker Studio: <https://lookerstudio.google.com/>"
+      ],
+      [
+        "Google Data Studio",
+        "Looker Studio"
+      ]
+    ],
+    "why": "Data Studio was renamed Looker Studio."
+  },
+  "1-18": {
+    "note": "Cloud Endpoints still works, but Google's current API-management products are API Gateway (for serverless backends such as Cloud Run functions) and Apigee. If they appear as options, treat them the same way: an API gateway in front of the backend.",
+    "why": "Older product framing: API Gateway and Apigee are the current API-management options."
+  },
+  "1-55": {
+    "note": "Cloud Endpoints still works, but Google's current API-management products are API Gateway (for serverless backends such as Cloud Run functions) and Apigee. If they appear as options, treat them the same way: an API gateway in front of the backend.",
+    "why": "Older product framing: API Gateway and Apigee are the current API-management options."
+  }
+}

@@ -188,7 +188,7 @@
       ],
       "takeaways": [
         "Any 'alert when X' with minimal development: Cloud Monitoring alerting policy, never a scheduled function.",
-        "App unreachable for users: uptime check; process stopped without app changes: process health (the bank also keys metric absence).",
+        "App unreachable for users: uptime check; process stopped without app changes: process health.",
         "VM memory needs the monitoring agent; log files need the logging agent with a custom source.",
         "Count /api/alpha/* requests: logs-based counter metric with a wildcard.",
         "Logs from every replica in every cluster: Cloud Logging via gcloud logging read, not kubectl logs or journalctl."
@@ -409,13 +409,13 @@
     {
       "term": "Metric absence condition",
       "definition": "A Cloud Monitoring alert condition that fires when a metric stops reporting for a set duration.",
-      "exam_context": "Keyed once for 'alert if a process hasn't run for 5 minutes' (Exam 4); another exam keys process health for the same stem, which fits better.",
+      "exam_context": "Fires when a metric stops arriving. A distractor for 'alert if a process hasn't run for 5 minutes', where a process health condition is the answer.",
       "lesson": 12
     },
     {
       "term": "Ops Agent",
       "definition": "Google's current unified agent for collecting logs and metrics from Compute Engine VMs, replacing the separate logging (fluentd) and monitoring (collectd) agents.",
-      "exam_context": "Questions still say 'Stackdriver Logging/Monitoring Agent'; treat that as the agent you install for log files and VM memory.",
+      "exam_context": "The agent you install for VM log files and memory metrics. Older material names the separate Stackdriver logging and monitoring agents instead.",
       "lesson": 12
     },
     {

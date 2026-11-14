@@ -231,7 +231,7 @@ When a question asks to surface a value buried inside log content (an IP, a stat
 You’re setting up connectivity between Google Kubernetes Engine (GKE) clusters that live in separate VPCs, and you’ve found that nodes in Cluster A cannot reach nodes in Cluster B. You suspect the root cause is a network misconfiguration rather than an application issue. You need to pinpoint exactly which layer of the network path is failing, but you don’t have execute access into any workloads or nodes to run commands directly. What should you do?
 
 - [ ] A. Install a toolbox container on a node in Cluster A, and use it to confirm that the routes to Cluster B are configured correctly.
-- [x] B. Use Network Connectivity Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.
+- [x] B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.
 - [ ] C. Attach a debug container and run the traceroute command in both directions — from Cluster A to Cluster B and from Cluster B to Cluster A — to identify the point where the paths fail in common.
 - [ ] D. Enable VPC Flow Logs in both VPCs and monitor the logs for packet drops.
 
@@ -239,7 +239,7 @@ You’re setting up connectivity between Google Kubernetes Engine (GKE) clusters
 
 **Correct Answer**
 
-**B. Use Network Connectivity Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.**
+**B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.**
 
 **Exam Reasoning Explanation**
 
@@ -269,7 +269,7 @@ A Connectivity Test performs static (and, where applicable, dynamic) analysis of
 
 **Exam Trap**
 
-The sharpest trap in this question is the product name itself: the Connectivity Test capability actually lives under **Network Intelligence Center** , not **Network Connectivity Center** — the latter is a separate Google Cloud product for building hub-and-spoke connectivity (VPC spokes, VPN, Interconnect, router-appliance spokes) between networks. The two names are easy to swap under exam pressure. Learn to recognize the capability by what it does — simulate a path and report the failing configuration layer without touching any compute resource — rather than by memorizing the exact product name, since official practice material (and even real exam distractors) can blur the two.
+Watch the product name: the Connectivity Test capability lives under **Network Intelligence Center** , not **Network Connectivity Center** — the latter is a separate Google Cloud product for building hub-and-spoke connectivity (VPC spokes, VPN, Interconnect, router-appliance spokes) between networks. The two names are easy to swap under exam pressure. Learn to recognize the capability by what it does — simulate a path and report the failing configuration layer without touching any compute resource — rather than by memorizing the exact product name, since official practice material (and even real exam distractors) can blur the two.
 
 **Foundation Concept**
 
@@ -1327,6 +1327,8 @@ When a question pairs a Git source of truth with consistency across multiple GKE
 [**Google Cloud — Policy Controller overview:**](https://docs.cloud.google.com/kubernetes-engine/enterprise/policy-controller/docs/overview) Supports: the distinction that Policy Controller enforces constraints through admission control and auditing, which eliminates Option D as the mechanism for installing resources from Git
 
 [**Google Cloud — Professional Cloud DevOps Engineer Certification Exam Guide:**](https://services.google.com/fh/files/misc/professional_cloud_devops_engineer_exam_guide_english.pdf) Supports: domain alignment to Section 1.4, “Managing multiple environments,” which covers managing configuration and policy and managing GKE clusters across an enterprise
+
+**⚠️ Note:** In a pure GitOps setup Cloud Build would only render and validate the manifests and commit them; Config Sync then applies them from Git. Having Cloud Build also deploy them is redundant. Pick C because it is the only option with Config Sync, not because of the Cloud Build deploy step.
 
 ---
 
@@ -4065,6 +4067,8 @@ When a VPC design question asks for minimal-management, broadly flexible connect
 
 [**Google Cloud — Cloud VPN documentation:**](https://cloud.google.com/network-connectivity/docs/vpn) Supports: the elimination of Option D by confirming Cloud VPN traverses the public internet via IPsec and is intended for low-volume data connections
 
+**⚠️ Note:** This is the best of the listed options only. VPC Network Peering is not transitive and has per-network peering limits, so a full mesh across many departments becomes hard to manage. Google's landing-zone guidance usually points to Shared VPC or a hub-and-spoke design (for example with Network Connectivity Center) at this scale.
+
 ---
 
 ## Question 57
@@ -4354,5 +4358,7 @@ When a question asks for both encrypting sensitive information and limiting expo
 [**Google Cloud — Rotate a key (Cloud KMS):**](https://cloud.google.com/kms/docs/key-rotation) Supports: the correct-answer mechanism of key rotation limiting the exposure window if a key is compromised
 
 [**Google Cloud — Cloud Key Management Service overview:**](https://cloud.google.com/kms/docs/key-management-service) Supports: Cloud KMS’s role as the centralized service for creating and managing the encryption keys used to protect application data
+
+**⚠️ Note:** Rotation bounds what a single compromised key version can expose: each version only encrypts data during its own period. Older versions stay enabled so existing data can still be decrypted, so to fully retire a version you must re-encrypt the data under the new version and then disable the old one. For storing application secrets themselves, Secret Manager is today's recommended service; it is not among these options.
 
 ---

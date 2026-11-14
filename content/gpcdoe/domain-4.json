@@ -12,7 +12,7 @@
         "One sink routes to exactly one destination; folder or org aggregated sinks automatically include future child projects.",
         "Cheapest multi-year or immutable archive: sink to Cloud Storage with a retention policy plus Bucket Lock.",
         "External SIEM that ingests via Pub/Sub: org sink to a Pub/Sub topic; Pub/Sub is transport (max 31 days), never storage.",
-        "Live, shareable SQL dashboards on logs: sink to BigQuery, then Data Studio/Looker Studio; a CSV/Sheets export is only a static snapshot.",
+        "Live, shareable SQL dashboards on logs: sink to BigQuery, then Looker Studio (formerly Data Studio); a CSV/Sheets export is only a static snapshot.",
         "Prefer native collection plus a sink over custom apps, pullers or third-party relays that write logs elsewhere."
       ]
     },
@@ -229,7 +229,7 @@
     },
     {
       "term": "BigQuery sink destination",
-      "definition": "Routing logs to a BigQuery dataset for SQL analysis and live dashboards in Data Studio/Looker Studio.",
+      "definition": "Routing logs to a BigQuery dataset for SQL analysis and live dashboards in Looker Studio (formerly Data Studio).",
       "exam_context": "Pick it for analysis and live shareable dashboards; not for locked retention or cheapest cold archive.",
       "lesson": 1
     },

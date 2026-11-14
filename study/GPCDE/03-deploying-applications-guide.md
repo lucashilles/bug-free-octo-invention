@@ -1,6 +1,6 @@
 # Domain 3 Study Guide — Configuring and Deploying Applications
 
-> Condensed from the 104-question bank in [`03-deploying-applications.md`](03-deploying-applications.md). Citations look like (Exam N · QM). Several scenarios repeat across exams, so look for paired citations. Many explanations still use old names (Stackdriver = Cloud Monitoring / Cloud Logging); see ⚠️ for the items that look outdated or weak.
+> Condensed from the 104-question bank in [`03-deploying-applications.md`](03-deploying-applications.md). Citations look like (Exam N · QM). Several scenarios repeat across exams, so look for paired citations. Old product names in the bank (Stackdriver, Container Registry, Cloud Source Repositories, Webmaster Central) have been updated to the current ones; see ⚠️ for the items that are still debatable.
 
 ---
 
@@ -80,7 +80,7 @@
 - Kubernetes sends **SIGTERM** before killing a container. To close DB connections cleanly during a Deployment update, **handle SIGTERM in the code** (Exam 2 · Q59).
 - `terminationGracePeriodSeconds` only gives *more time*. A **PodDisruptionBudget** only limits voluntary disruptions. A **preStop** hook runs extra logic. None of them fixes code that ignores SIGTERM (Exam 2 · Q59).
 - The bank's key for "check DB connectivity and run a graceful shutdown script on failure" is a **livenessProbe that fails without DB connectivity + a preStop handler** for the shutdown script. An initContainer only checks once before start, PostStart runs once after start, and separate Jobs are complex and slow (Exam 1 · Q19, see ⚠️).
-- A legacy app whose config lives on NFS: mount it via a **PersistentVolumeClaim** and start the service with an **ENTRYPOINT script** that verifies the config before serving. Baking config into the image forces rebuilds; a node startup script couples config to infrastructure (Exam 2 · Q4).
+- A legacy app whose config lives on NFS: mount it via a **PersistentVolumeClaim** and start the service with an **ENTRYPOINT script** that verifies the config before serving. Baking config into the image forces rebuilds; a node startup script couples config to infrastructure; copying with the Cloud Storage CLI doesn't fit config that lives on NFS. Outside this question, a **readiness probe** is the Kubernetes-native way to hold traffic until the app is ready (Exam 2 · Q4).
 - **Preemptible VMs** (Compute Engine) get a shutdown script. Make the script send the application a **Linux signal** so it disconnects from the database. Polling a file every 5 minutes is too slow; broadcasting to logged-in users or publishing to Pub/Sub doesn't stop the process cleanly (Exam 3 · Q40).
 - **The three probes:** a **readinessProbe** decides whether the Pod is in the Service's endpoints, so it controls **whether the load balancer sends it traffic**; a **livenessProbe** restarts a stuck container; a **startupProbe** holds off liveness (and readiness) checks until the app has started. To use `/healthz` for "should the LB route to this Pod?", configure `readinessProbe: httpGet: {path: /healthz, port: 80}` (Exam 5 · Q20).
 - **Slow, variable startup makes the liveness probe fail** → add a **startupProbe**. Lengthening the liveness `initialDelaySeconds` delays detection of real hangs on every start; more CPU or a readiness probe doesn't stop the restarts (Exam 5 · Q49).
@@ -119,7 +119,7 @@
 - **Service endpoint/version discovery for new VMs:** endpoint details as **metadata fetched at runtime**. Labels organize resources; they aren't runtime config. A fixed hostname/port is inflexible (Exam 2 · Q7).
 - **One project per environment (dev, QA, staging, prod):** set a **project-wide metadata key** such as `environment` once in each project; every instance inherits it and the deployment tool reads it from the metadata server. Setting instance metadata at each launch is repetitive and error-prone, a startup script that derives the environment from the project name is brittle, and a deployment-tool instance per project is overhead (Exam 5 · Q44).
 - **Shared read/write config file for many instances, no code rewrite:** **Filestore** mounted as an **NFS PersistentVolume**. This is the answer both when lifting a legacy app and when splitting a monolith into GKE microservices that share the file (Exam 4 · Q25), (Exam 5 · Q59).
-- **Expanded a persistent disk but Pods don't see the space:** edit **`spec.resources.requests.storage` on the PVC** and apply it (the StorageClass must allow volume expansion). Don't edit the PV's capacity, redeploy, or run `fdisk` in the Pod (Exam 4 · Q58).
+- **Expanded a persistent disk but Pods don't see the space:** edit **`spec.resources.requests.storage` on the PVC** and apply it (the StorageClass must allow volume expansion). Don't edit the PV's capacity, redeploy, or run `fdisk` in the Pod (Exam 4 · Q58, see ⚠️).
 
 ### Storage selector
 
@@ -127,7 +127,7 @@
 |---|---|---|---|
 | Many Pods read + write one file, NFS, no code change | **Filestore NFS PV** | Shared PD (complex ReadWriteMany setup, single point of failure), ConfigMap (not built for concurrent modification), GCS FUSE (performance overhead) | (Exam 4 · Q25), (Exam 5 · Q59) |
 | Each replica has its own disk | StatefulSet + PVC per Pod | Deployment | (Exam 2 · Q1) |
-| Legacy config on existing NFS share | PVC + ENTRYPOINT check | gsutil in container, COPY in image | (Exam 2 · Q4) |
+| Legacy config on existing NFS share | PVC + ENTRYPOINT check | Cloud Storage CLI in container, COPY in image | (Exam 2 · Q4) |
 | Grow a volume | Edit **PVC** request | Edit PV, fdisk | (Exam 4 · Q58) |
 
 ### Decision rules
@@ -195,7 +195,7 @@
 ### Decision rules
 - "Minimal configuration" on Cloud Run → use **built-in revision traffic splitting**, not a load balancer or code-level routing (Exam 6 · Q2).
 - "Small portion of users first, then everyone" → **traffic splitting / canary**, not "smoke test then 100%" (Exam 4 · Q30).
-- For the key **"safest rollout of a new GKE revision"**, the bank's answer is **rolling update + PodDisruptionBudget**, not a StatefulSet conversion or an HPA scale-down policy (Exam 3 · Q49, see ⚠️).
+- For the key **"safest rollout of a new GKE revision"**, the bank's answer is **rolling update + PodDisruptionBudget**, not a StatefulSet conversion or an HPA scale-down policy (Exam 3 · Q49). The PDB keeps 80% of Pods up during **voluntary disruptions** (node drains, upgrades) that may overlap the release; the pace of the rollout itself comes from `maxSurge`/`maxUnavailable`.
 - Surge vs unavailable: "keep capacity / keep old until new is healthy" → **surge 1, unavailable 0**; "no extra cost / no extra instances" → **surge 0, unavailable 1** (Exam 5 · Q57), (Exam 5 · Q10).
 - **Random share of users** → traffic split; **named group of users** → feature flag (Exam 5 · Q25), (Exam 5 · Q58).
 
@@ -217,10 +217,10 @@
 - **Stateless service, autoscaling needed urgently with minimal changes** → **HPA on CPU**. A custom-metric HPA or any VPA takes longer to set up (Exam 1 · Q27), (Exam 1 · Q39).
 - **Internal service that must scale rapidly** → **HPA + ClusterIP Service** (Exam 3 · Q14).
 - **Pub/Sub consumer with bursty publishing** → **HPA on an external metric** such as `pubsub.googleapis.com/subscription/num_undelivered_messages`. CPU may not track backlog (Exam 1 · Q12).
-- **Compute Engine MIG latency spikes while scaling on CPU** → **lower the target CPU utilization** (scale out earlier) and **shorten the cooldown/initialization period** (Exam 1 · Q14). Never remove health checks; there is no "AUTOSCALE" label.
+- **Compute Engine MIG latency spikes while scaling on CPU** → **lower the target CPU utilization** (scale out earlier) and **shorten the cooldown/initialization period** (Exam 1 · Q14). The initialization period is how long the autoscaler ignores a new VM's metrics; set much longer than the real boot time, it discards valid load signals and underestimates the group size. It doesn't change when a VM starts getting traffic. Never remove health checks; there is no "AUTOSCALE" label.
 - **Right-size Cloud Spanner for cost without hurting reliability:** watch **CPU utilization in Cloud Monitoring** and reduce processing units gradually to the minimum needed. Error logs, Trace RPS and Snapshot Debugger don't measure capacity (Exam 3 · Q24).
 - **Cloud Run slows down and returns errors only under a high-load test:** check whether the service hit its **maximum instances** limit and **raise max instances**. Min instances only keeps instances warm against cold starts; splitting traffic to an old revision or disabling Cloud Armor doesn't add capacity (Exam 5 · Q11).
-- **Cap App Engine standard at 5 instances:** **`basic_scaling` with `max_instances: 5`** (plus `idle_timeout`, e.g. 10m). **Manual scaling** runs a fixed `instances` count and has no `max_instances`; `min_pending_latency` is an automatic-scaling setting (Exam 5 · Q45, see ⚠️).
+- **Cap App Engine standard at 5 instances:** **`basic_scaling` with `max_instances: 5`** (plus `idle_timeout`, e.g. 10m). **Manual scaling** runs a fixed `instances` count and has no `max_instances`; `min_pending_latency` is an automatic-scaling setting. App Engine standard has three scaling types: automatic, basic and manual (Exam 5 · Q45).
 
 ### Autoscaler comparison
 
@@ -257,9 +257,9 @@
 - **Cloud Build deploys Cloud Functions and fails right after code validation:** the **Cloud Build service account lacks the Cloud Functions Developer role**. Instance limits, trigger parameters and retries with backoff don't fix permissions (Exam 1 · Q42).
 - **Cloud Deploy Dev → Test auto-promotion** (bank key): a **Cloud Function triggered by SUCCEEDED messages on the `clouddeploy-operations` topic** calls the Cloud Deploy API to promote. The `cloud-builds` topic carries build events, not deploy events (Exam 2 · Q44, see ⚠️).
 - **Isolated, automated test environment for Cloud Run system tests:** **Cloud Build runs Terraform** to create a **new project** and deploy the service there. A new revision in the production project lacks isolation; gcloud scripts are less declarative (Exam 4 · Q49).
-- **Versioned, auditable infrastructure + Google-managed tooling + serverless app:** keep app **and** infrastructure code in **Git**, have **Cloud Build apply Terraform**, and deploy the app to a serverless target (the key uses **Cloud Functions**) in a pipeline step. Plain `gcloud` commands for infrastructure aren't versioned IaC, self-hosted Jenkins isn't Google-managed, and a container on a Compute Engine VM isn't serverless (Exam 5 · Q32, see ⚠️).
+- **Versioned, auditable infrastructure + Google-managed tooling + serverless app:** keep app **and** infrastructure code in **Git**, have **Cloud Build apply Terraform**, and deploy the app to a serverless target (the key uses **Cloud Functions**) in a pipeline step. Plain `gcloud` commands for infrastructure aren't versioned IaC, self-hosted Jenkins isn't Google-managed, and a container on a Compute Engine VM isn't serverless (Exam 5 · Q32). The key wins because of IaC, not because Cloud Functions is "more serverless": Cloud Run and App Engine are serverless too.
 - **Promote one image through Dev → Test → Prod:** reference it by its **digest** (`image@sha256:…`), which is immutable. `latest` and even semantic-version tags are mutable and can be moved to different content; a unique image name doesn't pin content either (Exam 5 · Q18).
-- **Copy assets as part of a promotion:** add a **`gcr.io/cloud-builders/gsutil` step** to `cloudbuild.yaml` before the promote step, e.g. `cp -r gs://webphotos-staging gs://webphotos-prod`. Manual copies break automation; a startup script in `app.yaml` mixes data movement into the app runtime (Exam 5 · Q5, see ⚠️).
+- **Copy assets as part of a promotion:** add a **`gcr.io/cloud-builders/gsutil` step** to `cloudbuild.yaml` before the promote step, e.g. `cp -r gs://webphotos-staging gs://webphotos-prod`. The `-r` matters: the distractor's `-a` sets a canned ACL and isn't recursive. `waitFor: ['-']` starts a step at the beginning of the build, in parallel; it doesn't make later steps wait, so the promote step should `waitFor` the copy step's `id`. Manual copies break automation; a startup script in `app.yaml` mixes data movement into the app runtime. Today `gcloud storage cp` replaces `gsutil` (Exam 5 · Q5).
 - **Legacy .NET app, containers not approved, consistent results across environments:** have **Cloud Build bake a new Compute Engine image for every build** and deploy **that same image** to every environment (an immutable golden image). A .NET Core rewrite for Cloud Run is a big change, GKE needs containers, and Web Deploy onto a patched base image lets environments drift (Exam 5 · Q31).
 
 ### Decision rules
@@ -305,13 +305,13 @@
 ## 10. Networking and connectivity for deployed apps
 
 ### Key facts
-- **Cloud Run → Cloud SQL over private IP** (bank key): configure a **Serverless VPC Access connector** on the Cloud Run service (Exam 3 · Q5). The full managed pattern: Cloud SQL and Cloud Run **in the same project**, Cloud SQL **private IP + private services access**, Cloud Run uses the connector (Exam 3 · Q39).
+- **Cloud Run → Cloud SQL over private IP** (bank key): configure a **Serverless VPC Access connector** on the Cloud Run service (Exam 3 · Q5). The full managed pattern: Cloud SQL and Cloud Run **in the same project**, Cloud SQL **private IP + private services access**, Cloud Run uses the connector (Exam 3 · Q39). The connector (or the newer **Direct VPC egress**) is what gives Cloud Run a path into the VPC; the Cloud SQL connection or language connectors can use the private IP only once that path exists.
 - **Cloud Run → Memorystore gives 502 Bad Gateway:** the **connector is in a different region** from the Cloud Run service; all components must be in the same region. Memorystore doesn't need a public IP (Exam 4 · Q22).
 - **Compute Engine VMs → Cloud SQL without IP allowlisting:** enable **private IP** on the Cloud SQL instance (Exam 3 · Q19).
 - **Clients in the same VPC find a VM-hosted API:** Compute Engine **internal DNS**, `https://[INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal/`. External IPs, load balancers and A records are overkill (Exam 3 · Q4).
 - **Hybrid microservices crash on latency over Cloud VPN** with fluctuating bandwidth: **add Cloud VPN tunnels** for more bandwidth and redundancy (Exam 2 · Q39). Caching PII in Memorystore conflicts with the compliance reason it stays on-prem.
 - **Istio: requests to certain URLs fail, others between the same Pods succeed** → an **AuthorizationPolicy** blocking those **paths**. NetworkPolicy works at L3/L4 (not URLs), a wrong port or an mTLS mismatch would break all requests (Exam 1 · Q4), (Exam 1 · Q32).
-- **`kubectl` from Cloud Shell times out silently** against a GKE cluster with a public endpoint, after `get-credentials` succeeded: Cloud Shell's (ephemeral) external IP isn't in the cluster's **authorized networks** (control plane allowlist). Missing IAM rights give an explicit permission error, not a timeout; Cloud Shell doesn't need to be in the cluster's VPC to reach a public endpoint (Exam 5 · Q8, see ⚠️).
+- **`kubectl` from Cloud Shell times out silently** against a GKE cluster with a public endpoint, after `get-credentials` succeeded: Cloud Shell's (ephemeral) external IP isn't in the cluster's **authorized networks** (control plane allowlist). Missing IAM rights give an explicit permission error, not a timeout; Cloud Shell doesn't need to be in the cluster's VPC to reach a public endpoint. Authorized networks are **opt-in**; the key assumes they were enabled. GKE's DNS-based control plane endpoint avoids IP allowlisting altogether (Exam 5 · Q8).
 
 ### Layer comparison
 
@@ -322,7 +322,7 @@
 | Istio **AuthorizationPolicy** | HTTP method/path (L7) | **Yes** | (Exam 1 · Q4), (Exam 1 · Q32) |
 
 ### Decision rules
-- Serverless → private VPC resource: **connector, same region** (Exam 3 · Q5), (Exam 4 · Q22).
+- Serverless → private VPC resource: **connector (or Direct VPC egress), same region** (Exam 3 · Q5), (Exam 4 · Q22).
 - Path-specific failures in a mesh → **AuthorizationPolicy** (Exam 1 · Q32).
 - "No allowlisting" for Cloud SQL → **private IP** (Exam 3 · Q19).
 - Timeout with no error to a GKE control plane → **authorized networks**; an error message → **IAM/RBAC** (Exam 5 · Q8).
@@ -362,30 +362,30 @@
 ## 12. Production monitoring, logging and alerting
 
 ### Key facts
-- **Text log files on a VM → Cloud Logging, no code change:** install the logging agent (the bank's "Google-provided fluentd"/Stackdriver Logging Agent) and configure it to collect those files (Exam 2 · Q53), (Exam 3 · Q42). The first step after installing it is to **define the app log file as a custom source** (Exam 2 · Q5).
-- **Memory usage of a VM** is not a default hypervisor metric; you need the **monitoring agent** (Exam 3 · Q52).
+- **Text log files on a VM → Cloud Logging, no code change:** install the **Ops Agent** (older questions call it the logging agent or "Google-provided fluentd") and configure it to collect those files (Exam 2 · Q53, see ⚠️), (Exam 3 · Q42). The first step after installing it is to **define the app log file as a custom source** (Exam 2 · Q5).
+- **Memory usage of a VM** is not a default hypervisor metric; you need the **Ops Agent** (formerly the monitoring agent) (Exam 3 · Q52).
 - **Alert on error rate > 15%** (Cloud Run 500s), on **service degradation**, or on **GKE memory outside 20–80%**: a **Cloud Monitoring alerting policy**. Scheduled Cloud Functions, Composer, console checks and `kubectl top` scripts are all rejected (Exam 3 · Q6), (Exam 3 · Q23), (Exam 4 · Q57).
-- **Users can't reach the app behind the LB:** **uptime checks** (the bank's "Stackdriver availability checks") with alerting. LB/MIG health checks protect routing and autohealing; they don't notify you, and functional tests check behavior, not reachability (Exam 4 · Q10), (Exam 5 · Q29).
-- **Unix process stopped for 5 minutes, monitoring agent installed, app can't be changed:** the bank gives **two different keys for the same stem**: **metric absence** (Exam 4 · Q23) and **process health** (Exam 5 · Q47). Process health is the condition built for this: it counts matching processes from the agent's process metrics and fires when the count drops to 0. Pick process health when it's offered; see ⚠️.
+- **Users can't reach the app behind the LB:** **uptime checks** with alerting. LB/MIG health checks protect routing and autohealing; they don't notify you, and functional tests check behavior, not reachability (Exam 4 · Q10), (Exam 5 · Q29).
+- **Unix process stopped for 5 minutes, agent installed, app can't be changed:** a **process-health** condition. It counts matching processes from the agent's process metrics and fires when the count drops below 1. Metric absence doesn't fit: the app emits no metric of its own, and the VM's system metrics keep arriving whether the process runs or not (Exam 5 · Q47), (Exam 4 · Q23).
 - **Read stdout logs from every replica of a Deployment across several GKE clusters:** **`gcloud logging read`** with a filter. GKE ships container stdout/stderr to Cloud Logging, which aggregates all clusters. `kubectl logs` is one cluster/Pod at a time; `journalctl` via `exec` or SSH reads node/system logs, not container stdout (Exam 5 · Q28).
 - **Count requests to `/api/alpha/*` from logs:** a **logs-based counter metric** with a wildcard path filter. `/api/alpha/` alone misses sub-paths; exporting to GCS or Pub/Sub and counting lines is manual (Exam 4 · Q40).
 - **Correlate Prometheus metrics with logs and alert in real time, cheaply:** bring Prometheus metrics into **Cloud Monitoring** and create **log-based metrics** there to correlate and alert. BigQuery/Bigtable exports add cost and latency (Exam 3 · Q55).
 - **BigQuery query execution time:** Cloud Monitoring metrics, not Trace or slot usage (Exam 1 · Q53).
 - **Legacy on-prem monitoring is slow for cloud apps:** use **Cloud Logging + Cloud Monitoring** for capture and alerting and **forward alerts to the existing platform**, rather than a big-bang replacement (Exam 3 · Q35).
-- **Log retention of 1 and 3 years with easy search:** keep the logs in **Cloud Logging with custom retention**, rather than chained buckets (Exam 2 · Q45).
+- **Log retention of 1 and 3 years with easy search:** keep the logs in **Cloud Logging with custom retention**, rather than chained buckets. A log bucket has one retention value, so set it to 3 years, which also covers the 1-year need (Exam 2 · Q45).
 
 ### Signal selector
 
 | Question asks | Answer | Source |
 |---|---|---|
 | "Is it reachable from outside?" | Uptime check | (Exam 4 · Q10), (Exam 5 · Q29) |
-| "Has this Unix process stopped running?" | Process-health condition (bank also keys metric absence) | (Exam 5 · Q47), (Exam 4 · Q23) |
-| "Has metric X stopped reporting?" | Metric-absence condition | (Exam 4 · Q23) |
+| "Has this Unix process stopped running?" | Process-health condition | (Exam 5 · Q47), (Exam 4 · Q23) |
+| "Has metric X stopped reporting?" | Metric-absence condition (not for a process that emits no metric) | (Exam 4 · Q23) |
 | "Logs from all replicas in all clusters" | `gcloud logging read` / Logs Explorer | (Exam 5 · Q28) |
 | "Threshold on error rate / memory" | Metric-threshold alerting policy | (Exam 3 · Q6), (Exam 4 · Q57) |
 | "Count log lines matching a pattern" | Logs-based counter metric | (Exam 4 · Q40) |
-| "VM memory" | Monitoring agent | (Exam 3 · Q52) |
-| "Log files from disk" | Logging agent + custom source | (Exam 2 · Q5), (Exam 3 · Q42) |
+| "VM memory" | Ops Agent (metrics) | (Exam 3 · Q52) |
+| "Log files from disk" | Ops Agent (logs) + custom source | (Exam 2 · Q5), (Exam 3 · Q42) |
 
 ### Decision rules
 - "Minimal development time" for alerts → **native Cloud Monitoring**, never a custom function (Exam 3 · Q23), (Exam 3 · Q6).
@@ -406,26 +406,12 @@
 
 | Item | Issue |
 |---|---|
-| **(Exam 3 · Q49)** | Keys "rolling update with a PodDisruptionBudget at 80%". A PDB limits **voluntary evictions** (node drains, upgrades); it does not govern a Deployment rollout, which is controlled by `maxSurge`/`maxUnavailable`. The explanation's claim that the PDB keeps 80% of Pods up during the update is wrong. Pick it among these options, but don't learn it as how rollouts are protected. |
 | **(Exam 3 · Q46)** vs **(Exam 1 · Q41)**, **(Exam 3 · Q25)** | Keys Kubernetes Secret + KMS plugin for credentials that need **rotation**. The other two items (and Google's guidance) prefer **Secret Manager + Workload Identity**, which also handles versioning/rotation. Q46 only wins because Secret Manager isn't offered. |
-| **(Exam 1 · Q19)** | Keys a **livenessProbe that fails when the DB is unreachable**. Liveness probes that check external dependencies are a known anti-pattern: a DB outage makes every Pod restart in a loop. A readiness probe is the usual tool for dependency checks. The explanation's line that "a PreStop hook doesn't automatically trigger if a liveness probe fails" is also inaccurate: kubelet runs preStop before killing a container for a failed liveness probe. |
+| **(Exam 1 · Q19)** | Keys a **livenessProbe that fails when the DB is unreachable**. Liveness probes that check external dependencies are a known anti-pattern: a DB outage makes every Pod restart in a loop. A readiness probe is the usual tool for dependency checks. Pick the key here (it's the only option that runs the shutdown script on failure), but don't copy the pattern. |
 | **(Exam 2 · Q44)** | Cloud Function on `clouddeploy-operations` to auto-promote. Cloud Deploy now has **built-in automation (promote-release rules)**, which is the simpler current answer if offered. |
-| **(Exam 1 · Q14)** | Answers are fine, but the explanation says a shorter cooldown lets new VMs "handle traffic sooner". The cooldown/initialization period controls when the **autoscaler trusts the new VM's metrics**; it doesn't change when the VM serves traffic. |
-| **(Exam 2 · Q27)** | Calls traffic **mirroring** "A/B testing". Mirroring is shadow testing (users never see the new version); A/B testing exposes users to variants (Exam 2 · Q32). Learn the cue "full production load before launch → mirroring". |
-| **(Exam 2 · Q21)** | Dismisses Cloud Run's **continuous deployment from a repository with buildpacks**, which is a built-in, fully managed option (it creates a Cloud Build trigger for you) and arguably simpler. Expect either; the bank keys the explicit Cloud Build trigger. |
-| **(Exam 3 · Q5)**, **(Exam 3 · Q39)**, **(Exam 4 · Q22)** | Serverless VPC Access connectors are still valid, but Cloud Run now also supports **Direct VPC egress** without a connector. Q5's claim that the Cloud SQL connector/Cloud Run Cloud SQL connection "won't solve" private IP overstates it; they can use private IP once a VPC path exists. |
-| **Stackdriver / legacy agents**: (Exam 2 · Q5), (Exam 2 · Q53), (Exam 3 · Q42), (Exam 3 · Q52), (Exam 1 · Q53), (Exam 3 · Q23), (Exam 4 · Q10), (Exam 4 · Q23), (Exam 4 · Q40), (Exam 5 · Q29), (Exam 5 · Q47) | "Stackdriver" is now Cloud Logging/Monitoring, and the separate fluentd logging agent and collectd monitoring agent are replaced by the **Ops Agent**. The concepts hold; the product names are outdated. |
-| **(Exam 3 · Q30)** | Uses **Container Registry**, which is deprecated in favor of **Artifact Registry**; vulnerability scanning now sits under **Artifact Analysis**. The attestation + Binary Authorization logic still holds. |
-| **(Exam 2 · Q8)**, **(Exam 2 · Q21)**, **(Exam 3 · Q58)** | Built around **Cloud Source Repositories**, which is closed to new customers. The trigger logic (tag vs branch vs push) carries over to GitHub/GitLab-connected Cloud Build triggers. |
-| **(Exam 4 · Q58)** | Resizing the PD first and then editing the PVC is backwards from the normal flow (edit the PVC and let the CSI driver grow the disk), and it only works when the StorageClass has `allowVolumeExpansion: true`. With a manually created PV, as in the stem, expansion may not apply at all. |
-| **(Exam 3 · Q12)** | "Webmaster Central" is now **Search Console**. The CNAME to `ghs.googlehosted.com` remains the answer. |
-| **(Exam 2 · Q4)** | The explanation says gsutil in the container means "embedding credentials"; with Workload Identity it doesn't. Also, the Kubernetes-native way to hold traffic until config is present is a **readiness probe**. Learn the key, not the reasoning. |
-| **(Exam 2 · Q45)** | A Cloud Logging bucket has **one** retention value; you'd set 3 years (which also covers the 1-year need). The explanation implies setting two retention periods. |
-| **(Exam 5 · Q47)** vs **(Exam 4 · Q23)** | Same stem (Unix process not running for 5 minutes, agent installed, app can't be changed), different keys: Q47 = **process health**, Q23 = **metric absence**. Q23's explanation says process health needs the app to emit custom metrics, which is wrong: the agent reports process metrics itself. Process health is the condition designed for this and the safer pick when offered; metric absence only fits when the choice is "a metric stopped arriving". |
-| **(Exam 5 · Q5)** | The key (gsutil `cp -r` build step) is fine, but the explanation gets both flags wrong. `waitFor: ['-']` makes the step **start immediately at the beginning of the build, in parallel**; it does not make later steps wait. To run the copy before promotion, the promote step should `waitFor` the copy step's `id`. In `gsutil cp`, `-a` sets a **canned ACL**, not "archive mode", so D is wrong because it's missing `-r`, not because `-a` is merely less direct. `gsutil` is also superseded by `gcloud storage`. |
-| **(Exam 5 · Q45)** | The explanation says App Engine standard has "two scaling types: basic and automatic". There are three (**automatic, basic, manual**), and automatic scaling also supports `max_instances`. The key (basic scaling, `max_instances: 5`) is still the only option that caps instances. |
-| **(Exam 5 · Q32)** | The key (Git + Cloud Build + Terraform + Cloud Functions) is right because of **IaC**. The explanation's claims that App Engine is "less serverless" than Cloud Functions and that Cloud Functions is "the ideal" serverless target are wrong: Cloud Run and App Engine are serverless too. Don't learn "serverless means Cloud Functions". |
-| **(Exam 5 · Q8)** | The explanation says public-endpoint clusters restrict access to authorized IPs "by default". **Authorized networks are opt-in** on a public cluster; the key assumes they were enabled. GKE now also offers a DNS-based control plane endpoint, which avoids IP allowlisting for Cloud Shell. |
+| **(Exam 2 · Q21)** | Dismisses Cloud Run's **continuous deployment from a repository with buildpacks**, which is a built-in, fully managed option (it creates a Cloud Build trigger for you) and arguably simpler. Expect either; the bank keys the explicit Cloud Build trigger. The stem still uses Cloud Source Repositories, which is closed to new customers. |
+| **(Exam 4 · Q58)** | Resizing the PD first and then editing the PVC is backwards from the normal flow (edit the PVC and let the CSI driver grow the disk), and it only works when the StorageClass has `allowVolumeExpansion: true`. With a manually created PV, as in the stem, expansion may not apply at all. Editing the PVC is still the best option offered. |
+| **(Exam 2 · Q53)** | Options still name the legacy **Google-provided fluentd** (logs) and **collectd** (metrics) agents. Both are replaced by the **Ops Agent**; choose it when offered. |
 
 ---
 
@@ -453,9 +439,9 @@
 - Same image in every environment → reference it by **digest** (Exam 5 · Q18).
 - Only trusted images → **Cloud Build + Artifact Registry + Binary Authorization**; attestation step after tests; KMS key; rule in **prod** policy (Exam 2 · Q15), (Exam 6 · Q14), (Exam 4 · Q18).
 - No exfiltration from the pipeline → **private worker pool + VPC Service Controls** (+ Binary Authorization, also on Cloud Run) (Exam 5 · Q33), (Exam 5 · Q38).
-- Cloud Run → private Cloud SQL/Memorystore → **Serverless VPC Access connector in the same region** (Exam 3 · Q39), (Exam 4 · Q22).
+- Cloud Run → private Cloud SQL/Memorystore → **Serverless VPC Access connector (or Direct VPC egress) in the same region** (Exam 3 · Q39), (Exam 4 · Q22).
 - Istio, only some URLs fail → **AuthorizationPolicy** (Exam 1 · Q4).
 - VM won't boot / SSH dead → **serial port** (Exam 1 · Q56), (Exam 2 · Q50).
-- Alerts → **Cloud Monitoring alerting policy**; reachability → **uptime check**; process gone → **process health** (bank also keys metric absence, see ⚠️) (Exam 3 · Q6), (Exam 4 · Q10), (Exam 5 · Q47), (Exam 4 · Q23).
+- Alerts → **Cloud Monitoring alerting policy**; reachability → **uptime check**; process gone → **process health** (Exam 3 · Q6), (Exam 4 · Q10), (Exam 5 · Q47), (Exam 4 · Q23).
 - Count matching log entries → **logs-based counter metric** with wildcard path (Exam 4 · Q40).
-- Logs from files without code change → **logging agent**; VM memory → **monitoring agent** (Exam 3 · Q42), (Exam 3 · Q52).
+- Logs from files without code change → **Ops Agent** (logs); VM memory → **Ops Agent** (metrics) (Exam 3 · Q42), (Exam 3 · Q52).

@@ -37,9 +37,9 @@
 - CI build needs private VPC access, no public exposure, low overhead → Cloud Build private pools (peered into the VPC); an external load balancer is public by definition, and an internal one alone doesn’t get a default-pool build worker into the VPC in the first place. *(Q4.16)*
 - Fast, reliable, repeatable project provisioning → reuse the Cloud Foundation Toolkit’s existing Terraform modules, don’t build equivalent logic yourself from a script or a module you author from scratch. *(Q4.18)*
 - JSON key creation risk, zero overhead, complete elimination → constraints/iam.disableServiceAccountKeyCreation at the org level; “Upload” blocks a different action, and custom roles or admin-only grants don’t eliminate the capability outright. *(Q4.22)*
-- Infrastructure layers (Terraform, Kustomize/ACM): one shared repo, directories/overlays for environments. Application code: one repo per app, branches for features — not the reverse. *(Q4.26)*
+- Infrastructure layers (Terraform, Kustomize/Config Sync): one shared repo, directories/overlays for environments. Application code: one repo per app, branches for features — not the reverse. *(Q4.26)*
 - “Reconciles periodically” is a controller behavior, not a Pod/Job/pipeline behavior — Config Connector’s built-in reconciliation loop continuously corrects drift; Pods and Jobs run once, and Cloud Build runs on triggers. *(Q4.27)*
-- Constraint templates and policy parameters, synced automatically from Git, across many GKE clusters → Anthos Config Management (Policy Controller + Config Sync); Config Connector manages Google Cloud resources, not Kubernetes policy constraints. *(Q4.33)*
+- Constraint templates and policy parameters, synced automatically from Git, across many GKE clusters → Config Sync + Policy Controller; Config Connector manages Google Cloud resources, not Kubernetes policy constraints. *(Q4.33)*
 - “One bucket, many windows” — log views slice a single bucket into per-team visibility without copying any data. *(Q4.46)*
 - “Data Access logs need the ‘Private’ role; access for a team needs a group, not a list of names.” *(Q4.56)*
 
@@ -76,7 +76,7 @@ The hard requirement here is two-fold: true code _versioning_ (a history of chan
 
 **Why This Is Correct**
 
-A VCS (Git, typically hosted on Cloud Source Repositories, GitHub, or GitLab) stores every change as a discrete, reversible commit tied to an author and timestamp, which is the textbook definition of “code versioning.” Branching and merge workflows let multiple engineers work in parallel on the same Terraform configuration without overwriting each other’s changes, and establishing a push/merge procedure (e.g., feature branches plus pull requests into `main`) adds the review gate needed to keep shared infrastructure code trustworthy as the team scales. This is also the foundation Google Cloud’s own recommended practices build on: CI/CD pipelines for Terraform (via Cloud Build or similar) are triggered from VCS commits, so starting with a VCS is the prerequisite for everything that follows in a mature IaC workflow.
+A VCS (Git, typically hosted on GitHub, GitLab, Bitbucket, or Secure Source Manager) stores every change as a discrete, reversible commit tied to an author and timestamp, which is the textbook definition of “code versioning.” Branching and merge workflows let multiple engineers work in parallel on the same Terraform configuration without overwriting each other’s changes, and establishing a push/merge procedure (e.g., feature branches plus pull requests into `main`) adds the review gate needed to keep shared infrastructure code trustworthy as the team scales. This is also the foundation Google Cloud’s own recommended practices build on: CI/CD pipelines for Terraform (via Cloud Build or similar) are triggered from VCS commits, so starting with a VCS is the prerequisite for everything that follows in a mature IaC workflow.
 
 **Why the Other Options Are Not the Best Fit**
 
@@ -110,7 +110,7 @@ Whenever a DevOps scenario mentions a growing team needing to version and share 
 
 [**Google Cloud — Infrastructure as Code with Terraform (best practices):**](https://cloud.google.com/docs/terraform/best-practices/general-style-structure) Supports: why Terraform configurations should live in a VCS with branching/merge workflows as the basis for IaC management
 
-[**Google Cloud — Cloud Source Repositories overview:**](https://cloud.google.com/source-repositories/docs) Supports: Google Cloud’s own recommended Git-based version-control service for storing and collaborating on infrastructure code
+[**Google Cloud — Secure Source Manager overview:**](https://cloud.google.com/secure-source-manager/docs/overview) Supports: Google Cloud’s managed Git-based version-control service for storing and collaborating on code (Cloud Source Repositories is closed to new customers)
 
 </details>
 
@@ -906,6 +906,8 @@ When a question pairs a Git source of truth with consistency across multiple GKE
 
 [**Google Cloud — Professional Cloud DevOps Engineer Certification Exam Guide:**](https://services.google.com/fh/files/misc/professional_cloud_devops_engineer_exam_guide_english.pdf) Supports: domain alignment to Section 1.4, “Managing multiple environments,” which covers managing configuration and policy and managing GKE clusters across an enterprise
 
+**⚠️ Note:** In a pure GitOps setup Cloud Build would only render and validate the manifests and commit them; Config Sync then applies them from Git. Having Cloud Build also deploy them is redundant. Pick C because it is the only option with Config Sync, not because of the Cloud Build deploy step.
+
 </details>
 
 ---
@@ -1128,6 +1130,8 @@ When a VPC design question asks for minimal-management, broadly flexible connect
 
 [**Google Cloud — Cloud VPN documentation:**](https://cloud.google.com/network-connectivity/docs/vpn) Supports: the elimination of Option D by confirming Cloud VPN traverses the public internet via IPsec and is intended for low-volume data connections
 
+**⚠️ Note:** This is the best of the listed options only. VPC Network Peering is not transitive and has per-network peering limits, so a full mesh across many departments becomes hard to manage. Google's landing-zone guidance usually points to Shared VPC or a hub-and-spoke design (for example with Network Connectivity Center) at this scale.
+
 </details>
 
 ---
@@ -1198,6 +1202,8 @@ When a question asks for both encrypting sensitive information and limiting expo
 [**Google Cloud — Rotate a key (Cloud KMS):**](https://cloud.google.com/kms/docs/key-rotation) Supports: the correct-answer mechanism of key rotation limiting the exposure window if a key is compromised
 
 [**Google Cloud — Cloud Key Management Service overview:**](https://cloud.google.com/kms/docs/key-management-service) Supports: Cloud KMS’s role as the centralized service for creating and managing the encryption keys used to protect application data
+
+**⚠️ Note:** Rotation bounds what a single compromised key version can expose: each version only encrypts data during its own period. Older versions stay enabled so existing data can still be decrypted, so to fully retire a version you must re-encrypt the data under the new version and then disable the old one. For storing application secrets themselves, Secret Manager is today's recommended service; it is not among these options.
 
 </details>
 
@@ -2266,6 +2272,8 @@ When a scenario wants Data Access audit logging turned on broadly but one part o
 
 [**Google Cloud — Cloud Audit Logs overview:**](https://cloud.google.com/logging/docs/audit) Supports: general context on Data Access audit logs versus Admin Activity logs and how audit logging is scoped across organizations, folders, and projects
 
+**⚠️ Note:** Exempted principals are identity-based, not folder-based. Those principals are exempt everywhere the org-level setting applies, not only inside the CustomerService folder. The answer works only if those principals are used only by the CustomerService projects.
+
 </details>
 
 ---
@@ -2633,28 +2641,28 @@ When a scenario wants service account key creation eliminated organization-wide 
 
 ### Exam 4 · Q26
 
-You are designing a platform with three environments — development, quality assurance (QA), and production. Each environment is provisioned with Terraform and includes its own Google Kubernetes Engine (GKE) cluster where application teams deploy their workloads. Anthos Config Management, using templated Kustomize manifests, deploys infrastructure-level resources into each GKE cluster. Every user — infrastructure operators and application owners alike — works through GitOps. How should you structure your source control repositories for both infrastructure as code (IaC) and application source code?
+You are designing a platform with three environments — development, quality assurance (QA), and production. Each environment is provisioned with Terraform and includes its own Google Kubernetes Engine (GKE) cluster where application teams deploy their workloads. Config Sync, using templated Kustomize manifests, deploys infrastructure-level resources into each GKE cluster. Every user — infrastructure operators and application owners alike — works through GitOps. How should you structure your source control repositories for both infrastructure as code (IaC) and application source code?
 
-- A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Anthos Config Management Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
-- B. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Anthos Config Management Kustomize manifests) repositories are separate, with different branches representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
-- C. Cloud infrastructure (Terraform) repository is shared, with different branches representing different environments. GKE infrastructure (Anthos Config Management Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repository is shared, with different directories representing different features.
-- D. Cloud infrastructure (Terraform) repositories are separate per environment, with different branches also representing different environments within each. GKE infrastructure (Anthos Config Management Kustomize manifests) repositories are separate, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
+- A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
+- B. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repositories are separate, with different branches representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
+- C. Cloud infrastructure (Terraform) repository is shared, with different branches representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repository is shared, with different directories representing different features.
+- D. Cloud infrastructure (Terraform) repositories are separate per environment, with different branches also representing different environments within each. GKE infrastructure (Config Sync Kustomize manifests) repositories are separate, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Anthos Config Management Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
+**Correct:** A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.
 
 **Correct Answer**
 
-**A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Anthos Config Management Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.**
+**A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.**
 
 **Exam Reasoning Explanation**
 
-The structure must support GitOps for every user, keep each tooling layer consistent with how that tool is actually designed to be used, and avoid double-encoding the same dimension in two places. Option D fragments both Terraform and ACM/Kustomize into separate repositories per environment while also layering branches or overlay directories for environment inside each already-environment-specific repository — a redundant, internally inconsistent double-encoding that undermines a single source of truth. Option C combines a legitimate branch-per-environment Terraform pattern with a single shared application-source repository using directories for features, which collapses every application team’s code into one repository and treats “feature” as a static folder. Option B structures ACM/Kustomize with separate repositories and branches per environment, fighting against Kustomize’s own base-and-overlay design, which already expresses environment differences through overlay directories in one repository. Option A keeps each infrastructure layer in a single shared repository with environments as directories/overlays — matching how Kustomize is built and a well-documented Terraform pattern — while giving each application team its own repository with standard feature branches.
+The structure must support GitOps for every user, keep each tooling layer consistent with how that tool is actually designed to be used, and avoid double-encoding the same dimension in two places. Option D fragments both Terraform and Config Sync/Kustomize into separate repositories per environment while also layering branches or overlay directories for environment inside each already-environment-specific repository — a redundant, internally inconsistent double-encoding that undermines a single source of truth. Option C combines a legitimate branch-per-environment Terraform pattern with a single shared application-source repository using directories for features, which collapses every application team’s code into one repository and treats “feature” as a static folder. Option B structures Config Sync/Kustomize with separate repositories and branches per environment, fighting against Kustomize’s own base-and-overlay design, which already expresses environment differences through overlay directories in one repository. Option A keeps each infrastructure layer in a single shared repository with environments as directories/overlays — matching how Kustomize is built and a well-documented Terraform pattern — while giving each application team its own repository with standard feature branches.
 
 **Key Exam Clues**
 
-  * “Anthos Config Management... templated to deploy infrastructure level resources” — points directly at Kustomize’s base-and-overlay design, where overlay directories, not branches or separate repos, are the standard way to express environment differences
+  * “Config Sync... templated to deploy infrastructure level resources” — points directly at Kustomize’s base-and-overlay design, where overlay directories, not branches or separate repos, are the standard way to express environment differences
 
   * “application teams can deploy their applications” (plural teams) — signals application source code belongs to distinct teams, favoring separate per-team repositories over one shared application repository
 
@@ -2664,15 +2672,15 @@ The structure must support GitOps for every user, keep each tooling layer consis
 
 **Why This Is Correct**
 
-Terraform and Anthos Config Management/Kustomize are both infrastructure layers best kept in shared repositories with environments expressed as directories (Terraform’s root configurations) or overlays (Kustomize’s purpose-built base-plus-overlay pattern), keeping one source of truth per layer and making promotion between environments a simple, reviewable diff between directories rather than a cross-repository or cross-branch operation. Application source code belongs to individual teams and follows ordinary software development practice, where features are developed on branches and merged back into a main line — not expressed as folders, and not mixed with other teams’ unrelated code in one repository. This combination matches both infrastructure-as-code structuring guidance and standard application development workflow at once.
+Terraform and Config Sync/Kustomize are both infrastructure layers best kept in shared repositories with environments expressed as directories (Terraform’s root configurations) or overlays (Kustomize’s purpose-built base-plus-overlay pattern), keeping one source of truth per layer and making promotion between environments a simple, reviewable diff between directories rather than a cross-repository or cross-branch operation. Application source code belongs to individual teams and follows ordinary software development practice, where features are developed on branches and merged back into a main line — not expressed as folders, and not mixed with other teams’ unrelated code in one repository. This combination matches both infrastructure-as-code structuring guidance and standard application development workflow at once.
 
 **Why the Other Options Are Not the Best Fit**
 
-**Option B — Technically Possible but Not Best:** Separate repositories with environment branches for ACM/Kustomize works against Kustomize’s own design, which already differentiates environments through overlay directories on a shared base within one repository; splitting both repository and branch by environment adds fragmentation with no corresponding benefit.
+**Option B — Technically Possible but Not Best:** Separate repositories with environment branches for Config Sync/Kustomize works against Kustomize’s own design, which already differentiates environments through overlay directories on a shared base within one repository; splitting both repository and branch by environment adds fragmentation with no corresponding benefit.
 
 **Option C — Technically Possible but Not Best:** Branch-per-environment for the Terraform root configuration is a legitimate, documented pattern, but pairing it with a single shared application source repository where directories represent features breaks down once there are multiple distinct application teams — their codebases, release cadences, and ownership boundaries don’t fit naturally into folders of one shared repository.
 
-**Option D — Violates Requirement:** Separating both Terraform and ACM/Kustomize repositories by environment and then also using branches or overlay directories for environment within each already-environment-specific repository encodes the same distinction twice, which is redundant and undermines the single-source-of-truth structure GitOps depends on.
+**Option D — Violates Requirement:** Separating both Terraform and Config Sync/Kustomize repositories by environment and then also using branches or overlay directories for environment within each already-environment-specific repository encodes the same distinction twice, which is redundant and undermines the single-source-of-truth structure GitOps depends on.
 
 **Exam Trap**
 
@@ -2684,11 +2692,11 @@ GitOps repository structure should match the actual design and ownership model o
 
 **Real-World Connection**
 
-A platform team sets up one Terraform repository with dev, qa, and prod directories for foundational cloud infrastructure, and one Anthos Config Management repository with a base configuration and dev/qa/prod overlay directories for cluster-level resources, so promoting a change to production is a reviewable pull request that carries a directory’s state forward. Each application team keeps its own source repository and follows an ordinary feature-branch workflow, merging into main and letting the CI/CD pipeline — not a repository or branch per environment — handle deploying the resulting build to each environment’s GKE cluster.
+A platform team sets up one Terraform repository with dev, qa, and prod directories for foundational cloud infrastructure, and one Config Sync repository with a base configuration and dev/qa/prod overlay directories for cluster-level resources, so promoting a change to production is a reviewable pull request that carries a directory’s state forward. Each application team keeps its own source repository and follows an ordinary feature-branch workflow, merging into main and letting the CI/CD pipeline — not a repository or branch per environment — handle deploying the resulting build to each environment’s GKE cluster.
 
 **Memory Hook**
 
-Infrastructure layers (Terraform, Kustomize/ACM): one shared repo, directories/overlays for environments. Application code: one repo per app, branches for features — not the reverse.
+Infrastructure layers (Terraform, Kustomize/Config Sync): one shared repo, directories/overlays for environments. Application code: one repo per app, branches for features — not the reverse.
 
 **30-Second Exam Takeaway**
 
@@ -2780,25 +2788,25 @@ When a requirement specifically calls for infrastructure as code to reconcile pe
 You need to enforce several constraint templates across your Google Kubernetes Engine (GKE) clusters, with policy parameters that include restrictions on the Kubernetes API. The policy parameters must live in a GitHub repository and be applied automatically whenever that repository changes. What should you do?
 
 - A. Configure a GitHub Action that triggers Cloud Build whenever a parameter changes, and have Cloud Build run a gcloud CLI command to apply the change.
-- B. Configure a webhook that fires on GitHub changes and sends a request to Anthos Service Mesh to apply the change.
-- C. Configure Anthos Config Management to sync with the GitHub repository, so it automatically applies the change whenever the repository is updated.
+- B. Configure a webhook that fires on GitHub changes and sends a request to Cloud Service Mesh to apply the change.
+- C. Configure Config Sync to sync with the GitHub repository, so Policy Controller constraints are applied automatically whenever the repository is updated.
 - D. Configure Config Connector to sync with the GitHub repository, so it automatically applies the change whenever the repository is updated.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** C. Configure Anthos Config Management to sync with the GitHub repository, so it automatically applies the change whenever the repository is updated.
+**Correct:** C. Configure Config Sync to sync with the GitHub repository, so Policy Controller constraints are applied automatically whenever the repository is updated.
 
 **Correct Answer**
 
-**C. Configure Anthos Config Management to sync with the GitHub repository, so it automatically applies the change whenever the repository is updated.**
+**C. Configure Config Sync to sync with the GitHub repository, so Policy Controller constraints are applied automatically whenever the repository is updated.**
 
 **Exam Reasoning Explanation**
 
-The solution must enforce Kubernetes-level policy constraint templates, keep parameters in a Git repository, and apply changes automatically with no manual steps. Policy Controller, the Anthos Config Management component built for exactly this, lets you define and parameterize constraint templates — such as ones restricting Kubernetes API usage — as Kubernetes custom resources, while Config Sync continuously syncs those resources from a Git repository to registered clusters, applying changes automatically as the repository updates. Config Connector (D) is architecturally built to manage Google Cloud resources, not Kubernetes-level policy constraints, so it’s the wrong tool for this object type regardless of being wired to a repository. Anthos Service Mesh (B) is a traffic-management product with no role in applying Kubernetes policy objects. A custom Cloud Build pipeline (A) could technically apply changes via gcloud/kubectl, but means building and maintaining a bespoke sync mechanism rather than using the Google-managed tool designed for this. Anthos Config Management (C) satisfies every part of the requirement as a single, purpose-built solution.
+The solution must enforce Kubernetes-level policy constraint templates, keep parameters in a Git repository, and apply changes automatically with no manual steps. Policy Controller, the GKE component built for exactly this, lets you define and parameterize constraint templates — such as ones restricting Kubernetes API usage — as Kubernetes custom resources, while Config Sync continuously syncs those resources from a Git repository to registered clusters, applying changes automatically as the repository updates. Config Connector (D) is architecturally built to manage Google Cloud resources, not Kubernetes-level policy constraints, so it’s the wrong tool for this object type regardless of being wired to a repository. Cloud Service Mesh (B) is a traffic-management product with no role in applying Kubernetes policy objects. A custom Cloud Build pipeline (A) could technically apply changes via gcloud/kubectl, but means building and maintaining a bespoke sync mechanism rather than using the Google-managed tool designed for this. Config Sync with Policy Controller (C) satisfies every part of the requirement as a single, purpose-built solution.
 
 **Key Exam Clues**
 
-  * “enforce several constraint templates... policy parameters, such as restricting the Kubernetes API” — specifically names the Policy Controller/Gatekeeper constraint-template pattern, pointing directly at ACM’s policy-enforcement component
+  * “enforce several constraint templates... policy parameters, such as restricting the Kubernetes API” — specifically names the Policy Controller/Gatekeeper constraint-template pattern, pointing directly at Policy Controller
 
   * “stored in a GitHub repository and automatically applied when changes occur” — describes a continuous GitOps sync pattern, Config Sync’s defining function
 
@@ -2808,23 +2816,23 @@ The solution must enforce Kubernetes-level policy constraint templates, keep par
 
 **Why This Is Correct**
 
-Anthos Config Management combines Policy Controller, which lets you define parameterized constraint templates — including ones restricting Kubernetes API usage — as Kubernetes custom resources, with Config Sync, which continuously reads configuration from a connected Git repository and applies it across registered clusters as a single source of truth. Pointing Config Sync at the GitHub repository means any committed change to the constraint parameters is automatically detected and applied to every configured cluster, with no custom pipeline logic and no manual steps.
+Option C combines Policy Controller, which lets you define parameterized constraint templates — including ones restricting Kubernetes API usage — as Kubernetes custom resources, with Config Sync, which continuously reads configuration from a connected Git repository and applies it across registered clusters as a single source of truth. Pointing Config Sync at the GitHub repository means any committed change to the constraint parameters is automatically detected and applied to every configured cluster, with no custom pipeline logic and no manual steps.
 
 **Why the Other Options Are Not the Best Fit**
 
-**Option A — Technically Possible but Not Best:** A GitHub Action triggering Cloud Build to run a gcloud command could eventually apply the same changes, but requires designing, securing, and maintaining a custom sync pipeline, duplicating functionality Anthos Config Management already provides as a managed, purpose-built capability.
+**Option A — Technically Possible but Not Best:** A GitHub Action triggering Cloud Build to run a gcloud command could eventually apply the same changes, but requires designing, securing, and maintaining a custom sync pipeline, duplicating functionality Config Sync already provides as a managed, purpose-built capability.
 
-**Option B — Different Use Case:** Anthos Service Mesh manages traffic routing, mutual TLS, and observability between services; it has no mechanism for applying Kubernetes constraint templates or policy objects, so routing a webhook to it accomplishes nothing related to the described policies.
+**Option B — Different Use Case:** Cloud Service Mesh manages traffic routing, mutual TLS, and observability between services; it has no mechanism for applying Kubernetes constraint templates or policy objects, so routing a webhook to it accomplishes nothing related to the described policies.
 
 **Option D — Different Use Case:** Config Connector’s custom resources map to Google Cloud resources like databases and storage buckets, not Kubernetes policy constraint templates. It isn’t built to enforce API restrictions or other cluster-level policy constraints, and syncing it to a Git repository doesn’t change what kind of objects it manages.
 
 **Exam Trap**
 
-The trap is seeing “Kubernetes CRDs synced from a Git repo” and reaching for Config Connector, since it sounds structurally similar, without checking that Config Connector’s CRDs represent Google Cloud infrastructure resources, not Kubernetes policy constraints. The actual tool for constraint templates and policy parameters is Policy Controller, bundled with Config Sync inside Anthos Config Management — a distinction the question tests by pairing two superficially similar “GitHub repo plus GKE-adjacent tool” options that solve different problems.
+The trap is seeing “Kubernetes CRDs synced from a Git repo” and reaching for Config Connector, since it sounds structurally similar, without checking that Config Connector’s CRDs represent Google Cloud infrastructure resources, not Kubernetes policy constraints. The actual tool for constraint templates and policy parameters is Policy Controller, used together with Config Sync — a distinction the question tests by pairing two superficially similar “GitHub repo plus GKE-adjacent tool” options that solve different problems.
 
 **Foundation Concept**
 
-Anthos Config Management is Google’s combined configuration-and-policy management service for Kubernetes: Config Sync continuously applies configuration from a Git repository as a single source of truth across one or many clusters, while Policy Controller defines and enforces constraint templates and their parameters, built on the open source Gatekeeper project. Together they implement a GitOps workflow specifically for Kubernetes configuration and policy, distinct from Config Connector’s separate role of managing Google Cloud resources through Kubernetes custom resources.
+Config Sync and Policy Controller (formerly packaged as Anthos Config Management) are Google’s configuration and policy management tools for Kubernetes: Config Sync continuously applies configuration from a Git repository as a single source of truth across one or many clusters, while Policy Controller defines and enforces constraint templates and their parameters, built on the open source Gatekeeper project. Together they implement a GitOps workflow specifically for Kubernetes configuration and policy, distinct from Config Connector’s separate role of managing Google Cloud resources through Kubernetes custom resources.
 
 **Real-World Connection**
 
@@ -2832,17 +2840,17 @@ A platform team maintains a Git repository containing Policy Controller constrai
 
 **Memory Hook**
 
-Constraint templates and policy parameters, synced automatically from Git, across many GKE clusters → Anthos Config Management (Policy Controller + Config Sync); Config Connector manages Google Cloud resources, not Kubernetes policy constraints.
+Constraint templates and policy parameters, synced automatically from Git, across many GKE clusters → Config Sync + Policy Controller; Config Connector manages Google Cloud resources, not Kubernetes policy constraints.
 
 **30-Second Exam Takeaway**
 
-When a question describes enforcing Kubernetes constraint templates or policy parameters from a Git repository across GKE clusters, that’s Anthos Config Management’s Policy Controller and Config Sync — don’t confuse it with Config Connector (Google Cloud resource management), Anthos Service Mesh (traffic management), or a custom CI/CD pipeline built to replicate functionality Google already provides natively.
+When a question describes enforcing Kubernetes constraint templates or policy parameters from a Git repository across GKE clusters, that’s Config Sync and Policy Controller — don’t confuse it with Config Connector (Google Cloud resource management), Cloud Service Mesh (traffic management), or a custom CI/CD pipeline built to replicate functionality Google already provides natively.
 
 **Official References**
 
-[Google Cloud — Config Sync overview: ](https://cloud.google.com/anthos-config-management/docs/config-sync-overview)Supports: Config Sync applying Policy Controller constraints from a Git repository consistently across registered clusters
+[Google Cloud — Config Sync overview: ](https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview)Supports: Config Sync applying Policy Controller constraints from a Git repository consistently across registered clusters
 
-[**Google Cloud — gcloud apply fields reference (Anthos Config Management):**](https://cloud.google.com/anthos-config-management/docs/reference/gcloud-apply-fields) Supports: the configSync.syncRepo and policyController configuration fields used to wire a Git repository to automatic constraint-template enforcement
+[**Google Cloud — Policy Controller overview:**](https://docs.cloud.google.com/kubernetes-engine/enterprise/policy-controller/docs/overview) Supports: Policy Controller enforcing parameterized constraint templates on GKE clusters
 
 </details>
 
@@ -3112,8 +3120,8 @@ Archiving code removes real-time collaboration, prevents incremental review, and
 
 **To ensure consistency across your Google Kubernetes Engine (GKE) environments - development, staging, and production - while following Google-recommended practices for enforcing network policies and deploying a logging DaemonSet, what steps should you take?**
 
-- I. Employ Google Cloud Deploy to enforce network policies and deploy the DaemonSet. Utilize Cloud Monitoring to trigger alerts for any deviations from the repository source.
-- II. Use Google Cloud Deploy for the DaemonSet deployment and Policy Controller to configure network policies. Leverage Cloud Monitoring to identify drifts and Cloud Functions to rectify them.
+- I. Employ Cloud Deploy to enforce network policies and deploy the DaemonSet. Utilize Cloud Monitoring to trigger alerts for any deviations from the repository source.
+- II. Use Cloud Deploy for the DaemonSet deployment and Policy Controller to configure network policies. Leverage Cloud Monitoring to identify drifts and Cloud Run functions to rectify them.
 - III. Utilize Cloud Build to generate and deploy network policies and the DaemonSet. Implement Config Sync to synchronize configurations across all three environments.
 - IV. Utilize Cloud Build to generate and deploy network policies and the DaemonSet. Set up a Policy Controller to enforce configurations across the three environments.
 
@@ -3131,7 +3139,7 @@ This option most closely follows **Google-recommended GitOps practices for GKE**
 
 Key fundamentals behind this choice:
 
-  * **Config Sync (Anthos Config Management)** is Google’s **authoritative solution** for enforcing configuration consistency across multiple GKE clusters and environments. It continuously reconciles the desired state stored in Git with the actual cluster state.
+  * **Config Sync** (formerly part of Anthos Config Management) is Google’s **authoritative solution** for enforcing configuration consistency across multiple GKE clusters and environments. It continuously reconciles the desired state stored in Git with the actual cluster state.
 
   * **Network policies and DaemonSets** are classic cluster-level configurations that should be enforced declaratively and continuously, not deployed ad hoc.
 
@@ -3148,20 +3156,22 @@ This is the canonical pattern Google documents for:
   * Policy and system workload enforcement in GKE
 
 **Authoritative documentation:**  
-<https://cloud.google.com/anthos-config-management/docs/concepts/config-sync-overview>
+<https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview>
 
 **Why the other options are not suitable**
 
-**I. Google Cloud Deploy + Cloud Monitoring alerts**  
+**I. Cloud Deploy + Cloud Monitoring alerts**  
 Cloud Deploy is for **application delivery** , not enforcing cluster-level configurations like network policies or DaemonSets. Monitoring detects drift but does **not prevent or correct it**.
 
-**II. Cloud Deploy + Policy Controller + Cloud Functions**  
-This combines tools with overlapping responsibilities and introduces unnecessary operational complexity. Drift remediation via Cloud Functions is not Google’s recommended approach.
+**II. Cloud Deploy + Policy Controller + Cloud Run functions**  
+This combines tools with overlapping responsibilities and introduces unnecessary operational complexity. Drift remediation via Cloud Run functions is not Google’s recommended approach.
 
 **IV. Cloud Build + Policy Controller only**  
 Policy Controller enforces **policy constraints** , not the **deployment and synchronization** of resources like DaemonSets. It cannot replace Config Sync for full configuration consistency.
 
 **Final answer:** **III**
+
+**⚠️ Note:** In a pure GitOps setup Cloud Build would only render and validate the manifests and commit them; Config Sync then applies them from Git. Having Cloud Build also deploy them is redundant. Pick III because it is the only option with Config Sync, not because of the Cloud Build deploy step.
 
 </details>
 
@@ -3186,7 +3196,7 @@ Here's why this is the most secure and easily managed method:
 
   * **Principle of Least Privilege:** Grant the service account only the specific IAM permissions needed for Terraform to manage resources, minimizing potential security risks.
 
-  * **Workload Identity:** Workload Identity is specifically designed for VM-to-Google Cloud service communication. It doesn't involve long-lived credentials or manual key management.
+  * **Attached service account:** A VM with an attached service account gets short-lived access tokens automatically from the metadata server, and Terraform's Google provider picks them up through Application Default Credentials. There are no long-lived keys to store or rotate. (Workload Identity Federation is a different feature, for GKE Pods and for workloads outside Google Cloud.)
 
   * **Operational Ease:** You manage permissions centrally through IAM instead of handling credentials directly within Jenkins jobs.
 
@@ -3196,7 +3206,7 @@ Here's why this is the most secure and easily managed method:
 
   * **III. Establish a dedicated service account ...** Creating a service account is necessary, but storing the key as an environment variable introduces risks if the Jenkins server is compromised.
 
-  * **IV. Integrate the gcloud auth application-default login ...** This necessitates manual key rotation and places sensitive credentials on your Jenkins server
+  * **IV. Integrate the gcloud auth application-default login ...** This command is an interactive sign-in for a human user. It needs someone to complete a browser login, so it does not suit unattended pipelines, and the resulting user credentials would be stored on the Jenkins server and tie automation to one person's account.
 
 </details>
 
@@ -3207,23 +3217,23 @@ Here's why this is the most secure and easily managed method:
 **To enforce multiple constraint templates, including policies such as restricting the Kubernetes API, across your Google Kubernetes Engine (GKE) clusters, while ensuring these parameters are stored in a GitHub repository and automatically applied upon changes, what approach should you take?**
 
 - I. Implement a GitHub action to trigger Cloud Build upon parameter changes, then use Cloud Build to execute a gcloud CLI command for applying the modifications.
-- II. Utilize a webhook to notify Anthos Service Mesh of changes in GitHub, triggering the application of modifications.
-- III. Configure Anthos Config Management with the GitHub repository to automatically apply changes from the repository.
+- II. Utilize a webhook to notify Cloud Service Mesh of changes in GitHub, triggering the application of modifications.
+- III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository.
 - IV. Configure Config Connector with the GitHub repository to automatically apply changes from the repository.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** III. Configure Anthos Config Management with the GitHub repository to automatically apply changes from the repository.
+**Correct:** III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository.
 
 **Correct Option:**
 
-**III. Configure Anthos Config Management with the GitHub repository to automatically apply changes from the repository.**
+**III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository.**
 
 **Justification:**
 
-  * **Purpose-Built Tool:** Anthos Config Management (ACM) is designed specifically for managing configurations across multiple Kubernetes clusters, including policies like constraint templates.
+  * **Purpose-Built Tool:** Config Sync (with Policy Controller; formerly packaged as Anthos Config Management) is designed specifically for managing configurations across multiple Kubernetes clusters, including policies like constraint templates.
 
-  * **GitOps Workflow:** ACM integrates seamlessly with Git, enabling a GitOps workflow where configuration changes in the repository trigger automatic updates to clusters.
+  * **GitOps Workflow:** Config Sync integrates seamlessly with Git, enabling a GitOps workflow where configuration changes in the repository trigger automatic updates to clusters.
 
   * **Centralized Management:** Provides a centralized way to enforce multiple constraint templates consistently across GKE clusters.
 
@@ -3231,11 +3241,11 @@ Here's why this is the most secure and easily managed method:
 
   * **I. Implement a GitHub action to trigger Cloud Build upon parameter changes, then use Cloud Build to execute a gcloud CLI command for applying the modifications.**
 
-    * **More Complexity:** This approach requires building custom automation with GitHub Actions and Cloud Build. It's less streamlined than a dedicated config management tool like ACM.
+    * **More Complexity:** This approach requires building custom automation with GitHub Actions and Cloud Build. It's less streamlined than a dedicated config management tool like Config Sync.
 
-  * **II. Utilize a webhook to notify Anthos Service Mesh of changes in GitHub, triggering the application of modifications.**
+  * **II. Utilize a webhook to notify Cloud Service Mesh of changes in GitHub, triggering the application of modifications.**
 
-    * **Mismatched Focus:** Anthos Service Mesh is primarily focused on service networking and traffic management, not enforcing cluster policies across multiple clusters.
+    * **Mismatched Focus:** Cloud Service Mesh is primarily focused on service networking and traffic management, not enforcing cluster policies across multiple clusters.
 
   * **IV. Configure Config Connector with the GitHub repository to automatically apply changes from the repository.**
 
@@ -3243,9 +3253,9 @@ Here's why this is the most secure and easily managed method:
 
 **References:**
 
-<https://medium.com/@kasiarun/introduction-to-anthos-config-management-1a43917c26ae>
+<https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview>
 
-<https://cloud.google.com/anthos-config-management/docs/concepts/policy-controller>
+<https://docs.cloud.google.com/kubernetes-engine/enterprise/policy-controller/docs/overview>
 
 </details>
 

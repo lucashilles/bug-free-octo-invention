@@ -1,0 +1,528 @@
+{
+  "_comment": "Corrections applied by tools/fix.py and the parsers on top of the bank. Keys are <exam>-<n>. 'question'/'explanation' are lists of [old, new] replacements (or 'explanation' as a full replacement string), 'answers' replaces option text by label, 'correct' sets the correct label(s), 'note' appends a ⚠️ note, 'why' records the reason.",
+  "5-33": {
+    "explanation": [
+      [
+        "  * **Workload Identity:** Workload Identity is specifically designed for VM-to-Google Cloud service communication. It doesn't involve long-lived credentials or manual key management.",
+        "  * **Attached service account:** A VM with an attached service account gets short-lived access tokens automatically from the metadata server, and Terraform's Google provider picks them up through Application Default Credentials. There are no long-lived keys to store or rotate. (Workload Identity Federation is a different feature, for GKE Pods and for workloads outside Google Cloud.)"
+      ],
+      [
+        "This necessitates manual key rotation and places sensitive credentials on your Jenkins server",
+        "This command is an interactive sign-in for a human user. It needs someone to complete a browser login, so it does not suit unattended pipelines, and the resulting user credentials would be stored on the Jenkins server and tie automation to one person's account."
+      ]
+    ],
+    "why": "Explanation called the attached-SA mechanism 'Workload Identity' and said ADC login needs key rotation; it is an interactive user-credential flow."
+  },
+  "2-60": {
+    "note": "Rotation bounds what a single compromised key version can expose: each version only encrypts data during its own period. Older versions stay enabled so existing data can still be decrypted, so to fully retire a version you must re-encrypt the data under the new version and then disable the old one. For storing application secrets themselves, Secret Manager is today's recommended service; it is not among these options.",
+    "why": "Explanation implies rotation alone limits exposure; old versions remain usable until data is re-encrypted."
+  },
+  "2-56": {
+    "note": "This is the best of the listed options only. VPC Network Peering is not transitive and has per-network peering limits, so a full mesh across many departments becomes hard to manage. Google's landing-zone guidance usually points to Shared VPC or a hub-and-spoke design (for example with Network Connectivity Center) at this scale.",
+    "why": "Peering mesh at 'large number of departments' scale is not low-maintenance; correct only relative to the options."
+  },
+  "4-5": {
+    "note": "Exempted principals are identity-based, not folder-based. Those principals are exempt everywhere the org-level setting applies, not only inside the CustomerService folder. The answer works only if those principals are used only by the CustomerService projects.",
+    "why": "Exemption is per principal, not per folder; caveat needed."
+  },
+  "2-18": {
+    "note": "In a pure GitOps setup Cloud Build would only render and validate the manifests and commit them; Config Sync then applies them from Git. Having Cloud Build also deploy them is redundant. Pick C because it is the only option with Config Sync, not because of the Cloud Build deploy step.",
+    "why": "Keyed option has Cloud Build deploy and Config Sync sync the same resources; redundant in GitOps."
+  },
+  "5-24": {
+    "answers": {
+      "I": "I. Employ Cloud Deploy to enforce network policies and deploy the DaemonSet. Utilize Cloud Monitoring to trigger alerts for any deviations from the repository source.",
+      "II": "II. Use Cloud Deploy for the DaemonSet deployment and Policy Controller to configure network policies. Leverage Cloud Monitoring to identify drifts and Cloud Run functions to rectify them."
+    },
+    "explanation": [
+      [
+        "**Config Sync (Anthos Config Management)** is Google’s",
+        "**Config Sync** (formerly part of Anthos Config Management) is Google’s"
+      ],
+      [
+        "**I. Google Cloud Deploy + Cloud Monitoring alerts**",
+        "**I. Cloud Deploy + Cloud Monitoring alerts**"
+      ],
+      [
+        "**II. Cloud Deploy + Policy Controller + Cloud Functions**",
+        "**II. Cloud Deploy + Policy Controller + Cloud Run functions**"
+      ],
+      [
+        "Drift remediation via Cloud Functions is not",
+        "Drift remediation via Cloud Run functions is not"
+      ],
+      [
+        "<https://cloud.google.com/anthos-config-management/docs/concepts/config-sync-overview>",
+        "<https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview>"
+      ]
+    ],
+    "note": "In a pure GitOps setup Cloud Build would only render and validate the manifests and commit them; Config Sync then applies them from Git. Having Cloud Build also deploy them is redundant. Pick III because it is the only option with Config Sync, not because of the Cloud Build deploy step.",
+    "why": "Retired names (Google Cloud Deploy, Cloud Functions, ACM URL); keyed option is redundant in pure GitOps."
+  },
+  "4-26": {
+    "question": [
+      [
+        "Anthos Config Management, using templated Kustomize manifests,",
+        "Config Sync, using templated Kustomize manifests,"
+      ]
+    ],
+    "answers": {
+      "A": "A. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.",
+      "B": "B. Cloud infrastructure (Terraform) repository is shared, with different directories representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repositories are separate, with different branches representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features.",
+      "C": "C. Cloud infrastructure (Terraform) repository is shared, with different branches representing different environments. GKE infrastructure (Config Sync Kustomize manifests) repository is shared, with different overlay directories representing different environments. Application (app source code) repository is shared, with different directories representing different features.",
+      "D": "D. Cloud infrastructure (Terraform) repositories are separate per environment, with different branches also representing different environments within each. GKE infrastructure (Config Sync Kustomize manifests) repositories are separate, with different overlay directories representing different environments. Application (app source code) repositories are separate per application, with different branches representing different features."
+    },
+    "explanation": [
+      [
+        "Anthos Config Management",
+        "Config Sync"
+      ],
+      [
+        "ACM",
+        "Config Sync"
+      ]
+    ],
+    "why": "Anthos Config Management is legacy branding; the GitOps component is Config Sync."
+  },
+  "4-33": {
+    "answers": {
+      "B": "B. Configure a webhook that fires on GitHub changes and sends a request to Cloud Service Mesh to apply the change.",
+      "C": "C. Configure Config Sync to sync with the GitHub repository, so Policy Controller constraints are applied automatically whenever the repository is updated."
+    },
+    "explanation": [
+      [
+        "**C. Configure Anthos Config Management to sync with the GitHub repository, so it automatically applies the change whenever the repository is updated.**",
+        "**C. Configure Config Sync to sync with the GitHub repository, so Policy Controller constraints are applied automatically whenever the repository is updated.**"
+      ],
+      [
+        "Policy Controller, the Anthos Config Management component built for exactly this,",
+        "Policy Controller, the GKE component built for exactly this,"
+      ],
+      [
+        "pointing directly at ACM’s policy-enforcement component",
+        "pointing directly at Policy Controller"
+      ],
+      [
+        "Anthos Config Management combines Policy Controller,",
+        "Option C combines Policy Controller,"
+      ],
+      [
+        "duplicating functionality Anthos Config Management already provides",
+        "duplicating functionality Config Sync already provides"
+      ],
+      [
+        "Anthos Config Management (C) satisfies every part",
+        "Config Sync with Policy Controller (C) satisfies every part"
+      ],
+      [
+        "bundled with Config Sync inside Anthos Config Management",
+        "used together with Config Sync"
+      ],
+      [
+        "Anthos Config Management is Google’s combined configuration-and-policy management service for Kubernetes:",
+        "Config Sync and Policy Controller (formerly packaged as Anthos Config Management) are Google’s configuration and policy management tools for Kubernetes:"
+      ],
+      [
+        "→ Anthos Config Management (Policy Controller + Config Sync);",
+        "→ Config Sync + Policy Controller;"
+      ],
+      [
+        "that’s Anthos Config Management’s Policy Controller and Config Sync",
+        "that’s Config Sync and Policy Controller"
+      ],
+      [
+        "Anthos Service Mesh",
+        "Cloud Service Mesh"
+      ],
+      [
+        "https://cloud.google.com/anthos-config-management/docs/config-sync-overview",
+        "https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview"
+      ],
+      [
+        "[**Google Cloud — gcloud apply fields reference (Anthos Config Management):**](https://cloud.google.com/anthos-config-management/docs/reference/gcloud-apply-fields) Supports: the configSync.syncRepo and policyController configuration fields used to wire a Git repository to automatic constraint-template enforcement",
+        "[**Google Cloud — Policy Controller overview:**](https://docs.cloud.google.com/kubernetes-engine/enterprise/policy-controller/docs/overview) Supports: Policy Controller enforcing parameterized constraint templates on GKE clusters"
+      ]
+    ],
+    "why": "Anthos Config Management / Anthos Service Mesh are legacy names; now Config Sync + Policy Controller and Cloud Service Mesh."
+  },
+  "5-37": {
+    "answers": {
+      "II": "II. Utilize a webhook to notify Cloud Service Mesh of changes in GitHub, triggering the application of modifications.",
+      "III": "III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository."
+    },
+    "explanation": [
+      [
+        "**III. Configure Anthos Config Management with the GitHub repository to automatically apply changes from the repository.**",
+        "**III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository.**"
+      ],
+      [
+        "Anthos Config Management (ACM) is designed specifically",
+        "Config Sync (with Policy Controller; formerly packaged as Anthos Config Management) is designed specifically"
+      ],
+      [
+        "**GitOps Workflow:** ACM integrates",
+        "**GitOps Workflow:** Config Sync integrates"
+      ],
+      [
+        "dedicated config management tool like ACM.",
+        "dedicated config management tool like Config Sync."
+      ],
+      [
+        "Anthos Service Mesh",
+        "Cloud Service Mesh"
+      ],
+      [
+        "<https://medium.com/@kasiarun/introduction-to-anthos-config-management-1a43917c26ae>\n",
+        ""
+      ],
+      [
+        "<https://cloud.google.com/anthos-config-management/docs/concepts/policy-controller>",
+        "<https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview>\n\n<https://docs.cloud.google.com/kubernetes-engine/enterprise/policy-controller/docs/overview>"
+      ]
+    ],
+    "why": "Anthos Config Management / Anthos Service Mesh are legacy names; now Config Sync + Policy Controller and Cloud Service Mesh."
+  },
+  "1-4": {
+    "explanation": [
+      [
+        "(Git, typically hosted on Cloud Source Repositories, GitHub, or GitLab)",
+        "(Git, typically hosted on GitHub, GitLab, Bitbucket, or Secure Source Manager)"
+      ],
+      [
+        "[**Google Cloud — Cloud Source Repositories overview:**](https://cloud.google.com/source-repositories/docs) Supports: Google Cloud’s own recommended Git-based version-control service for storing and collaborating on infrastructure code",
+        "[**Google Cloud — Secure Source Manager overview:**](https://cloud.google.com/secure-source-manager/docs/overview) Supports: Google Cloud’s managed Git-based version-control service for storing and collaborating on code (Cloud Source Repositories is closed to new customers)"
+      ]
+    ],
+    "why": "Cloud Source Repositories is closed to new customers."
+  },
+  "5-9": {
+    "explanation": [
+      [
+        "  * **Secret Rotation:** Cloud KMS simplifies secret rotation, enhancing security in case of a breach.",
+        "  * **Rotation and revocation:** After a breach you replace the secret object in Cloud Storage and can revoke IAM access to the bucket or key at once. (Rotating the KMS key only creates a new key version for future encryptions; it does not change the secret value itself.)"
+      ]
+    ],
+    "note": "This is the best of the four options, but none of them is Secret Manager, which is Google's recommended store for pipeline secrets today. Choose Cloud Storage plus Cloud KMS only when Secret Manager is not offered.",
+    "why": "Explanation confused rotating a KMS key with rotating a secret; Secret Manager is the modern answer but not offered."
+  },
+  "1-21": {
+    "note": "This is the best of the four options, but none of them is Secret Manager, which is Google's recommended store for pipeline secrets today. Choose Cloud Storage plus Cloud KMS only when Secret Manager is not offered.",
+    "why": "Secret Manager is the modern answer but not offered."
+  },
+  "5-19": {
+    "explanation": [
+      [
+        "  * **Kubernetes Native:** This method is directly supported within Kubernetes Deployment objects, ensuring a streamlined process.",
+        "  * **Kubernetes Native:** Partitioned rolling updates are a native Kubernetes feature: the `partition` field of a **StatefulSet**'s `RollingUpdate` strategy updates only the Pods whose ordinal is at or above the partition value. (Deployments have no `partition` field; with a Deployment you would get a similar effect with two Deployments or by pausing a rollout.)"
+      ],
+      [
+        "Stateful sets are used for workloads requiring persistent storage and stable identifiers, not for phased rollouts of web servers.",
+        "The parallel Pod management policy only controls whether Pods are created and deleted in order or all at once during scaling. It does not limit an update to half of the Pods. The phased rollout comes from the StatefulSet `partition` setting in option I, not from the Pod management policy."
+      ]
+    ],
+    "why": "Explanation claimed partition is a Deployment feature and dismissed StatefulSets, where partition actually lives."
+  },
+  "5-21": {
+    "question": [
+      [
+        "considering specific traffic direction and testing needs,",
+        "where the platform must route traffic from Android devices to an Android-specific microservice, support arbitrary percentage-based traffic splitting, and allow continuous testing of multiple versions of any microservice,"
+      ]
+    ],
+    "answers": {
+      "III": "III. Deploy the canary release on Compute Engine, utilizing Cloud Service Mesh with Compute Engine to direct 10% of user traffic to the canary release via virtual service configuration.",
+      "IV": "IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service."
+    },
+    "explanation": [
+      [
+        "**IV. Opt for Google Kubernetes Engine with Anthos Service Mesh for deploying",
+        "**IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying"
+      ],
+      [
+        "The question explicitly mentions **specific traffic direction and testing needs** , which implies **advanced traffic control** , not just percentage-based splitting.",
+        "The question requires routing **Android devices to an Android-specific microservice**, which needs **request-attribute (header) routing**, not just percentage-based splitting."
+      ],
+      [
+        "**Anthos Service Mesh (ASM)** provides",
+        "**Cloud Service Mesh** provides"
+      ],
+      [
+        "**III. Compute Engine with Anthos Service Mesh**",
+        "**III. Compute Engine with Cloud Service Mesh**"
+      ],
+      [
+        "Anthos Service Mesh is designed for **Kubernetes workloads**. While traffic shaping on Compute Engine is possible, ASM does not manage non-GKE VM workloads for application-level canary routing.",
+        "Cloud Service Mesh can include Compute Engine VMs, so the platform is not the problem. The option only configures a 10% split and gives **no rule for identifying Android traffic**, so it misses the header-routing requirement. Running a containerized microservice app on VMs also adds management overhead compared with GKE."
+      ]
+    ],
+    "why": "Stem was vague (no criteria) and the explanation wrongly said the mesh can't manage VM workloads; Anthos Service Mesh renamed. Aligned with Exam 2 Q36."
+  },
+  "5-30": {
+    "explanation": [
+      [
+        "Cloud Run does not support arbitrary filesystem secret mounts like this, and manual decryption is unnecessary and error-prone. This is not a supported or recommended pattern.",
+        "Cloud Run can mount Secret Manager secrets as files in a volume, so mounting is not the problem. The problem is the extra step: Secret Manager returns the secret already decrypted, so decrypting it again in the app is unnecessary, adds custom code, and makes no sense. (A system path such as `/sys` is also a poor mount location.)"
+      ]
+    ],
+    "why": "Explanation claimed Cloud Run can't mount secrets as files; it can. Option II is wrong because of the needless decrypt step."
+  },
+  "5-14": {
+    "answers": {
+      "I": "I. Implement Artifact Analysis to scan and report Common Vulnerabilities and Exposures (CVEs)."
+    },
+    "explanation": [
+      [
+        "Container Analysis",
+        "Artifact Analysis"
+      ],
+      [
+        "(e.g., Google Container Registry)",
+        "(Artifact Registry)"
+      ],
+      [
+        "<https://cloud.google.com/container-analysis/docs/container-analysis>",
+        "<https://cloud.google.com/artifact-analysis/docs/artifact-analysis>"
+      ]
+    ],
+    "why": "Container Analysis is now Artifact Analysis; Container Registry is retired in favour of Artifact Registry."
+  },
+  "5-53": {
+    "explanation": [
+      [
+        "This allows the managed instance group to seamlessly transition to the new resource, avoiding downtime.",
+        "Terraform then points the managed instance group at the new template and only afterwards deletes the old one, so the \"template is in use\" error goes away and everything happens in a single `terraform apply`. (The template must use `name_prefix` or a generated name so the old and new templates can exist at the same time.)"
+      ],
+      [
+        "    * **Minimizes application disruption:** The managed instance group can continue serving traffic from the old instances while new ones with the updated machine type are spun up.",
+        "    * **Minimizes application disruption:** Swapping the template does not touch running instances. How and when existing VMs move to the new machine type depends on the MIG's update policy (for example a proactive rolling update), not on `create_before_destroy` itself."
+      ],
+      [
+        "    * While less disruptive, it involves more manual steps and could cause temporary inconsistencies due to a mix of instance types.",
+        "    * This reaches the same end state, but done as separate steps it needs several code changes and pipeline runs (add the new template, switch the MIG, then remove the old template). That raises pipeline execution frequency, which the question asks you to minimize. `create_before_destroy` does the same sequence automatically in one run."
+      ]
+    ],
+    "why": "Explanation implied create_before_destroy itself rolls out new VMs and faulted B for mixing instance types; the real reason is extra pipeline runs."
+  },
+  "5-52": {
+    "explanation": [
+      [
+        "  * While rolling back the green version would address the immediate issue, it may impact user experience as the application would revert to a potentially outdated version. Additionally, it doesn't provide developers with a controlled environment to diagnose the issue.",
+        "  * Rolling back green would stop the errors, but it is slower than switching traffic (Pods must be replaced) and it destroys the failing version, so developers can no longer inspect it. Switching the Service selector to blue is instant and leaves green running for debugging."
+      ]
+    ],
+    "why": "Reasoning against B was weak; the real reasons are speed and keeping green for diagnosis."
+  },
+  "4-8": {
+    "answers": {
+      "A": "A. Use Cloud Build to build container images and update Kubernetes manifests only after changes are merged into the main branch. Use Config Sync to deploy the images for testing in dynamically created namespaces within the autoscaling Dev cluster. Delete the namespaces after testing."
+    },
+    "explanation": [
+      [
+        "  * **A — Technically Possible but Ambiguous:** Its namespace approach is appropriate, but “main-branch merge requests” does not clearly specify the intended feature-branch workflow. Importantly, pre-merge pull-request triggers can also test feature-branch commits, so this wording can overlap with C. ",
+        "  * **A — Violates Requirement:** Its namespace approach is appropriate, but it builds only after changes are merged into main. By then the features are already integrated, so developers cannot test their changes independently of other development work, which is the stated goal. "
+      ],
+      [
+        "\n\nFor an unambiguous question, A should explicitly distinguish mainline integration from pre-merge feature testing.",
+        ""
+      ],
+      [
+        "Choose **C** as the clearest intended answer: feature-branch triggers, temporary namespaces, stable dependencies, and cleanup. A’s merge-request wording should be clarified because pre-merge testing can implement the same pattern.",
+        "Choose **C**: feature-branch triggers, temporary namespaces, stable dependencies, and cleanup. A builds only after merging to main, which is too late for independent feature testing."
+      ],
+      [
+        "Supports: Branch-push and pull-request triggers, including the ambiguity in option A.",
+        "Supports: Branch-push and pull-request triggers."
+      ]
+    ],
+    "why": "Option A's 'main-branch merge requests' wording was ambiguous (pre-merge triggers could test feature commits); reworded to post-merge builds so only C fits."
+  },
+  "3-12": {
+    "note": "Option C is also defensible: a QA stage with a manual approval gate followed by a production canary meets the requirement too. D is preferred only because it is the simplest design that literally matches the stem.",
+    "why": "Bank's own explanation admits C is technically defensible."
+  },
+  "5-49": {
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "**Correct Answers: B and E**\n\n**Reasoning**\n\nYour application has consistently consumed **less than 5%** of its error budget over six months, and stakeholders have just confirmed that the SLO is set correctly. So the SLO is fixed, and what has to move is the **observed reliability**, which is far above what the SLO requires. The goal is met by deliberately spending some of the unused error budget, not by changing the target or adding reliability.\n\n**Correct Answer 1: B. Opt for more frequent or potentially risky application releases.**\n\nReleases are a major source of outages. Releasing more often, or taking somewhat more risk per release, spends unused error budget in exchange for velocity, while the SLO still limits how far you can go. This is the core idea of an error budget: unreliability you are allowed to spend on change.\n\n**Correct Answer 2: E. Schedule planned downtime to utilize more of the error budget, ensuring users aren't reliant on a stricter SLO.**\n\nUsers come to depend on the reliability they actually see, not the reliability you promised. A service that greatly exceeds its SLO effectively creates a tighter, implicit SLO. The SRE book describes this with Google's Chubby lock service: SRE makes sure the service meets, but does not greatly exceed, its SLO, and uses **planned outages** so that dependent teams don't assume it never fails. Any planned downtime must stay within the error budget and be announced in advance.\n\n**Why the Other Options Are Incorrect**\n\n**A. Increase serving capacity**\n\nThis raises reliability and cost even further, which widens the gap between the SLO and observed reliability. It is the opposite of the goal.\n\n**C. Adjust the SLO**\n\nYou **already confirmed** the SLO is appropriate. Tightening it to match observed reliability shrinks the error budget, slows velocity, and commits the team to a level of reliability nobody asked for.\n\n**D. Introduce and assess additional SLIs**\n\nMore SLIs help when the current indicators miss important user journeys. Nothing in the scenario says the SLIs are inadequate, and measuring more does not close the gap between a confirmed SLO and an unused error budget.\n\n**References:**  \n[Google SRE Book – Service Level Objectives](https://sre.google/sre-book/service-level-objectives/) (the Chubby planned-outage example)  \n[Google SRE Workbook – Implementing SLOs](https://sre.google/workbook/implementing-slos/)\n\n**Final Answer: B and E**",
+    "why": "Same scenario as Exam 2 Q33, which keys B+E and cites the SRE book's Chubby planned-outage practice; D (more SLIs) only fits if SLIs miss user journeys, which the stem doesn't say. Old explanation called planned downtime anti-SRE, contradicting the SRE book."
+  },
+  "5-60": {
+    "explanation": [
+      [
+        "Specifying maxUnavailable as 100% in a PodDisruptionBudget would effectively prevent any Pod disruptions during maintenance activities. However, it wouldn't prevent node upgrades or other maintenance tasks that could still impact the database's operation. Additionally, this approach may not align with best practices for managing Pod disruptions.",
+        "Specifying maxUnavailable as 100% in a PodDisruptionBudget allows **all** of the Pods to be disrupted at once, so it gives no protection at all. A PDB that blocks evictions would use maxUnavailable: 0 (or minAvailable equal to the replica count), and even that only delays node drains; GKE still upgrades the node after a timeout. It doesn't stop the upgrades that cause the disruption."
+      ]
+    ],
+    "why": "Explanation said maxUnavailable 100% prevents disruptions; it permits all of them."
+  },
+  "5-46": {
+    "explanation": [
+      [
+        "Correct math gives ≈ $900, not $1 000; an extra $100 appears from rounding far beyond two significant digits.",
+        "Correct math gives ≈ $900, not $1 000. The $1 000 figure comes from multiplying revenue by 0.1% (the old unavailability) instead of by the 0.09-point difference between 99.9% and 99.99%."
+      ]
+    ],
+    "why": "The $1,000 distractor comes from using 0.1% instead of the 0.09-point difference, not from rounding."
+  },
+  "5-32": {
+    "explanation": [
+      [
+        "Internal load balancers are **regional** , not global. They cannot distribute traffic across regions and are inappropriate for multi-region production access.",
+        "Multi-region deployment behind a load balancer is a traffic-distribution choice, not capacity planning. It does not check whether each region has the quota and capacity to run large instances, which is the actual concern in the question. (Most internal load balancers are regional, although a cross-region internal Application Load Balancer exists, so don't reject the option on that ground alone.)"
+      ]
+    ],
+    "why": "Claim that internal load balancers can never span regions is outdated (cross-region internal Application Load Balancer); the real reason III fails is that it doesn't address quota/capacity."
+  },
+  "5-6": {
+    "explanation": [
+      [
+        "Google SRE explicitly defines this as an _early, mandatory step_ before mitigation actions begin.",
+        "With the IC, OL, and CL already assigned, mitigation belongs to the Operations Lead and stakeholder updates belong to the Communications Lead. The IC's own job is coordination, which needs a shared place for responders to talk, so setting up that channel is the IC's next step."
+      ]
+    ],
+    "why": "The claim that Google defines the channel as an early mandatory step overstates the source; reasoning aligned with Exam 1 Q27 (role ownership)."
+  },
+  "5-3": {
+    "answers": {
+      "D": "**D.Install the**`**gcloud**`**CLI** on your application servers.\n\n**Write a script using**`**gcloud storage**` to upload application logs to a **Cloud Storage bucket** , and then schedule it to run via `cron` every 5 minutes.\n\n**Give the developers IAM Object Viewer access** to view the logs in the specified bucket."
+    },
+    "explanation": [
+      [
+        "This role **is used for viewing private logs** , which include **admin activity and system logs**. It **is not required for regular application logs**.",
+        "This role adds access to **private logs**, mainly **Data Access audit logs**. Admin Activity and other regular logs are already readable with Logs Viewer, and application logs don't need it, so it grants more than needed."
+      ],
+      [
+        "**D. Using**`**gsutil**`**to upload logs manually**",
+        "**D. Using**`**gcloud storage**`**to upload logs manually**"
+      ]
+    ],
+    "note": "The legacy Cloud Logging agent is end of support. On current VMs, install the Ops Agent, which collects both logs and metrics; the answer logic (agent + Logs Viewer) is unchanged.",
+    "why": "Explanation mislabelled private logs as admin activity/system logs (they are mainly Data Access audit logs); gsutil modernized to gcloud storage; legacy agent noted."
+  },
+  "5-13": {
+    "explanation": [
+      [
+        "`DELTA` is used for **rate-based metrics over time** , but **latency should be measured as a point-in-time value (GAUGE)**.",
+        "A `DOUBLE` value is a **single number per point** (for example an average), so it loses the spread of latencies across users. To see what **all** users experience you need a `DISTRIBUTION` value."
+      ],
+      [
+        "`INT64` is **not appropriate for capturing floating-point latency values**.",
+        "`INT64` is also a **single scalar** per point, so, like any scalar, it can't show the latency distribution across all users."
+      ]
+    ],
+    "why": "Rejection reasons were weak (DELTA 'rate-based', INT64 'floating point'); the real reason is that any scalar loses the distribution (Exam 1 Q1)."
+  },
+  "5-28": {
+    "explanation": [
+      [
+        "While the Ops Agent can collect custom metrics, this likely requires more configuration and potentially custom code than a logs-based solution.",
+        "A metrics receiver collects a fixed set of predefined metrics from the host or a supported application. It **can't break request counts down by client IP**, so it can't answer the question at all. The client IP is only in the access log, which is why a logs-based metric is needed."
+      ]
+    ],
+    "why": "Real reason the metrics receiver fails is that it can't break down by client IP (Exam 2 Q3), not extra configuration."
+  },
+  "5-1": {
+    "explanation": [
+      [
+        "Technically valid (they can see dashboards and charts), but it shares **all monitoring dashboards and metrics in the project** , not just the specific chart. This goes beyond the requirement and does not strictly follow “share the chart only.”",
+        "The role is the same as in option C, so the access granted is the same. Monitoring Viewer lets the team see all dashboards and metrics in the project whether you send them a project ID or a URL. The difference is only delivery: a project ID doesn't point the team to the chart, while “Share chart by URL” does. That is why C fits better, not because it grants less access."
+      ],
+      [
+        "Other options either over-share (A) or don’t work at all (B, D).",
+        "Option A grants the same access but doesn't deliver the chart; B and D don't work at all."
+      ]
+    ],
+    "why": "Explanation claimed sharing via project ID over-shares compared with a URL; access is set by the IAM role, which is the same in both."
+  },
+  "1-11": {
+    "explanation": [
+      [
+        "a setting of 1.0 logs 100% of flows, which is what",
+        "a setting of 1.0 keeps every flow record produced by the primary sampling (the most complete Flow Logs setting, though Flow Logs still sample packets and can't guarantee every packet or connection), which is what"
+      ]
+    ],
+    "why": "Sampling 1.0 does not capture every flow; primary packet sampling is dynamic and not adjustable (Exam 2 Q13)."
+  },
+  "2-4": {
+    "answers": {
+      "B": "B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint."
+    },
+    "explanation": [
+      [
+        "**B. Use Network Connectivity Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.**",
+        "**B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.**"
+      ],
+      [
+        "The sharpest trap in this question is the product name itself: the Connectivity Test capability actually lives under **Network Intelligence Center** , not **Network Connectivity Center** — the latter is a separate Google Cloud product",
+        "Watch the product name: the Connectivity Test capability lives under **Network Intelligence Center** , not **Network Connectivity Center** — the latter is a separate Google Cloud product"
+      ]
+    ],
+    "why": "Option named the wrong product (Network Connectivity Center); Connectivity Tests are in Network Intelligence Center."
+  },
+  "5-59": {
+    "explanation": [
+      [
+        "While deploying the application to one region per continent can improve latency compared to a single region deployment, it may not provide the most optimal response times as users within continents may still experience latency due to regional distances.",
+        "Regional external load balancers can't share one global anycast IP address. A global IP address requires the global external Application Load Balancer (Premium Tier), so this design can't be built as described."
+      ]
+    ],
+    "why": "Real reason III fails is that regional LBs can't share a global anycast IP (Exam 2 Q24), not continental latency."
+  },
+  "5-18": {
+    "explanation": [
+      [
+        "2. CopyEditSELECT service.description, labels.system, SUM(cost) AS total_cost\n            3. FROM `billing_dataset.gcp_billing_export`\n            4. WHERE usage_start_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)\n            5. GROUP BY service.description, labels.system",
+        "2. SELECT service.description, l.value AS system, SUM(cost) AS total_cost\n            3. FROM `billing_dataset.gcp_billing_export`, UNNEST(labels) AS l\n            4. WHERE l.key = 'system' AND usage_start_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)\n            5. GROUP BY service.description, system"
+      ],
+      [
+        "2. CopyEditgcloud compute",
+        "2. gcloud compute"
+      ]
+    ],
+    "why": "Sample SQL selected labels.system directly; labels is a repeated key/value field that needs UNNEST."
+  },
+  "5-4": {
+    "explanation": [
+      [
+        "While this is architecturally recommended for HTTP workloads, **external HTTP(S) Load Balancing runs on Premium Tier by default** , which is **more expensive** , not cheaper. It optimizes performance, not cost.",
+        "An HTTP load balancer as Ingress is a **traffic-distribution** choice: it gives routing and scaling features but does not make egress cheaper, and it has its own charges. (A regional external Application Load Balancer can run in Standard Tier, so the tier is not the reason to reject it.)"
+      ]
+    ],
+    "why": "Claim that the HTTP LB is Premium-only overstated; real reason is it solves traffic distribution, not cost (Exam 1 Q41)."
+  },
+  "5-35": {
+    "correct": "I",
+    "explanation": "**Correct Option:**\n\n**I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.**\n\n**Justification:**\n\n  * **Two requirements:** cut the cost of application logs in Cloud Logging, and keep collecting GKE operational logs.\n\n  * **Nobody reads the application logs in Cloud Logging:** developers use `kubectl logs`, which reads from the node and does not depend on Cloud Logging, and the logs have no uniform structure, so they are hard to query anyway.\n\n  * **`--logging=SYSTEM` controls collection at the source:** it collects logs from system namespaces (such as kube-system), node services such as kubelet and containerd, and Kubernetes events, and stops collecting application (workload) logs. The verbose application logs are never ingested, so you don't pay for them, and operational logs keep flowing.\n\n\n\n\n**Why Other Options Are Less Suitable:**\n\n  * **II. `--logging=WORKLOAD`**\n\n    * Workload logs are the application logs, the very thing you want to stop collecting. Google also documents SYSTEM as required for all clusters, so WORKLOAD alone isn't a valid way to express this.\n\n  * **III. Disable the `_Default` sink**\n\n    * Stops routing almost all project logs to the `_Default` bucket, including the GKE operational logs you must keep. (The `_Required` sink still keeps audit logs, but that doesn't cover GKE system logs.)\n\n  * **IV. Exclusion filter `severity >= DEBUG resource.type = \"k8s_container\"`**\n\n    * `severity >= DEBUG` matches essentially **every** container log entry, not only DEBUG ones, and `k8s_container` also covers system Pods, so it can drop operational logs too. It also filters after collection instead of avoiding collection. Exclusion filters fit when you want to keep part of the application logs.\n\n\n\n\n**References:**\n\n<https://cloud.google.com/kubernetes-engine/docs/concepts/about-logs>\n\n<https://cloud.google.com/logging/docs/routing/overview>",
+    "why": "Same scenario as Exam 4 Q41, which keys --logging=SYSTEM. The keyed filter severity>=DEBUG matches all container logs (incl. system Pods) and the explanation misread it."
+  },
+  "3-19": {
+    "correct": [
+      "A",
+      "D"
+    ],
+    "explanation": "**Correct Answer**\n\n**A. Establish monitoring and alerting for the service.**\n\n**D. Implement redundant resources within the service environment.**\n\n**Exam Reasoning Explanation**\n\nThe stem places the service in a specific lifecycle phase: it is being **actively developed** and **prepared for production**. Google's SRE engagement model ties different SRE activities to different phases. In the **active development** phase, SRE starts productionalizing the service: capacity planning, setting up extra resources for **redundancy**, planning for high availability and load balancing, and putting **monitoring and alerting** in place. Picking the two activities that belong to this phase gives A and D.\n\n**Key Exam Clues**\n\n  * **“Actively developing” — Technical signal:** The design is already done, so this is the active development phase, not architecture and design.\n\n  * **“Preparing it for production” — Required outcome:** Calls for productionalization work (redundancy, monitoring, alerting).\n\n  * **“Google-recommended practices” — Hard constraint:** Points to the phase-by-phase activities in the SRE engagement model.\n\n  * **“Choose two” — Cardinality instruction:** Pick the two activities the model lists for this phase.\n\n\n\n\n**Why This Is Correct**\n\n  * **A:** Monitoring and alerting are listed productionalization tasks for active development. They make the service observable before it takes production traffic.\n\n  * **D:** Adding resources for redundancy is also listed for active development. It is how the service gets the availability it will need in production.\n\n\n\n\n**Why the Other Options Are Not the Best Fit**\n\n  * **Option B — Wrong phase:** Guidelines for using infrastructure systems belong to the architecture and design phase.\n\n  * **Option C — Wrong phase:** Collaborating with the product team on the service's design is also architecture and design work. In active development the design already exists.\n\n  * **Option E — Wrong phase:** Early consultation on architecture and design decisions is valuable, but it belongs before development starts. It is not the next priority for a service already being built and prepared for production.\n\n\n\n\n**Exam Trap**\n\nEarly SRE engagement is good practice, so E sounds right. The question asks what to do **next** for a service that is already in active development, and design-phase activities (B, C, E) are past that point.\n\n**Memory Hook**\n\nDesign phase: guidelines, co-design, consultation. Active development: redundancy, monitoring, alerting.\n\n**30-Second Exam Takeaway**\n\nMatch the activity to the lifecycle phase. For a service in active development being prepared for production, choose monitoring/alerting and redundancy.\n\n**Official References**\n\n  * [**Google SRE Workbook — SRE Engagement Model:**](https://sre.google/workbook/engagement-model/)\n\nSupports: Redundancy, monitoring, and alerting during active development; infrastructure guidelines and co-design during architecture and design.\n\n  * [**Google SRE Book — The Evolving SRE Engagement Model:**](https://sre.google/sre-book/evolving-sre-engagement-model/)\n\nSupports: Early consultation as a design-phase engagement.",
+    "why": "Google's SRE engagement model lists redundancy plus monitoring/alerting under active development; early consultation (E) is design-phase. The old explanation itself said A+D had direct support."
+  },
+  "1-9": {
+    "note": "GKE's native custom-metrics support covers metrics your Pods export. For a Cloud Monitoring metric such as the load balancer's request count, Google's HPA documentation still uses the Custom Metrics - Stackdriver Adapter, so the adapter-based wording of the same question (Exam 5 · Q12) is also correct. Either way, the key is scaling the HPA on the load balancer's request count.",
+    "why": "Explanation implies native support removes the adapter for LB metrics; native support is for Pod-exported metrics."
+  },
+  "1-8": {
+    "note": "Cloud Profiler gives code-level CPU and heap profiles, not system resource-utilization metrics. It is the best of these options, but if an option offers the Ops Agent with Cloud Monitoring, choose that.",
+    "why": "Profiler is the least-bad listed option; real tool for system metrics is Ops Agent/Monitoring."
+  },
+  "4-45": {
+    "note": "Cloud Profiler describes wall time much larger than CPU time as time spent waiting (I/O, locks, downstream calls), which more CPU usually doesn't fix. Option A matches the published sample answer, so expect it on the exam, but don't treat it as a general diagnostic rule.",
+    "why": "Key A matches the official sample but contradicts Profiler's own guidance; caveat only."
+  },
+  "4-29": {
+    "note": "Heap that grows steadily after a release suggests a memory leak. Raising the memory limit is the expected exam answer but only a stopgap: it delays the OOM kill while the code is fixed.",
+    "why": "Key is the expected answer but a stopgap; caveat only."
+  },
+  "1-5": {
+    "note": "Google's Spot VM documentation lists rendering and media processing as typical Spot workloads, so D is not a poor fit in general. C wins here because its fault tolerance (sufficient quorum) is stated explicitly.",
+    "why": "Rejection of rendering for Spot is a stretch; keep key with caveat."
+  }
+}

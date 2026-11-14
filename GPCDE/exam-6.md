@@ -239,7 +239,7 @@ For more details, refer to:
 
 **What is your next step?**
 
-- [x] A. Create a custom role for the service account, granting only the cloudsql.instances.connect permission. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.
+- [x] A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.
 - [ ] B. Assign the roles/cloudsql.client role to the custom service account. Modify the Cloud SQL Auth Proxy startup command to include the --unix-socket option.
 - [ ] C. Grant the custom service account the roles/cloudsql.editor role for broad permissions.
 - [ ] D. Assign the roles/cloudsql.viewer role to the custom service account and adjust the Cloud SQL Auth Proxy command to specify your instance connection name.
@@ -248,18 +248,18 @@ For more details, refer to:
 
 The correct answer is 
 
-**A. Create a custom role for the service account, granting only the cloudsql.instances.connect permission. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.**
+**A. Assign the roles/cloudsql.client role to the custom service account. Then, update the Cloud SQL Auth Proxy startup command with your instance connection name.**
 
 Explanation:
 
-According to Google’s best practices and the **principle of least privilege** , it is recommended to create a custom role that grants only the permissions necessary for the task. For connecting to Cloud SQL using the **Cloud SQL Auth Proxy** , the `**cloudsql.instances.connect**` permission is sufficient to establish a secure connection to the Cloud SQL instance. By limiting the permissions to only what’s necessary, you enhance security by reducing the potential for unintended access.
+Google's documentation says that a service account connecting through the **Cloud SQL Auth Proxy** needs the **Cloud SQL Client** role (`roles/cloudsql.client`). It is the predefined role made for this job: it lets the account connect to instances (and read the instance metadata the proxy needs) without letting it change or delete them, so it meets the **principle of least privilege** with no custom role to maintain.
 
-Additionally, updating the **Cloud SQL Auth Proxy startup command** with the instance connection name is essential to correctly establish the connection to your Cloud SQL instance.
+The proxy then needs to know which instance to reach, so you start it with the **instance connection name** (`project:region:instance`). On Windows, the application connects to the proxy over TCP on localhost.
 
 Justifications for Incorrect Options:
 
-  * **Option B: Assign the roles/cloudsql.client role with the --unix-socket option**  
-While the `roles/cloudsql.client` role includes the `cloudsql.instances.connect` permission, it also includes other permissions that may not be necessary, which doesn’t align with the principle of least privilege. The `--unix-socket` option is specific to UNIX-based systems and is not applicable to Windows.
+  * **Option B: Assign roles/cloudsql.client and use the --unix-socket option**  
+The role is right, but Google's documentation states that Unix sockets aren't supported for the Windows environment. On a Windows VM you connect to the proxy over a TCP port instead.
 
   * **Option C: Grant the roles/cloudsql.editor role**  
 The `roles/cloudsql.editor` role provides broad permissions, including modifying database instances, which violates the principle of least privilege and poses a security risk.
@@ -272,6 +272,8 @@ The `roles/cloudsql.viewer` role allows read-only access to Cloud SQL resources 
 For more information, refer to:
 
   * [Using the Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy)
+
+  * [Cloud SQL roles and permissions](https://cloud.google.com/sql/docs/mysql/roles-and-permissions)
 
 ---
 
@@ -352,7 +354,7 @@ Explanation:
 
 To achieve minimal latency and optimize **Time to First Byte (TTFB)** for a RESTful backend with thousands of devices, the best approach is to:
 
-  1. **Use an external Application Load Balancer** : Google Cloud's external **Application Load Balancer** is built on the **Premium Tier network** , offering global load balancing with proximity-based routing. This setup reduces latency by routing each request to the backend instance closest to the device, minimizing TTFB.
+  1. **Use an external Application Load Balancer** : With **Premium Tier**, the global external **Application Load Balancer** terminates the TCP and TLS connections at the Google edge location closest to each device, then carries the request to the backend over Google's private network. The backend is in a single region, so the gain doesn't come from picking a closer backend: it comes from shorter handshakes (connection setup happens near the device) and reused connections from the edge to the backend, which lowers TTFB.
 
   2. **Managed Instance Group** : Using a managed instance group for the backend ensures scalability and resilience, as it can automatically scale based on demand and distribute traffic efficiently.
 
@@ -367,7 +369,7 @@ Cloud DNS round-robin routing lacks proximity-based routing and does not optimiz
 Basic round-robin DNS routing does not provide latency optimization or failover, and Cloud DNS does not route based on geographic proximity, making it unsuitable for minimizing TTFB across a large number of devices.
 
   * **Option C: Network Load Balancer with a managed instance group**  
-The Network Load Balancer operates at Layer 4 (TCP/UDP) and does not support HTTP(S) protocols natively. It also lacks advanced features like proximity-based routing, which is crucial for reducing TTFB for a geographically dispersed user base.
+The passthrough Network Load Balancer is regional and operates at Layer 4: it forwards the HTTP traffic, but connections aren't terminated at the edge, so every TCP and TLS handshake travels all the way to the backend region. That gives a higher TTFB than the Application Load Balancer.
 
 **Relevant Documentation:**
 
@@ -550,35 +552,29 @@ For more information on Cloud Run, refer to:
 **How should you structure the ticket reservation process?**
 
 - [ ] A. Place the seat reservation request in a Cloud Tasks queue, which initiates a Workflow to handle the reservation processing.
-- [x] B. Publish the seat reservation to a Pub/Sub topic and configure the backend service to use Eventarc for processing the reservation on GKE.
+- [ ] B. Publish the seat reservation to a Pub/Sub topic and configure the backend service to use Eventarc for processing the reservation on GKE.
 - [ ] C. Store the seat reservation in a Cloud Storage bucket, triggering an event to a Cloud Run service that processes the order.
-- [ ] D. Send the seat reservation as an HTTP POST request to an Application Load Balancer, which distributes it to a Compute Engine managed instance group that processes the reservation.
+- [x] D. Send the seat reservation as an HTTP POST request to an Application Load Balancer, which distributes it to a Compute Engine managed instance group that processes the reservation.
 
 ### Explanation
 
-The most suitable approach to ensure immediate confirmation and efficient processing of seat reservations is:
+The approach that gives customers immediate confirmation is:
 
-**B. Publish the seat reservation to a Pub/Sub topic and configure the backend service to use Eventarc for processing the reservation on GKE.**
+**D. Send the seat reservation as an HTTP POST request to an Application Load Balancer, which distributes it to a Compute Engine managed instance group that processes the reservation.**
 
 **Explanation:**
 
-  * **Immediate confirmation:** Pub/Sub ensures a reliable and scalable messaging system. The reservation request is immediately published to the topic, allowing the client to receive confirmation as soon as the request is acknowledged.
+  * **Immediate confirmation needs a synchronous call:** The customer has to know right away whether *their specific seat* was reserved. With a synchronous HTTP request, the backend checks and reserves the seat (for example in a transactional database) and returns success or "seat taken" in the same response.
 
-  * **Efficient processing:** Eventarc triggers the backend service on GKE automatically when a new message arrives on the Pub/Sub topic. This eliminates the need for polling or constant monitoring of the queue, leading to efficient processing.
-
-  * **Scalability:** Pub/Sub and Eventarc are highly scalable, allowing the system to handle increased load during peak booking times.
-
-  * **Reliability:** Pub/Sub ensures reliable message delivery, reducing the risk of lost reservations.
+  * **Scalability and availability:** The Application Load Balancer spreads requests across a managed instance group that autoscales during busy on-sale periods and replaces unhealthy instances.
 
 **Why other options are not suitable:**
 
-  * **A. Cloud Tasks and Workflow:** While this approach can be used, it might introduce latency as the reservation request is first queued and then processed by Workflow. This could delay the confirmation process.
+  * **A. Cloud Tasks and Workflow:** Queuing the request makes processing asynchronous. The client only learns that the task was queued, not whether the seat was reserved.
 
-  * **C. Cloud Storage:** Storing the reservation in Cloud Storage and triggering a Cloud Run service is not the most efficient way to handle real-time processing. It might introduce unnecessary delays.
+  * **B. Pub/Sub and Eventarc:** Publishing is asynchronous too. Pub/Sub acknowledges that it *received the message*, not that the seat was reserved, so the customer can't get an immediate reservation result (and the seat might already be taken when the message is processed).
 
-  * **D. HTTP POST and Load Balancer:** While this approach can work, it relies on polling the load balancer for new requests, which can be less efficient than event-driven architectures. Additionally, it might introduce complexities in scaling the backend service.
-
-By using Pub/Sub and Eventarc, you can achieve a reliable, scalable, and efficient seat reservation process, ensuring immediate confirmation for your customers.
+  * **C. Cloud Storage:** Writing an object and reacting to the storage event is asynchronous and adds latency, so there's no immediate answer for the customer.
 
 ---
 
@@ -667,6 +663,8 @@ Consolidating resources in a single project reduces isolation, making it harder 
 For more information, refer to:
 
   * [Shared VPC Overview](https://cloud.google.com/vpc/docs/shared-vpc)
+
+**⚠️ Note:** Shared VPC puts both projects on one network, which weakens the "keep projects isolated" requirement. Private Service Connect is now the cleaner way to reach AlloyDB from another project or network. Answer Shared VPC when PSC isn't offered.
 
 ---
 

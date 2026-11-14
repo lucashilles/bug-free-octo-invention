@@ -275,6 +275,8 @@ When a question asks for low-effort, centralized collection of resource-utilizat
 
 [**Google Cloud — Cloud Debugger deprecation notice:**](https://docs.cloud.google.com/stackdriver/docs/deprecations/debugger-deprecation) Supports: the elimination of Option B as both an outdated and now-nonexistent service
 
+**⚠️ Note:** Cloud Profiler gives code-level CPU and heap profiles, not system resource-utilization metrics. It is the best of these options, but if an option offers the Ops Agent with Cloud Monitoring, choose that.
+
 </details>
 
 ---
@@ -310,7 +312,7 @@ Two decisions drive this question: _where_ to enable Flow Logs and _at what samp
 
 **Why This Is Correct**
 
-VPC Flow Logs record metadata about IP traffic sent from and received by VM instances, and the sampling rate parameter controls what fraction of eligible flows are actually logged — a setting of 1.0 logs 100% of flows, which is what a security investigation needs to avoid missing the very traffic you’re hunting for. Scoping the logs to the production VPC’s frontend and backend subnets targets exactly the environment and both tiers where the suspicious communication could be occurring, without burdening the unrelated testing environment with unnecessary logging overhead and cost.
+VPC Flow Logs record metadata about IP traffic sent from and received by VM instances, and the sampling rate parameter controls what fraction of eligible flows are actually logged — a setting of 1.0 keeps every flow record produced by the primary sampling (the most complete Flow Logs setting, though Flow Logs still sample packets and can't guarantee every packet or connection), which is what a security investigation needs to avoid missing the very traffic you’re hunting for. Scoping the logs to the production VPC’s frontend and backend subnets targets exactly the environment and both tiers where the suspicious communication could be occurring, without burdening the unrelated testing environment with unnecessary logging overhead and cost.
 
 **Why the Other Options Are Not the Best Fit**
 
@@ -1403,17 +1405,17 @@ When a question asks to surface a value buried inside log content (an IP, a stat
 You’re setting up connectivity between Google Kubernetes Engine (GKE) clusters that live in separate VPCs, and you’ve found that nodes in Cluster A cannot reach nodes in Cluster B. You suspect the root cause is a network misconfiguration rather than an application issue. You need to pinpoint exactly which layer of the network path is failing, but you don’t have execute access into any workloads or nodes to run commands directly. What should you do?
 
 - A. Install a toolbox container on a node in Cluster A, and use it to confirm that the routes to Cluster B are configured correctly.
-- B. Use Network Connectivity Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.
+- B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.
 - C. Attach a debug container and run the traceroute command in both directions — from Cluster A to Cluster B and from Cluster B to Cluster A — to identify the point where the paths fail in common.
 - D. Enable VPC Flow Logs in both VPCs and monitor the logs for packet drops.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** B. Use Network Connectivity Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.
+**Correct:** B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.
 
 **Correct Answer**
 
-**B. Use Network Connectivity Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.**
+**B. Use Network Intelligence Center to run a Connectivity Test from a Cluster A endpoint to a Cluster B endpoint.**
 
 **Exam Reasoning Explanation**
 
@@ -1443,7 +1445,7 @@ A Connectivity Test performs static (and, where applicable, dynamic) analysis of
 
 **Exam Trap**
 
-The sharpest trap in this question is the product name itself: the Connectivity Test capability actually lives under **Network Intelligence Center** , not **Network Connectivity Center** — the latter is a separate Google Cloud product for building hub-and-spoke connectivity (VPC spokes, VPN, Interconnect, router-appliance spokes) between networks. The two names are easy to swap under exam pressure. Learn to recognize the capability by what it does — simulate a path and report the failing configuration layer without touching any compute resource — rather than by memorizing the exact product name, since official practice material (and even real exam distractors) can blur the two.
+Watch the product name: the Connectivity Test capability lives under **Network Intelligence Center** , not **Network Connectivity Center** — the latter is a separate Google Cloud product for building hub-and-spoke connectivity (VPC spokes, VPN, Interconnect, router-appliance spokes) between networks. The two names are easy to swap under exam pressure. Learn to recognize the capability by what it does — simulate a path and report the failing configuration layer without touching any compute resource — rather than by memorizing the exact product name, since official practice material (and even real exam distractors) can blur the two.
 
 **Foundation Concept**
 
@@ -4743,7 +4745,7 @@ Since the requirement is to **share the chart** , not the entire dashboard, opti
 **Why other options are not a perfect fit**
 
 **A (Project ID + Monitoring Viewer)** :  
-Technically valid (they can see dashboards and charts), but it shares **all monitoring dashboards and metrics in the project** , not just the specific chart. This goes beyond the requirement and does not strictly follow “share the chart only.”
+The role is the same as in option C, so the access granted is the same. Monitoring Viewer lets the team see all dashboards and metrics in the project whether you send them a project ID or a URL. The difference is only delivery: a project ID doesn't point the team to the chart, while “Share chart by URL” does. That is why C fits better, not because it grants less access.
 
 **B (Project ID + Dashboard Viewer)** :  
 This role (actually “Dashboard Configuration Viewer” in practice) only provides access to dashboard definitions. It does not allow viewing chart **data**. Users will see errors like _“Invalid resource type/metric type”_. Not valid.
@@ -4759,7 +4761,7 @@ It leverages the official **“share chart by URL”** feature in Metrics Explor
 
 It grants the **Monitoring Viewer role** , the minimum role that allows access to metric data needed for charts.
 
-Other options either over-share (A) or don’t work at all (B, D).
+Option A grants the same access but doesn't deliver the chart; B and D don't work at all.
 
 </details>
 
@@ -4777,8 +4779,8 @@ Other options either over-share (A) or don’t work at all (B, D).
     **Give the developers the IAM Logs Private Logs Viewer role** to access **Cloud Logging** and view logs.
 - **C.Deploy the Cloud Monitoring agent** to the application servers.
     **Give the developers the IAM Monitoring Viewer role** to access **Cloud Monitoring** and view metrics.
-- **D.Install the**`**gsutil**`**command-line tool** on your application servers.
-    **Write a script using**`**gsutil**` to upload application logs to a **Cloud Storage bucket** , and then schedule it to run via `cron` every 5 minutes.
+- **D.Install the**`**gcloud**`**CLI** on your application servers.
+    **Write a script using**`**gcloud storage**` to upload application logs to a **Cloud Storage bucket** , and then schedule it to run via `cron` every 5 minutes.
     **Give the developers IAM Object Viewer access** to view the logs in the specified bucket.
 
 <details><summary>Answer &amp; explanation</summary>
@@ -4805,11 +4807,11 @@ The **best and easiest** approach to allow developers to access logs is to:
 
 **Why Other Options Are Incorrect:**
 
-**B. Logs Private Logs Viewer Role** – This role **is used for viewing private logs** , which include **admin activity and system logs**. It **is not required for regular application logs**.
+**B. Logs Private Logs Viewer Role** – This role adds access to **private logs**, mainly **Data Access audit logs**. Admin Activity and other regular logs are already readable with Logs Viewer, and application logs don't need it, so it grants more than needed.
 
 **C. Cloud Monitoring Agent + Monitoring Viewer Role** – The **Cloud Monitoring agent** is for **metrics (CPU, memory, network, etc.)** , **not logs**. Developers need access to **Cloud Logging, not Cloud Monitoring**.
 
-**D. Using**`**gsutil**`**to upload logs manually** – This is **overly complex and inefficient** :
+**D. Using**`**gcloud storage**`**to upload logs manually** – This is **overly complex and inefficient** :
 
   * Requires **writing and maintaining a log upload script**.
 
@@ -4821,6 +4823,8 @@ The **best and easiest** approach to allow developers to access logs is to:
 
 [Installing the Cloud Logging Agent](https://cloud.google.com/logging/docs/agent/logging/install-index)  
 [ IAM Roles for Cloud Logging](https://cloud.google.com/logging/docs/access-control)
+
+**⚠️ Note:** The legacy Cloud Logging agent is end of support. On current VMs, install the Ops Agent, which collects both logs and metrics; the answer logic (agent + Logs Viewer) is unchanged.
 
 </details>
 
@@ -4924,7 +4928,7 @@ The **best and easiest** approach to allow developers to access logs is to:
 
 **A. Using a**`**DELTA**`**metricKind and**`**DOUBLE**`**valueType with a Stacked Bar Graph** –
 
-  * `DELTA` is used for **rate-based metrics over time** , but **latency should be measured as a point-in-time value (GAUGE)**.
+  * A `DOUBLE` value is a **single number per point** (for example an average), so it loses the spread of latencies across users. To see what **all** users experience you need a `DISTRIBUTION` value.
 
   * **Stacked Bar graphs are not ideal for latency distributions**.
 
@@ -4938,7 +4942,7 @@ The **best and easiest** approach to allow developers to access logs is to:
 
   * `METRIC_KIND_UNSPECIFIED` is **not a valid selection** for Cloud Monitoring.
 
-  * `INT64` is **not appropriate for capturing floating-point latency values**.
+  * `INT64` is also a **single scalar** per point, so, like any scalar, it can't show the latency distribution across all users.
 
 **Reference Documentation:**
 
@@ -4980,7 +4984,7 @@ The **best and easiest** approach to allow developers to access logs is to:
 
   * **III. Enhance the application to directly transmit IP address request metrics...** Modifying production code for monitoring purposes introduces risks and complexity.
 
-  * **IV. Configure the Ops Agent with a metrics receiver.** While the Ops Agent can collect custom metrics, this likely requires more configuration and potentially custom code than a logs-based solution.
+  * **IV. Configure the Ops Agent with a metrics receiver.** A metrics receiver collects a fixed set of predefined metrics from the host or a supported application. It **can't break request counts down by client IP**, so it can't answer the question at all. The client IP is only in the access log, which is why a logs-based metric is needed.
 
 **Reference:**
 

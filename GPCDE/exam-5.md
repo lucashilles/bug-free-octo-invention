@@ -40,7 +40,7 @@
 
 **For a web application that sends messages to Pub/Sub, you need to configure local testing to quickly assess Pub/Sub integration for each new build. How should you set up local testing?**
 
-- [x] II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through ${gcloud beta emulators pubsub env-init}.
+- [x] II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through $(gcloud beta emulators pubsub env-init).
 - [ ] III. Access the Google Cloud console, navigate to the API Library, and enable the Pub/Sub API. During local development, configure the application to call pubsub.googleapis.com.
 - [ ] IV. Deploy the Pub/Sub emulator using gcloud and start it with a valid Google Project ID. When developing locally, configure the application to utilize the local emulator by exporting the PUBSUB_EMULATOR_HOST variable.
 - [ ] I. Integrate Cloud Code into the integrated development environment (IDE). Activate Pub/Sub via Cloud APIs with a valid Google Project ID. During local development, configure the application to invoke pubsub.googleapis.com.
@@ -49,7 +49,7 @@
 
 **The correct approach to set up local testing for a web application that sends messages to Pub/Sub is:**
 
-**II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through**`**${gcloud beta emulators pubsub env-init}**`**.**
+**II. Use gcloud to install the Pub/Sub emulator and initiate it with a valid Google Project ID. For local development, configure the application to use the local emulator through**`**$(gcloud beta emulators pubsub env-init)**`**.**
 
 **Explanation:**
 
@@ -57,18 +57,20 @@
 
   * Using `**gcloud**` to install the Pub/Sub emulator and initiating it with a valid Google Project ID sets up the local environment for Pub/Sub emulation.
 
-  * Configuring the application to use the local emulator through `**${gcloud beta emulators pubsub env-init}**` ensures that the application sends messages to the local emulator instead of the actual Pub/Sub service during local development.
+  * Configuring the application to use the local emulator through `**$(gcloud beta emulators pubsub env-init)**` ensures that the application sends messages to the local emulator instead of the actual Pub/Sub service during local development.
 
 Option I is incorrect because it suggests integrating Cloud Code into the IDE and activating Pub/Sub via Cloud APIs with a valid Google Project ID, which may not be suitable for local testing.
 
 Option III is incorrect because it involves enabling the Pub/Sub API in the Google Cloud console, which is not related to setting up local testing with the Pub/Sub emulator.
 
-Option IV is incorrect because it suggests deploying the Pub/Sub emulator using `**gcloud**`, which is unnecessary since the emulator can be started locally without deploying it. Additionally, the method of configuring the application to utilize the local emulator by exporting the `**PUBSUB_EMULATOR_HOST**` variable is not mentioned in this option.
+Option IV is also a valid setup: `env-init` simply prints `export PUBSUB_EMULATOR_HOST=...`, so exporting that variable yourself has the same effect (Exam 4 · Q21 keys exactly this). The bank prefers II only because `env-init` sets the variable automatically.
 
 **References:**  
 [https://cloud.google.com/pubsub/docs/emulator#env](https://cloud.google.com/pubsub/docs/emulator#env  https://cloud.google.com/pubsub/docs/emulator#automatically_setting_the_variables)
 
 [https://cloud.google.com/pubsub/docs/emulator#automatically_setting_the_variables](https://cloud.google.com/pubsub/docs/emulator#env  https://cloud.google.com/pubsub/docs/emulator#automatically_setting_the_variables)
+
+**⚠️ Note:** Options II and IV are functionally equivalent; both end with PUBSUB_EMULATOR_HOST pointing at the local emulator. On the exam, pick whichever of the two is offered.
 
 ---
 
@@ -128,6 +130,8 @@ Option A is incorrect because App Engine is a platform for building and deployin
 Option B is incorrect because Firestore is not typically used for storing streaming data, as it is designed more for document-oriented databases rather than real-time streaming data.
 
 Option C is incorrect because Dataflow is better suited for stream processing before analysis, rather than BigQuery, which is optimized for performing SQL queries on stored data. Additionally, Firestore is not typically used for storing streaming data.
+
+**⚠️ Note:** The diagram this question refers to is missing, so the meaning of steps 1 to 4 is inferred. The key is plausible, but some of the explanations are muddled (option C is rejected because "Dataflow is better than BigQuery", and B and C are said to fail because Firestore isn't for streaming data, although the key stores data in Firestore too). The pattern to remember is Pub/Sub → Dataflow → BigQuery.
 
 ---
 
@@ -207,35 +211,25 @@ Option C is incorrect because Dataflow is better suited for stream processing be
 
 **Correct Answer:**
 
-  * **C. Insert a build step in the**`**cloudbuild.yaml**`**file before the promotion step with the arguments:...**
-
-1.  name: gcr.io/cloud-builders/gsutil
-      2. args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']
-      3. waitFor: ['-']
+  * **C.** A build step using the `gsutil` builder with `args: ['cp', '-r', 'gs://webphotos-staging', 'gs://webphotos-prod']`, added before the promotion step.
 
 **Justification:**
 
-  * **Automation within the Build Pipeline:** Integrating the photo transfer into your Cloud Build pipeline ensures it happens automatically during the promotion process. This aligns with the goal of automating where feasible.
+  * **Automation within the build pipeline:** Copying the photos in a Cloud Build step makes the copy part of every promotion, with no manual work.
 
-  * **The 'gsutil' Cloud Builder:** The `gcr.io/cloud-builders/gsutil` image provides tools for efficient Cloud Storage operations.
+  * **Recursive copy (`-r`):** The photos are in several directories, so the copy must be recursive.
 
-  * **Recursive Copy (**`**-r**`**):** Ensures all photos and subdirectories within `webphotos-staging` are copied.
-
-  * `**waitFor: ['-']**`**:** Prevents subsequent build steps from running until the copy operation successfully completes.
+  * **About `waitFor: ['-']`:** This makes the step start at the beginning of the build, in parallel with other steps; it does **not** make later steps wait for it. To guarantee the photos are copied before promotion, the promotion step should list this step's `id` in its own `waitFor` (or leave `waitFor` out of both steps, since steps then run in order).
 
 **Incorrect Answers:**
 
-  * **A. Perform a manual copy of the photos to**`**webphotos-prod**`**.**
+  * **A. Manual copy:** It breaks the goal of automating the promotion and invites missed steps.
 
-    * **Reasoning:** This breaks the desired automation and introduces the potential for errors or missed steps in the promotion process.
+  * **B. Startup script in `app.yaml`:** `app.yaml` configures the runtime, not deployment tasks, and a copy at startup would run on every instance start. Deployment and data transfer are better kept in the pipeline.
 
-  * **B. Introduce a startup script in the application's**`**app.yaml**`**file...**
+  * **D. `cp -a`:** In `gsutil cp`, `-a` sets a **canned ACL** on the copied objects (it takes a value such as `public-read`); it is not an "archive" or recursive flag. Without `-r`, the directories of photos aren't copied.
 
-    * **Reasoning:** While possible, this mixes concerns. Deployment and data transfer are better separated; keeping the transfer in Cloud Build makes the process more independent and reusable.
-
-  * **D. Include a build step... `args: ['cp', '-a', 'gs://webphotos-staging', 'gs://webphotos-prod']...**
-
-    * **Reasoning:** The `-a` flag (archive mode) is usually for preserving file attributes. While it would work, the simpler `-r` (recursive) flag is more direct for this use case.
+**Note on tools:** `gsutil` is superseded by `gcloud storage` (for example `gcloud storage cp --recursive ...`), which the `gcr.io/cloud-builders/gcloud` builder can run.
 
 ---
 
@@ -348,7 +342,7 @@ For more information on secure connections to Cloud SQL, refer to:
 
 **Justification:**
 
-  * **Authorized Networks for Public Clusters:** Even though your GKE cluster has a public endpoint, by default, access is restricted to a set of authorized IP addresses. Cloud Shell has a dynamic, ephemeral IP address that changes, making it likely it's not included in the allowed list. (GCP Documentation: [invalid URL removed])
+  * **Authorized Networks for Public Clusters:** A public endpoint accepts connections from any IP address unless control plane authorized networks are enabled. They are opt-in, but once enabled, only the listed IP ranges can reach the endpoint. Cloud Shell has a dynamic, ephemeral external IP address, so it is usually not in the list and its connections are dropped. The question assumes authorized networks were enabled, which is common in production.
 
   * **Timeout Behavior:** The lack of an explicit error message and a timeout is consistent with traffic simply being blocked without rejection at the network level.
 
@@ -364,7 +358,9 @@ For more information on secure connections to Cloud SQL, refer to:
 
   * **D. A VPC firewall is obstructing access to the cluster's endpoint**
 
-    * **Reasoning:** While possible, VPC firewalls would usually result in a more explicit connection failure rather than a silent timeout.
+    * **Reasoning:** VPC firewall rules filter traffic to and from resources in your VPC, such as the nodes; they don't control access to the Google-managed control plane's public endpoint.
+
+**⚠️ Note:** GKE now also offers a DNS-based control plane endpoint, which authorizes kubectl access with IAM instead of IP allowlists and avoids this problem for Cloud Shell.
 
 ---
 
@@ -376,41 +372,45 @@ For more information on secure connections to Cloud SQL, refer to:
 
 - [ ] C. Set up **Cloud Endpoints** with **Firebase Authentication** for all microservices. Configure **Firebase rules** to manage access control lists (ACLs) for each service, allowing public access where needed.
 - [ ] A. Enable **Identity-Aware Proxy (IAP)** for all microservices, and create a new microservice that verifies the authentication requirements for each service and controls access accordingly.
-- [x] B. Enable **Identity-Aware Proxy (IAP)** for all microservices. Use **access control lists (ACLs)** to restrict access to specific services and grant **allAuthenticatedUsers** access to public services.
-- [ ] D. Set up separate **Cloud Run services** for public and restricted microservices. Enable **IAP** only for restricted services, and set the Cloud Run **ingress settings** to **‘Internal and Cloud Load Balancing’** for these services.
+- [ ] B. Enable **Identity-Aware Proxy (IAP)** for all microservices. Use **access control lists (ACLs)** to restrict access to specific services and grant **allAuthenticatedUsers** access to public services.
+- [x] D. Set up separate **Cloud Run services** for public and restricted microservices. Enable **IAP** only for restricted services, and set the Cloud Run **ingress settings** to **‘Internal and Cloud Load Balancing’** for these services.
 
 ### Explanation
 
 The correct answer is
 
-**B. Enable Identity-Aware Proxy (IAP) for all microservices. Manage access control lists (ACLs) for the restricted services, and configure allAuthenticatedUsers access to the public services.**
+**D. Set up separate Cloud Run services for public and restricted microservices. Enable IAP only for restricted services, and set the Cloud Run ingress settings to 'Internal and Cloud Load Balancing' for these services.**
 
 Explanation:
 
-**Identity-Aware Proxy (IAP)** is the recommended way to secure access to applications running on Google Cloud by controlling access based on Google identity. Enabling IAP for all microservices allows you to easily manage access control for each service using **Access Control Lists (ACLs)** :
+  1. **Public services** : Deployed as their own Cloud Run services with the `roles/run.invoker` role granted to `allUsers`, so anyone can call them with no sign-in.
 
-  1. **Restricted Services** : Use ACLs to grant access only to specific, authenticated Google identities for services that require authentication.
+  2. **Restricted services** : Put behind an external Application Load Balancer with **Identity-Aware Proxy (IAP)** enabled, and grant the IAP-secured Web App User role only to the Google identities that need access.
 
-  2. **Public Services** : Configure `allAuthenticatedUsers` to allow access to users who have authenticated with any Google account, or alternatively, you can configure these services with `allUsers` if truly unrestricted access is required.
+  3. **Ingress 'Internal and Cloud Load Balancing'** : This setting still allows traffic that arrives through the external Application Load Balancer, but it blocks requests sent straight to the service's `run.app` URL. Users therefore can't bypass IAP.
 
-This approach provides **secure, identity-based access** for the restricted services and easy configuration for public services, while avoiding additional infrastructure or complex access control implementations.
+This keeps each service's access rule simple and uses managed Google features only, with no custom code.
 
 Justifications for Incorrect Options:
 
   * **Option A: Develop a new microservice to manage access**  
-Creating a custom access management microservice introduces unnecessary complexity and management overhead, especially when IAP natively supports Google identity-based access control.
+Writing your own access-checking service adds code to build, secure and operate, when IAP already does identity-based access natively.
+
+  * **Option B: IAP for all services with allAuthenticatedUsers for public ones**  
+`allAuthenticatedUsers` still requires every caller to sign in with a Google account, so the public services would not be unrestricted as the requirement asks. Putting IAP in front of services that should be open also adds configuration for no benefit.
 
   * **Option C: Use Cloud Endpoints with Firebase Authentication**  
-Cloud Endpoints and Firebase Authentication can control access, but they add complexity and require more setup than IAP. IAP provides a simpler, built-in approach for managing identity-based access for Google Cloud services.
-
-  * **Option D: Configure separate Cloud Run services with IAP and ‘Internal and Cloud Load Balancing’ ingress**  
-Using `Internal and Cloud Load Balancing` ingress restricts access to only internal Google Cloud traffic, which doesn’t meet the requirement for public access. IAP provides a more flexible solution, allowing both public and restricted access within the same framework.
+Cloud Endpoints and Firebase Authentication can control access, but they need more setup than IAP, and Firebase Security Rules protect Firebase data, not Cloud Run services.
 
 **Relevant Documentation:**
 
 For more details, refer to:
 
   * [Identity-Aware Proxy (IAP) Overview](https://cloud.google.com/iap/docs/concepts-overview)
+
+  * [Cloud Run ingress settings](https://cloud.google.com/run/docs/securing/ingress)
+
+  * [Allowing public (unauthenticated) access to Cloud Run](https://cloud.google.com/run/docs/authenticating/public)
 
 ---
 
@@ -581,7 +581,7 @@ Here's why this is the best approach:
 
 **Justification:**
 
-  * **Cost-Effectiveness:** In BigQuery, batch queries are significantly more cost-effective compared to on-demand queries. They are the best option if time efficiency is not a concern.
+  * **Cost-Effectiveness:** Batch queries cost the same as interactive queries, but they need no extra project, reservation or monitoring, so they're the cheapest way to meet the request when time efficiency is not a concern.
 
   * **Workload Prioritization:** Batch jobs run when there is available BigQuery capacity, ensuring they won't disrupt critical workloads.
 
@@ -704,9 +704,9 @@ For more information, refer to:
 
 Here's why Cloud Endpoints is a good fit for your requirements:
 
-  * **Authentication Management:** Cloud Endpoints integrates with Cloud Identity and Access Management (IAM) to handle user authentication and authorization for your API.
+  * **Authentication Management:** Cloud Endpoints (through its Extensible Service Proxy) validates API keys and JSON Web Tokens, for example from Firebase Authentication, Auth0 or Google ID tokens, to authenticate API consumers.
 
-  * **Usage Quotas:** Cloud Endpoints allows you to define and enforce quotas on API calls based on various metrics like request rate, project, or API method.
+  * **Usage Quotas:** Cloud Endpoints lets you define and enforce quotas on API calls per consumer project (identified by API key) and per API method.
 
   * **Metrics Tracking:** Cloud Endpoints provides built-in monitoring and logging capabilities that you can use to track API usage metrics and analyze API performance.
 
@@ -720,7 +720,9 @@ Let's analyze the other options and why they are not ideal:
 
 **Reference:**
 
-<https://cloud.google.com/kubernetes-engine/docs/concepts/ingress>
+<https://cloud.google.com/endpoints/docs/openapi/authentication-method>
+
+<https://cloud.google.com/endpoints/docs/openapi/quotas-overview>
 
 ---
 
@@ -772,11 +774,9 @@ Let's analyze the other options and why they are not ideal:
 
 **You are developing a highly available and globally accessible application to deliver static content to users. What configuration should you implement for the storage and serving components to minimize management overhead, reduce latency, and maximize reliability for users?**
 
-- [x] IV. 1. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.
+- [x] IV. 1. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.
     2\. Reserve an external IP address and set up an external HTTP(S) load balancer.
     Enable Cloud CDN and direct traffic to the backend bucket.
-    3\. Set up an external HTTP(S) load balancer.
-    Enable Cloud CDN and route traffic to the unmanaged instance group.
 - [ ] II. 1. Create an unmanaged instance group and replicate the static content across the VMs.
     2\. Set up an external HTTP(S) load balancer.
     Enable Cloud CDN and route traffic to the unmanaged instance group.
@@ -791,23 +791,23 @@ Let's analyze the other options and why they are not ideal:
 
 The most suitable configuration for this scenario is **IV** :
 
-  * **1\. Utilize a Standard storage class, multi-regional Cloud Storage bucket and store the static content within it.** Multi-regional Cloud Storage provides the highest level of availability and geographic redundancy for your content. This ensures reliability even if a single region experiences issues.
+  * **1\. Utilize a Standard storage class Cloud Storage bucket in a multi-region location and store the static content within it.** A multi-region bucket provides the highest level of availability and geographic redundancy for your content. This ensures reliability even if a single region experiences issues.
 
   * **2\. Reserve an external IP address and set up an external HTTP(S) load balancer. Enable Cloud CDN and direct traffic to the backend bucket.** The load balancer distributes traffic for global reach, and Cloud CDN optimizes for low-latency content delivery.
 
 **Here's why this combination is the best:**
 
-  * **Maximizes reliability:** Multi-regional storage and load balancing mitigate the risk of regional outages impacting content availability.
+  * **Maximizes reliability:** Multi-region storage and load balancing mitigate the risk of regional outages impacting content availability.
 
   * **Minimizes latency:** Cloud CDN caches the content at edge locations worldwide, placing it closer to users for faster delivery.
 
-  * **Reduces management overhead:** Using fully managed services like multi-regional Cloud Storage and Cloud CDN eliminates the need to manage infrastructure like VMs.
+  * **Reduces management overhead:** Using fully managed services like multi-region Cloud Storage and Cloud CDN eliminates the need to manage infrastructure like VMs.
 
 **Why other options are less ideal:**
 
   * **I & II**: Using instance groups (managed or unmanaged) introduces the overhead of managing VM infrastructure, patching, and scaling. This is less efficient for static content.
 
-  * **III:** A regional Cloud Storage bucket offers less redundancy than a multi-regional one, increasing the risk of downtime if a regional issue occurs.
+  * **III:** A regional Cloud Storage bucket offers less redundancy than a multi-region one, increasing the risk of downtime if a regional issue occurs.
 
 ---
 
@@ -897,7 +897,7 @@ The most suitable configuration for this scenario is **IV** :
 
   * **Using Dataflow with Apache Beam's PubSubIO package ensures efficient processing of messages from the Pub/Sub topic in a streaming fashion.**
 
-  * **Dataflow automatically handles aspects like scaling, fault tolerance, and data deduplication, ensuring that each message is processed only once without the need for manual intervention.**
+  * **Dataflow automatically handles scaling and fault tolerance, and deduplicates Pub/Sub redeliveries of the same message (by message ID), so each message is processed once without manual intervention. If the publisher itself can send the same data as separate messages, set a unique ID attribute and read it with `PubSubIO`'s ID attribute option (`withIdAttribute`) so Dataflow can deduplicate those too.**
 
   * **Dataflow also integrates seamlessly with various storage options provided by Google Cloud Platform, allowing you to save the output to storage in a cost-effective manner.**
 
@@ -1014,7 +1014,7 @@ IV. A temporary outage is occurring in the Interconnect link from the on-premise
 
 *Domain 2: Building and Testing Applications*
 
-**Your team is tasked with standardizing log data for services running on Google Kubernetes Engine. How can you achieve this using Google-recommended practices efficiently? (Select two options.)**
+**Your team is tasked with standardizing log data for services running on Google Kubernetes Engine and making that data more useful for analysis. How can you achieve this using Google-recommended practices efficiently? (Select two options.)**
 
 - [ ] IV. Enforce the usage of the Logging API within the application code to generate structured logs for Cloud Logging.
 - [x] I. Implement logging exports on application logs to BigQuery for streamlined log analytics.
@@ -1235,15 +1235,15 @@ In the absence of a centralized logging solution, the task becomes more cumberso
 - [ ] I. Functional tests
 - [ ] III. Cloud Load Balancing - health probes
 - [ ] IV. Managed instance group - health evaluations
-- [x] II. Stackdriver availability checks
+- [x] II. Cloud Monitoring uptime (availability) checks
 
 ### Explanation
 
 The correct option for this scenario is:
 
-**II. Stackdriver availability checks**
+**II. Cloud Monitoring uptime (availability) checks**
 
-**Justification:** Stackdriver availability checks allow you to monitor the availability of your application from various locations globally. By configuring Stackdriver availability checks, you can receive alerts when your application becomes inaccessible, ensuring you're promptly notified of any issues affecting user access. This method directly addresses the goal of establishing a monitoring mechanism to detect when the application becomes inaccessible.
+**Justification:** Cloud Monitoring uptime checks allow you to monitor the availability of your application from various locations globally. By configuring Cloud Monitoring uptime checks, you can receive alerts when your application becomes inaccessible, ensuring you're promptly notified of any issues affecting user access. This method directly addresses the goal of establishing a monitoring mechanism to detect when the application becomes inaccessible.
 
 **Why the other options are not suitable:**
 
@@ -1386,13 +1386,13 @@ IV. Managed instance group - health evaluations: Managed instance group health e
 
   * **Google-Managed Services:** Cloud Build and Cloud Functions are fully-managed, easing operational burden. Terraform has excellent integration with GCP.
 
-  * **Serverless Alignment:** Cloud Functions is the ideal serverless compute choice for the application tier.
+  * **Serverless Alignment:** Cloud Functions is a serverless platform, so the requirement is met. (Cloud Run and App Engine are serverless too; this option wins because of infrastructure as code with Terraform and a fully managed pipeline, not because Cloud Functions is more serverless.)
 
 **Why Other Options Are Less Ideal:**
 
   * **II. Deploy Jenkins ... Deploy the application to App Engine ...**
 
-    * **Operational Overhead:** Jenkins introduces self-management of a VM compared to Cloud Build. App Engine is also less serverless than Cloud Functions.
+    * **Operational Overhead:** Jenkins runs on VMs you manage, unlike Cloud Build, and there's no infrastructure as code for versioned, auditable infrastructure changes. (App Engine itself is serverless; that is not the problem.)
 
   * **III. Set up a continuous integration pipeline on Cloud Build ... Deploy the container to a Compute Engine instance ...**
 
@@ -1587,19 +1587,19 @@ This option is relevant if there are network issues affecting access to external
 **You're preparing to migrate your Compute Engine application to Google Kubernetes Engine (GKE). As part of this process, you need to build a container image and push it to Artifact Registry using Cloud Build. Which steps should you take? (Select two.)**
 
 - [x] A. Execute `gcloud builds submit` in the directory containing the application source code.
-- [ ] B. Run `gcloud run deploy app-name --image gcr.io/$PROJECT_ID/app-name` in the directory housing the application source code.
+- [ ] B. Run `gcloud run deploy app-name --image us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name` in the directory housing the application source code.
 - [ ] E. Within the application source directory, generate a file named `cloudbuild.yaml` with the following content:
     steps:
     \- name: 'gcr.io/cloud-builders/cloud'
     args: ['app', 'deploy']
     timeout: '1600s'
-- [ ] C. Use `gcloud container images add-tag gcr.io/$PROJECT_ID/app-name gcr.io/$PROJECT_ID/app-name:latest` in the application source directory.
+- [ ] C. Use `gcloud container images add-tag us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name:latest` in the application source directory.
 - [x] D. Create a file named `cloudbuild.yaml` in the application source directory, and include the following content:
     steps:
     \- name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-name', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name', '.']
     \- name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/app-name']
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name']
 
 ### Explanation
 
@@ -1615,9 +1615,9 @@ YAML
         
                     1. steps:
             2. - name: 'gcr.io/cloud-builders/docker'
-            3.   args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-name', '.']
+            3.   args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name', '.']
             4. - name: 'gcr.io/cloud-builders/docker'
-            5.   args: ['push', 'gcr.io/$PROJECT_ID/app-name']
+            5.   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name']
 
 * **Justification:** This `cloudbuild.yaml` file provides Cloud Build with the instructions to:
 
@@ -1627,11 +1627,11 @@ YAML
 
 **Incorrect Answers:**
 
-  * **B. Run**`**gcloud run deploy app-name --image gcr.io/$PROJECT_ID/app-name**`**...**
+  * **B. Run**`**gcloud run deploy app-name --image us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name**`**...**
 
     * **Reasoning:** This is a command for deploying an application to Cloud Run (a separate service), not for building and pushing images to Artifact Registry.
 
-  * **C. Use**`**gcloud container images add-tag gcr.io/$PROJECT_ID/app-name gcr.io/$PROJECT_ID/app-name:latest**`**...**
+  * **C. Use**`**gcloud container images add-tag us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/app-name:latest**`**...**
 
     * **Reasoning:** This command deals with re-tagging existing container images, not the primary build-and-push process.
 
@@ -1953,9 +1953,9 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
 *Domain 3: Configuring and Deploying Applications*
 
-**You aim to restrict your App Engine standard configuration to a maximum of 5 instances while using the following setup:**
+**You aim to restrict your App Engine standard configuration to a maximum of 5 instances.**
 
-**Which code snippet should be integrated into your configuration to achieve this?**
+**Which scaling configuration should you use?**
 
 - [ ] I. Utilize manual scaling with a set number of instances and a minimum pending latency of 30ms.
 - [ ] III. Opt for basic scaling with a designated number of instances set at 5 and a minimum pending latency of 30ms.
@@ -1970,7 +1970,7 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
 **Explanation:**
 
-  * **Basic Scaling:** App Engine standard environment offers two scaling types: basic and automatic. Basic scaling allows you to directly control the maximum number of instances.
+  * **Basic Scaling:** App Engine standard offers three scaling types: automatic, basic and manual. Basic scaling sets a cap with `max_instances` and starts instances only when requests arrive. (Automatic scaling also accepts `max_instances`, but no option here uses it.)
 
   * **Maximum Instances:** The `max_instances` setting within your configuration file enables you to explicitly limit the number of instances to 5.
 
@@ -2042,7 +2042,7 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
 *Domain 3: Configuring and Deploying Applications*
 
-**You are setting up monitoring for your application deployed on a Compute Engine virtual machine instance equipped with the Stackdriver Monitoring Agent. The application functions as a Unix process on the instance. Your objective is to receive alerts if the Unix process remains inactive for at least 5 minutes. Given the limitation that you cannot modify the application to produce metrics or logs, what alert condition should you establish?**
+**You are setting up monitoring for your application deployed on a Compute Engine virtual machine instance equipped with the Ops Agent (which replaces the legacy Monitoring agent). The application functions as a Unix process on the instance. Your objective is to receive alerts if the Unix process remains inactive for at least 5 minutes. Given the limitation that you cannot modify the application to produce metrics or logs, what alert condition should you establish?**
 
 - [x] II. Process status evaluation
 - [ ] IV. Metric level benchmark
@@ -2057,7 +2057,7 @@ IV. Configuring instance custom-metadata keys named "environment" during instanc
 
   * **Process Status Evaluation Focus:** Process status checks directly monitor whether a particular process is running or not, aligning precisely with the goal of detecting inactivity.
 
-  * **Monitoring Agent Capability:** The Stackdriver Monitoring Agent can track system-level metrics, including the existence and state of Unix processes. This makes process status evaluation a readily achievable monitoring method with the existing setup.
+  * **Monitoring Agent Capability:** The agent can track system-level metrics, including the existence and state of Unix processes. This makes process status evaluation a readily achievable monitoring method with the existing setup.
 
 **Reasons Why Other Options Are Incorrect:**
 
@@ -2383,6 +2383,8 @@ D. Activating Managed Service for Prometheus on your Google Kubernetes Engine cl
 
   * This approach optimizes the startup time of new instances, allowing the service to efficiently handle traffic spikes and provide a better user experience.
 
+  * Only non-sensitive configuration and static data belong in the image. Secrets such as passwords and API keys should stay in Secret Manager and be mounted or read at runtime.
+
 The other options can be explained as follows:
 
 I. Retrieve application configuration and static data from the database on application startup.
@@ -2391,7 +2393,7 @@ I. Retrieve application configuration and static data from the database on appli
 
 III. Execute as much work as feasible in the background after the response has been delivered to the user.
 
-  * While executing background tasks after the response has been delivered can help offload some processing from the request handling phase, it might not directly address the issue of enhancing user experience during traffic spikes. Additionally, this approach might not be suitable for all types of tasks and could introduce complexity into the application architecture.
+  * With request-based billing (the default), Cloud Run throttles an instance's CPU almost to zero once the response is sent, so background work after the response may stall or never finish. Google lists it as an anti-pattern; use Cloud Tasks, Pub/Sub or a Cloud Run job for deferred work instead.
 
 IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to exit swiftly, facilitating the initiation of a replacement instance.
 
@@ -2452,7 +2454,7 @@ IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to e
 
 *Domain 2: Building and Testing Applications*
 
-**You're deploying a Python application to Cloud Run via Cloud Source Repositories and Cloud Build. Below is the Cloud Build pipeline:**
+**You're deploying a Python application to Cloud Run via GitHub and Cloud Build. Below is the Cloud Build pipeline:**
 
 **```**
 
@@ -2486,7 +2488,7 @@ IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to e
 
 **```**
 
-**You aim to optimize deployment times and eliminate unnecessary steps. What should you do?**
+**You aim to optimize deployment times by avoiding unnecessary work in the build. What should you do?**
 
 - [x] D. Introduce the --cache-from argument to the Docker build step in your build configuration file.
 - [ ] C. Store image artifacts in a Cloud Storage bucket located in the same region as the Cloud Run instance.
@@ -2508,14 +2510,19 @@ IV. Ensure that timeout exceptions and errors prompt the Cloud Run instance to e
 **Example Modification:**
 
 1.  steps:
-      2.   ... 
-      3.   - name: 'gcr.io/cloud-builders/docker'
-      4.     args: 
-      5.       ['build', 
-      6.        '--cache-from=us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:latest', # Example - adapt as needed
-      7.        '-t', 'us-central1-docker.pkg.dev/$(PROJECT_ID)/${_REPO_NAME)/myimage:$(SHORT_SHA)', 
-      8.        '.'] 
-      9.   ...
+      2.   - name: 'gcr.io/cloud-builders/docker'   # pull the previous image so its layers can be reused
+      3.     entrypoint: 'bash'
+      4.     args: ['-c', 'docker pull us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:latest || exit 0']
+      5.   - name: 'gcr.io/cloud-builders/docker'
+      6.     args: 
+      7.       ['build', 
+      8.        '--cache-from=us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:latest',
+      9.        '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:$SHORT_SHA', 
+      10.       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/myimage:latest', 
+      11.       '.'] 
+      12.  ...
+
+`--cache-from` only helps if the cached image is available locally, so the build first pulls the previous image (the `|| exit 0` keeps the first build from failing), and the build also tags and pushes `:latest` so the next build has a cache source. Kaniko cache or BuildKit inline cache are alternatives.
 
 **Incorrect Answers:**
 

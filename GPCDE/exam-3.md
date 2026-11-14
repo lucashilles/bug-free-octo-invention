@@ -173,25 +173,23 @@ Ref:
 
 **Explanation:**
 
-  * **Serverless VPC Access:** This is the recommended way to connect Cloud Run to Cloud SQL using private IP addresses. It establishes a secure tunnel within your VPC network.
+  * **A path into the VPC:** A Cloud SQL private IP is reachable only from inside the VPC network (through private services access). Cloud Run runs outside your VPC, so it needs a way into the VPC first. A Serverless VPC Access connector provides that path. (Cloud Run can now also use **Direct VPC egress** for the same purpose, without a connector.)
 
-  * **Security:** Private IP connectivity enhances security by preventing database exposure to the public internet.
+  * **Security:** Private IP connectivity keeps database traffic off the public internet.
 
-  * **No code changes:** This method generally doesn't require any changes to your Java application code.
+  * **No code changes:** Once the connector is set, the application connects to the private IP as usual.
 
 **Why other options are less ideal:**
 
-  * **I. Cloud SQL connection:** While Cloud Run can connect to Cloud SQL, this usually uses public IP by default, not complying with the internal IP requirement.
+  * **I. Cloud SQL connection:** The Cloud Run Cloud SQL connection (the built-in Cloud SQL Auth Proxy over a Unix socket) doesn't give Cloud Run a route into the VPC. It can use the private IP only if a connector or Direct VPC egress is also configured.
 
-  * **III. Cloud SQL Java connector:** The connector is necessary, but on its own, it won't solve the private IP access issue.
+  * **III. Cloud SQL Java connector:** The connector can connect over private IP, but only once Cloud Run has a path into the VPC; on its own it doesn't provide that path, and it requires code changes.
 
-  * **IV. Cloud SQL Auth proxy:** The proxy is useful but adds an extra component. Serverless VPC Access is a more streamlined solution for private IP connections from Cloud Run.
+  * **IV. Cloud SQL Auth proxy instance:** Same limitation: a separate proxy adds a component to run and still needs network access to the private IP.
 
 **References:**
 
-[https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object](https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object  https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response we)
-
-[https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response we](https://cloud.google.com/storage/docs/encryption/using-customer-supplied-keys#rest-csek-download-object  https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#response we)
+<https://cloud.google.com/sql/docs/mysql/connect-run#private-ip>
 
 ---
 
@@ -437,18 +435,18 @@ Here's why this approach aligns with Google's best practices and is the most eff
 
 **You are deploying a single website on App Engine, which must be accessible via the URL http://www.altostrat.com/. What steps should you take to achieve this?**
 
-- [x] I. Verify domain ownership through Webmaster Central. Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.
+- [x] I. Verify domain ownership through Search Console (formerly Webmaster Central). Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.
 - [ ] III. Configure a mapping in dispatch.yaml to link the domain www.altostrat.com to your App Engine service. Set up a DNS CNAME record pointing to the App Engine canonical name ghs.googlehosted.com.
-- [ ] II. Verify domain ownership via Webmaster Central. Configure an A record pointing to the singular global App Engine IP address.
+- [ ] II. Verify domain ownership via Search Console (formerly Webmaster Central). Configure an A record pointing to the singular global App Engine IP address.
 - [ ] IV. Set up a mapping in dispatch.yaml to direct the domain www.altostrat.com to your App Engine service. Establish an A record pointing to the singular global App Engine IP address.
 
 ### Explanation
 
-**I. Verify domain ownership through Webmaster Central. Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.**
+**I. Verify domain ownership through Search Console (formerly Webmaster Central). Set up a DNS CNAME record directing to the App Engine canonical name ghs.googlehosted.com.**
 
 Explanation:
 
-  * **Domain Verification:** Webmaster Central allows you to prove ownership of your domain, a prerequisite for configuring custom domains with App Engine.
+  * **Domain Verification:** Search Console (formerly Webmaster Central) allows you to prove ownership of your domain, a prerequisite for configuring custom domains with App Engine.
 
   * **CNAME Record:** CNAME records create an alias. In this case, `www.altostrat.com` becomes an alias for your App Engine's `ghs.googlehosted.com` address.
 
@@ -570,7 +568,7 @@ Let's look at why the other options are less suitable:
 
   * **III. Cloud SQL employing a SQL SELECT statement:** Cloud SQL is a relational database that provides structured data storage and querying but might not be the most efficient for handling real-time updates and diverse data formats.
 
-  * **IV. Firestore in Datastore mode utilizing a global query:** While Firestore in Datastore mode supports global queries, it is generally less performant than Native mode for common use cases like this one.
+  * **IV. Firestore in Datastore mode utilizing a global query:** Datastore mode is built for server-side workloads. It lacks Native mode's real-time listeners and mobile/web client libraries with offline support, which is what lets customers see their purchases right after submitting them.
 
 **In summary:** Firestore in Native mode provides the real-time updates, flexible querying, and diverse data format support needed to meet the requirements of storing and accessing customer purchase history effectively.
 
@@ -585,7 +583,7 @@ Let's look at why the other options are less suitable:
 
 **In a distributed microservices architecture, you aim to assess the performance and system resource utilization of a Java-based microservice. What steps should you take?**
 
-- [ ] IV. Utilize OpenCensus to instrument the service for measuring service latency, and subsequently, generate custom metrics in Cloud Monitoring.
+- [ ] IV. Utilize OpenTelemetry to instrument the service for measuring service latency, and subsequently, generate custom metrics in Cloud Monitoring.
 - [x] I. Employ Cloud Profiler to instrument the service, enabling measurement of CPU utilization and method-level execution times.
 - [ ] II. Utilize Debugger to instrument the service for error investigation purposes.
 - [ ] III. Employ Cloud Trace to instrument the service, facilitating the measurement of request latency.
@@ -610,9 +608,9 @@ Why other options are incorrect:
 
     * Cloud Trace is useful for tracking request latency across services, but it does not give detailed insights into resource utilization (e.g., CPU or memory). Its primary focus is on tracing the flow of requests and measuring how long it takes for services to respond, not on performance profiling.
 
-  * **Option IV: Utilize OpenCensus to measure service latency and generate custom metrics** :
+  * **Option IV: Utilize OpenTelemetry to measure service latency and generate custom metrics** :
 
-    * OpenCensus (now part of OpenTelemetry) is used for **distributed tracing** and **latency** monitoring, not directly for CPU or method-level performance analysis. While useful for tracking the flow of requests and generating metrics, it doesn’t provide deep insights into resource utilization like Cloud Profiler does.
+    * OpenTelemetry (the successor of OpenCensus) is used for **distributed tracing** and **latency** monitoring, not directly for CPU or method-level performance analysis. While useful for tracking the flow of requests and generating metrics, it doesn’t provide deep insights into resource utilization like Cloud Profiler does.
 
 In conclusion, **Cloud Profiler (Option I)** is the correct choice for your performance assessment and resource utilization needs.
 
@@ -658,6 +656,8 @@ Here's why this approach shines:
 Ref:
 
 <https://cloud.google.com/anthos/run/docs/deploy-application>
+
+**⚠️ Note:** "Anthos" is now **GKE Enterprise**, and "Cloud Run for Anthos" became **Knative serving**, which is no longer offered as a Google-managed add-on. Learn the key (one managed platform across both environments plus a serverless deployment layer), but expect newer product names on the real exam.
 
 ---
 
@@ -741,34 +741,36 @@ Ref:
 
 **In your company's BigQuery environment, the "Master" dataset stores employee travel and expense data, categorized by department. To ensure employees only access relevant departmental information, you seek to implement a streamlined security framework. What's the optimal approach?**
 
-- [ ] I. Establish distinct datasets for each department, creating views with appropriate WHERE clauses in the "Master" dataset to filter records. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.
-- [x] III. Create a "Master" dataset and develop individual views for each department within it. Grant employees access to the relevant departmental views.
+- [x] I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the "Master" dataset. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.
+- [ ] III. Create a "Master" dataset and develop individual views for each department within it. Grant employees access to the relevant departmental views.
 - [ ] II. Set up separate datasets for each department and implement data pipelines to copy relevant data from the "Master" dataset to department-specific datasets. Grant employees access to these department-specific datasets.
 - [ ] IV. Create a "Master" dataset and segregate data into separate tables for each department. Grant employees access to their department's specific table.
 
 ### Explanation
 
-**III. Create a "Master" dataset and develop individual views for each department within it. Grant employees access to the relevant departmental views.**
+**I. Establish distinct datasets for each department, and in each one create a view with the appropriate WHERE clause to filter the department's records from the "Master" dataset. Authorize these views to access records from the "Master" dataset, granting employees access to their respective departmental datasets.**
 
-Let's break down why this approach offers the best balance of security, efficiency, and maintainability:
+This is BigQuery's **authorized view** pattern:
 
-  * **Centralized Data:** Maintaining a single "Master" dataset ensures data consistency and simplifies updates.
+  * **No data copies:** The data stays in the "Master" dataset. Each department dataset only holds a view that selects that department's rows.
 
-  * **Fine-grained Access Control:** Views provide a secure mechanism to filter data based on department without duplication. Each view acts as a virtual table, exposing only the necessary subset of data.
+  * **Access to the view, not the tables:** Authorizing the view on the "Master" dataset lets the view read the source tables on the users' behalf. Employees get access only to their department's dataset, so they can query the view without any permission on the "Master" tables.
 
-  * **Efficiency:** Views don't replicate data, saving storage costs and avoiding the overhead of data synchronization.
+  * **Separate dataset is required:** An authorized view must live in a different dataset from the source data. Putting the views in their own datasets is what keeps the base tables out of reach.
 
-  * **Maintainability:** Changes to the underlying data in the "Master" dataset will automatically propagate to the relevant departmental views without the need to update multiple separate datasets.
+  * **Simple to manage:** Granting a team access to one dataset is one IAM binding, and changes in "Master" show up in the views immediately.
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. Establish distinct datasets for each department ...** This approach introduces data duplication and increases storage costs. It also creates overhead in keeping these datasets synchronized with the "Master" dataset.
+  * **II. Set up separate datasets for each department and implement data pipelines ...** This copies the data, adds storage cost, and adds pipelines to build and keep in sync.
 
-  * **II. Set up separate datasets for each department and implement data pipelines ...** Similar to option I, this approach leads to data redundancy and the added complexity of managing data pipelines.
+  * **III. Create a "Master" dataset and develop individual views for each department within it ...** A view in the same dataset as its source can't be an authorized view. Without authorization, a user querying the view also needs read access to the underlying "Master" tables, which would expose every department's records.
 
-  * **IV. Create a "Master" dataset and segregate data into separate tables for each department ...** While this avoids data duplication, it makes queries more complex since you'll likely need to use `UNION ALL` across multiple tables.
+  * **IV. Create a "Master" dataset and segregate data into separate tables for each department ...** Splitting the data into per-department tables complicates loading and cross-department queries, and you still have to manage table-level permissions inside the shared dataset.
 
 **Reference:**
+
+<https://cloud.google.com/bigquery/docs/authorized-views>
 
 <https://cloud.google.com/bigquery/docs/dataset-access-controls>
 
@@ -861,24 +863,24 @@ Let's break down why this approach offers the best balance of security, efficien
 
 **You seek to alert on-call engineers promptly about a service degradation in production, minimizing development time. Which option is the most efficient?**
 
-- [x] IV. Employ Stackdriver Monitoring to monitor resources and generate alerts.
+- [x] IV. Employ Cloud Monitoring to monitor resources and generate alerts.
 - [ ] II. Implement Cloud Pub/Sub to monitor resources and generate alerts.
-- [ ] III. Utilize Stackdriver Error Reporting to capture errors and generate alerts.
+- [ ] III. Utilize Error Reporting to capture errors and generate alerts.
 - [ ] I. Utilize Cloud Function to monitor resources and generate alerts.
 
 ### Explanation
 
-**IV. Employ Stackdriver Monitoring to monitor resources and generate alerts.**
+**IV. Employ Cloud Monitoring to monitor resources and generate alerts.**
 
 Here's why:
 
-  * **Purpose-Built:** Stackdriver Monitoring (now called Cloud Monitoring) is specifically designed for monitoring resources, metrics, and setting up alerting policies based on various conditions.
+  * **Purpose-Built:** Cloud Monitoring is specifically designed for monitoring resources, metrics, and setting up alerting policies based on various conditions.
 
   * **Wide Range of Metrics:** It offers comprehensive coverage of infrastructure and application-level metrics, allowing you to pinpoint relevant indicators of service degradation (e.g., error rates, latency, resource utilization).
 
-  * **Alerting Integration:** Stackdriver Monitoring seamlessly integrates with alerting mechanisms, allowing you to define thresholds and quickly notify on-call engineers.
+  * **Alerting Integration:** Cloud Monitoring seamlessly integrates with alerting mechanisms, allowing you to define thresholds and quickly notify on-call engineers.
 
-  * **Minimizes Development Effort:** Using Stackdriver Monitoring requires minimal development time compared to building a custom solution.
+  * **Minimizes Development Effort:** Using Cloud Monitoring requires minimal development time compared to building a custom solution.
 
 **Why Other Options are Less Ideal:**
 
@@ -886,7 +888,7 @@ Here's why:
 
   * **II. Implement Cloud Pub/Sub to monitor resources...** Cloud Pub/Sub is a messaging service. It would need to be integrated with other monitoring and alerting components, adding complexity.
 
-  * **III. Utilize Stackdriver Error Reporting...** Error Reporting is primarily focused on error analysis rather than general resource monitoring and alerting.
+  * **III. Utilize Error Reporting...** Error Reporting is primarily focused on error analysis rather than general resource monitoring and alerting.
 
 **References:**
 
@@ -1148,9 +1150,9 @@ Why the other options are less suitable:
 
 *Domain 3: Configuring and Deploying Applications*
 
-**While running a containerized application on Google Kubernetes Engine with container images stored in Container Registry and employing CI/CD practices, how can you prevent the deployment of containers containing known critical vulnerabilities?**
+**While running a containerized application on Google Kubernetes Engine with container images stored in Artifact Registry and employing CI/CD practices, how can you prevent the deployment of containers containing known critical vulnerabilities?**
 
-- [ ] III. Enable the Container Scanning API for vulnerability scanning, review vulnerability reporting in Container Registry within the Cloud Console, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
+- [ ] III. Enable the Container Scanning API for vulnerability scanning, review vulnerability reporting in Artifact Registry within the Google Cloud console, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
 - [ ] I. Utilize Web Security Scanner to automatically crawl the application, review scan results in application logs, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
 - [x] IV. Enable the Container Scanning API for vulnerability scanning, programmatically review vulnerability reporting through the Container Scanning API, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
 - [ ] II. Utilize Web Security Scanner to automatically crawl the application, review scan results in the Cloud Console's scan details page, and provide an attestation of the container's freedom from critical vulnerabilities, enforced by Binary Authorization policy before deployment.
@@ -1175,6 +1177,8 @@ Here's why this stands out:
 
   * **III. Manual Review in Console:** Relying on manual review in the Cloud Console slows down your CI/CD pipelines and is less scalable for larger deployments.
 
+**⚠️ Note:** Container Registry is deprecated in favor of Artifact Registry. Vulnerability scanning is now part of Artifact Analysis (still turned on with the Container Scanning API); the attestation + Binary Authorization logic is unchanged.
+
 ---
 
 ## Question 31
@@ -1183,8 +1187,8 @@ Here's why this stands out:
 
 **As you develop a microservice-based application to operate on Google Kubernetes Engine (GKE), certain services require access to various Google Cloud APIs. How should you configure authentication for these services within the cluster, adhering to Google's recommended best practices? (Select two.)**
 
-- [x] II. Activate Workload Identity within the cluster via the gcloud command-line tool.
-- [x] V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentity with gcloud.
+- [x] II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool.
+- [x] V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.
 - [ ] I. Utilize the service account associated with the GKE node.
 - [ ] IV. Centralize the storage of Google service account keys within a secret management service.
 - [ ] III. Retrieve the Google service account keys from a secret management service.
@@ -1193,29 +1197,27 @@ Here's why this stands out:
 
 **The two most suitable approaches are:**
 
-  * **II. Activate Workload Identity within the cluster via the gcloud command-line tool.**
+  * **II. Activate Workload Identity Federation for GKE within the cluster via the gcloud command-line tool.**
 
-  * **V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentity with gcloud.**
+  * **V. Bind the Kubernetes service account and the Google service account using roles/iam.workloadIdentityUser with gcloud.**
 
 **Explanation:**
 
-  * **Workload Identity:** This is the preferred method for authentication in GKE. It eliminates the need to manage service account keys directly within your pods. Instead, Kubernetes service accounts are securely mapped to Google service accounts, simplifying permissions management.
+  * **Workload Identity Federation for GKE** (formerly called Workload Identity): This is the preferred method for authentication in GKE. It eliminates the need to manage service account keys within your Pods. Instead, Kubernetes service accounts are mapped to Google service accounts (or granted IAM roles directly), simplifying permissions management.
 
-  * **IAM Binding:** The `roles/iam.workloadIdentity` binding is the mechanism that associates the Kubernetes and Google service accounts, enabling your pods to use the correct Google Cloud permissions.
+  * **IAM Binding:** Granting `roles/iam.workloadIdentityUser` on the Google service account to the Kubernetes service account is what lets Pods using that Kubernetes service account act as the Google service account.
 
 **Why Other Options Aren't as Suitable**
 
-  * **I. GKE Node Service Account:** While technically possible, this is strongly discouraged. It grants broad permissions to all pods on a node, violating the principle of least privilege.
+  * **I. GKE Node Service Account:** While technically possible, this is strongly discouraged. It grants broad permissions to all Pods on a node, violating the principle of least privilege.
 
-  * **III & IV. Service Account Key Management:** Managing keys directly creates overhead. Keys can be revoked, rotated, and potentially leaked. Workload Identity eliminates these concerns.
+  * **III & IV. Service Account Key Management:** Managing keys directly creates overhead. Keys must be rotated and can leak. Workload Identity Federation for GKE eliminates these concerns.
 
 **References:**
 
-[https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity  https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts)
+<https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>
 
-[https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity  https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts)
-
-[https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity  https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#use_workload_identity  https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts)
+<https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts>
 
 ---
 
@@ -1441,7 +1443,7 @@ Here's why this stands out as the most suitable solution:
 
   * **III. Instruct the developers to install the gcloud CLI...**
 
-    * **Additional Overhead:** While the `gcloud` CLI is useful, it introduces an extra tool dependency. `kubectl` is the primary interface for Kubernetes interaction.
+    * **Not a switching mechanism on its own:** Running `gcloud container clusters get-credentials` is how each developer adds a GKE cluster's entry to their own kubeconfig, and it is a valid, Google-documented approach. Note that gcloud is not an "extra" dependency: GKE authentication in kubeconfig relies on the gcloud-based `gke-gcloud-auth-plugin` anyway. The bank prefers a shared, consistent definition of clusters and contexts that developers switch between with `kubectl config use-context`.
 
   * **IV. Advise the developers to open three terminals...**
 
@@ -1449,6 +1451,8 @@ Here's why this stands out as the most suitable solution:
 
 **Reference:**  
 <https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/>
+
+**⚠️ Note:** This is a best-of-the-options judgement. GKE documentation recommends that each developer run `gcloud container clusters get-credentials` (which writes the contexts into their own kubeconfig) and switch with `kubectl config use-context`. A shared kubeconfig should not embed credentials; GKE kubeconfig user entries call the gcloud auth plugin.
 
 ---
 
@@ -1538,6 +1542,8 @@ Here's why this is the most streamlined, secure, and Google-recommended approach
 
 **References:**  
 [https://cloud.google.com/sql/docs/postgres/connect-run#configure https://cloud.google.com/sql/docs/postgres/connect-run#private-ip](https://cloud.google.com/sql/docs/postgres/connect-run#configure   https://cloud.google.com/sql/docs/postgres/connect-run#private-ip)
+
+**⚠️ Note:** Cloud Run can now also reach a VPC with Direct VPC egress, without a Serverless VPC Access connector. Both are valid; the connector is what this option describes.
 
 ---
 
@@ -1633,30 +1639,30 @@ IV. Create a new dataset in BigQuery, copy the source table to the new dataset, 
 
 *Domain 3: Configuring and Deploying Applications*
 
-**As you deploy your application to a Compute Engine virtual machine instance, it logs its files to disk. You want to view these logs in Stackdriver Logging without modifying the application code. What's the recommended approach?**
+**As you deploy your application to a Compute Engine virtual machine instance, it logs its files to disk. You want to view these logs in Cloud Logging without modifying the application code. What's the recommended approach?**
 
-- [x] I. Install the Stackdriver Logging Agent and set it up to transmit the application logs.
-- [ ] IV. Modify the application to log to /var/log so that its logs are automatically sent to Stackdriver Logging.
+- [x] I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.
+- [ ] IV. Modify the application to log to /var/log so that its logs are automatically sent to Cloud Logging.
 - [ ] III. Specify the log file folder path in the instance's metadata to configure it for sending the application logs.
-- [ ] II. Utilize a Stackdriver Logging Library to directly log from the application to Stackdriver Logging.
+- [ ] II. Utilize a Cloud Logging client library to directly log from the application to Cloud Logging.
 
 ### Explanation
 
-**I. Install the Stackdriver Logging Agent and set it up to transmit the application logs.**
+**I. Install the Ops Agent (which replaces the legacy Logging agent) and set it up to transmit the application logs.**
 
 **Explanation:**
 
-The Stackdriver Logging Agent (now called the Cloud Logging Agent) is the most flexible and least invasive way to achieve this:
+The Ops Agent (which replaces the legacy Logging agent) is the most flexible and least invasive way to achieve this:
 
   * **No Code Changes:** You don't have to modify your existing logging mechanisms, preserving your application logic.
 
   * **Customization:** The agent can monitor custom log files and even parse them to extract structured data, making it adaptable to your application's log format.
 
-  * **Centralization:** The agent reliably sends logs to Stackdriver Logging, giving you a unified view in the Google Cloud Console.
+  * **Centralization:** The agent reliably sends logs to Cloud Logging, giving you a unified view in the Google Cloud Console.
 
 **Why Other Options Are Less Ideal:**
 
-  * **II. Utilize a Stackdriver Logging Library...** This requires changes to your code, adding the library and potentially modifying your logging statements.
+  * **II. Utilize a Cloud Logging client library...** This requires changes to your code, adding the library and potentially modifying your logging statements.
 
   * **III. Specify the log file folder path...** This method relies on specific agent configurations and log formats, making it less flexible than actively configuring the agent.
 
@@ -1674,36 +1680,40 @@ The Stackdriver Logging Agent (now called the Cloud Logging Agent) is the most f
 
 **You're tasked with transferring an internal file upload API, which enforces a 500-MB file size limit, to App Engine. What's the optimal approach?**
 
-- [ ] III. Implement signed URLs for file uploads.
+- [x] III. Implement signed URLs for file uploads.
 - [ ] II. Use CPanel for file uploads.
 - [ ] I. Utilize FTP for uploading files.
-- [x] IV. Modify the API to function as a multipart file upload API.
+- [ ] IV. Modify the API to function as a multipart file upload API.
 
 ### Explanation
 
-**The optimal approach for transferring an internal file upload API to App Engine with a 500-MB file size limit would be:**
-
-**IV. Modify the API to function as a multipart file upload API.**
+**III. Implement signed URLs for file uploads.**
 
 Explanation:
 
+  * App Engine limits the size of an HTTP request to 32 MB, so a 500-MB file can't be uploaded through the App Engine app itself, multipart or not.
+
+  * With **signed URLs**, the App Engine app authenticates the user and returns a time-limited URL that allows a PUT of one specific object in a Cloud Storage bucket. The client then uploads the file **directly to Cloud Storage**, which handles objects far larger than 500 MB. The app can still enforce the 500-MB limit (for example with an `x-goog-content-length-range` header in the signed URL) and keeps the bytes out of its instances.
+
+**Why the other options are wrong:**
+
 I. Utilize FTP for uploading files.
 
-  * Using FTP (File Transfer Protocol) for uploading files might not be the best option for App Engine as it is a platform-as-a-service (PaaS) offering by Google Cloud Platform, and direct FTP access is not typically supported. Additionally, managing file uploads through FTP might introduce complexities in terms of security, scalability, and integration with the App Engine environment.
+  * App Engine doesn't offer FTP access, and running your own FTP server adds security and operational work.
 
 II. Use CPanel for file uploads.
 
-  * CPanel is a web hosting control panel that allows users to manage their website and server settings. While it provides file management capabilities, it's not directly applicable to App Engine, which is a managed platform for building and deploying applications. CPanel is more suitable for traditional web hosting environments rather than cloud platforms like App Engine.
+  * cPanel is a control panel for traditional web hosting and has no role in App Engine.
 
-III. Implement signed URLs for file uploads.
+IV. Modify the API to function as a multipart file upload API.
 
-  * Signed URLs can be useful for providing temporary, secure access to resources stored in cloud storage services like Google Cloud Storage. However, App Engine itself is capable of handling file uploads, and implementing signed URLs might add unnecessary complexity to the solution. Additionally, signed URLs don't inherently address the multipart file upload requirement.
+  * Multipart encoding only changes how the request body is formatted. The whole request still passes through App Engine and still hits its 32-MB request limit.
 
-**IV. Modify the API to function as a multipart file upload API.**
+**References:**
 
-  * **This option is the most appropriate as it involves adapting the existing API to support multipart file uploads, which is a common approach for handling large file uploads in web applications. By modifying the API to support multipart file uploads, you can ensure compatibility with the App Engine environment and adhere to the specified file size limit. This approach allows you to leverage the capabilities of App Engine for handling file uploads while ensuring efficient and scalable processing of large files.**
+<https://cloud.google.com/storage/docs/access-control/signed-urls>
 
-**Therefore, option IV is the optimal approach for transferring the internal file upload API to App Engine with a 500-MB file size limit.**
+<https://cloud.google.com/appengine/docs/standard/quotas#Requests>
 
 ---
 
@@ -1842,6 +1852,8 @@ III. Storing credentials in an encrypted volume mount is better than plain text 
 
 <https://cloud.google.com/kubernetes-engine/docs/how-to/encrypting-secrets#reencrypt-secrets>
 
+**⚠️ Note:** Secret Manager isn't among the options. When it is offered, Google's preferred answer for credentials that must be rotated is Secret Manager accessed with Workload Identity, which supports versions and rotation schedules. Application-layer secrets encryption with Cloud KMS protects Secrets at rest in etcd but doesn't rotate the credentials themselves.
+
 ---
 
 ## Question 47
@@ -1889,7 +1901,7 @@ Here's why this stands out:
 
 *Domain 2: Building and Testing Applications*
 
-**Your company stores its source code in a Cloud Source Repositories repository. The company aims to build and test the code with each source code commit to the repository, seeking a managed solution with minimal operational overhead. Which method should they use?**
+**Your company stores its source code in a GitHub repository. The company aims to build and test the code with each source code commit to the repository, seeking a managed solution with minimal operational overhead. Which method should they use?**
 
 - [ ] IV. Implement a source code commit trigger to send a message to a Cloud Pub/Sub topic, subsequently activating an App Engine service to build the source code.
 - [ ] II. Deploy Jenkins via the Google Cloud Platform Marketplace, set up to monitor source code commits.
@@ -1904,7 +1916,7 @@ Here's why this is the best choice:
 
   * **Managed Service:** Cloud Build is a serverless CI/CD solution from Google Cloud, minimizing operational burden compared to self-managing CI tools.
 
-  * **Integration:** Cloud Build has direct integration with Cloud Source Repositories, simplifying setup.
+  * **Integration:** Cloud Build connects directly to GitHub (as well as GitLab and Bitbucket) repositories, simplifying setup.
 
   * **Flexibility:** Cloud Build can be customized for various build and test scenarios.
 
@@ -1939,7 +1951,7 @@ Here's why this is the best choice:
 
   * **Minimizing Downtime:** Rolling updates replace pods gradually, ensuring service availability during the update process.
 
-  * **Safety Net:** A PodDisruptionBudget (PDB) limits the number of pods that can be unavailable simultaneously. Setting it to 80% guarantees that at least 80% of your pods remain active, mitigating the risk of full service disruption.
+  * **Safety Net:** A PodDisruptionBudget (PDB) set to 80% (`minAvailable: 80%`) keeps at least 80% of the Pods running during **voluntary disruptions** such as node drains, node pool upgrades and cluster autoscaler scale-down, which can overlap with a release. It does not pace the rollout itself: the Deployment's rolling-update settings (`maxSurge`/`maxUnavailable`) control how many Pods are replaced at a time.
 
   * **Google-Recommended:** This strategy aligns with Google's best practices for production deployments on GKE.
 
@@ -2042,9 +2054,9 @@ References:
 
 **To migrate an independent Java application operating on an on-premises Linux virtual machine (VM) to Google Cloud cost-effectively without employing the lift-and-shift method, the plan is to modernize the application by converting it to a container. How should this task be accomplished?**
 
-- [ ] I. Employ Migrate for Anthos to transition the VM to your Google Kubernetes Engine (GKE) cluster as a container.
+- [ ] I. Employ Migrate to Containers to transition the VM to your Google Kubernetes Engine (GKE) cluster as a container.
 - [x] IV. Utilize Jib to construct a Docker image from your source code, subsequently uploading it to Artifact Registry. Then, deploy the application within a GKE cluster and perform testing.
-- [ ] III. Use Migrate for Compute Engine to transfer the VM to a Compute Engine instance, and leverage Cloud Build for container conversion.
+- [ ] III. Use Migrate to Virtual Machines to transfer the VM to a Compute Engine instance, and leverage Cloud Build for container conversion.
 - [ ] II. Export the VM as a raw disk and import it as an image. Then, instantiate a Compute Engine instance from the imported image.
 
 ### Explanation
@@ -2063,11 +2075,11 @@ References:
 
 Options I, II, and III are not the best fit for modernizing the application as described:
 
-I. Migrate for Anthos is a tool for modernizing and migrating workloads to containers and Kubernetes, but it's typically used for more complex applications that may require additional refactoring or integration with Kubernetes features. For a simple Java application, using Jib and deploying to GKE directly would be more straightforward and cost-effective.
+I. Migrate to Containers is a tool for modernizing and migrating workloads to containers and Kubernetes, but it's typically used for more complex applications that may require additional refactoring or integration with Kubernetes features. For a simple Java application, using Jib and deploying to GKE directly would be more straightforward and cost-effective.
 
 II. Exporting the VM as a raw disk and importing it as an image to instantiate a Compute Engine instance doesn't involve containerization. While it can migrate the application to Google Cloud, it doesn't achieve the modernization goal of running the application in a containerized environment.
 
-III. Migrate for Compute Engine is a tool for migrating VMs to Compute Engine instances, but it doesn't inherently involve containerization. Leveraging Cloud Build for container conversion might add unnecessary complexity compared to using Jib directly for building Docker images.
+III. Migrate to Virtual Machines is a tool for migrating VMs to Compute Engine instances, but it doesn't inherently involve containerization. Leveraging Cloud Build for container conversion might add unnecessary complexity compared to using Jib directly for building Docker images.
 
 **Reference:**
 
@@ -2081,28 +2093,28 @@ III. Migrate for Compute Engine is a tool for migrating VMs to Compute Engine in
 
 **You aim to monitor the memory usage of your application deployed on Compute Engine. What's the appropriate action?**
 
-- [ ] I. Implement the Stackdriver Client Library.
-- [ ] III. Utilize the Stackdriver Metrics Explorer.
-- [x] II. Deploy the Stackdriver Monitoring Agent.
+- [ ] I. Implement the Cloud Monitoring client library.
+- [ ] III. Utilize Metrics Explorer in Cloud Monitoring.
+- [x] II. Deploy the Ops Agent (which replaces the legacy Monitoring agent).
 - [ ] IV. Access the Google Cloud Platform Console.
 
 ### Explanation
 
-**II. Deploy the Stackdriver Monitoring Agent.**
+**II. Deploy the Ops Agent (which replaces the legacy Monitoring agent).**
 
 Here's why this is the best option:
 
-  * **Comprehensive Metrics:** The Stackdriver Monitoring Agent automatically collects a wide range of system-level metrics, including memory usage, and sends them to Stackdriver Monitoring.
+  * **Comprehensive Metrics:** The Ops Agent automatically collects a wide range of system-level metrics, including memory usage, and sends them to Cloud Monitoring.
 
   * **Minimal Configuration:** Agent installation and basic configuration are relatively straightforward.
 
-  * **Visualization & Alerting:** Stackdriver Monitoring provides tools for visualizing memory usage data over time and creating alerts based on thresholds you define.
+  * **Visualization & Alerting:** Cloud Monitoring provides tools for visualizing memory usage data over time and creating alerts based on thresholds you define.
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. Implement the Stackdriver Client Library.** While this library _can_ be used for custom metrics, it's overkill for basic memory usage. The agent handles this automatically.
+  * **I. Implement the Cloud Monitoring client library.** While this library _can_ be used for custom metrics, it's overkill for basic memory usage. The agent handles this automatically.
 
-  * **III. Utilize the Stackdriver Metrics Explorer.** Metrics Explorer is for viewing and querying data collected by Stackdriver Monitoring – this relies on the agent collecting those metrics first.
+  * **III. Utilize Metrics Explorer in Cloud Monitoring.** Metrics Explorer is for viewing and querying data collected by Cloud Monitoring – this relies on the agent collecting those metrics first.
 
   * **IV. Access the Google Cloud Platform Console.** The GCP console offers a high-level overview of resources, but lacks the granular historical views and alerting capabilities you'd need for detailed memory monitoring.
 
@@ -2139,7 +2151,7 @@ Let's break down why this is the most secure and streamlined option:
 
   * **Manageability:**
 
-    * A single HTTP(S) load balancer handles both web traffic and SSH access (tunneled through IAP), simplifying your networking setup.
+    * The HTTP(S) load balancer handles web traffic, while SSH goes through IAP TCP forwarding, a separate path that needs only a firewall rule allowing IAP's range (35.235.240.0/20) on port 22. Neither needs public IPs on the instances.
 
     * You avoid the overhead of managing bastion hosts or additional firewall rules.
 
@@ -2317,7 +2329,7 @@ Here's why this approach excels:
 
 *Domain 3: Configuring and Deploying Applications*
 
-**As you develop a new web application using Cloud Run and commit code to Cloud Source Repositories, you aim to deploy new code efficiently. You've already crafted a Cloud Build YAML file that builds a container and executes the command: gcloud run deploy. What's the next step?**
+**As you develop a new web application using Cloud Run and commit code to a GitHub repository connected to Cloud Build, you aim to deploy new code efficiently. You've already crafted a Cloud Build YAML file that builds a container and executes the command: gcloud run deploy. What's the next step?**
 
 - [ ] IV. Schedule a Cron job to run the command gcloud builds submit every 24 hours.
 - [ ] I. Establish a Pub/Sub topic to receive notifications when code is pushed to the repository. Set up a Pub/Sub trigger to execute the build file upon receiving an event on the topic.
@@ -2332,7 +2344,7 @@ Here's why this approach excels:
 
 **Justification:**
 
-  * **Direct Integration:** Cloud Build triggers offer the most seamless integration with Cloud Source Repositories. They directly monitor your repo for changes.
+  * **Direct Integration:** Cloud Build triggers integrate directly with connected repositories (GitHub, GitLab, Bitbucket). They directly monitor your repo for changes.
 
   * **Branch Specificity:** You can configure the trigger to activate only on pushes to the designated branch (development in this case), ensuring builds happen when you expect them.
 

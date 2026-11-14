@@ -134,7 +134,7 @@ Reference:
 
 - [ ] IV. Introduce a startup script to the GKE instance group to mount the NFS share during node startup, transferring the configuration files into the container, and activate the service via an ENTRYPOINT script.
 - [x] II. Establish a PersistentVolumeClaim (PVC) on the GKE cluster, accessing configuration files from the volume, and commence the service via an ENTRYPOINT script.
-- [ ] I. Utilize the gsutil utility within the Docker container at startup, copying files, and initiate the service via an ENTRYPOINT script.
+- [ ] I. Utilize the gcloud storage CLI within the Docker container at startup, copying files, and initiate the service via an ENTRYPOINT script.
 - [ ] III. Incorporate the COPY statement in the Dockerfile to inject the configuration into the container image, validating its availability, and launch the service using an ENTRYPOINT script.
 
 ### Explanation
@@ -151,7 +151,7 @@ Here's why this stands out as the ideal choice:
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. gsutil within the container:** While possible, it adds complexity and potential security risks due to embedding credentials within the container.
+  * **I. Cloud Storage CLI within the container:** The configuration lives on an NFS share, not in Cloud Storage, so this needs a separate process to put it there, and it bakes a storage tool and copy logic into the image. (With Workload Identity it wouldn't need embedded credentials.)
 
   * **III. Embedding config in the image:** This makes image management less flexible, requiring rebuilds for configuration changes.
 
@@ -165,22 +165,24 @@ Here's why this stands out as the ideal choice:
 
 [https://cloud.google.com/storage/docs/gcs-fuse](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes  https://cloud.google.com/filestore/docs/accessing-fileshares  https://cloud.google.com/storage/docs/gcs-fuse)
 
+**⚠️ Note:** In Kubernetes, the standard way to keep a Pod from receiving traffic until it's ready is a readiness probe. The ENTRYPOINT check works here because the server doesn't start listening until the config is found.
+
 ---
 
 ## Question 5
 
 *Domain 3: Configuring and Deploying Applications*
 
-**Upon installing the Stackdriver Logging Agent to transmit an application's log file to Stackdriver from a Compute Engine virtual machine instance, what is the initial step you should take?**
+**Upon installing the Cloud Logging agent to transmit an application's log file to Cloud Logging from a Compute Engine virtual machine instance, what is the initial step you should take?**
 
-- [ ] IV. Establish a Stackdriver Logs Export Sink with a filter aligning with the application's log entries.
+- [ ] IV. Establish a Cloud Logging sink with a filter aligning with the application's log entries.
 - [x] III. Define the application log file as a custom source.
 - [ ] II. Provide the instance with complete access to all Cloud APIs.
 - [ ] I. Activate the Error Reporting API for the project.
 
 ### Explanation
 
-**The initial step you should take upon installing the Stackdriver Logging Agent to transmit an application's log file to Stackdriver from a Compute Engine virtual machine instance is:**
+**The initial step you should take upon installing the Cloud Logging agent to transmit an application's log file to Cloud Logging from a Compute Engine virtual machine instance is:**
 
 **III. Define the application log file as a custom source.**
 
@@ -188,24 +190,26 @@ Here's why this stands out as the ideal choice:
 
 I. Activating the Error Reporting API for the project:
 
-  * While activating the Error Reporting API may be necessary for capturing and reporting errors, it is not the initial step for configuring log forwarding with the Stackdriver Logging Agent.
+  * While activating the Error Reporting API may be necessary for capturing and reporting errors, it is not the initial step for configuring log forwarding with the Cloud Logging agent.
 
 II. Providing the instance with complete access to all Cloud APIs:
 
-  * Providing the instance with complete access to all Cloud APIs is not necessary for configuring log forwarding with the Stackdriver Logging Agent. It is a security best practice to provide only the necessary permissions to instances.
+  * Providing the instance with complete access to all Cloud APIs is not necessary for configuring log forwarding with the Cloud Logging agent. It is a security best practice to provide only the necessary permissions to instances.
 
 **III. Defining the application log file as a custom source:**
 
-  * **This is the initial step in configuring log forwarding with the Stackdriver Logging Agent. By defining the application log file as a custom source, you specify which log files should be collected and forwarded to Stackdriver Logging.**
+  * **This is the initial step in configuring log forwarding with the Cloud Logging agent. By defining the application log file as a custom source, you specify which log files should be collected and forwarded to Cloud Logging.**
 
-IV. Establishing a Stackdriver Logs Export Sink with a filter aligning with the application's log entries:
+IV. Establishing a Cloud Logging sink with a filter aligning with the application's log entries:
 
-  * Establishing a Stackdriver Logs Export Sink with a filter aligning with the application's log entries is a subsequent step after defining the custom log source. It involves configuring the destination for the logs and specifying any filters to ensure only relevant log entries are exported.
+  * Establishing a Cloud Logging sink with a filter aligning with the application's log entries is a subsequent step after defining the custom log source. It involves configuring the destination for the logs and specifying any filters to ensure only relevant log entries are exported.
 
 **Therefore, the initial step you should take is to define the application log file as a custom source (Option III).**
 
 Ref:  
 <https://cloud.google.com/logging/docs/agent/configuration>
+
+**⚠️ Note:** The legacy Logging agent is replaced by the Ops Agent; there, you declare the application log file as a `files` receiver in the agent's config, which is the same idea as a custom source.
 
 ---
 
@@ -217,22 +221,22 @@ Ref:
 
 - [ ] II. Develop a Cloud Function triggered by code check-ins to perform CVE scans on the code.
 - [ ] III. Restrict the usage of non-commercially supported base images within your development environment.
-- [x] I. Activate the Vulnerability scanning feature within the Container Registry.
+- [x] I. Activate the Vulnerability scanning feature within Artifact Registry.
 - [ ] IV. Utilize Cloud Monitoring to scrutinize Cloud Build's output and detect if a vulnerable version has been utilized.
 
 ### Explanation
 
-**I. Activate the Vulnerability scanning feature within the Container Registry.**
+**I. Activate the Vulnerability scanning feature within Artifact Registry.**
 
 Here's why this stands out as the most suitable option:
 
-  * **Purpose-Built:** Container Registry's vulnerability scanning feature is specifically designed to scan container images for known CVEs. It aligns directly with your core requirement.
+  * **Purpose-Built:** Artifact Registry's vulnerability scanning feature (Artifact Analysis) is specifically designed to scan container images for known CVEs. It aligns directly with your core requirement.
 
-  * **Seamless Integration:** It works seamlessly with container images stored in the Container Registry, fitting naturally into your existing workflow.
+  * **Seamless Integration:** It works seamlessly with container images stored in Artifact Registry, fitting naturally into your existing workflow.
 
   * **Minimal Disruption:** Activating this scanning feature does not require significant changes to the development process, maintaining agility.
 
-  * **Managed Service:** Utilizing this feature within the Container Registry aligns with your stated preference for managed services.
+  * **Managed Service:** Utilizing this feature within Artifact Registry aligns with your stated preference for managed services.
 
 **Why Other Options are Less Ideal:**
 
@@ -289,12 +293,12 @@ Here's why this stands out as the most suitable option:
 
 *Domain 3: Configuring and Deploying Applications*
 
-**You're utilizing Cloud Build to create a new Docker image for each source code commit to a Cloud Source Repositories repository. Commits to the master branch trigger builds for your application. How can you automate the release process for specific commits to the master branch?**
+**You're utilizing Cloud Build to create a new Docker image for each source code commit to a Git repository connected to Cloud Build (for example, on GitHub). Commits to the master branch trigger builds for your application. How can you automate the release process for specific commits to the master branch?**
 
 - [ ] III. Configure a build trigger based on a Git branch name pattern, adhering to a Git branch naming convention for releases.
 - [ ] I. Trigger the build manually for new releases.
 - [x] II. Set up a build trigger based on a Git tag pattern, following a Git tag convention for releases.
-- [ ] IV. Store your source code in a secondary Cloud Source Repositories repository with a distinct Cloud Build trigger solely for new releases.
+- [ ] IV. Store your source code in a secondary Git repository with a distinct Cloud Build trigger solely for new releases.
 
 ### Explanation
 
@@ -314,11 +318,11 @@ Why Other Options Are Less Ideal:
 
   * **III. Configure a build trigger based on a Git branch name pattern ...** Branch naming conventions might change or be less reliable than an explicit tagging strategy.
 
-  * **IV. Store your source code in a secondary Cloud Source Repositories repository ...** This adds unnecessary complexity, fragmenting your codebase and its history.
+  * **IV. Store your source code in a secondary Git repository ...** This adds unnecessary complexity, fragmenting your codebase and its history.
 
 **Reference:**
 
-<https://cloud.google.com/source-repositories/docs/integrating-with-cloud-build#create_a_build_trigger>
+<https://cloud.google.com/build/docs/automating-builds/create-manage-triggers>
 
 ---
 
@@ -487,7 +491,7 @@ gRPC-based APIs:
 
 Other options and why they are less suitable:
 
-  * **I. RESTful APIs** : While REST is widely used and supports HTTPS, it relies on **JSON** for data exchange, which is bulkier than Protobuf. REST also uses HTTP/1.1, which is not as efficient as HTTP/2 in terms of bandwidth usage and performance, particularly in mobile environments.
+  * **I. RESTful APIs** : While REST is widely used and supports HTTPS, it relies on **JSON** for data exchange, which is bulkier than Protobuf. REST can run over HTTP/2 as well, so the main bandwidth difference is the payload format: binary Protobuf messages are much smaller than the equivalent JSON.
 
   * **II. MQTT for APIs** : MQTT is a lightweight protocol primarily designed for messaging in IoT systems. It is not ideal for APIs intended for mobile applications as it focuses more on **publish/subscribe messaging** rather than standard request/response patterns that are common in APIs. While it minimizes bandwidth, it's not designed to integrate seamlessly with mobile app APIs.
 
@@ -870,10 +874,12 @@ Here's why:
 
   * **II. Jenkins:** While powerful, Jenkins introduces the overhead of maintaining your own Jenkins server and its configuration.
 
-  * **III. Buildpacks:** Buildpacks can be a great option, but they might require additional configuration if you have specific build requirements beyond what buildpacks provide.
+  * **III. Continuous deployment with buildpacks:** This is also fully managed: Cloud Run's "continuously deploy from a repository" setup creates a Cloud Build trigger for you and can build the Go code with buildpacks. It is a reasonable answer in practice, but the bank prefers the explicit Cloud Build trigger, which gives full control over the build and deploy steps.
 
 **Reference:**  
 <https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build>
+
+**⚠️ Note:** Cloud Source Repositories is closed to new customers; the same Cloud Build trigger works with GitHub, GitLab or Bitbucket repositories connected to Cloud Build. Option III is a built-in, fully managed alternative that some would call simpler.
 
 ---
 
@@ -1013,13 +1019,15 @@ Here's why Traffic Director is the best fit:
 
   * **III. Anthos Service Mesh:** Anthos Service Mesh offers advanced traffic management but introduces complexity in this case. Traffic Director is a more streamlined solution for your specific requirement.
 
-  * **IV. Internal HTTP(S) Load Balancing:** Internal HTTP(S) Load Balancing lacks the ability to make routing decisions based on HTTP headers.
+  * **IV. Internal HTTP(S) Load Balancing:** Internal Application Load Balancers do support header-based routing through URL maps. The question, though, is about services calling each other across regions with loose coupling, which is the service-mesh use case Traffic Director was built for; a classic regional internal load balancer only reaches backends in its own region.
 
 **References:**
 
 [https://cloud.google.com/traffic-director/docs/set-up-gce-vms](https://cloud.google.com/traffic-director/docs/set-up-gce-vms  https://cloud.google.com/traffic-director/docs/overview#traffic_management)
 
 [https://cloud.google.com/traffic-director/docs/overview#traffic_management](https://cloud.google.com/traffic-director/docs/set-up-gce-vms  https://cloud.google.com/traffic-director/docs/overview#traffic_management)
+
+**⚠️ Note:** Traffic Director and Anthos Service Mesh have both been merged into **Cloud Service Mesh**, so newer versions of this question may name that instead. A cross-region internal Application Load Balancer can now also route on headers across regions, so this question reflects the older product lineup.
 
 ---
 
@@ -1083,9 +1091,9 @@ Let's break down why this is the most effective choice:
 
   * **Full Load Testing:** Mirroring the entire production load ensures you're testing against the true scale of your traffic.
 
-  * **A/B Comparison:** Comparing the performance of your new application code against the existing version under identical load provides valuable insights for optimization.
+  * **Side-by-side comparison:** Comparing the performance of the new version against the existing one under identical load provides valuable insights. This is a shadow test: the mirrored responses are discarded, so users never see the new version. (Classic A/B testing is different: it sends real users to each variant to compare their behavior.)
 
-  * **Controlled Rollout:** Based on the results of your A/B tests, you can gradually and safely increase traffic to the new version.
+  * **Controlled Rollout:** Based on the results of the shadow test, you can then release the new version with confidence.
 
 **Why Other Options are Less Ideal:**
 
@@ -1098,6 +1106,8 @@ Let's break down why this is the most effective choice:
 **Reference:**
 
 <https://cloud.google.com/architecture/application-deployment-and-testing-strategies#shadow_test_pattern>
+
+**⚠️ Note:** The option calls this "A/B testing with traffic mirroring". The part that meets the requirement is the traffic mirroring (shadow test); the cue is "full production load before launch".
 
 ---
 
@@ -1225,45 +1235,37 @@ III. Set up a "Customers" table with an Array field to store phone numbers for e
 **what should you do? (Choose two.)**
 
 - [ ] III. Generate a JSON Web Token (JWT) for users requiring access to the Coldline storage buckets.
-- [ ] I. Apply the Bucket Lock feature to enforce a retention policy on the data.
+- [x] I. Apply the Bucket Lock feature to enforce a retention policy on the data.
 - [ ] V. Configure a lifecycle management policy to transition objects older than 14 days to the Nearline storage class.
 - [x] IV. Establish a lifecycle management policy to transition objects older than 14 days to the Coldline storage class.
-- [x] II. Schedule a job to transition objects older than 14 days to the Coldline storage class.
+- [ ] II. Schedule a job to transition objects older than 14 days to the Coldline storage class.
 
 ### Explanation
 
 **Correct Answers:**
 
-  * **II. Schedule a job to transition objects older than 14 days to the Coldline storage class.**
+  * **I. Apply the Bucket Lock feature to enforce a retention policy on the data.**
 
   * **IV. Establish a lifecycle management policy to transition objects older than 14 days to the Coldline storage class.**
 
 **Justification:**
 
-  * **Tiered Storage:** Both approaches leverage Cloud Storage's different storage classes. Since recent logs (<= 14 days) are accessed frequently, keeping them on Standard storage makes sense. Older logs can safely transition to the less expensive Coldline storage class.
+  * **Retention (I):** The stem requires keeping the data for at least 7 years. A bucket retention policy (locked with Bucket Lock) guarantees that no object can be deleted or overwritten before it reaches that age. Bucket Lock itself has no extra charge; you only pay for the storage you keep, which you would have to keep anyway.
 
-  * **Automation:** While scheduling a job is possible, lifecycle management policies provide a more declarative and automated way to enforce the storage tiering.
-
-  * **Data Retention:** Neither of these solutions directly address the 7-year retention requirement. That could be handled with Object Lifecycle Management (e.g., deleting after 7 years) or Bucket Lock.
+  * **Tiering (IV):** Logs are reviewed often during the first two weeks, then only once a year. A lifecycle rule that moves objects older than 14 days to Coldline (designed for data accessed less than once a quarter) cuts storage cost, and it runs automatically with no code to maintain.
 
 **Why Other Options Are Less Ideal:**
 
-  * **I. Apply the Bucket Lock feature to enforce a retention policy on the data.**
+  * **II. Schedule a job to transition objects older than 14 days to the Coldline storage class.** This does the same thing as IV, but you have to write, schedule and monitor the job yourself. Object Lifecycle Management is the managed, declarative way to do it, and choosing both II and IV would leave the retention requirement unmet.
 
-    * **Cost:** Bucket Lock is designed for legal holds and compliance, not primarily for cost optimization. It can become expensive for large datasets with long retention periods.
+  * **III. Generate a JSON Web Token (JWT) for users requiring access to the Coldline storage buckets.** Access is handled with IAM; JWTs do nothing for cost or retention.
 
-  * **III. Generate a JSON Web Token (JWT) for users requiring access to the Coldline storage buckets.**
-
-    * **Relevance:** JWTs are for authentication, not directly related to cost optimization of storage.
-
-  * **V. Configure a lifecycle management policy to transition objects older than 14 days to the Nearline storage class.**
-
-    * **Cost:** Nearline, while less expensive than Standard, is still more costly than Coldline for infrequently accessed data.
+  * **V. Configure a lifecycle management policy to transition objects older than 14 days to the Nearline storage class.** Nearline suits data read about once a month. For data read once a year, Coldline is cheaper.
 
 **References** :  
-[https://cloud.google.com/storage/docs/bucket-lock ](https://cloud.google.com/storage/docs/bucket-lock   https://cloud.google.com/storage/docs/lifecycle)
+<https://cloud.google.com/storage/docs/bucket-lock>
 
-[https://cloud.google.com/storage/docs/lifecycle](https://cloud.google.com/storage/docs/bucket-lock   https://cloud.google.com/storage/docs/lifecycle)
+<https://cloud.google.com/storage/docs/lifecycle>
 
 ---
 
@@ -1465,13 +1467,13 @@ Ref:
 
 **III. Establish a cluster comprising a minimum of 3 Spanner nodes.**
 
-  * **Having a cluster with multiple nodes improves database availability and fault tolerance. With a minimum of 3 Spanner nodes, the system can maintain availability even if one node fails. This redundancy ensures that the database remains accessible and operational, contributing to the goal of achieving 99.999% availability.**
+  * **Nodes add serving and storage capacity to every replica in the instance. Replication, and therefore fault tolerance, comes from the instance configuration (here a multi-region one), not from the node count. Google has long recommended at least 3 nodes for production instances so a global workload has enough capacity to keep latency low, which makes this the better of the two node-count options.**
 
 Options II, IV, V, and VI are not the optimal choices for achieving the stated objectives:
 
 II. Implement a multi-regional Cloud Spanner instance with the "nam3" configuration.
 
-  * "nam3" configuration refers to a regional instance in North America, which may not provide the desired global availability and latency improvements compared to a multi-regional configuration.
+  * "nam3" is a multi-region configuration too, but all of its regions are in North America. It gives 99.999% availability, yet users in Europe and Asia would read from far-away replicas, so it doesn't minimize read latency worldwide.
 
 IV. Set up a cluster with at least 1 Spanner node.
 
@@ -1643,24 +1645,24 @@ Here's why it's particularly well-suited to this situation:
 
 - [ ] III. Establish Trusted Network ranges within the application, allowing traffic exclusively from these networks.
 - [ ] IV. Employ an automated procedure to procure SSL Certificates for applications from Let's Encrypt and integrate them into the applications.
-- [x] II. Deploy Istio, activate proxy injection in the application namespace, and then implement mutual TLS (mTLS).
+- [x] II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS).
 - [ ] I. Implement Network Policies to restrict traffic between applications.
 
 ### Explanation
 
 **Correct Option:**
 
-**II. Deploy Istio, activate proxy injection in the application namespace, and then implement mutual TLS (mTLS).**
+**II. Install Cloud Service Mesh (Google's managed Istio), enable sidecar proxy injection in the application namespace, and then enforce mutual TLS (mTLS).**
 
 **Justification:**
 
-  * **Istio is a service mesh explicitly engineered for managing, securing, and observing microservices-based applications.** It accomplishes this by adding sidecar proxies next to each application instance (injected automatically). These sidecars regulate the flow of traffic within the cluster.
+  * **Cloud Service Mesh is Google's supported distribution of Istio, a service mesh explicitly engineered for managing, securing, and observing microservices-based applications.** It accomplishes this by adding sidecar proxies next to each application instance (injected automatically). These sidecars regulate the flow of traffic within the cluster.
 
   * **Mutual TLS offers robust encryption and identity verification for service-to-service communication.** This guarantees the confidentiality and integrity of data exchanged between applications.
 
-  * **The use of Istio and mTLS satisfies the requirement for minimal modifications to the applications themselves.** The proxies manage encryption transparently.
+  * **The use of the mesh and mTLS satisfies the requirement for minimal modifications to the applications themselves.** The proxies manage encryption transparently.
 
-  * **Istio is widely used with Kubernetes and offers robust Google support.**
+  * **Cloud Service Mesh is fully supported by Google on GKE.** (The older "Istio on GKE" add-on is deprecated.)
 
 **Why Other Options are Less Ideal:**
 
@@ -1676,9 +1678,9 @@ Here's why it's particularly well-suited to this situation:
 
 **References:**
 
-[https://cloud.google.com/istio/docs/istio-on-gke/installing](https://cloud.google.com/istio/docs/istio-on-gke/installing  https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits)
+<https://cloud.google.com/service-mesh/docs/overview>
 
-[https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits](https://cloud.google.com/istio/docs/istio-on-gke/installing  https://cloud.google.com/istio/docs/istio-on-gke/overview Istio gives you the following benefits)
+<https://cloud.google.com/service-mesh/docs/security/configuring-mtls>
 
 ---
 
@@ -1787,6 +1789,8 @@ Here's why the other options are less important initially:
 
 [https://cloud.google.com/deploy/docs/integrating#before_you_begin](https://cloud.google.com/functions/docs/calling/pubsub   https://cloud.google.com/deploy/docs/integrating#integrating_with_automated_testing  https://cloud.google.com/build/docs/automate-builds-pubsub-events#console_2  https://cloud.google.com/deploy/docs/integrating#before_you_begin)
 
+**⚠️ Note:** Cloud Deploy now has built-in automation: an automation resource with a promote-release rule promotes a release to the next target after a successful rollout, with no custom code. Pick it if it's offered; among these options, the Cloud Function on `clouddeploy-operations` is the best fit.
+
 ---
 
 ## Question 45
@@ -1810,13 +1814,13 @@ Here's why the other options are less important initially:
 
   1. **Cloud Logging (formerly Stackdriver Logging)** : Cloud Logging is a fully managed service by Google Cloud Platform for collecting, viewing, and analyzing logs from applications and services. It offers customizable retention periods, making it an ideal solution for meeting specific compliance requirements.
 
-  2. **Customized retention duration** : With Cloud Logging, you can set retention periods tailored to your specific needs. In this scenario, you can set a retention period of 1 year for internal audits and 3 years to meet compliance standards.
+  2. **Customized retention duration** : A Cloud Logging log bucket has a single, configurable retention period (from 1 day up to 3650 days). Set it to 3 years: that meets the compliance need and also covers the 1-year internal-audit need, and the logs stay searchable in Logs Explorer and Log Analytics.
 
 Options I, II, and IV do not fully address the requirements and may introduce unnecessary complexity:
 
 I. Storing logs in a Cloud Storage bucket with bucket locking enabled can prevent deletion of objects but doesn't address the need for different retention periods for internal audits and compliance standards.
 
-II. Storing logs in a Cloud Storage bucket with a fixed 3-year retention period doesn't meet the requirement of retaining logs for 1 year for internal audits.
+II. A Cloud Storage bucket with a 3-year retention period would keep the logs long enough, but the logs aren't easily searchable there and you'd have to build the export yourself.
 
 IV. Initially storing logs in a Cloud Storage bucket with a 1-year retention period and then transferring logs to another bucket with a 2-year retention period after 1 year adds unnecessary complexity and management overhead. Using Cloud Logging with customized retention durations is a more straightforward solution.
 
@@ -1846,7 +1850,7 @@ Explanation:
 
   * **Efficiency:** Accessing this built-in metadata server is the most direct and performant way to retrieve information about the Cloud Run environment.
 
-  * **Specificity:** You can query specific values like `computeMetadata/v1/project/project-id` and `computeMetadata/v1/instance/zone` for the project ID and region respectively.
+  * **Specificity:** You can query specific values like `computeMetadata/v1/project/project-id` and `computeMetadata/v1/instance/region` for the project ID and region respectively.
 
   * **Security:** The metadata server is only accessible from within the service instance itself, enhancing security.
 
@@ -1934,10 +1938,10 @@ Here's why this approach excels:
 **Your API backend operates across multiple cloud providers, and you need to analyze the network latency of your API. Which two actions should you take? (Select two.)**
 
 - [x] I. Utilize Zipkin collector to gather data efficiently.
-- [ ] V. Employ Stackdriver Profiler to identify performance bottlenecks and generate reports.
-- [ ] IV. Leverage Stackdriver Debugger to analyze network latency issues.
+- [ ] V. Employ Cloud Profiler to identify performance bottlenecks and generate reports.
+- [ ] IV. Leverage Cloud Debugger to analyze network latency issues.
 - [ ] II. Implement Fluentd agent to collect data seamlessly.
-- [x] III. Use Stackdriver Trace for generating comprehensive latency reports.
+- [x] III. Use Cloud Trace for generating comprehensive latency reports.
 
 ### Explanation
 
@@ -1947,25 +1951,27 @@ Here's why this approach excels:
 
     * **Latency Analysis:** Zipkin captures detailed timing data about each "span" within a request, crucial for network latency analysis.
 
-  * **III. Use Stackdriver Trace for generating comprehensive latency reports.**
+  * **III. Use Cloud Trace for generating comprehensive latency reports.**
 
-    * **Trace Analysis:** Stackdriver Trace ingests trace data (including from Zipkin) and provides powerful visualization and analysis tools specifically tailored to investigating latency issues.
+    * **Trace Analysis:** Cloud Trace ingests trace data (including from Zipkin) and provides powerful visualization and analysis tools specifically tailored to investigating latency issues.
 
-    * **Cross-Cloud Visibility:** If parts of your backend are on GCP, Stackdriver Trace will integrate with them natively.
+    * **Cross-Cloud Visibility:** If parts of your backend are on GCP, Cloud Trace will integrate with them natively.
 
 **Why Other Options Are Less Ideal**
 
   * **II. Implement Fluentd agent ...** While Fluentd is a versatile log aggregator, it's not focused on distributed tracing. It would require custom processing to extract the latency data you need.
 
-  * **IV. Leverage Stackdriver Debugger ...** Debugger is primarily for debugging running code, not for tracing distributed request paths and measuring network time specifically.
+  * **IV. Leverage Cloud Debugger ...** Debugger is primarily for debugging running code, not for tracing distributed request paths and measuring network time specifically.
 
-  * **V. Employ Stackdriver Profiler ...** Profiler focuses on code-level performance issues, not end-to-end network latency.
+  * **V. Employ Cloud Profiler ...** Profiler focuses on code-level performance issues, not end-to-end network latency.
 
 **Reference:**
 
 [https://cloud.google.com/trace/docs/zipkin](https://cloud.google.com/trace/docs/zipkin  https://cloud.google.com/trace/docs/zipkin#frequently_asked_questions)
 
 [https://cloud.google.com/trace/docs/zipkin#frequently_asked_questions](https://cloud.google.com/trace/docs/zipkin  https://cloud.google.com/trace/docs/zipkin#frequently_asked_questions)
+
+**⚠️ Note:** Cloud Trace still accepts Zipkin data, but Zipkin is a legacy path: OpenTelemetry (which absorbed OpenCensus) is now the recommended instrumentation. If an OpenTelemetry option is offered, prefer it over Zipkin. Cloud Debugger was shut down in 2023.
 
 ---
 
@@ -2051,7 +2057,7 @@ Here's why this is the best approach:
 
 *Domain 2: Building and Testing Applications*
 
-**Your team is responsible for crafting services operating on Google Kubernetes Engine. Storing your team's code in Cloud Source Repositories, you're aiming to swiftly pinpoint bugs in the code prior to deployment to production. Your objective is to streamline developer feedback and optimize the process through automation. What's the recommended course of action?**
+**Your team is responsible for crafting services operating on Google Kubernetes Engine. Storing your team's code in a GitHub repository, you're aiming to swiftly pinpoint bugs in the code prior to deployment to production. Your objective is to streamline developer feedback and optimize the process through automation. What's the recommended course of action?**
 
 - [ ] III. Leverage Spinnaker to automate the deployment of container images to the production environment.
 - [ ] IV. Employ Cloud Build to automate the creation of container images from code, initiated by forked versions.
@@ -2068,7 +2074,7 @@ Here's why:
 
   * **Git Tag Integration:** Tagging in source control often signifies a release candidate. Using Git tags to trigger Cloud Build ensures the image built reflects a potentially releasable state of your code, ideal for testing.
 
-  * **Streamlined Workflow:** Cloud Build offers a well-integrated workflow for building container images directly from Cloud Source Repositories, promoting efficiency for developers.
+  * **Streamlined Workflow:** Cloud Build offers a well-integrated workflow for building container images directly from connected repositories such as GitHub, promoting efficiency for developers.
 
 Let's analyze why other options are less optimal:
 
@@ -2077,6 +2083,8 @@ Let's analyze why other options are less optimal:
   * **III. Leverage Spinnaker...** Again, Spinnaker's core competency is deployment, making it less ideal for the bug-identification stage that happens earlier in the pipeline.
 
   * **IV. Employ Cloud Build...forked versions.** Building images from forked versions could introduce inconsistencies and make it harder to track the connection between code and image for testing purposes. Using Git tags provides a more controlled and predictable workflow.
+
+**⚠️ Note:** For fast developer feedback, building and testing on every commit or push is the usual practice; Git tags normally mark releases. The real lesson is Cloud Build (CI) rather than Spinnaker (CD).
 
 ---
 
@@ -2161,6 +2169,8 @@ Here's why this is the best option:
 Ref:
 
 <https://cloud.google.com/stackdriver/docs/solutions/agents/ops-agent>
+
+**⚠️ Note:** The Google-provided fluentd (legacy Logging agent) and collectd (legacy Monitoring agent) are replaced by the Ops Agent, which collects both logs and metrics. If the Ops Agent is offered, choose it for local log files.
 
 ---
 

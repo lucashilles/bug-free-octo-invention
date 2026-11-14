@@ -36,7 +36,7 @@ Since the requirement is to **share the chart** , not the entire dashboard, opti
 **Why other options are not a perfect fit**
 
 **A (Project ID + Monitoring Viewer)** :  
-Technically valid (they can see dashboards and charts), but it shares **all monitoring dashboards and metrics in the project** , not just the specific chart. This goes beyond the requirement and does not strictly follow “share the chart only.”
+The role is the same as in option C, so the access granted is the same. Monitoring Viewer lets the team see all dashboards and metrics in the project whether you send them a project ID or a URL. The difference is only delivery: a project ID doesn't point the team to the chart, while “Share chart by URL” does. That is why C fits better, not because it grants less access.
 
 **B (Project ID + Dashboard Viewer)** :  
 This role (actually “Dashboard Configuration Viewer” in practice) only provides access to dashboard definitions. It does not allow viewing chart **data**. Users will see errors like _“Invalid resource type/metric type”_. Not valid.
@@ -52,7 +52,7 @@ It leverages the official **“share chart by URL”** feature in Metrics Explor
 
 It grants the **Monitoring Viewer role** , the minimum role that allows access to metric data needed for charts.
 
-Other options either over-share (A) or don’t work at all (B, D).
+Option A grants the same access but doesn't deliver the chart; B and D don't work at all.
 
 ---
 
@@ -122,8 +122,8 @@ Cloud Build **automatically publishes build events** to the `**cloud-builds**`**
     **Give the developers the IAM Logs Private Logs Viewer role** to access **Cloud Logging** and view logs.
 - [ ] **C.Deploy the Cloud Monitoring agent** to the application servers.
     **Give the developers the IAM Monitoring Viewer role** to access **Cloud Monitoring** and view metrics.
-- [ ] **D.Install the**`**gsutil**`**command-line tool** on your application servers.
-    **Write a script using**`**gsutil**` to upload application logs to a **Cloud Storage bucket** , and then schedule it to run via `cron` every 5 minutes.
+- [ ] **D.Install the**`**gcloud**`**CLI** on your application servers.
+    **Write a script using**`**gcloud storage**` to upload application logs to a **Cloud Storage bucket** , and then schedule it to run via `cron` every 5 minutes.
     **Give the developers IAM Object Viewer access** to view the logs in the specified bucket.
 
 ### Explanation
@@ -148,11 +148,11 @@ The **best and easiest** approach to allow developers to access logs is to:
 
 **Why Other Options Are Incorrect:**
 
-**B. Logs Private Logs Viewer Role** – This role **is used for viewing private logs** , which include **admin activity and system logs**. It **is not required for regular application logs**.
+**B. Logs Private Logs Viewer Role** – This role adds access to **private logs**, mainly **Data Access audit logs**. Admin Activity and other regular logs are already readable with Logs Viewer, and application logs don't need it, so it grants more than needed.
 
 **C. Cloud Monitoring Agent + Monitoring Viewer Role** – The **Cloud Monitoring agent** is for **metrics (CPU, memory, network, etc.)** , **not logs**. Developers need access to **Cloud Logging, not Cloud Monitoring**.
 
-**D. Using**`**gsutil**`**to upload logs manually** – This is **overly complex and inefficient** :
+**D. Using**`**gcloud storage**`**to upload logs manually** – This is **overly complex and inefficient** :
 
   * Requires **writing and maintaining a log upload script**.
 
@@ -164,6 +164,8 @@ The **best and easiest** approach to allow developers to access logs is to:
 
 [Installing the Cloud Logging Agent](https://cloud.google.com/logging/docs/agent/logging/install-index)  
 [ IAM Roles for Cloud Logging](https://cloud.google.com/logging/docs/access-control)
+
+**⚠️ Note:** The legacy Cloud Logging agent is end of support. On current VMs, install the Ops Agent, which collects both logs and metrics; the answer logic (agent + Logs Viewer) is unchanged.
 
 ---
 
@@ -212,7 +214,7 @@ Shared VPC improves **network governance and IAM separation** , not runtime netw
 Private clusters improve **security** by removing public node IPs. They do not reduce inbound HTTP traffic costs and may even introduce additional NAT costs.
 
 **IV. Implement a Google Cloud HTTP Load Balancer as Ingress.**  
-While this is architecturally recommended for HTTP workloads, **external HTTP(S) Load Balancing runs on Premium Tier by default** , which is **more expensive** , not cheaper. It optimizes performance, not cost.
+An HTTP load balancer as Ingress is a **traffic-distribution** choice: it gives routing and scaling features but does not make egress cheaper, and it has its own charges. (A regional external Application Load Balancer can run in Standard Tier, so the tier is not the reason to reject it.)
 
 **Final answer:** **II**
 
@@ -310,7 +312,7 @@ Core SRE fundamentals behind this step:
 
   * **Scalability:** As more responders join, they can quickly get context without interrupting mitigation work.
 
-Google SRE explicitly defines this as an _early, mandatory step_ before mitigation actions begin.
+With the IC, OL, and CL already assigned, mitigation belongs to the Operations Lead and stakeholder updates belong to the Communications Lead. The IC's own job is coordination, which needs a shared place for responders to talk, so setting up that channel is the IC's next step.
 
 **Authoritative documentation:**  
 <https://sre.google/sre-book/managing-incidents/>
@@ -457,7 +459,7 @@ Here's why this stands out as the most secure and manageable approach:
 
   * **Secret Isolation:** Separates secret management from source code repositories, reducing the risk of accidental exposure.
 
-  * **Secret Rotation:** Cloud KMS simplifies secret rotation, enhancing security in case of a breach.
+  * **Rotation and revocation:** After a breach you replace the secret object in Cloud Storage and can revoke IAM access to the bucket or key at once. (Rotating the KMS key only creates a new key version for future encryptions; it does not change the secret value itself.)
 
 Let's analyze the shortcomings of the other options:
 
@@ -470,6 +472,8 @@ Let's analyze the shortcomings of the other options:
 **Reference:**
 
 <https://cloud.google.com/security-key-management>
+
+**⚠️ Note:** This is the best of the four options, but none of them is Secret Manager, which is Google's recommended store for pipeline secrets today. Choose Cloud Storage plus Cloud KMS only when Secret Manager is not offered.
 
 ---
 
@@ -676,7 +680,7 @@ While improving test coverage is a top priority, consider these additional SRE-a
 
 **A. Using a**`**DELTA**`**metricKind and**`**DOUBLE**`**valueType with a Stacked Bar Graph** –
 
-  * `DELTA` is used for **rate-based metrics over time** , but **latency should be measured as a point-in-time value (GAUGE)**.
+  * A `DOUBLE` value is a **single number per point** (for example an average), so it loses the spread of latencies across users. To see what **all** users experience you need a `DISTRIBUTION` value.
 
   * **Stacked Bar graphs are not ideal for latency distributions**.
 
@@ -690,7 +694,7 @@ While improving test coverage is a top priority, consider these additional SRE-a
 
   * `METRIC_KIND_UNSPECIFIED` is **not a valid selection** for Cloud Monitoring.
 
-  * `INT64` is **not appropriate for capturing floating-point latency values**.
+  * `INT64` is also a **single scalar** per point, so, like any scalar, it can't show the latency distribution across all users.
 
 **Reference Documentation:**
 
@@ -705,18 +709,18 @@ While improving test coverage is a top priority, consider these additional SRE-a
 
 **Your organization recently shifted to a container-based workflow for application development. Within this setup, your team continuously deploys multiple applications via an automated build pipeline to the production environment. However, a recent security audit flagged concerns about potential vulnerabilities in the code deployed to production. The conventional tooling for virtual machine (VM) vulnerabilities is inadequate for the containerized environment. How can you ensure the security and patch level of all code processed through the pipeline?**
 
-- [x] I. Implement Container Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).
+- [x] I. Implement Artifact Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).
 - [ ] II. Configure the containers within the build pipeline to autonomously update themselves before release.
 - [ ] III. Adapt existing operating system vulnerability software to function within the containerized environment.
 - [ ] IV. Integrate static code analysis tooling to scrutinize the Docker files utilized in creating the containers.
 
 ### Explanation
 
-**I. Implement Container Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).**
+**I. Implement Artifact Analysis to scan and report Common Vulnerabilities and Exposures (CVEs).**
 
 Here's why this stands out:
 
-  * **Container-Focused:** Container Analysis is specifically designed to identify vulnerabilities within container images, offering a more accurate and targeted approach than traditional VM-based tools.
+  * **Container-Focused:** Artifact Analysis is specifically designed to identify vulnerabilities within container images, offering a more accurate and targeted approach than traditional VM-based tools.
 
   * **Pipeline Integration:** Seamlessly integrates into your CI/CD pipeline, providing security checks at multiple stages of the development process.
 
@@ -734,7 +738,7 @@ Here's why this stands out:
 
   * **Proactive Security:** Implement vulnerability scanning early in your build pipeline to discover issues before they reach production.
 
-  * **Image Repository Integration:** Consider integrating Container Analysis with your image repository (e.g., Google Container Registry) for continuous monitoring of stored images.
+  * **Image Repository Integration:** Consider integrating Artifact Analysis with your image repository (Artifact Registry) for continuous monitoring of stored images.
 
 **Additional Considerations:**
 
@@ -743,7 +747,7 @@ Here's why this stands out:
   * **Dependency Scanning:** Use tools to scan for outdated dependencies with known vulnerabilities in your container images.
 
 **Reference:**  
-<https://cloud.google.com/container-analysis/docs/container-analysis>
+<https://cloud.google.com/artifact-analysis/docs/artifact-analysis>
 
 ---
 
@@ -941,17 +945,17 @@ What should you do?
   1. **Assign labels to Compute Engine instances** for each system:
         
                     1. bash
-            2. CopyEditgcloud compute instances add-labels instance-name --labels=system=my-system
+            2. gcloud compute instances add-labels instance-name --labels=system=my-system
 
   2. **Enable BigQuery billing export** to **store billing data**.
 
   3. **Query costs per system using BigQuery** :
         
                     1. sql
-            2. CopyEditSELECT service.description, labels.system, SUM(cost) AS total_cost
-            3. FROM `billing_dataset.gcp_billing_export`
-            4. WHERE usage_start_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
-            5. GROUP BY service.description, labels.system
+            2. SELECT service.description, l.value AS system, SUM(cost) AS total_cost
+            3. FROM `billing_dataset.gcp_billing_export`, UNNEST(labels) AS l
+            4. WHERE l.key = 'system' AND usage_start_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+            5. GROUP BY service.description, system
             6. ORDER BY total_cost DESC;
 
 **Why Other Options Are Incorrect:**
@@ -1002,7 +1006,7 @@ What should you do?
 
   * **Controlled Rollout:** Partitioned rolling updates allow you to release your new feature in increments. You can update half of your web server pods, validate functionality, and then proceed with the remaining pods if everything looks good.
 
-  * **Kubernetes Native:** This method is directly supported within Kubernetes Deployment objects, ensuring a streamlined process.
+  * **Kubernetes Native:** Partitioned rolling updates are a native Kubernetes feature: the `partition` field of a **StatefulSet**'s `RollingUpdate` strategy updates only the Pods whose ordinal is at or above the partition value. (Deployments have no `partition` field; with a Deployment you would get a similar effect with two Deployments or by pausing a rollout.)
 
   * **Phase Control:** You have granular control over the percentage of pods updated in each phase, enabling the targeted 50% rollout.
 
@@ -1012,7 +1016,7 @@ What should you do?
 
   * **III. Utilize a replica set within the deployment specification.** Replica sets simply control the number of running pods, not the rollout strategy of updates.
 
-  * **IV. Opt for a stateful set with parallel pod management policy.** Stateful sets are used for workloads requiring persistent storage and stable identifiers, not for phased rollouts of web servers.
+  * **IV. Opt for a stateful set with parallel pod management policy.** The parallel Pod management policy only controls whether Pods are created and deleted in order or all at once during scaling. It does not limit an update to half of the Pods. The phased rollout comes from the StatefulSet `partition` setting in option I, not from the Pod management policy.
 
 **Reference:**
 
@@ -1064,12 +1068,12 @@ What should you do?
 
 *Domain 2: Building and Implementing CI/CD Pipelines*
 
-**During the migration of an on-premises containerized web application to Google Cloud, considering specific traffic direction and testing needs, which deployment strategy and platform should you opt for?**
+**During the migration of an on-premises containerized web application to Google Cloud, where the platform must route traffic from Android devices to an Android-specific microservice, support arbitrary percentage-based traffic splitting, and allow continuous testing of multiple versions of any microservice, which deployment strategy and platform should you opt for?**
 
 - [ ] I. Implement the canary release on Cloud Run, employing traffic splitting to route 10% of user traffic to the canary release based on the revision tag.
 - [ ] II. Choose App Engine for deploying the canary release, utilizing traffic splitting to direct a subset of user traffic to the new version based on IP address.
-- [ ] III. Deploy the canary release on Compute Engine, utilizing Anthos Service Mesh with Compute Engine to direct 10% of user traffic to the canary release via virtual service configuration.
-- [x] IV. Opt for Google Kubernetes Engine with Anthos Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.
+- [ ] III. Deploy the canary release on Compute Engine, utilizing Cloud Service Mesh with Compute Engine to direct 10% of user traffic to the canary release via virtual service configuration.
+- [x] IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.
 
 ### Explanation
 
@@ -1077,15 +1081,15 @@ What should you do?
 
 **Why option IV is correct**
 
-**IV. Opt for Google Kubernetes Engine with Anthos Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.**
+**IV. Opt for Google Kubernetes Engine with Cloud Service Mesh for deploying the canary release, employing traffic splitting to direct 10% of user traffic to the new version based on the user-agent header configured in the virtual service.**
 
 This is the **most appropriate and exam-accurate choice** given all constraints in the question:
 
   * The application is **containerized** and being migrated from **on-premises** → GKE is the natural target platform.
 
-  * The question explicitly mentions **specific traffic direction and testing needs** , which implies **advanced traffic control** , not just percentage-based splitting.
+  * The question requires routing **Android devices to an Android-specific microservice**, which needs **request-attribute (header) routing**, not just percentage-based splitting.
 
-  * **Anthos Service Mesh (ASM)** provides **Layer-7 traffic management** using Istio, enabling:
+  * **Cloud Service Mesh** provides **Layer-7 traffic management** using Istio, enabling:
 
     * Header-based routing (such as `User-Agent`)
 
@@ -1105,8 +1109,8 @@ Cloud Run supports **percentage-based traffic splitting only**. It does **not su
 **II. App Engine with IP-based traffic splitting**  
 IP-based routing is coarse, unreliable (NAT, mobile users), and not suitable for controlled canary testing. Additionally, App Engine is less aligned with migrating an existing **containerized** on-prem application.
 
-**III. Compute Engine with Anthos Service Mesh**  
-Anthos Service Mesh is designed for **Kubernetes workloads**. While traffic shaping on Compute Engine is possible, ASM does not manage non-GKE VM workloads for application-level canary routing.
+**III. Compute Engine with Cloud Service Mesh**  
+Cloud Service Mesh can include Compute Engine VMs, so the platform is not the problem. The option only configures a 10% split and gives **no rule for identifying Android traffic**, so it misses the header-routing requirement. Running a containerized microservice app on VMs also adds management overhead compared with GKE.
 
 **Final answer:** **IV**
 
@@ -1199,8 +1203,8 @@ For Envoy-based external HTTP(S) / external Application Load Balancing, **Standa
 
 **To ensure consistency across your Google Kubernetes Engine (GKE) environments - development, staging, and production - while following Google-recommended practices for enforcing network policies and deploying a logging DaemonSet, what steps should you take?**
 
-- [ ] I. Employ Google Cloud Deploy to enforce network policies and deploy the DaemonSet. Utilize Cloud Monitoring to trigger alerts for any deviations from the repository source.
-- [ ] II. Use Google Cloud Deploy for the DaemonSet deployment and Policy Controller to configure network policies. Leverage Cloud Monitoring to identify drifts and Cloud Functions to rectify them.
+- [ ] I. Employ Cloud Deploy to enforce network policies and deploy the DaemonSet. Utilize Cloud Monitoring to trigger alerts for any deviations from the repository source.
+- [ ] II. Use Cloud Deploy for the DaemonSet deployment and Policy Controller to configure network policies. Leverage Cloud Monitoring to identify drifts and Cloud Run functions to rectify them.
 - [x] III. Utilize Cloud Build to generate and deploy network policies and the DaemonSet. Implement Config Sync to synchronize configurations across all three environments.
 - [ ] IV. Utilize Cloud Build to generate and deploy network policies and the DaemonSet. Set up a Policy Controller to enforce configurations across the three environments.
 
@@ -1216,7 +1220,7 @@ This option most closely follows **Google-recommended GitOps practices for GKE**
 
 Key fundamentals behind this choice:
 
-  * **Config Sync (Anthos Config Management)** is Google’s **authoritative solution** for enforcing configuration consistency across multiple GKE clusters and environments. It continuously reconciles the desired state stored in Git with the actual cluster state.
+  * **Config Sync** (formerly part of Anthos Config Management) is Google’s **authoritative solution** for enforcing configuration consistency across multiple GKE clusters and environments. It continuously reconciles the desired state stored in Git with the actual cluster state.
 
   * **Network policies and DaemonSets** are classic cluster-level configurations that should be enforced declaratively and continuously, not deployed ad hoc.
 
@@ -1233,20 +1237,22 @@ This is the canonical pattern Google documents for:
   * Policy and system workload enforcement in GKE
 
 **Authoritative documentation:**  
-<https://cloud.google.com/anthos-config-management/docs/concepts/config-sync-overview>
+<https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview>
 
 **Why the other options are not suitable**
 
-**I. Google Cloud Deploy + Cloud Monitoring alerts**  
+**I. Cloud Deploy + Cloud Monitoring alerts**  
 Cloud Deploy is for **application delivery** , not enforcing cluster-level configurations like network policies or DaemonSets. Monitoring detects drift but does **not prevent or correct it**.
 
-**II. Cloud Deploy + Policy Controller + Cloud Functions**  
-This combines tools with overlapping responsibilities and introduces unnecessary operational complexity. Drift remediation via Cloud Functions is not Google’s recommended approach.
+**II. Cloud Deploy + Policy Controller + Cloud Run functions**  
+This combines tools with overlapping responsibilities and introduces unnecessary operational complexity. Drift remediation via Cloud Run functions is not Google’s recommended approach.
 
 **IV. Cloud Build + Policy Controller only**  
 Policy Controller enforces **policy constraints** , not the **deployment and synchronization** of resources like DaemonSets. It cannot replace Config Sync for full configuration consistency.
 
 **Final answer:** **III**
+
+**⚠️ Note:** In a pure GitOps setup Cloud Build would only render and validate the manifests and commit them; Config Sync then applies them from Git. Having Cloud Build also deploy them is redundant. Pick III because it is the only option with Config Sync, not because of the Cloud Build deploy step.
 
 ---
 
@@ -1400,7 +1406,7 @@ Here's why this is the most direct and effective approach:
 
   * **III. Enhance the application to directly transmit IP address request metrics...** Modifying production code for monitoring purposes introduces risks and complexity.
 
-  * **IV. Configure the Ops Agent with a metrics receiver.** While the Ops Agent can collect custom metrics, this likely requires more configuration and potentially custom code than a logs-based solution.
+  * **IV. Configure the Ops Agent with a metrics receiver.** A metrics receiver collects a fixed set of predefined metrics from the host or a supported application. It **can't break request counts down by client IP**, so it can't answer the question at all. The client IP is only in the access log, which is why a logs-based metric is needed.
 
 **Reference:**
 
@@ -1482,7 +1488,7 @@ This aligns perfectly with Google’s guidance: _use Secret Manager for applicat
 **Why the other options are not suitable**
 
 **II. Mount the key under**`**/sys/api_key**`**and decrypt it in the app.**  
-Cloud Run does not support arbitrary filesystem secret mounts like this, and manual decryption is unnecessary and error-prone. This is not a supported or recommended pattern.
+Cloud Run can mount Secret Manager secrets as files in a volume, so mounting is not the problem. The problem is the extra step: Secret Manager returns the secret already decrypted, so decrypting it again in the app is unnecessary, adds custom code, and makes no sense. (A system path such as `/sys` is also a poor mount location.)
 
 **III. Store the API key directly in Cloud KMS and reference it as an environment variable.**  
 Cloud KMS is designed for **encryption keys** , not for storing application secrets. Google explicitly recommends using **Secret Manager on top of KMS** for secret storage.
@@ -1625,7 +1631,7 @@ Cloud Trace is for **latency analysis and request tracing** , not for determinin
 Selecting a machine type alone does not ensure availability. Without confirming **regional quota capacity** , instances may fail to launch entirely.
 
 **III. Deploy across multiple regions using an internal load balancer.**  
-Internal load balancers are **regional** , not global. They cannot distribute traffic across regions and are inappropriate for multi-region production access.
+Multi-region deployment behind a load balancer is a traffic-distribution choice, not capacity planning. It does not check whether each region has the quota and capacity to run large instances, which is the actual concern in the question. (Most internal load balancers are regional, although a cross-region internal Application Load Balancer exists, so don't reject the option on that ground alone.)
 
 **Final answer:** **IV**
 
@@ -1650,7 +1656,7 @@ Here's why this is the most secure and easily managed method:
 
   * **Principle of Least Privilege:** Grant the service account only the specific IAM permissions needed for Terraform to manage resources, minimizing potential security risks.
 
-  * **Workload Identity:** Workload Identity is specifically designed for VM-to-Google Cloud service communication. It doesn't involve long-lived credentials or manual key management.
+  * **Attached service account:** A VM with an attached service account gets short-lived access tokens automatically from the metadata server, and Terraform's Google provider picks them up through Application Default Credentials. There are no long-lived keys to store or rotate. (Workload Identity Federation is a different feature, for GKE Pods and for workloads outside Google Cloud.)
 
   * **Operational Ease:** You manage permissions centrally through IAM instead of handling credentials directly within Jenkins jobs.
 
@@ -1660,7 +1666,7 @@ Here's why this is the most secure and easily managed method:
 
   * **III. Establish a dedicated service account ...** Creating a service account is necessary, but storing the key as an environment variable introduces risks if the Jenkins server is compromised.
 
-  * **IV. Integrate the gcloud auth application-default login ...** This necessitates manual key rotation and places sensitive credentials on your Jenkins server
+  * **IV. Integrate the gcloud auth application-default login ...** This command is an interactive sign-in for a human user. It needs someone to complete a browser login, so it does not suit unattended pipelines, and the resulting user credentials would be stored on the Jenkins server and tie automation to one person's account.
 
 ---
 
@@ -1727,42 +1733,44 @@ These tools detect issues **after pods are already running** , which is **shift-
 
 **In your company's Google Kubernetes Engine (GKE) setup, the development environment's clusters are logging applications with verbosity, accessed by developers via kubectl logs without utilizing Cloud Logging. Additionally, there's no standardized logging structure across applications. To minimize logging-related costs while retaining GKE operational logs, what's the optimal approach?**
 
-- [ ] I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.
+- [x] I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.
 - [ ] II. Modify the logging configuration for the development cluster with: gcloud container clusters update --logging=WORKLOAD.
 - [ ] III. Disable the default logging sink within the project associated with the development environment using: gcloud logging sinks update _Default --disabled.
-- [x] IV. Implement an exclusion filter on the default logging sink within the project tied to the development environment with: severity >= DEBUG resource.type = "k8s_container".
+- [ ] IV. Implement an exclusion filter on the default logging sink within the project tied to the development environment with: severity >= DEBUG resource.type = "k8s_container".
 
 ### Explanation
 
 **Correct Option:**
 
-**IV. Implement an exclusion filter on the default logging sink within the project tied to the development environment with: severity >= DEBUG resource.type = "k8s_container".**
+**I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.**
 
 **Justification:**
 
-  * **Targeted Filtering:** Directly addresses the verbose application logs by filtering out DEBUG and lower severity log entries from Kubernetes containers, significantly reducing log volume.
+  * **Two requirements:** cut the cost of application logs in Cloud Logging, and keep collecting GKE operational logs.
 
-  * **Retains Operational Logs:** Keeps essential GKE system logs flowing to Cloud Logging for operational visibility.
+  * **Nobody reads the application logs in Cloud Logging:** developers use `kubectl logs`, which reads from the node and does not depend on Cloud Logging, and the logs have no uniform structure, so they are hard to query anyway.
 
-  * **Minimal Change:** Minimizes disruption, requiring just a filter update on the existing logging sink.
-
-  * **Cost-Effective:** Reduces the volume of ingested logs, directly impacting logging costs.
+  * **`--logging=SYSTEM` controls collection at the source:** it collects logs from system namespaces (such as kube-system), node services such as kubelet and containerd, and Kubernetes events, and stops collecting application (workload) logs. The verbose application logs are never ingested, so you don't pay for them, and operational logs keep flowing.
 
 **Why Other Options Are Less Suitable:**
 
-  * **I. Update the development cluster using the command: gcloud container clusters update --logging=SYSTEM.**
+  * **II. `--logging=WORKLOAD`**
 
-    * **Too Broad:** Disables application logging entirely, potentially hindering necessary debugging for developers.
+    * Workload logs are the application logs, the very thing you want to stop collecting. Google also documents SYSTEM as required for all clusters, so WORKLOAD alone isn't a valid way to express this.
 
-    * **Loses Valuable Developer Insights:** May eliminate useful troubleshooting logs generated by developer-side applications.
+  * **III. Disable the `_Default` sink**
 
-  * **II. Modify the logging configuration for the development cluster with: gcloud container clusters update --logging=WORKLOAD.**
+    * Stops routing almost all project logs to the `_Default` bucket, including the GKE operational logs you must keep. (The `_Required` sink still keeps audit logs, but that doesn't cover GKE system logs.)
 
-    * **No Filtering:** Doesn't address the verbosity issue. Logs would still be sent to Cloud Logging, incurring costs.
+  * **IV. Exclusion filter `severity >= DEBUG resource.type = "k8s_container"`**
 
-  * **III. Disable the default logging sink within the project associated with the development environment using: gcloud logging sinks update _Default --disabled.**
+    * `severity >= DEBUG` matches essentially **every** container log entry, not only DEBUG ones, and `k8s_container` also covers system Pods, so it can drop operational logs too. It also filters after collection instead of avoiding collection. Exclusion filters fit when you want to keep part of the application logs.
 
-    * **Extreme Measure:** Completely disables all logging, including crucial GKE operational logs, hindering monitoring and troubleshooting.
+**References:**
+
+<https://cloud.google.com/kubernetes-engine/docs/concepts/about-logs>
+
+<https://cloud.google.com/logging/docs/routing/overview>
 
 ---
 
@@ -1820,21 +1828,21 @@ These tools detect issues **after pods are already running** , which is **shift-
 **To enforce multiple constraint templates, including policies such as restricting the Kubernetes API, across your Google Kubernetes Engine (GKE) clusters, while ensuring these parameters are stored in a GitHub repository and automatically applied upon changes, what approach should you take?**
 
 - [ ] I. Implement a GitHub action to trigger Cloud Build upon parameter changes, then use Cloud Build to execute a gcloud CLI command for applying the modifications.
-- [ ] II. Utilize a webhook to notify Anthos Service Mesh of changes in GitHub, triggering the application of modifications.
-- [x] III. Configure Anthos Config Management with the GitHub repository to automatically apply changes from the repository.
+- [ ] II. Utilize a webhook to notify Cloud Service Mesh of changes in GitHub, triggering the application of modifications.
+- [x] III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository.
 - [ ] IV. Configure Config Connector with the GitHub repository to automatically apply changes from the repository.
 
 ### Explanation
 
 **Correct Option:**
 
-**III. Configure Anthos Config Management with the GitHub repository to automatically apply changes from the repository.**
+**III. Configure Config Sync with the GitHub repository so Policy Controller constraints are automatically applied from the repository.**
 
 **Justification:**
 
-  * **Purpose-Built Tool:** Anthos Config Management (ACM) is designed specifically for managing configurations across multiple Kubernetes clusters, including policies like constraint templates.
+  * **Purpose-Built Tool:** Config Sync (with Policy Controller; formerly packaged as Anthos Config Management) is designed specifically for managing configurations across multiple Kubernetes clusters, including policies like constraint templates.
 
-  * **GitOps Workflow:** ACM integrates seamlessly with Git, enabling a GitOps workflow where configuration changes in the repository trigger automatic updates to clusters.
+  * **GitOps Workflow:** Config Sync integrates seamlessly with Git, enabling a GitOps workflow where configuration changes in the repository trigger automatic updates to clusters.
 
   * **Centralized Management:** Provides a centralized way to enforce multiple constraint templates consistently across GKE clusters.
 
@@ -1842,11 +1850,11 @@ These tools detect issues **after pods are already running** , which is **shift-
 
   * **I. Implement a GitHub action to trigger Cloud Build upon parameter changes, then use Cloud Build to execute a gcloud CLI command for applying the modifications.**
 
-    * **More Complexity:** This approach requires building custom automation with GitHub Actions and Cloud Build. It's less streamlined than a dedicated config management tool like ACM.
+    * **More Complexity:** This approach requires building custom automation with GitHub Actions and Cloud Build. It's less streamlined than a dedicated config management tool like Config Sync.
 
-  * **II. Utilize a webhook to notify Anthos Service Mesh of changes in GitHub, triggering the application of modifications.**
+  * **II. Utilize a webhook to notify Cloud Service Mesh of changes in GitHub, triggering the application of modifications.**
 
-    * **Mismatched Focus:** Anthos Service Mesh is primarily focused on service networking and traffic management, not enforcing cluster policies across multiple clusters.
+    * **Mismatched Focus:** Cloud Service Mesh is primarily focused on service networking and traffic management, not enforcing cluster policies across multiple clusters.
 
   * **IV. Configure Config Connector with the GitHub repository to automatically apply changes from the repository.**
 
@@ -1854,9 +1862,9 @@ These tools detect issues **after pods are already running** , which is **shift-
 
 **References:**
 
-<https://medium.com/@kasiarun/introduction-to-anthos-config-management-1a43917c26ae>
+<https://docs.cloud.google.com/kubernetes-engine/config-sync/docs/overview>
 
-<https://cloud.google.com/anthos-config-management/docs/concepts/policy-controller>
+<https://docs.cloud.google.com/kubernetes-engine/enterprise/policy-controller/docs/overview>
 
 ---
 
@@ -2316,7 +2324,7 @@ Therefore option I, which identifies the benefit as $900 and rejects the $2 000 
 
   * **II. “Assess the value at $1 000 and conclude the investment is not justified.”**
 
-    * The conclusion (not justified) is fine, but the _benefit figure_ is wrong. Correct math gives ≈ $900, not $1 000; an extra $100 appears from rounding far beyond two significant digits.
+    * The conclusion (not justified) is fine, but the _benefit figure_ is wrong. Correct math gives ≈ $900, not $1 000. The $1 000 figure comes from multiplying revenue by 0.1% (the old unavailability) instead of by the 0.09-point difference between 99.9% and 99.99%.
 
   * **III. “Determine the value at $1 000 and conclude the investment is justified.”**
 
@@ -2418,88 +2426,44 @@ Here's why and a breakdown of the other options:
 - [ ] A. Increase serving capacity across all application zones.
 - [x] B. Opt for more frequent or potentially risky application releases.
 - [ ] C. Adjust the SLO to better match the observed reliability of the application.
-- [x] D. Introduce and assess additional Service Level Indicators (SLIs) for the application.
-- [ ] E. Schedule planned downtime to utilize more of the error budget, ensuring users aren't reliant on a stricter SLO.
+- [ ] D. Introduce and assess additional Service Level Indicators (SLIs) for the application.
+- [x] E. Schedule planned downtime to utilize more of the error budget, ensuring users aren't reliant on a stricter SLO.
 
 ### Explanation
 
-**Correct Answers: B and D**
+**Correct Answers: B and E**
 
 **Reasoning**
 
-Your application has consistently consumed **less than 5%** of its error budget over six months.  
-This means:
-
-  * The service is **more reliable than required** by the current SLO.
-
-  * You are **under-utilizing your error budget**.
-
-  * You can afford to **move faster** without hurting users or violating SLOs.
-
-Google SRE guidance states:
-
-  * **If your error budget is consistently under-consumed** , you should **increase the release velocity**.
-
-  * **If your SLO is appropriate and not too strict** , you should **NOT tighten it** , but instead improve value delivery or observability by adding meaningful SLIs.
-
-This leads to the two correct choices.
+Your application has consistently consumed **less than 5%** of its error budget over six months, and stakeholders have just confirmed that the SLO is set correctly. So the SLO is fixed, and what has to move is the **observed reliability**, which is far above what the SLO requires. The goal is met by deliberately spending some of the unused error budget, not by changing the target or adding reliability.
 
 **Correct Answer 1: B. Opt for more frequent or potentially risky application releases.**
 
-Why this is correct
+Releases are a major source of outages. Releasing more often, or taking somewhat more risk per release, spends unused error budget in exchange for velocity, while the SLO still limits how far you can go. This is the core idea of an error budget: unreliability you are allowed to spend on change.
 
-Underused error budget means:
+**Correct Answer 2: E. Schedule planned downtime to utilize more of the error budget, ensuring users aren't reliant on a stricter SLO.**
 
-  * You can ship faster
-
-  * You can take more risk
-
-  * You can accelerate innovation
-
-This is exactly what Google’s **Error Budget Policy** recommends.
-
-**Reference:**  
-**Google SRE Book - Error Budget Policy**  
-<https://sre.google/sre-book/availability-table/>
-
-**Correct Answer 2: D. Introduce and assess additional Service Level Indicators (SLIs) for the application.**
-
-**Why this is correct**
-
-If your system appears _too reliable_ , you might not be measuring **all** important aspects of user experience.
-
-Adding or refining SLIs can:
-
-  * Improve understanding of real reliability
-
-  * Ensure all critical user interactions are measured
-
-  * Align reliability signals with business needs
-
-This is a standard SRE practice when reliability seems artificially high.
-
-**Reference:**  
-**Google SRE Workbook – Implementing SLIs**  
-<https://sre.google/workbook/implementing-slos/>
+Users come to depend on the reliability they actually see, not the reliability you promised. A service that greatly exceeds its SLO effectively creates a tighter, implicit SLO. The SRE book describes this with Google's Chubby lock service: SRE makes sure the service meets, but does not greatly exceed, its SLO, and uses **planned outages** so that dependent teams don't assume it never fails. Any planned downtime must stay within the error budget and be announced in advance.
 
 **Why the Other Options Are Incorrect**
 
 **A. Increase serving capacity**
 
-This increases cost and does not improve alignment with SLOs.  
-Your system is already exceeding expectations.
+This raises reliability and cost even further, which widens the gap between the SLO and observed reliability. It is the opposite of the goal.
 
 **C. Adjust the SLO**
 
-You **already confirmed** the SLO is appropriate.  
-Tightening it would reduce error budget artificially and may slow velocity without business need.
+You **already confirmed** the SLO is appropriate. Tightening it to match observed reliability shrinks the error budget, slows velocity, and commits the team to a level of reliability nobody asked for.
 
-**E. Schedule planned downtime**
+**D. Introduce and assess additional SLIs**
 
-This is anti-SRE and harmful.  
-Never reduce reliability intentionally just to “use up” error budget.
+More SLIs help when the current indicators miss important user journeys. Nothing in the scenario says the SLIs are inadequate, and measuring more does not close the gap between a confirmed SLO and an unused error budget.
 
-**Final Answer: B and D**
+**References:**  
+[Google SRE Book – Service Level Objectives](https://sre.google/sre-book/service-level-objectives/) (the Chubby planned-outage example)  
+[Google SRE Workbook – Implementing SLOs](https://sre.google/workbook/implementing-slos/)
+
+**Final Answer: B and E**
 
 ---
 
@@ -2765,7 +2729,7 @@ Adjusting the selector on the Service to target the blue version specifically wo
 
 **B. Rolling back the Deployment green-app to use the prior version of the application:**
 
-  * While rolling back the green version would address the immediate issue, it may impact user experience as the application would revert to a potentially outdated version. Additionally, it doesn't provide developers with a controlled environment to diagnose the issue.
+  * Rolling back green would stop the errors, but it is slower than switching traffic (Pods must be replaced) and it destroys the failing version, so developers can no longer inspect it. Switching the Service selector to blue is instant and leaves green running for debugging.
 
 **C. Modifying the selector on the Service appservice to app: my-app:**
 
@@ -2806,11 +2770,11 @@ Let's break down why this is the most suitable solution and discuss the other op
 
 **D. Employ the create_before_destroy meta-argument within the instance template's lifecycle block, setting it to true.**
 
-  * **How it works:** create_before_destroy forces Terraform to create a new instance template (with the updated machine type) _before_ destroying the old template. This allows the managed instance group to seamlessly transition to the new resource, avoiding downtime.
+  * **How it works:** create_before_destroy forces Terraform to create a new instance template (with the updated machine type) _before_ destroying the old template. Terraform then points the managed instance group at the new template and only afterwards deletes the old one, so the "template is in use" error goes away and everything happens in a single `terraform apply`. (The template must use `name_prefix` or a generated name so the old and new templates can exist at the same time.)
 
   * **Advantages**
 
-    * **Minimizes application disruption:** The managed instance group can continue serving traffic from the old instances while new ones with the updated machine type are spun up.
+    * **Minimizes application disruption:** Swapping the template does not touch running instances. How and when existing VMs move to the new machine type depends on the MIG's update policy (for example a proactive rolling update), not on `create_before_destroy` itself.
 
     * **Maintains CI/CD pipeline consistency:** Your pipeline won't need major modifications, allowing for smooth continuous deployment.
 
@@ -2822,7 +2786,7 @@ Let's break down why this is the most suitable solution and discuss the other op
 
   * **B. Introduce a new instance template, update the managed instance group to use this new template, and subsequently delete the old instance template.**
 
-    * While less disruptive, it involves more manual steps and could cause temporary inconsistencies due to a mix of instance types.
+    * This reaches the same end state, but done as separate steps it needs several code changes and pipeline runs (add the new template, switch the MIG, then remove the old template). That raises pipeline execution frequency, which the question asks you to minimize. `create_before_destroy` does the same sequence automatically in one run.
 
   * **C. Eliminate the managed instance group from your Terraform state file, update the instance template, and then re-import the managed instance group.**
 
@@ -3114,7 +3078,7 @@ Deploying the application to each region and serving it from a global anycast IP
 
 **III. Deploy the application to one region per continent, utilizing a regional external HTTP(S) load balancer in each region, and assign the same global IP address to all regional load balancers.**
 
-  * While deploying the application to one region per continent can improve latency compared to a single region deployment, it may not provide the most optimal response times as users within continents may still experience latency due to regional distances.
+  * Regional external load balancers can't share one global anycast IP address. A global IP address requires the global external Application Load Balancer (Premium Tier), so this design can't be built as described.
 
 **IV. Deploy the application to a single region and configure Google Cloud Armor in the frontend to permit traffic from all IP addresses.**
 
@@ -3161,7 +3125,7 @@ Configuring a maintenance exclusion window with a scope of "No minor or node upg
 
 **III. Establishing a "PodDisruptionBudget" object with maxUnavailable specified as 100%:**
 
-  * Specifying maxUnavailable as 100% in a PodDisruptionBudget would effectively prevent any Pod disruptions during maintenance activities. However, it wouldn't prevent node upgrades or other maintenance tasks that could still impact the database's operation. Additionally, this approach may not align with best practices for managing Pod disruptions.
+  * Specifying maxUnavailable as 100% in a PodDisruptionBudget allows **all** of the Pods to be disrupted at once, so it gives no protection at all. A PDB that blocks evictions would use maxUnavailable: 0 (or minAvailable equal to the replica count), and even that only delays node drains; GKE still upgrades the node after a timeout. It doesn't stop the upgrades that cause the disruption.
 
 **References:**
 
