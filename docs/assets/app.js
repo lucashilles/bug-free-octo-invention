@@ -169,7 +169,7 @@
       $('.qactions', el).innerHTML = '';
       $('.feedback', el).innerHTML = `
         <p class="result ${ok ? 'ok' : 'bad'}">${selected.size === 0 ? 'Not answered' : ok ? '✓ Correct' : '✗ Incorrect'}</p>
-        <details class="explain" ${opts.openExplanation === false ? '' : 'open'}><summary>Explanation</summary><div class="prose">${q.explanation}</div></details>
+        ${q.explanation ? `<details class="explain" ${opts.openExplanation === false ? '' : 'open'}><summary>Explanation</summary><div class="prose">${q.explanation}</div></details>` : ''}
         ${lessons.length ? `<p class="muted" style="font-size:13.5px;margin-top:10px">Related lesson${lessons.length > 1 ? 's' : ''}: ${lessons.map(l => `<a href="${lessonHref(l)}">${l.domain}.${l.num} ${esc(l.title)}</a>`).join(' · ')}</p>` : ''}`;
       if (opts.onReveal) opts.onReveal(ok);
       return ok;

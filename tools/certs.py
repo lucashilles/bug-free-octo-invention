@@ -51,6 +51,31 @@ CERTS = {
         },
         'prefix_rules': [],
     },
+    'gcdl': {
+        'code': 'GCDL',
+        'name': 'Cloud Digital Leader',
+        'domains': {
+            1: {'slug': '01-digital-transformation', 'title': 'Digital Transformation with Google Cloud',
+                'short': 'Digital Transformation', 'weight': '~17%',
+                'desc': 'Why cloud, cloud models and economics (CapEx vs OpEx, TCO), Google Cloud infrastructure, and leading cloud adoption.'},
+            2: {'slug': '02-data-transformation', 'title': 'Exploring Data Transformation with Google Cloud',
+                'short': 'Data Transformation', 'weight': '~16%',
+                'desc': 'The data value chain, structured vs unstructured data, databases and storage options, BigQuery, Looker and data governance.'},
+            3: {'slug': '03-ai-innovation', 'title': 'Innovating with Google Cloud Artificial Intelligence',
+                'short': 'AI & ML', 'weight': '~16%',
+                'desc': 'AI/ML fundamentals, pre-trained APIs, AutoML, Vertex AI, generative AI and agents, and responsible AI.'},
+            4: {'slug': '04-modernize-infrastructure', 'title': 'Modernize Infrastructure and Applications with Google Cloud',
+                'short': 'Infrastructure & Apps', 'weight': '~17%',
+                'desc': 'Compute options, containers and serverless, migration paths, hybrid and multicloud, APIs and application modernization.'},
+            5: {'slug': '05-trust-and-security', 'title': 'Trust and Security with Google Cloud',
+                'short': 'Trust & Security', 'weight': '~17%',
+                'desc': 'Shared responsibility, zero trust, IAM, encryption, threats, compliance, data sovereignty and residency.'},
+            6: {'slug': '06-scaling-operations', 'title': 'Scaling with Google Cloud Operations',
+                'short': 'Operations & SRE', 'weight': '~17%',
+                'desc': 'Cost management and billing, resource hierarchy, SRE and DevOps, SLAs/SLOs, observability, and sustainability.'},
+        },
+        'prefix_rules': [],
+    },
 }
 
 

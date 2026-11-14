@@ -1,0 +1,57 @@
+{
+  "_comment": "Corrections applied by tools/parse_md.py on top of the raw dumps. Keys are <exam>-<n>. 'question' is a list of [old, new] text replacements in the stem, 'answers' replaces option text by letter, 'correct' changes the keyed letter, 'why' records the reason.",
+  "2-27": {
+    "answers": {"B": "B. To store and analyze large volumes of structured and unstructured data at scale"},
+    "why": "Key claimed BigQuery analyzes speech files with low-latency processing; BigQuery is not a low-latency engine and doesn't analyze raw audio by itself."
+  },
+  "2-38": {
+    "answers": {"C": "C. High-memory VMs"},
+    "why": "Options B and C were both 'CPUs'."
+  },
+  "3-32": {
+    "question": [["After the migration, what is QuickServeNow responsible for?", "After the migration, which change will QuickServeNow need to adapt to?"]],
+    "why": "Asked what the customer is 'responsible for' but keyed a consequence of migrating, not a shared-responsibility duty."
+  },
+  "4-25": {
+    "question": [["is temporarily below its service level objective, but the team still has remaining error budget", "is meeting its service level objective and the team still has plenty of error budget remaining"]],
+    "why": "Premise was contradictory: a service below its SLO has normally used up its error budget."
+  },
+  "4-29": {
+    "question": [
+      ["how this move usually changes the company’s total cost of ownership model", "how this move usually changes the way the company pays for IT"],
+      ["How does TCO generally shift when", "How does the company’s IT spending generally shift when"]
+    ],
+    "why": "TCO is a total, not a spending model; what shifts is the spending structure."
+  },
+  "4-34": {
+    "answers": {"A": "A. A Spot VM on Compute Engine"},
+    "why": "Preemptible VMs are the older product; Spot VMs replaced them."
+  },
+  "4-35": {
+    "correct": "A",
+    "why": "Key was 'primarily from high-risk regions'; a model that predicts for all regions needs representative training data from all of them."
+  },
+  "5-5": {
+    "question": [["Which Google Cloud product or service is most closely related", "Which technology is most closely related"]],
+    "why": "Asked for a product or service but keyed 'Machine learning', which is a technique."
+  },
+  "5-46": {
+    "answers": {"A": "A. They don't require data science expertise."},
+    "why": "'Don't require technical specialists' overstated it: a developer still calls the API; what's removed is the need for ML specialists."
+  },
+  "6-19": {
+    "answers": {"A": "A. Recording application and operating system events as timestamped entries"},
+    "why": "'Writing events as text' was too loose; Cloud Logging also stores structured entries."
+  },
+  "6-48": {
+    "question": [
+      ["from many internal and external systems", "from systems running on Google Cloud and on two other public cloud providers"],
+      ["bring these data sources together so", "bring these data sources together across providers so"]
+    ],
+    "why": "Keyed 'Multi cloud environment' but the stem never mentioned more than one cloud provider."
+  },
+  "6-49": {
+    "answers": {"B": "B. Adopt a zero-trust model that verifies users, devices and applications."},
+    "why": "Key described zero trust as 'multiple layers of network security', mixing it up with defense in depth."
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "The base vocabulary of cloud security: the CIA triad (confidentiality, integrity, availability), security posture and cyber resilience. These terms appear as answer options throughout the domain, so knowing each one precisely prevents mix-ups.",
+      "objectives": [
+        "Define confidentiality, integrity and availability and tell them apart from compliance",
+        "Explain security posture as the full view of an organization's security readiness",
+        "Describe cyber resilience as prevent, continue, limit impact and recover",
+        "Recognize that long-term security depends on expertise and process, not a single tool"
+      ],
+      "takeaways": [
+        "Availability means data is dependable and accessible when needed.",
+        "Compliance (meeting standards) is not part of the CIA triad.",
+        "Security posture is the complete picture: network, identity, monitoring and consistent policies.",
+        "Cyber resilience covers prevention, continuity, limiting impact and fast recovery.",
+        "Buying the most expensive platform is never the long-term answer. Invest in people and an evolving plan."
+      ]
+    },
+    "2": {
+      "summary": "The exam describes a scenario and asks you to name the threat. This lesson covers phishing, malware, ransomware, cryptomining, misconfiguration, third-party (supply chain) risk, LLM prompt injection and DDoS, with the clue words that identify each one.",
+      "objectives": [
+        "Identify phishing, malware and ransomware from scenario clues",
+        "Recognize cryptomining from unauthorized VMs and unexpected bills",
+        "Distinguish misconfiguration and third-party risk from software exploits",
+        "Describe prompt injection as an attack on LLM-based applications"
+      ],
+      "takeaways": [
+        "Fake message asking for a password or bank details is phishing, a social engineering attack.",
+        "Encrypted files plus a payment demand is ransomware. Secret theft or damage is generic malware.",
+        "Unauthorized VMs and a rising bill point to cryptomining.",
+        "A public bucket opened by mistake is misconfiguration, not a zero-day.",
+        "Entry through a vendor plugin is an unsecured third-party system.",
+        "Prompts that make an AI assistant ignore its instructions are an LLM attack (prompt injection)."
+      ]
+    },
+    "3": {
+      "summary": "Security in the cloud is shared. Google always secures the physical infrastructure, while the customer secures its operating systems (in IaaS), code, data and access policies. The split shifts toward Google as services become more managed.",
+      "objectives": [
+        "State which responsibilities Google always holds",
+        "List the customer's responsibilities when using IaaS such as Compute Engine",
+        "Identify who defines data access policies"
+      ],
+      "takeaways": [
+        "Physical data center security belongs to Google alone, in every service model.",
+        "In IaaS the customer patches and hardens the guest OS and secures its code.",
+        "The customer's IT team defines who can access which data.",
+        "Assuming security is fully Google's job is always wrong."
+      ]
+    },
+    "4": {
+      "summary": "IAM controls who can do what on which resource. This lesson covers authentication versus authorization, 2-Step Verification, least privilege and mapping roles to job functions so access stays manageable.",
+      "objectives": [
+        "Use IAM to grant view-only access without delete or create rights",
+        "Distinguish authentication from authorization",
+        "Describe 2SV/MFA and the factors it uses",
+        "Apply least privilege and role-per-job-function design"
+      ],
+      "takeaways": [
+        "Who can view vs. delete a dataset is an IAM question.",
+        "Authentication proves who you are. Authorization decides what you can do.",
+        "Password plus phone prompt, code or security key is 2SV/MFA.",
+        "Least privilege means only the permissions the job needs.",
+        "Map roles to job functions (groups), not to each person, and avoid basic roles and shared service accounts."
+      ]
+    },
+    "5": {
+      "summary": "Protecting traffic and applications: firewall rules allow or deny traffic, Google Cloud Armor defends against DDoS, and Model Armor screens generative AI prompts and responses. Zero trust replaces trust in the network perimeter with verification of every request.",
+      "objectives": [
+        "Choose firewall rules to allow or deny network traffic",
+        "Choose Google Cloud Armor for DDoS protection on public apps",
+        "Choose Model Armor to reduce prompt injection and harmful AI output",
+        "Explain zero trust and how it differs from perimeter security and VPNs"
+      ],
+      "takeaways": [
+        "DDoS on a public website means Google Cloud Armor.",
+        "Security Command Center finds risks but doesn't stop DDoS traffic.",
+        "Model Armor inspects AI prompts and responses.",
+        "Zero trust verifies every identity, device and request from any location.",
+        "Perimeter security that trusts the internal network is the outdated model."
+      ]
+    },
+    "6": {
+      "summary": "Google Cloud encrypts all customer data at rest and in transit by default, which also protects data if someone gains physical access. Customers still need regular backups and an incident response plan to recover from failures, ransomware and breaches.",
+      "objectives": [
+        "State when Google Cloud encrypts data by default",
+        "Explain how encryption protects data from physical intrusion",
+        "Choose backups to restore a known-good state",
+        "Explain why an incident response plan is still needed in the cloud"
+      ],
+      "takeaways": [
+        "Data is encrypted by default at rest and in transit, with no setup.",
+        "Security Command Center and Sensitive Data Protection are not what provides default encryption.",
+        "Strong encryption protects stored data even if hardware is physically accessed.",
+        "Regular backups restore data after device failure or ransomware.",
+        "An incident response plan reduces the impact of a breach."
+      ]
+    },
+    "7": {
+      "summary": "Google Cloud's security operations and threat intelligence portfolio: Security Command Center for posture, Google Security Operations for detection and response, and Mandiant, VirusTotal and Google Threat Intelligence for knowledge about attackers.",
+      "objectives": [
+        "Choose Security Command Center for a central posture and vulnerability view",
+        "Choose Google Security Operations for alert ingestion, detection and response",
+        "Define threat intelligence and name its Google sources",
+        "Tell Mandiant, VirusTotal and Google Threat Intelligence apart"
+      ],
+      "takeaways": [
+        "Central view of misconfigurations and vulnerabilities across projects is Security Command Center.",
+        "Too many alerts, need detection, investigation and response is Google Security Operations.",
+        "Threat intelligence is analyzed knowledge of attacker goals, targets and TTPs.",
+        "Mandiant = frontline incident response. VirusTotal = multi-engine file and URL scanning.",
+        "Google Threat Intelligence combines Mandiant, VirusTotal, Google visibility and AI."
+      ]
+    },
+    "8": {
+      "summary": "Google Cloud's trust commitments and compliance tools: customers own and can export their data, Google doesn't use it for advertising, and privacy practices are independently audited. It also covers data sovereignty, privacy, Compliance Reports Manager and how OpEx changes security spending.",
+      "objectives": [
+        "Define data sovereignty and privacy in the cloud",
+        "State who owns customer data and whether it can be exported",
+        "List Google's privacy commitments",
+        "Use Compliance Reports Manager to get certificates and audit reports"
+      ],
+      "takeaways": [
+        "Data sovereignty means data is governed by the laws of the country where it is stored.",
+        "Privacy means restrictions on how data is accessed and shared.",
+        "The customer owns its data and can export it at any time.",
+        "Google does not use customer data for advertising and has its privacy practices audited.",
+        "ISO 27001 certificates and audit reports come from Compliance Reports Manager.",
+        "OpEx removes big upfront security investment but not the customer's configuration duties."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "2-Step Verification (2SV)",
+      "definition": "Sign-in that requires a password plus a second factor such as a phone prompt, a code or a hardware security key. Also called multi-factor authentication (MFA).",
+      "exam_context": "Password plus phone prompt, code or security key is 2SV/MFA, not data masking or DDoS protection.",
+      "lesson": 4
+    },
+    {
+      "term": "Authentication",
+      "definition": "The process of proving a user is who they claim to be, for example by signing in.",
+      "exam_context": "\"Confirm the person signing in is really the claimed user\" is authentication, not authorization or auditing.",
+      "lesson": 4
+    },
+    {
+      "term": "Authorization",
+      "definition": "Deciding what an authenticated identity is allowed to do. In Google Cloud this is done with IAM roles.",
+      "exam_context": "Comes after authentication. Don't confuse \"what can you do\" with \"who are you\".",
+      "lesson": 4
+    },
+    {
+      "term": "Availability",
+      "definition": "The CIA principle that data and systems stay dependable and accessible when needed.",
+      "exam_context": "Pick \"accessible when needed\". \"Correct and complete\" is integrity, \"approved users only\" is confidentiality.",
+      "lesson": 1
+    },
+    {
+      "term": "Compliance Reports Manager",
+      "definition": "Google Cloud tool that gives customers certificates, audit reports and compliance documents such as ISO 27001 and SOC reports.",
+      "exam_context": "Answer for verifying the provider's certifications. SCC and Cloud Monitoring don't hold audit reports.",
+      "lesson": 8
+    },
+    {
+      "term": "Cryptomining",
+      "definition": "An attack where criminals use compromised accounts to run unauthorized compute that mines cryptocurrency at the victim's expense.",
+      "exam_context": "Clues: unknown VMs, high CPU on hashing, an unexpected bill.",
+      "lesson": 2
+    },
+    {
+      "term": "Cyber resilience",
+      "definition": "The ability to reduce the chance of attacks, keep essential services running during an incident, limit impact and recover quickly.",
+      "exam_context": "Matches \"prevent, continue, limit impact, restore\". Not data masking or IaaS.",
+      "lesson": 1
+    },
+    {
+      "term": "Data sovereignty",
+      "definition": "The principle that data is subject to the laws of the country where it is stored.",
+      "exam_context": "Not \"a country can access all data\" and not encryption. Personal control of data is privacy.",
+      "lesson": 8
+    },
+    {
+      "term": "Default encryption",
+      "definition": "Google Cloud encrypts all customer data at rest and in transit automatically, with no customer setup.",
+      "exam_context": "Answer is \"at rest and in transit\" and \"encrypted by default\", not SCC or Sensitive Data Protection.",
+      "lesson": 6
+    },
+    {
+      "term": "Distributed Denial-of-Service (DDoS)",
+      "definition": "An attack that floods a service with traffic, often from a botnet, to exhaust resources and block real users.",
+      "exam_context": "The defense is Google Cloud Armor.",
+      "lesson": 5
+    },
+    {
+      "term": "Firewall rules",
+      "definition": "Rules that allow or deny incoming and outgoing network traffic to resources.",
+      "exam_context": "Answer when the question is about which traffic is allowed or denied.",
+      "lesson": 5
+    },
+    {
+      "term": "Google Cloud Armor",
+      "definition": "Google Cloud's edge security service that protects internet-facing applications from DDoS and web attacks.",
+      "exam_context": "DDoS or botnet flood on a public website means Cloud Armor, not SCC, IAP or KMS.",
+      "lesson": 5
+    },
+    {
+      "term": "Google Security Operations",
+      "definition": "Cloud-native SIEM/SOAR platform (formerly Chronicle) that centralizes security data and uses AI and threat intelligence for detection, investigation and response.",
+      "exam_context": "Answer for alert overload and faster incident response.",
+      "lesson": 7
+    },
+    {
+      "term": "Google Threat Intelligence",
+      "definition": "Offering that combines Mandiant frontline intelligence, VirusTotal crowdsourced data, Google's visibility and AI analysis.",
+      "exam_context": "Pick it when the question lists Mandiant and VirusTotal and AI together.",
+      "lesson": 7
+    },
+    {
+      "term": "Identity and Access Management (IAM)",
+      "definition": "Google Cloud service that controls who can do what on which resource by granting roles.",
+      "exam_context": "Answer for \"view but not delete or create\" access questions.",
+      "lesson": 4
+    },
+    {
+      "term": "Incident response plan",
+      "definition": "A prepared, documented process for detecting, containing and recovering from security incidents such as data exposure.",
+      "exam_context": "Still needed in the cloud. Security is not fully Google's responsibility.",
+      "lesson": 6
+    },
+    {
+      "term": "Least privilege",
+      "definition": "Granting each identity only the permissions its job requires and nothing more.",
+      "exam_context": "\"Only the specific permissions needed for their role\" is least privilege, not zero trust.",
+      "lesson": 4
+    },
+    {
+      "term": "LLM attack (prompt injection)",
+      "definition": "Crafted prompts that make an AI model ignore its instructions, leak restricted data or bypass controls.",
+      "exam_context": "Defended with Model Armor.",
+      "lesson": 2
+    },
+    {
+      "term": "Malware",
+      "definition": "Malicious software that secretly steals, alters or damages information.",
+      "exam_context": "\"Without the user noticing\" points to malware. Ransomware is a loud subtype that demands payment.",
+      "lesson": 2
+    },
+    {
+      "term": "Mandiant",
+      "definition": "Google Cloud's incident response and threat intelligence organization, known for frontline intelligence from real attacks.",
+      "exam_context": "Answer for \"hands-on incident response\" intelligence.",
+      "lesson": 7
+    },
+    {
+      "term": "Misconfiguration",
+      "definition": "A security weakness caused by incorrect settings, such as making a storage bucket public.",
+      "exam_context": "\"No software flaw exploited\" means misconfiguration, not zero-day or APT.",
+      "lesson": 2
+    },
+    {
+      "term": "Model Armor",
+      "definition": "Google Cloud capability that screens AI prompts and responses to reduce prompt injection and jailbreak risk and block harmful output.",
+      "exam_context": "Answer for securing public generative AI features.",
+      "lesson": 5
+    },
+    {
+      "term": "Phishing",
+      "definition": "Social engineering where a fake trusted message tricks people into revealing credentials or clicking malicious links.",
+      "exam_context": "Fake portal, urgent account warning, request for password or bank details.",
+      "lesson": 2
+    },
+    {
+      "term": "Privacy",
+      "definition": "In the cloud, restrictions on how personal data is accessed and shared.",
+      "exam_context": "Not identity verification (authentication) and not meeting standards (compliance).",
+      "lesson": 8
+    },
+    {
+      "term": "Ransomware",
+      "definition": "Malware that encrypts the victim's data and demands payment for the decryption key.",
+      "exam_context": "Encrypted files plus a cryptocurrency demand. Defended with backups and an incident response plan.",
+      "lesson": 2
+    },
+    {
+      "term": "Security Command Center (SCC)",
+      "definition": "Google Cloud's centralized security and risk management service that finds misconfigurations, vulnerabilities and threats across projects.",
+      "exam_context": "Answer for a central posture view across many projects. It doesn't block DDoS or encrypt data.",
+      "lesson": 7
+    },
+    {
+      "term": "Security posture",
+      "definition": "The overall state of an organization's security readiness across network, identity, monitoring and policies.",
+      "exam_context": "\"Complete view of cybersecurity readiness\" is security posture, not threat response.",
+      "lesson": 1
+    },
+    {
+      "term": "Shared responsibility model",
+      "definition": "The split of security duties between cloud provider and customer. Google secures the physical infrastructure. The customer secures its data, access and (in IaaS) operating systems and code.",
+      "exam_context": "Physical data center security is always Google's alone.",
+      "lesson": 3
+    },
+    {
+      "term": "Threat intelligence",
+      "definition": "Analyzed information about attackers' goals, targets, campaigns and tactics, techniques and procedures (TTPs).",
+      "exam_context": "Knowledge used to defend proactively. Threat response is acting on an incident.",
+      "lesson": 7
+    },
+    {
+      "term": "Zero trust architecture",
+      "definition": "Security model that trusts no network location and verifies every identity, device and request before granting access.",
+      "exam_context": "Replaces perimeter trust and VPN-centric access. Google's version is BeyondCorp.",
+      "lesson": 5
+    }
+  ]
+}

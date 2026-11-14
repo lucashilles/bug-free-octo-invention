@@ -1,0 +1,255 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "Digital transformation means using cloud, data, automation and AI to redesign how a business operates and serves customers. This lesson covers what the term means on the exam, which customer expectations drive it, and why it is more than a hosting change.",
+      "objectives": [
+        "Define digital transformation and tell it apart from narrower labels like data center migration",
+        "Explain why cloud adoption is a chance to redesign processes and services, not just cut costs",
+        "Recognize the modern customer expectations behind transformation: any-device access and always-on service"
+      ],
+      "takeaways": [
+        "Cloud + analytics + automation to redesign workflows and customer experience = digital transformation.",
+        "Cloud adoption is a business change, not an IT-only change, and not only for large companies.",
+        "The long-term value of cloud is that teams focus on building solutions instead of running infrastructure.",
+        "Customers expect information on any device and services that are always on.",
+        "Options with 'only', 'exclusively' or 'never' are usually wrong at this level."
+      ]
+    },
+    "2": {
+      "summary": "On-premises capacity is fixed, so traffic spikes force a choice between paying for idle peak hardware or suffering outages. This lesson explains the scaling pain the exam describes and how elastic cloud capacity removes it.",
+      "objectives": [
+        "Identify why on-prem infrastructure struggles to scale: buying, installing and maintaining hardware is slow and costly",
+        "Explain how cloud elasticity and pay-per-use solve over- and under-provisioning",
+        "Reject serverless, multicloud and compliance distractors in on-prem scenarios"
+      ],
+      "takeaways": [
+        "On-prem traffic spike problems come down to fixed capacity and the cost of provisioning for peak.",
+        "Cloud lets you pay only for what you need, when you need it.",
+        "Public cloud gives access to data and compute not tied to one physical location.",
+        "Public cloud is cost-effective for storing and serving data at large scale.",
+        "Cloud never promises 100% availability or removes the need for security."
+      ]
+    },
+    "3": {
+      "summary": "Moving to cloud changes how IT is paid for: from large upfront capital purchases to ongoing operational spending. This lesson covers CapEx vs OpEx, TCO, ROI and the pay-as-you-go model.",
+      "objectives": [
+        "Define CapEx and OpEx and state the direction of the shift when moving to cloud",
+        "Explain what total cost of ownership includes and why it is reviewed before migration",
+        "Describe how cloud affects infrastructure management and personnel costs"
+      ],
+      "takeaways": [
+        "Moving to cloud shifts spending from CapEx to OpEx. OpEx to CapEx is always the wrong direction.",
+        "After migration, the business adapts to a consumption-based, pay-as-you-go model.",
+        "Review TCO before migrating to evaluate return on investment.",
+        "Cloud reduces on-prem infrastructure management costs; the provider maintains the hardware.",
+        "Usage-based bills are not automatically more predictable; they need monitoring."
+      ]
+    },
+    "4": {
+      "summary": "Deployment models describe where workloads run: on-premises, public cloud, private cloud, hybrid or multicloud. The exam mostly tests the definition of hybrid cloud and how it differs from multicloud.",
+      "objectives": [
+        "Define public, private, hybrid and multicloud deployment models",
+        "Distinguish hybrid (private + public) from multicloud (several public providers)",
+        "Explain why organizations keep some systems on-prem while using public cloud"
+      ],
+      "takeaways": [
+        "Hybrid cloud = private or on-prem infrastructure + public cloud services used together.",
+        "Multicloud = two or more public cloud providers.",
+        "Hybrid lets sensitive systems stay on-prem while analytics and new services use the cloud.",
+        "Deployment models are not service models: 'hybrid cloud' is a distractor in IaaS/PaaS/SaaS questions.",
+        "Hybrid and multicloud products such as GKE Enterprise are covered in Domain 4."
+      ]
+    },
+    "5": {
+      "summary": "Service models describe how much the provider manages for you. This lesson covers IaaS, PaaS and SaaS, the shared responsibility split between customer and provider, and the scenario wording that points to each model.",
+      "objectives": [
+        "Match a scenario to IaaS, PaaS or SaaS based on what the customer wants to manage",
+        "Describe who manages each layer under each service model",
+        "Identify what a SaaS customer remains responsible for"
+      ],
+      "takeaways": [
+        "IaaS: rent VMs, storage and networking and configure them yourself.",
+        "PaaS: deploy your own code; the provider runs servers, OS and scaling.",
+        "SaaS: use a ready-made application; you manage only your content, data and users.",
+        "The provider always manages the physical data center, network and hardware.",
+        "'Network as a service' and 'Functions as a service' are distractors in these questions."
+      ]
+    },
+    "6": {
+      "summary": "Google Cloud runs on a global network of regions and zones built with custom hardware. This lesson covers regions vs zones, the difference between latency and bandwidth, how to serve distant users, and why Google builds purpose-built servers.",
+      "objectives": [
+        "Explain regions and zones and what each protects against",
+        "Distinguish network latency from bandwidth from a user symptom",
+        "Choose where to deploy to reduce latency for distant users",
+        "State the benefit of Google's purpose-built servers"
+      ],
+      "takeaways": [
+        "Far-away users with fast speed tests but slow pages have a latency problem, not a bandwidth problem.",
+        "To serve users on another continent, deploy a replica in a region near them.",
+        "More zones in the same region, or more regions on the same continent, don't help distant users.",
+        "Google's purpose-built servers are optimized for specific tasks, which makes them more efficient.",
+        "Edge locations and Cloud CDN bring content even closer to users."
+      ]
+    },
+    "7": {
+      "summary": "Technology alone does not transform a company. This lesson covers the leadership and culture side of cloud adoption: executive sponsorship, blameless culture, upskilling through shared learning, and Google's Cloud Adoption Framework.",
+      "objectives": [
+        "Describe the leadership behaviors that turn small migrations into company-wide transformation",
+        "Choose the right approach to building cloud skills across teams",
+        "Outline the themes and phases of the Google Cloud Adoption Framework"
+      ],
+      "takeaways": [
+        "Company-wide adoption needs visible top-down sponsorship and a blameless culture.",
+        "Build skills through continuous peer-to-peer learning with official training materials.",
+        "Isolated self-study, contractor-only expertise and 'never hire' are weaker choices.",
+        "The Cloud Adoption Framework themes are Learn, Lead, Scale and Secure, across tactical, strategic and transformational phases."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Bandwidth",
+      "definition": "The amount of data a network connection can carry per second.",
+      "exam_context": "Users with fast speed tests still see slow pages from a distant region. That is latency, not bandwidth.",
+      "lesson": 6
+    },
+    {
+      "term": "Blameless culture",
+      "definition": "A culture where incidents and failures are reviewed to learn and improve, not to assign personal blame.",
+      "exam_context": "Paired with top-down sponsorship as the way to make cloud adoption company-wide.",
+      "lesson": 7
+    },
+    {
+      "term": "Capital expenditure (CapEx)",
+      "definition": "Upfront spending on long-lived physical assets such as servers and data centers.",
+      "exam_context": "Cloud migration moves spending away from CapEx. Any option moving toward CapEx is wrong.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Adoption Framework",
+      "definition": "Google's model for cloud maturity, with themes Learn, Lead, Scale and Secure across tactical, strategic and transformational phases.",
+      "exam_context": "Not tested directly in the bank. Use it to reason about leadership and skills questions.",
+      "lesson": 7
+    },
+    {
+      "term": "Consumption-based pricing",
+      "definition": "Paying for cloud resources according to what you actually use, also called pay-as-you-go.",
+      "exam_context": "After migrating, the customer adapts to this spending model; it solves over- and under-buying for peaks.",
+      "lesson": 3
+    },
+    {
+      "term": "Digital transformation",
+      "definition": "Using cloud, data, analytics, automation and AI to redesign business processes, collaboration and customer experiences.",
+      "exam_context": "The label for a scenario that combines several technologies to change how the business works.",
+      "lesson": 1
+    },
+    {
+      "term": "Elasticity",
+      "definition": "The ability to add and remove capacity automatically as demand changes.",
+      "exam_context": "Answers holiday-spike scenarios where on-prem companies over-buy or run out of servers.",
+      "lesson": 2
+    },
+    {
+      "term": "Executive sponsorship",
+      "definition": "Visible, top-down support for a transformation from senior leadership.",
+      "exam_context": "Needed to move from a few cost-saving migrations to company-wide transformation.",
+      "lesson": 7
+    },
+    {
+      "term": "Hybrid cloud",
+      "definition": "An architecture that combines private or on-premises infrastructure with public cloud services.",
+      "exam_context": "Keep sensitive systems on-prem and use Google Cloud for analytics and scaling. Not the same as multicloud.",
+      "lesson": 4
+    },
+    {
+      "term": "Infrastructure as a service (IaaS)",
+      "definition": "A service model where you rent virtual machines, storage and networking and manage the OS and software yourself.",
+      "exam_context": "Rent VMs and build customized servers, paying per use. Example: Compute Engine.",
+      "lesson": 5
+    },
+    {
+      "term": "Multicloud",
+      "definition": "Using services from two or more public cloud providers.",
+      "exam_context": "The 'multiple public cloud providers' option is multicloud, the distractor in hybrid questions.",
+      "lesson": 4
+    },
+    {
+      "term": "Network latency",
+      "definition": "The delay for data to travel between a user and a server, mostly driven by distance.",
+      "exam_context": "Distant users with high-speed internet but slow loading pages. Fix by deploying closer.",
+      "lesson": 6
+    },
+    {
+      "term": "On-premises",
+      "definition": "Infrastructure owned and operated by the company in its own data center.",
+      "exam_context": "Fixed capacity makes scaling slow and costly and forces provisioning for peak.",
+      "lesson": 2
+    },
+    {
+      "term": "Operational expenditure (OpEx)",
+      "definition": "Ongoing spending on services as they are consumed, such as a monthly cloud bill.",
+      "exam_context": "Moving to cloud shifts spending toward OpEx.",
+      "lesson": 3
+    },
+    {
+      "term": "Platform as a service (PaaS)",
+      "definition": "A service model where you deploy your own code and the provider manages servers, OS and scaling.",
+      "exam_context": "Custom app that must scale, with no servers or OS to manage. Examples: App Engine, Cloud Run.",
+      "lesson": 5
+    },
+    {
+      "term": "Private cloud",
+      "definition": "Cloud-style infrastructure dedicated to a single organization, usually in its own data center.",
+      "exam_context": "Combined with public cloud it forms a hybrid cloud.",
+      "lesson": 4
+    },
+    {
+      "term": "Public cloud",
+      "definition": "Shared computing infrastructure owned and run by a provider and rented on demand over the internet.",
+      "exam_context": "Benefits: access not tied to one location, cost-effective at scale, pay for what you use.",
+      "lesson": 4
+    },
+    {
+      "term": "Purpose-built servers",
+      "definition": "Custom server hardware designed by Google for specific workloads in its data centers.",
+      "exam_context": "Their benefit is efficiency from being optimized for specific tasks, not lower build cost.",
+      "lesson": 6
+    },
+    {
+      "term": "Region",
+      "definition": "An independent geographic area where Google Cloud resources are hosted, made up of several zones.",
+      "exam_context": "Deploy a replica in a region near distant users to reduce latency.",
+      "lesson": 6
+    },
+    {
+      "term": "Return on investment (ROI)",
+      "definition": "The value gained from an investment compared with its cost.",
+      "exam_context": "Reviewing TCO before migration lets leadership evaluate the ROI of moving to cloud.",
+      "lesson": 3
+    },
+    {
+      "term": "Shared responsibility model",
+      "definition": "The division of security and operational duties between the cloud provider and the customer, which depends on the service model.",
+      "exam_context": "In SaaS, the customer is responsible for its own content and data; the provider runs the platform and infrastructure.",
+      "lesson": 5
+    },
+    {
+      "term": "Software as a service (SaaS)",
+      "definition": "A service model where the provider delivers a complete application over the internet.",
+      "exam_context": "Ready-made payroll or content apps with no servers, platform or code to manage. Example: Google Workspace.",
+      "lesson": 5
+    },
+    {
+      "term": "Total cost of ownership (TCO)",
+      "definition": "All costs of a solution over its life: hardware, software, facilities, power, staff, maintenance and downtime.",
+      "exam_context": "Compare on-prem vs cloud TCO before migration to evaluate ROI.",
+      "lesson": 3
+    },
+    {
+      "term": "Zone",
+      "definition": "An isolated deployment area within a region.",
+      "exam_context": "More zones in the same region improve availability, not latency for users on another continent.",
+      "lesson": 6
+    }
+  ]
+}

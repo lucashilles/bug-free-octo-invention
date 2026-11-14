@@ -31,7 +31,10 @@ def main():
             for a in x['answers']:
                 mark = '[x]' if a['correct'] else '[ ]'
                 L.append(f'- {mark} ' + a['text'].replace('\n\n', '\n  ').replace('\n', '\n  '))
-            L += ['', '### Explanation', '', re.sub(r'^(#+)', r'###\1', x['explanation'], flags=re.M), '', '---', '']
+            L.append('')
+            if x['explanation']:
+                L += ['### Explanation', '', re.sub(r'^(#+)', r'###\1', x['explanation'], flags=re.M), '']
+            L += ['---', '']
         path = os.path.join(cert_dir(cid), f'exam-{exam}.md')
         open(path, 'w', encoding='utf-8').write(re.sub(r'\n[ \t]*(\n[ \t]*){2,}', '\n\n', '\n'.join(L)))
         print(f'{path}: {len(qs)} questions')

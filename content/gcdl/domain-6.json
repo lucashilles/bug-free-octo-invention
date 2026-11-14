@@ -1,0 +1,323 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "Cloud spending is decentralized and variable, so organizations need financial governance (FinOps) to keep it under control. This lesson covers cost visibility, accountability and recommendations.",
+      "objectives": [
+        "Describe how cloud spending differs from on-premises spending",
+        "Explain how cost visibility per team creates accountability",
+        "Identify intelligent recommendations as the way to optimize resource use"
+      ],
+      "takeaways": [
+        "Cloud spending is decentralized and variable. On-premises spending was centralized and fixed.",
+        "Share cost views with each department so teams see their impact on the bill.",
+        "Use labels, projects and folders to break costs down by team.",
+        "Intelligent recommendations (Active Assist) rightsize and clean up resources when demand varies.",
+        "Moving to CapEx or buying physical servers is never the cloud cost answer."
+      ]
+    },
+    "2": {
+      "summary": "Google Cloud gives specific tools for controlling cost: budgets with threshold alerts, the Pricing Calculator for estimates, and automatic or committed discounts for Compute Engine.",
+      "objectives": [
+        "Set up the right tool to be notified before spend exceeds a limit",
+        "Choose the Pricing Calculator to estimate cost before deploying",
+        "Tell sustained use discounts apart from committed use discounts and Spot VMs"
+      ],
+      "takeaways": [
+        "Budget + threshold rule = notification when spend crosses a limit. It does not stop spending by itself.",
+        "The Pricing Calculator estimates monthly cost before deployment.",
+        "Sustained use discounts apply automatically. You do nothing.",
+        "Committed use discounts need a 1- or 3-year commitment.",
+        "Quotas cap resource usage. They are not a spend alert."
+      ]
+    },
+    "3": {
+      "summary": "The resource hierarchy (organization, folders, projects, resources) lets administrators set policies once and have them inherited downward.",
+      "objectives": [
+        "Name the levels of the Google Cloud resource hierarchy",
+        "Explain how folder-level policies are inherited",
+        "Use folders to apply rules to a whole team's projects"
+      ],
+      "takeaways": [
+        "Organization → Folders → Projects → Resources.",
+        "A folder policy is inherited by every project in it, and by those projects' resources.",
+        "Policies can be set at any level, not only organization or project.",
+        "Inheritance flows down, never sideways to other folders."
+      ]
+    },
+    "4": {
+      "summary": "Reliability is measured with availability percentages and the SLI, SLO and SLA trio. This lesson defines each term and converts nines into allowed downtime.",
+      "objectives": [
+        "Distinguish SLI, SLO and SLA",
+        "Express availability as a percentage of uptime",
+        "Convert an availability target into allowed downtime"
+      ],
+      "takeaways": [
+        "SLI is a measurement, SLO is an internal target, SLA is a contract.",
+        "Availability is a percentage of uptime.",
+        "Five nines (99.999%) allows about 5 minutes of downtime a year.",
+        "The SLO is set stricter than the SLA so teams react before customers are owed credits."
+      ]
+    },
+    "5": {
+      "summary": "Error budgets turn the SLO into a decision tool: spend the budget on innovation, or switch to reliability work when the SLO is missed. It also covers what happens when a provider misses its SLA.",
+      "objectives": [
+        "Calculate an error budget from an SLO",
+        "Decide between innovation and reliability work based on the error budget",
+        "Describe the consequences of a missed SLA for the provider and the customer"
+      ],
+      "takeaways": [
+        "Error budget = 100% − SLO.",
+        "Budget remaining → prioritize innovation and feature velocity.",
+        "Below the SLO → focus on reliability.",
+        "A missed provider SLA typically earns the customer a service credit.",
+        "The real business risk of downtime is customers leaving."
+      ]
+    },
+    "6": {
+      "summary": "DevOps and SRE change how teams build and run software: shared responsibility, automation of toil, small incremental changes, gradual rollouts and blameless learning from failure.",
+      "objectives": [
+        "Explain how DevOps reduces manual work and silos",
+        "Apply small incremental changes and gradual rollouts to reduce release risk",
+        "Describe SRE attitudes to toil, failure and postmortems"
+      ],
+      "takeaways": [
+        "DevOps removes repetitive manual tasks through tools and automation.",
+        "Silos are fixed by shared responsibility for business results, not blame.",
+        "Small incremental changes shorten recovery when bugs appear.",
+        "Roll out new features to a small group first.",
+        "Automate toil.",
+        "Failure is normal: accept and learn from it in blameless postmortems."
+      ]
+    },
+    "7": {
+      "summary": "Observability means visibility into infrastructure and applications through metrics and logs. The Four Golden Signals (latency, traffic, errors, saturation) are the core metrics SRE watches.",
+      "objectives": [
+        "Define observability, monitoring and logging",
+        "Name the Four Golden Signals",
+        "Map a symptom to the right golden signal"
+      ],
+      "takeaways": [
+        "Out-of-the-box observability = monitoring IT infrastructure and applications.",
+        "Monitoring collects predefined and custom metrics.",
+        "Logging records application and operating system events.",
+        "Latency = how long a request takes. Saturation = how full capacity is.",
+        "Traffic is demand, errors is the failure rate."
+      ]
+    },
+    "8": {
+      "summary": "Google Cloud Observability provides one tool per job: Monitoring, Logging, Trace, Error Reporting, Profiler and the retired Debugger. The exam tests matching a need to the tool.",
+      "objectives": [
+        "Match an operations need to the right Google Cloud Observability tool",
+        "Tell Cloud Trace apart from Cloud Profiler",
+        "Recognize Cloud Logging as the central log service"
+      ],
+      "takeaways": [
+        "Metrics, dashboards, alerts, uptime checks → Cloud Monitoring.",
+        "Collect, store and search logs in one place → Cloud Logging.",
+        "One request across microservices → Cloud Trace.",
+        "Crashes and exceptions grouped automatically → Error Reporting.",
+        "CPU and memory use per code function → Cloud Profiler.",
+        "Live code state without downtime → Cloud Debugger, now retired."
+      ]
+    },
+    "9": {
+      "summary": "Resilient systems use redundancy so they keep running when a component fails. Moving to an energy-efficient public cloud lets organizations scale quickly while meeting sustainability goals.",
+      "objectives": [
+        "Define redundancy and distinguish it from backups",
+        "Outline resilience patterns across zones and regions",
+        "Explain how public cloud supports sustainability goals"
+      ],
+      "takeaways": [
+        "Redundancy = copies of components so the service survives a failure.",
+        "Backups restore data, redundancy keeps the service running.",
+        "Spread workloads across zones and regions and use autoscaling.",
+        "Scale fast and sustainably with a cloud provider's energy-efficient data centers.",
+        "The Carbon Footprint tool reports emissions from your Google Cloud usage."
+      ]
+    },
+    "10": {
+      "summary": "Google Cloud Customer Care offers tiered support, from free Basic to Premium with the fastest response and a Technical Account Manager.",
+      "objectives": [
+        "List the Customer Care tiers in order",
+        "Pick the tier that matches a workload's criticality",
+        "Explain support case priorities"
+      ],
+      "takeaways": [
+        "Basic → Standard → Enhanced → Premium.",
+        "Premium gives the fastest P1 response and a dedicated Technical Account Manager.",
+        "Enhanced is production-grade but has no TAM.",
+        "Set case priority by business impact."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Availability",
+      "definition": "The share of time a service is up and usable, expressed as a percentage of uptime.",
+      "exam_context": "Expressed as percentage of uptime. Five nines (99.999%) ≈ 5 minutes of downtime a year.",
+      "lesson": 4
+    },
+    {
+      "term": "Blameless postmortem",
+      "definition": "A written review after an incident that records what happened, why, and how to prevent it, without blaming individuals.",
+      "exam_context": "SRE answer to a bug or incident: learn from it. Reprimanding the person responsible is a distractor.",
+      "lesson": 6
+    },
+    {
+      "term": "Budget alert",
+      "definition": "A Cloud Billing budget with threshold rules that sends notifications when actual or forecasted spend crosses set percentages.",
+      "exam_context": "Answer for 'notify us when costs cross a limit'. Quotas and past billing reports are distractors.",
+      "lesson": 2
+    },
+    {
+      "term": "Cloud Debugger",
+      "definition": "A retired tool that let developers inspect the state of running code in real time without stopping the app.",
+      "exam_context": "Keyed for 'inspect live code state without downtime'. Shut down in 2023, successor is Snapshot Debugger.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Logging",
+      "definition": "Managed service that collects, stores, searches and analyzes logs from Google Cloud resources and applications.",
+      "exam_context": "Any 'collect, store, search logs in one place' or 'search log entries across containers' question.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Monitoring",
+      "definition": "Managed service for metrics, dashboards, alerting and uptime checks.",
+      "exam_context": "Answer for dashboards, alerts and uptime checks in one place. Not Trace, Logging or Profiler.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Profiler",
+      "definition": "Continuous, low-overhead profiler that shows CPU and memory use per code function in production.",
+      "exam_context": "Pick it when the question asks which functions consume the most resources.",
+      "lesson": 8
+    },
+    {
+      "term": "Cloud Trace",
+      "definition": "Distributed tracing tool that follows a single request across services and shows time spent at each step.",
+      "exam_context": "Pick it for slow requests across microservices. Not Profiler.",
+      "lesson": 8
+    },
+    {
+      "term": "Committed use discount (CUD)",
+      "definition": "A discount in exchange for committing to a level of resource usage for 1 or 3 years.",
+      "exam_context": "The 1/3-year commitment option is a CUD, not the way to get sustained use discounts.",
+      "lesson": 2
+    },
+    {
+      "term": "DevOps",
+      "definition": "A set of practices that unites development and operations through shared tools, automation and responsibility.",
+      "exam_context": "Solves repetitive manual tasks and team silos.",
+      "lesson": 6
+    },
+    {
+      "term": "Error budget",
+      "definition": "The amount of unreliability an SLO allows: 100% minus the SLO.",
+      "exam_context": "Budget left → innovate. SLO missed → focus on reliability.",
+      "lesson": 5
+    },
+    {
+      "term": "Error Reporting",
+      "definition": "Tool that automatically collects, groups and displays application crashes and exceptions.",
+      "exam_context": "Pick it when developers don't want to dig through raw logs for exceptions.",
+      "lesson": 8
+    },
+    {
+      "term": "FinOps",
+      "definition": "Cloud financial management practice where finance, technology and business teams share accountability for cloud spend.",
+      "exam_context": "Cloud spending is decentralized and variable, so share cost views to create accountability.",
+      "lesson": 1
+    },
+    {
+      "term": "Four Golden Signals",
+      "definition": "Google SRE's core service metrics: latency, traffic, errors and saturation.",
+      "exam_context": "Map the symptom: wait time = latency, capacity used = saturation.",
+      "lesson": 7
+    },
+    {
+      "term": "Intelligent recommendations",
+      "definition": "Automated suggestions (Active Assist / Recommender) such as rightsizing VMs or removing idle resources.",
+      "exam_context": "Answer for optimizing resource use when demand and costs vary.",
+      "lesson": 1
+    },
+    {
+      "term": "Latency",
+      "definition": "The time between a request and its response.",
+      "exam_context": "'Users wait a long time' or 'time between request and response'.",
+      "lesson": 7
+    },
+    {
+      "term": "Observability",
+      "definition": "Visibility into the health, performance and behavior of systems through metrics, logs and traces.",
+      "exam_context": "Out-of-the-box observability = monitoring IT infrastructure and applications.",
+      "lesson": 7
+    },
+    {
+      "term": "Premium Support",
+      "definition": "Highest Google Cloud Customer Care tier, with the fastest critical response and a Technical Account Manager.",
+      "exam_context": "Fastest response + dedicated TAM → Premium, not Enhanced.",
+      "lesson": 10
+    },
+    {
+      "term": "Pricing Calculator",
+      "definition": "Google Cloud tool for estimating the cost of a workload before deploying it.",
+      "exam_context": "Answer for 'reliable estimate before deploying'. Not a test deployment.",
+      "lesson": 2
+    },
+    {
+      "term": "Redundancy",
+      "definition": "Duplicating important components across resources so the system keeps running when one fails.",
+      "exam_context": "Answer for 'continue operating if one component fails'. Backups restore, they don't keep you running.",
+      "lesson": 9
+    },
+    {
+      "term": "Resource hierarchy",
+      "definition": "Organization → folders → projects → resources structure used to organize and apply policies.",
+      "exam_context": "Folder policies are inherited by projects and their resources.",
+      "lesson": 3
+    },
+    {
+      "term": "Saturation",
+      "definition": "How full a system is: the share of capacity (CPU, memory, I/O) being used.",
+      "exam_context": "'How much capacity is used' or 'resources becoming constrained'.",
+      "lesson": 7
+    },
+    {
+      "term": "Service credit",
+      "definition": "Compensation a provider gives a customer when it misses its SLA.",
+      "exam_context": "What a customer typically gets when the provider misses an SLA.",
+      "lesson": 5
+    },
+    {
+      "term": "Service-level agreement (SLA)",
+      "definition": "A contract with customers promising a service level, with consequences such as credits if missed.",
+      "exam_context": "Contract/promise → SLA. Set looser than the SLO.",
+      "lesson": 4
+    },
+    {
+      "term": "Service-level indicator (SLI)",
+      "definition": "A direct measurement of service performance, such as success rate or latency.",
+      "exam_context": "'Direct measurement of how the service is performing' → SLI.",
+      "lesson": 4
+    },
+    {
+      "term": "Service-level objective (SLO)",
+      "definition": "An internal target value for an SLI.",
+      "exam_context": "'Desired reliability and performance target' → SLO.",
+      "lesson": 4
+    },
+    {
+      "term": "Sustained use discount (SUD)",
+      "definition": "Automatic discount on eligible Compute Engine VMs that run for a large part of the billing month.",
+      "exam_context": "Applied automatically, no action needed.",
+      "lesson": 2
+    },
+    {
+      "term": "Toil",
+      "definition": "Manual, repetitive, automatable operational work that grows with service size.",
+      "exam_context": "SRE best practice: prioritize automating it.",
+      "lesson": 6
+    }
+  ]
+}

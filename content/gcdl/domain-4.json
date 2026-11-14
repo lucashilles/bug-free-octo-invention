@@ -1,0 +1,302 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "Companies modernize because legacy apps are slow to change. This lesson covers the business case: faster releases, agile cloud-native development, and managed services that take routine administration off the IT team.",
+      "objectives": [
+        "Explain why slow release cycles drive application modernization",
+        "Describe what building cloud-native adds over only moving an existing app",
+        "Identify which tasks a managed service takes over and which stay with the customer"
+      ],
+      "takeaways": [
+        "Apps that take weeks to update are the classic trigger for modernization.",
+        "Modernizing on Google Cloud lets teams release fixes and features faster.",
+        "Cloud-native apps support agile feature releases.",
+        "Managed services handle patching and upgrades, not user access decisions.",
+        "Cloud moves spending toward OpEx, never back to CapEx."
+      ]
+    },
+    "2": {
+      "summary": "Virtualization is the base of cloud compute. This lesson covers hypervisors, virtual machines, Compute Engine for workloads that need full control, and Spot VMs for cheap, interruptible batch jobs.",
+      "objectives": [
+        "Explain what a hypervisor does",
+        "Choose virtual machines when each app needs its own operating system",
+        "Pick Compute Engine when a workload needs control over OS, networking and machine types",
+        "Identify workloads that suit Spot VMs"
+      ],
+      "takeaways": [
+        "A hypervisor runs several operating systems on one physical machine.",
+        "VMs give each app a dedicated OS. Containers share the host kernel.",
+        "Compute Engine = maximum control, with autoscaling and rolling updates still available.",
+        "Spot VMs (successor to Preemptible VMs) are the cheapest option for restartable, non-urgent batch work."
+      ]
+    },
+    "3": {
+      "summary": "Containers package code with its dependencies, microservices split apps into independent pieces, and GKE orchestrates the containers. This lesson covers each and when GKE Autopilot fits better than Standard.",
+      "objectives": [
+        "Explain how containerization fixes environment drift between development and production",
+        "Describe microservices and how they differ from a monolith",
+        "Explain when to use GKE and the exam's stock description of its benefit",
+        "Distinguish GKE Autopilot from GKE Standard"
+      ],
+      "takeaways": [
+        "Containers bundle code and dependencies so apps behave the same everywhere.",
+        "Microservices are built, deployed and scaled independently, each owning one business function.",
+        "GKE orchestrates containers at scale, up to thousands.",
+        "GKE's exam-phrased benefit is rapid deployment and testing of changes.",
+        "Autopilot lets Google manage nodes and cluster operations."
+      ]
+    },
+    "4": {
+      "summary": "Serverless means Google runs the servers and the app scales automatically. This lesson separates Cloud Run (containers), Cloud Run functions (event-driven snippets) and App Engine (web apps with versions and traffic splitting).",
+      "objectives": [
+        "Define serverless computing and its main benefit",
+        "Choose Cloud Run for a containerized app that should scale to zero",
+        "Choose Cloud Run functions for small event-driven code",
+        "Explain how App Engine versions support testing with different users"
+      ],
+      "takeaways": [
+        "Serverless: you write code, Google handles provisioning, scaling and patching.",
+        "Scalability, including scale to zero, is the headline serverless benefit.",
+        "Container image + serverless = Cloud Run.",
+        "Small code that runs when something happens = Cloud Run functions.",
+        "App Engine runs different versions for different users."
+      ]
+    },
+    "5": {
+      "summary": "Migration strategies differ in how much the app changes. This lesson covers rehost, replatform, refactor and reimagine, plus Google's greenfield and brownfield framing.",
+      "objectives": [
+        "Match rehost, replatform and refactor to their scenarios",
+        "Explain the trade-off between migration speed and modernization benefit",
+        "Distinguish greenfield from brownfield invention"
+      ],
+      "takeaways": [
+        "Rehost (lift and shift) changes nothing and is the fastest.",
+        "Replatform swaps in a managed component, such as Cloud SQL, with logic mostly unchanged.",
+        "Refactor into microservices for efficiency and scale, at the cost of time and code changes.",
+        "Greenfield = no existing app. Brownfield = new app that replaces an old one.",
+        "Building cloud-native goes alongside moving selected legacy workloads."
+      ]
+    },
+    "6": {
+      "summary": "Some workloads need a specialized landing zone. This lesson covers Google Cloud VMware Engine, Bare Metal Solution and Database Migration Service into Cloud SQL.",
+      "objectives": [
+        "Choose VMware Engine for VMware estates that must keep their tools",
+        "Choose Bare Metal Solution for licensing-bound or hardware-dependent workloads",
+        "Use Database Migration Service to move SQL Server and other engines into Cloud SQL"
+      ],
+      "takeaways": [
+        "VMware tools and procedures unchanged = Google Cloud VMware Engine.",
+        "Strict licensing or low-level server access = Bare Metal Solution.",
+        "Keep the database engine but make it managed = Database Migration Service to Cloud SQL.",
+        "vSphere, Firestore and BigQuery are distractors in these scenarios."
+      ]
+    },
+    "7": {
+      "summary": "Many companies run across on-premises and several clouds. This lesson defines hybrid and multicloud, covers GKE Enterprise for consistent Kubernetes management everywhere, and explains openness as a hedge against lock-in.",
+      "objectives": [
+        "Distinguish hybrid cloud from multicloud from a scenario",
+        "Explain when GKE Enterprise is the answer",
+        "Connect openness, open standards and open source to avoiding vendor lock-in"
+      ],
+      "takeaways": [
+        "Hybrid = on-premises plus public cloud. Multicloud = more than one public cloud.",
+        "Data must stay on-premises but you want Google services = hybrid.",
+        "Kubernetes managed consistently across Google Cloud, on-prem and other clouds = GKE Enterprise (formerly Anthos).",
+        "Openness, interoperability and open standards reduce lock-in.",
+        "Open source = public code anyone can study, change and contribute to."
+      ]
+    },
+    "8": {
+      "summary": "APIs let software systems talk to each other. This lesson covers how APIs unlock legacy systems without a rewrite, keep partner data current, create new revenue, and how Apigee manages, secures and monetizes them.",
+      "objectives": [
+        "Define an API",
+        "Explain how an API exposes legacy data without replacing the system",
+        "Identify scenarios where APIs create new business value with partners",
+        "Choose Apigee for API management, analytics and monetization"
+      ],
+      "takeaways": [
+        "An API is a defined set of rules for applications to communicate.",
+        "APIs expose selected legacy capabilities so you don't have to rewrite the system.",
+        "APIs connect systems programmatically so data stays current.",
+        "A paid API turns valuable data into a new revenue stream.",
+        "Apigee manages, secures, tracks and monetizes APIs."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "API (application programming interface)",
+      "definition": "A defined set of rules and methods that lets software applications communicate through requests and responses.",
+      "exam_context": "The answer whenever systems, partners or a legacy system and a modern app must exchange data. It avoids rewriting the legacy system.",
+      "lesson": 8
+    },
+    {
+      "term": "Apigee",
+      "definition": "Google Cloud's API management platform for designing, securing, analyzing and monetizing APIs.",
+      "exam_context": "Pick it to expose and reuse backend services as APIs, track traffic, apply access rules and charge external developers.",
+      "lesson": 8
+    },
+    {
+      "term": "App Engine",
+      "definition": "Google's original serverless PaaS for web applications, with automatic scaling and versioning.",
+      "exam_context": "Web app that autoscales while Google runs the infrastructure. Its versions let you serve different versions to different users.",
+      "lesson": 4
+    },
+    {
+      "term": "Bare Metal Solution",
+      "definition": "Dedicated physical servers in Google-managed facilities, connected to Google Cloud.",
+      "exam_context": "Workloads with strict third-party licensing, low-level server access or architectures that can't be virtualized, such as legacy databases.",
+      "lesson": 6
+    },
+    {
+      "term": "Brownfield",
+      "definition": "Building a new cloud-native application to replace an existing legacy system.",
+      "exam_context": "\"New cloud-native app that will eventually replace the on-premises system\" = invent in brownfield.",
+      "lesson": 5
+    },
+    {
+      "term": "Cloud Run",
+      "definition": "Serverless platform that runs container images, scales automatically and scales to zero.",
+      "exam_context": "One container, no clusters or servers to manage, scale to zero, any language. Prefer it over App Engine when the stem says container image.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Run functions",
+      "definition": "Event-driven serverless functions (formerly Cloud Functions) that run small pieces of code in response to events.",
+      "exam_context": "Code that runs whenever a file is uploaded, a form is submitted or a threshold is crossed.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud-native application",
+      "definition": "An application designed for the cloud from the start, typically using microservices, containers and managed services.",
+      "exam_context": "Chosen because developers can release new features in an agile way.",
+      "lesson": 1
+    },
+    {
+      "term": "Compute Engine",
+      "definition": "Google Cloud's infrastructure-as-a-service virtual machines.",
+      "exam_context": "Pick it when the workload needs detailed control over OS, networking and machine types. It's also the rehost target.",
+      "lesson": 2
+    },
+    {
+      "term": "Containerization",
+      "definition": "Packaging application code together with its libraries and dependencies into a portable container.",
+      "exam_context": "Fixes code that works in development but breaks in production because of different package versions.",
+      "lesson": 3
+    },
+    {
+      "term": "Database Migration Service",
+      "definition": "Managed service that migrates databases such as SQL Server, MySQL and PostgreSQL into Cloud SQL.",
+      "exam_context": "Move quickly to a managed database while keeping the same engine. Firestore and BigQuery are distractors.",
+      "lesson": 6
+    },
+    {
+      "term": "GKE Autopilot",
+      "definition": "GKE mode in which Google manages nodes, scaling and cluster operations.",
+      "exam_context": "Kubernetes with less time spent configuring nodes and running the cluster.",
+      "lesson": 3
+    },
+    {
+      "term": "GKE Enterprise",
+      "definition": "Google's platform (formerly Anthos) for managing Kubernetes clusters consistently across Google Cloud, on-premises and other clouds.",
+      "exam_context": "Centralized management and consistent security for containers across hybrid and multicloud environments.",
+      "lesson": 7
+    },
+    {
+      "term": "Google Cloud VMware Engine",
+      "definition": "A managed VMware environment running natively on Google Cloud.",
+      "exam_context": "Move a VMware estate while admins keep familiar VMware tools and procedures.",
+      "lesson": 6
+    },
+    {
+      "term": "Google Kubernetes Engine (GKE)",
+      "definition": "Google's managed Kubernetes service for deploying, scaling and orchestrating containers.",
+      "exam_context": "Orchestrate many (even thousands of) containers. Exam phrasing: enables rapid deployment and testing.",
+      "lesson": 3
+    },
+    {
+      "term": "Greenfield",
+      "definition": "Building a new application from scratch with no existing system to migrate.",
+      "exam_context": "\"No existing application to migrate or modify\" = invent in greenfield.",
+      "lesson": 5
+    },
+    {
+      "term": "Hybrid cloud",
+      "definition": "A mix of on-premises or private infrastructure and public cloud.",
+      "exam_context": "Data must stay in your own data center while you use Google Cloud services such as BigQuery or ML.",
+      "lesson": 7
+    },
+    {
+      "term": "Hypervisor",
+      "definition": "Software that creates and runs virtual machines, letting several operating systems share one physical machine.",
+      "exam_context": "\"Run Linux and Windows separately on the same physical server.\"",
+      "lesson": 2
+    },
+    {
+      "term": "Managed services",
+      "definition": "Cloud services where the provider handles infrastructure administration such as patching, upgrades and server setup.",
+      "exam_context": "Frees IT staff from patching and database setup. Patching and upgrades are the task handled automatically.",
+      "lesson": 1
+    },
+    {
+      "term": "Microservices",
+      "definition": "An architecture in which an application is split into small, independent services, each owning one business function.",
+      "exam_context": "Services built, deployed and scaled separately. Refactoring into microservices makes apps more efficient and scalable.",
+      "lesson": 3
+    },
+    {
+      "term": "Multicloud",
+      "definition": "Using more than one public cloud provider.",
+      "exam_context": "Kubernetes workloads across three public clouds = multicloud, even when GKE Enterprise manages them.",
+      "lesson": 7
+    },
+    {
+      "term": "Open source",
+      "definition": "Software whose source code is publicly available to study, change and contribute to.",
+      "exam_context": "Answer when the stem says code is open for public review and community contribution.",
+      "lesson": 7
+    },
+    {
+      "term": "Open standards",
+      "definition": "Publicly available specifications that let technologies interoperate across vendors.",
+      "exam_context": "Reduces the fear that choosing one cloud provider makes future migration hard.",
+      "lesson": 7
+    },
+    {
+      "term": "Refactor",
+      "definition": "Migration that changes the application code, often splitting a monolith into microservices.",
+      "exam_context": "Benefit: more efficient and scalable. Not the fastest path, and code changes are required.",
+      "lesson": 5
+    },
+    {
+      "term": "Rehost (lift and shift)",
+      "definition": "Moving an application to the cloud as-is, with no code or architecture changes.",
+      "exam_context": "Same OS images, settings and configs moved to Compute Engine. Fastest migration.",
+      "lesson": 5
+    },
+    {
+      "term": "Replatform (move and improve)",
+      "definition": "Migration that keeps the app logic mostly unchanged but swaps components for managed services.",
+      "exam_context": "Replace a self-managed database with Cloud SQL while the application stays the same.",
+      "lesson": 5
+    },
+    {
+      "term": "Serverless computing",
+      "definition": "A model in which the cloud provider manages servers, scaling and runtime, and you supply only code.",
+      "exam_context": "Main benefit is scalability, from few to many users and down to zero, so there's no idle cost.",
+      "lesson": 4
+    },
+    {
+      "term": "Spot VMs",
+      "definition": "Deeply discounted Compute Engine VMs that use spare capacity and can be stopped when Google needs it back. Successor to Preemptible VMs.",
+      "exam_context": "Cheapest option for batch jobs that checkpoint, can restart and aren't urgent.",
+      "lesson": 2
+    },
+    {
+      "term": "Virtual machine",
+      "definition": "An emulated computer with its own operating system, running on a hypervisor.",
+      "exam_context": "Each app needs its own dedicated OS = VMs, not containers.",
+      "lesson": 2
+    }
+  ]
+}
