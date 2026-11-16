@@ -14,7 +14,7 @@ from certs import CERTS, REPO, study_dir, content_dir, load_questions, domain_re
 ASSETS = os.path.join(REPO, 'docs', 'assets')
 CID = None  # certification currently being built; used for citation links
 
-CITE = re.compile(r'\b(?:Exam\s*|E)(\d)\s*·\s*Q(\d+)')
+CITE = re.compile(r'\b(?:Exam\s*|E)(\d+)\s*·\s*Q(\d+)')
 
 
 def md(text):
@@ -41,7 +41,7 @@ def bold_headings(text):
 
 
 def link_cites(html):
-    html = re.sub(r'\((\s*(?:(?:Exam\s*|E)\d\s*·\s*Q\d+[,;\s]*)+)\)', r'\1', html)
+    html = re.sub(r'\((\s*(?:(?:Exam\s*|E)\d+\s*·\s*Q\d+[,;\s]*)+)\)', r'\1', html)
     return CITE.sub(lambda m: f'<a class="cite" href="#/{CID}/q/e{m.group(1)}q{m.group(2)}">Exam {m.group(1)} · Q{m.group(2)}</a>', html)
 
 

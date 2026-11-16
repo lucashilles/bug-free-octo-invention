@@ -22,6 +22,8 @@ Served by GitHub Pages from `docs/`, or open `docs/index.html` locally. It needs
 
 Progress is saved per certification in each visitor's browser (localStorage), so nobody sees anyone else's progress.
 
+Contributing? Read [AGENTS.md](AGENTS.md) for conventions, the workflow and what not to commit.
+
 ## Repository layout
 
 ```
@@ -59,10 +61,13 @@ python3 fix.py gpcde
 python3 export_md.py gpcde
 python3 gen.py gpcde
 python3 build.py            # all certifications, or: python3 build.py gpcde
+
+# 4. Check everything before committing (fails on errors).
+python3 check.py
 ```
 
 The study guides (`study/<CODE>/*-guide.md`) and `content/<cert-id>/*.json` are written by hand or with an assistant. `build.py` turns each guide's `## N. Title` sections into lessons. It collects the `### Decision rules` and `### Traps` subsections, `## ⚠️ Questionable answers` and `## Last-minute cheat sheet` into the Quick Reference, and turns `(Exam N · QM)` citations into links to the questions.
 
 To add a certification, add an entry to `CERTS` in `tools/certs.py`, create its folder with the mock exam result pages, and run the pipeline.
 
-Raw `.html` mock exam pages are git-ignored because they contain the answers of whoever took the test. Delete them after parsing.
+Raw `.html` mock exam pages and `.zip` dump archives are git-ignored; the pages contain the answers of whoever took the test. Delete raw sources after parsing.

@@ -1,3 +1,6 @@
 __pycache__/
-# Raw Udemy result pages contain the test-taker's own answers; parse them, then delete.
-GPCD*/*.html
+# Raw practice-exam sources: Udemy result pages contain the test-taker's own answers, and dump
+# archives are third-party material. Parse them, then delete; never commit them.
+/*/*.html
+!/docs/*.html
+*.zip
