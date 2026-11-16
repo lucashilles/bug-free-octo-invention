@@ -26,6 +26,11 @@ Building a custom model takes more data work, ML skills, time and money than cal
 
 **Remember:** Pre-trained API = fast and easy, low differentiation. Custom model = more effort, more differentiation.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview)
+- [docs.cloud.google.com/architecture/ml-on-gcp-best-practices](https://docs.cloud.google.com/architecture/ml-on-gcp-best-practices)
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+
 ---
 
 ## Question 2
@@ -51,6 +56,11 @@ Google Cloud Armor protects internet-facing apps from DDoS attacks and common we
 - **D. Security Command Center**: It gives a central view of security risks and findings, but it doesn't filter incoming DDoS traffic.
 
 **Remember:** DDoS or web attacks on a public site → Cloud Armor.
+
+**References:**
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
+- [docs.cloud.google.com/armor/docs/advanced-network-ddos](https://docs.cloud.google.com/armor/docs/advanced-network-ddos)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
 
 ---
 
@@ -78,6 +88,11 @@ Google Cloud encrypts all customer data at rest by default. If someone physicall
 
 **Remember:** Physical theft of a disk → encryption at rest makes the data unreadable.
 
+**References:**
+- [cloud.google.com/docs/security/encryption/default-encryption](https://cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/security/encryption](https://cloud.google.com/security/encryption)
+- [cloud.google.com/docs/security/encryption-in-transit](https://cloud.google.com/docs/security/encryption-in-transit)
+
 ---
 
 ## Question 4
@@ -103,6 +118,11 @@ Under Google Cloud's terms, customers own their data. Google only processes it t
 - **C. Google**: Google is the processor of the data, not its owner.
 
 **Remember:** Your data stays yours. Google processes it, never owns it.
+
+**References:**
+- [cloud.google.com/privacy](https://cloud.google.com/privacy)
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [docs.cloud.google.com/docs/security/deletion](https://docs.cloud.google.com/docs/security/deletion)
 
 ---
 
@@ -130,6 +150,11 @@ Multi-cloud means using more than one public cloud provider. Here TrailPilot run
 
 **Remember:** Several public clouds → multi-cloud. On-premises + public cloud → hybrid.
 
+**References:**
+- [cloud.google.com/learn/what-is-multicloud](https://cloud.google.com/learn/what-is-multicloud)
+- [cloud.google.com/kubernetes-engine/multi-cloud/docs](https://cloud.google.com/kubernetes-engine/multi-cloud/docs)
+- [cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
+
 ---
 
 ## Question 6
@@ -155,6 +180,11 @@ Google Cloud's privacy commitments say the customer owns and controls its data. 
 - **D. Open a support ticket**: Customers don't need Google's permission or a ticket to move their own data.
 
 **Remember:** Customer owns the data → customer can move it out anytime.
+
+**References:**
+- [cloud.google.com/privacy](https://cloud.google.com/privacy)
+- [cloud.google.com/privacy/common-privacy-principles](https://cloud.google.com/privacy/common-privacy-principles)
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
 
 ---
 
@@ -182,6 +212,11 @@ Cloud Logging collects, stores and lets you search log entries from applications
 
 **Remember:** Search log entries / error messages → Cloud Logging. Metrics and alerts → Monitoring. Latency → Trace.
 
+**References:**
+- [docs.cloud.google.com/logging/docs/view/logs-explorer-interface](https://docs.cloud.google.com/logging/docs/view/logs-explorer-interface)
+- [docs.cloud.google.com/kubernetes-engine/docs/how-to/view-logs](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/view-logs)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+
 ---
 
 ## Question 8
@@ -207,6 +242,11 @@ An API exposes the existing system's data and functions to new apps in a standar
 - **C. Automatically convert to cloud-native**: An API doesn't turn an old system into a cloud-native one by itself.
 
 **Remember:** API on top of a legacy system = new experiences without rewriting the old system.
+
+**References:**
+- [cloud.google.com/solutions/unlocking-legacy-applications](https://cloud.google.com/solutions/unlocking-legacy-applications)
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
 
 ---
 
@@ -234,6 +274,11 @@ A service-level objective (SLO) is the target level of reliability or performanc
 
 **Remember:** SLI = what you measure. SLO = the target. SLA = the contract with penalties.
 
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
+- [sre.google/resources/practices-and-processes/art-of-slos/](https://sre.google/resources/practices-and-processes/art-of-slos/)
+
 ---
 
 ## Question 10
@@ -259,6 +304,11 @@ A service-level objective (SLO) is the target value for reliability and responsi
 - **D. Service-level indicator**: The SLI is the measured value (like actual latency); the SLO is the goal for it.
 
 **Remember:** "Target" → SLO. "Measurement" → SLI.
+
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
+- [sre.google/resources/practices-and-processes/art-of-slos/](https://sre.google/resources/practices-and-processes/art-of-slos/)
 
 ---
 
@@ -286,6 +336,11 @@ The problem is that the website shows stale stock because it isn't connected to 
 
 **Remember:** APIs connect systems programmatically so data stays in sync.
 
+**References:**
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [cloud.google.com/solutions/unlocking-legacy-applications](https://cloud.google.com/solutions/unlocking-legacy-applications)
+
 ---
 
 ## Question 12
@@ -311,6 +366,11 @@ Google Cloud's privacy controls are checked by independent third-party audits ag
 - **D. Privacy reviews for customer applications**: Google doesn't review the privacy of each customer's own applications; that is the customer's job.
 
 **Remember:** Proof of privacy and security → independent audits and certifications (ISO, SOC).
+
+**References:**
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [cloud.google.com/docs/security/encryption/default-encryption](https://cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/security/compliance/offerings](https://cloud.google.com/security/compliance/offerings)
 
 **⚠️ Note:** The idea is right (third-party audits against standards such as ISO 27018), but the wording is loose and D can sound plausible. C is still the best option; pick it on this exam.
 
@@ -340,6 +400,11 @@ Archive is the cheapest Cloud Storage class for data accessed less than once a y
 
 **Remember:** Monthly → Nearline. Quarterly → Coldline. Yearly or less → Archive.
 
+**References:**
+- [docs.cloud.google.com/storage/docs/storage-classes](https://docs.cloud.google.com/storage/docs/storage-classes)
+- [cloud.google.com/storage/pricing](https://cloud.google.com/storage/pricing)
+- [docs.cloud.google.com/architecture/dr-scenarios-planning-guide](https://docs.cloud.google.com/architecture/dr-scenarios-planning-guide)
+
 ---
 
 ## Question 14
@@ -365,6 +430,11 @@ Speech-to-Text is a pre-trained API that turns audio into written text. Recorded
 - **D. Cloud SQL**: Cloud SQL is a managed relational database, not an AI service.
 
 **Remember:** Audio → text = Speech-to-Text. Text → audio = Text-to-Speech.
+
+**References:**
+- [cloud.google.com/speech-to-text/docs](https://cloud.google.com/speech-to-text/docs)
+- [cloud.google.com/vision/docs](https://cloud.google.com/vision/docs)
+- [cloud.google.com/translate/docs](https://cloud.google.com/translate/docs)
 
 ---
 
@@ -392,6 +462,11 @@ A hypervisor is the software layer that creates and runs virtual machines. It sp
 
 **Remember:** Multiple operating systems on one physical machine → hypervisor (VMs).
 
+**References:**
+- [cloud.google.com/learn/what-is-a-virtual-machine](https://cloud.google.com/learn/what-is-a-virtual-machine)
+- [cloud.google.com/discover/containers-vs-vms](https://cloud.google.com/discover/containers-vs-vms)
+- [docs.cloud.google.com/compute/docs/overview](https://docs.cloud.google.com/compute/docs/overview)
+
 ---
 
 ## Question 16
@@ -417,6 +492,11 @@ Modern customers expect help and services to be available whenever they need the
 - **D. Regional access**: The issue is time of day, not geographic location.
 
 **Remember:** "Evenings and weekends", "24/7" → always-on expectations.
+
+**References:**
+- [cloud.google.com/learn/what-is-digital-transformation](https://cloud.google.com/learn/what-is-digital-transformation)
+- [cloud.google.com/blog/products/ai-machine-learning/introducing-customer-engagement-suite-with-google-ai](https://cloud.google.com/blog/products/ai-machine-learning/introducing-customer-engagement-suite-with-google-ai)
+- [docs.cloud.google.com/contact-center/insights/docs](https://docs.cloud.google.com/contact-center/insights/docs)
 
 ---
 
@@ -444,6 +524,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's managed 
 
 **Remember:** Foundation models + company data + deploy agents → Gemini Enterprise Agent Platform.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [cloud.google.com/model-garden](https://cloud.google.com/model-garden)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/build/runtime](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/runtime)
+
 ---
 
 ## Question 18
@@ -470,6 +555,11 @@ Google Cloud commits that it doesn't use customer data for ads. Customer data is
 
 **Remember:** Google Cloud privacy commitment: your data is not used for ads.
 
+**References:**
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [cloud.google.com/privacy/data-protection-impact-assessment](https://cloud.google.com/privacy/data-protection-impact-assessment)
+- [docs.cloud.google.com/docs/security/encryption/default-encryption](https://docs.cloud.google.com/docs/security/encryption/default-encryption)
+
 ---
 
 ## Question 19
@@ -495,6 +585,11 @@ Moving to Google Cloud means relying on security that is built into the platform
 - **D. Increase physical hardware capacity**: In the cloud the provider manages hardware; the company doesn't buy more.
 
 **Remember:** Moving to Google Cloud → you gain built-in, default security layers.
+
+**References:**
+- [cloud.google.com/docs/security/overview/whitepaper](https://cloud.google.com/docs/security/overview/whitepaper)
+- [cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
 
 **⚠️ Note:** The keyed wording is vague. It means Google's default protections (encryption, secure infrastructure). The other options are plainly wrong, so pick A on this exam.
 
@@ -524,6 +619,11 @@ In the shared responsibility model, Google always secures the physical layer: bu
 
 **Remember:** Google always owns physical security. In IaaS, the customer owns the OS and everything above it.
 
+**References:**
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+- [cloud.google.com/security/infrastructure](https://cloud.google.com/security/infrastructure)
+
 ---
 
 ## Question 21
@@ -549,6 +649,11 @@ Public cloud gives near-unlimited storage and global delivery on a pay-as-you-go
 - **D. Increasing capital expenditure**: Cloud shifts spending away from CapEx toward OpEx.
 
 **Remember:** Large-scale storage and delivery without buying hardware → public cloud.
+
+**References:**
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+- [docs.cloud.google.com/storage/docs/introduction](https://docs.cloud.google.com/storage/docs/introduction)
 
 ---
 
@@ -576,6 +681,11 @@ Availability is the share of time a service is up and working, expressed as a pe
 
 **Remember:** Availability = % uptime (the "nines").
 
+**References:**
+- [cloud.google.com/compute/sla](https://cloud.google.com/compute/sla)
+- [cloud.google.com/storage/sla](https://cloud.google.com/storage/sla)
+- [cloud.google.com/architecture/framework/reliability/use-slos-and-slis](https://cloud.google.com/architecture/framework/reliability/use-slos-and-slis)
+
 ---
 
 ## Question 23
@@ -601,6 +711,11 @@ Cloud SQL is Google Cloud's fully managed relational database for MySQL, Postgre
 - **D. Dataflow**: Dataflow processes data in pipelines; it doesn't store it as a database.
 
 **Remember:** Small or medium relational app database, managed → Cloud SQL.
+
+**References:**
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [docs.cloud.google.com/dataflow/docs/overview](https://docs.cloud.google.com/dataflow/docs/overview)
 
 ---
 
@@ -628,6 +743,11 @@ Gemini is Google's multimodal foundation model family. It can understand and rea
 
 **Remember:** Multimodal foundation model from Google → Gemini.
 
+**References:**
+- [cloud.google.com/use-cases/multimodal-ai](https://cloud.google.com/use-cases/multimodal-ai)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models)
+- [ai.google.dev/gemini-api/docs/models](https://ai.google.dev/gemini-api/docs/models)
+
 ---
 
 ## Question 25
@@ -653,6 +773,11 @@ An error budget is the amount of unreliability the SLO allows (100% − SLO). Ru
 - **D. Speed to release new features**: Close, but release speed alone isn't the goal. The budget is spent on innovation that improves the user experience, and raw speed can burn the budget carelessly.
 
 **Remember:** Budget left → innovate. SLO missed / budget gone → reliability.
+
+**References:**
+- [cloud.google.com/sre](https://cloud.google.com/sre)
+- [sre.google/workbook/error-budget-policy](https://sre.google/workbook/error-budget-policy)
+- [docs.cloud.google.com/service-mesh/docs/observability/design-slo](https://docs.cloud.google.com/service-mesh/docs/observability/design-slo)
 
 ---
 
@@ -680,6 +805,11 @@ GPUs and TPUs are accelerators built for the heavy math in machine learning. TPU
 
 **Remember:** Train large models fast → GPUs and TPUs (TPUs are Google's ML-specific chips).
 
+**References:**
+- [docs.cloud.google.com/compute/docs/gpus/overview](https://docs.cloud.google.com/compute/docs/gpus/overview)
+- [docs.cloud.google.com/tpu/docs/intro-to-tpu](https://docs.cloud.google.com/tpu/docs/intro-to-tpu)
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+
 ---
 
 ## Question 27
@@ -705,6 +835,11 @@ When applications move to the cloud, Google runs the physical hardware, power, c
 - **D. Increased cloud hardware management**: The customer doesn't manage cloud hardware; Google does.
 
 **Remember:** Moving to cloud → less infrastructure management for your own team.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-migration](https://cloud.google.com/learn/what-is-cloud-migration)
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/architecture/framework/cost-optimization](https://cloud.google.com/architecture/framework/cost-optimization)
 
 ---
 
@@ -732,6 +867,11 @@ AutoML trains a custom model on your own labeled data without you writing traini
 
 **Remember:** Custom categories + labeled data + no ML coding → AutoML.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/automl-training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/automl-training-overview)
+- [cloud.google.com/storage/docs/storage-classes](https://cloud.google.com/storage/docs/storage-classes)
+
 ---
 
 ## Question 29
@@ -757,6 +897,11 @@ On premises, a company buys servers and data center equipment up front. That is 
 - **D. OpEx → CapEx**: This is exactly backwards.
 
 **Remember:** Cloud migration = CapEx → OpEx.
+
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
 
 ---
 
@@ -784,6 +929,11 @@ Relational databases hold structured data that fits neatly into rows and columns
 
 **Remember:** Rows and columns → relational database. Images, video, audio → Cloud Storage.
 
+**References:**
+- [cloud.google.com/sql/docs](https://cloud.google.com/sql/docs)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
+- [cloud.google.com/architecture/storage-advisor](https://cloud.google.com/architecture/storage-advisor)
+
 ---
 
 ## Question 31
@@ -809,6 +959,11 @@ The cloud lets developers create environments in minutes, scale on demand and us
 - **D. Optimize on-premises maintenance**: The move is away from on-premises, so this doesn't help developers.
 
 **Remember:** Slow provisioning and fixed capacity → cloud gives on-demand tools and elastic resources.
+
+**References:**
+- [cloud.google.com/docs/overview](https://cloud.google.com/docs/overview)
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [cloud.google.com/architecture/framework/cost-optimization](https://cloud.google.com/architecture/framework/cost-optimization)
 
 ---
 
@@ -836,6 +991,11 @@ Latency is the delay for data to travel between the user and the server. Users i
 
 **Remember:** Fast connection but slow pages for distant users → latency (distance).
 
+**References:**
+- [cloud.google.com/load-balancing/docs/load-balancing-overview](https://cloud.google.com/load-balancing/docs/load-balancing-overview)
+- [cloud.google.com/cdn/docs/overview](https://cloud.google.com/cdn/docs/overview)
+- [cloud.google.com/docs/geography-and-regions](https://cloud.google.com/docs/geography-and-regions)
+
 ---
 
 ## Question 33
@@ -861,6 +1021,11 @@ Digital transformation is more than moving servers. The cloud gives companies th
 - **D. Same model, only lower costs**: Cost savings alone miss the main point of transformation.
 
 **Remember:** Cloud transformation = rethinking the business, not just relocating IT.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [cloud.google.com/architecture/framework](https://cloud.google.com/architecture/framework)
+- [cloud.google.com/transform/digital-transformation](https://cloud.google.com/transform/digital-transformation)
 
 ---
 
@@ -888,6 +1053,11 @@ Spot VMs run on Google's spare capacity at a large discount. Google can stop the
 
 **Remember:** Interruptible + restartable + cheapest → Spot VMs (the successor to Preemptible VMs).
 
+**References:**
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+- [cloud.google.com/spot-vms/pricing](https://cloud.google.com/spot-vms/pricing)
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+
 ---
 
 ## Question 35
@@ -913,6 +1083,11 @@ A model learns patterns from its training data, so the data must represent the c
 - **D. Only severe data, high-risk regions**: Both problems at once: biased regions and no normal cases.
 
 **Remember:** Training data must be representative: every region, normal and extreme cases.
+
+**References:**
+- [developers.google.com/machine-learning/crash-course/overfitting/imbalanced-datasets](https://developers.google.com/machine-learning/crash-course/overfitting/imbalanced-datasets)
+- [developers.google.com/machine-learning/crash-course/classification](https://developers.google.com/machine-learning/crash-course/classification)
+- [developers.google.com/machine-learning/crash-course/fairness/types-of-bias](https://developers.google.com/machine-learning/crash-course/fairness/types-of-bias)
 
 ---
 
@@ -940,6 +1115,11 @@ Cloud-native apps are built from microservices, containers and managed services.
 
 **Remember:** Cloud-native → frequent, agile releases.
 
+**References:**
+- [cloud.google.com/learn/what-is-cloud-native](https://cloud.google.com/learn/what-is-cloud-native)
+- [cloud.google.com/resources/rearchitecting-to-cloud-native](https://cloud.google.com/resources/rearchitecting-to-cloud-native)
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+
 ---
 
 ## Question 37
@@ -965,6 +1145,11 @@ On-premises technology needs upfront capital spending on servers and facilities.
 - **D. Increased hardware maintenance**: Hardware maintenance goes down because Google handles it.
 
 **Remember:** On-premises → cloud = CapEx → OpEx.
+
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
 
 ---
 
@@ -992,6 +1177,11 @@ Cloud SQL supports SQL Server as a managed service, so Google handles patching, 
 
 **Remember:** Keep the same relational engine, stop managing it → Cloud SQL (via Database Migration Service).
 
+**References:**
+- [docs.cloud.google.com/sql/docs/sqlserver](https://docs.cloud.google.com/sql/docs/sqlserver)
+- [docs.cloud.google.com/database-migration/docs/sqlserver/guide](https://docs.cloud.google.com/database-migration/docs/sqlserver/guide)
+- [cloud.google.com/sql](https://cloud.google.com/sql)
+
 ---
 
 ## Question 39
@@ -1017,6 +1207,11 @@ Dataflow is a serverless service for batch and streaming pipelines. Google provi
 - **D. Guarantees no errors**: No service guarantees error-free data; data quality still needs checks.
 
 **Remember:** Serverless pipeline (Dataflow) = no servers to manage, automatic scaling.
+
+**References:**
+- [cloud.google.com/products/dataflow](https://cloud.google.com/products/dataflow)
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+- [cloud.google.com/dataflow/docs/horizontal-autoscaling](https://cloud.google.com/dataflow/docs/horizontal-autoscaling)
 
 ---
 
@@ -1044,6 +1239,11 @@ Redundancy means running duplicate copies of important components, such as insta
 
 **Remember:** Keep running when something fails → redundancy. Recover lost data → backups.
 
+**References:**
+- [docs.cloud.google.com/architecture/framework/reliability/build-highly-available-systems](https://docs.cloud.google.com/architecture/framework/reliability/build-highly-available-systems)
+- [docs.cloud.google.com/architecture/framework/reliability](https://docs.cloud.google.com/architecture/framework/reliability)
+- [docs.cloud.google.com/architecture/infra-reliability-guide/design](https://docs.cloud.google.com/architecture/infra-reliability-guide/design)
+
 ---
 
 ## Question 41
@@ -1069,6 +1269,11 @@ Latency comes from physical distance between users and the servers. Running a co
 - **C. More regions in Europe**: Europe is still far from the United States.
 
 **Remember:** Distant users with high latency → deploy closer to them, in their region.
+
+**References:**
+- [docs.cloud.google.com/docs/get-started/consider-geographic-distribution](https://docs.cloud.google.com/docs/get-started/consider-geographic-distribution)
+- [docs.cloud.google.com/architecture/framework/performance-optimization/plan-resource-allocation](https://docs.cloud.google.com/architecture/framework/performance-optimization/plan-resource-allocation)
+- [docs.cloud.google.com/load-balancing/docs/https/http-load-balancing-best-practices](https://docs.cloud.google.com/load-balancing/docs/https/http-load-balancing-best-practices)
 
 ---
 
@@ -1096,6 +1301,11 @@ Timeliness means data is current enough for its purpose. Fashion trends change q
 
 **Remember:** Stale data → timeliness. Duplicates → uniqueness. Wrong format → validity.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
+
 ---
 
 ## Question 43
@@ -1121,6 +1331,11 @@ Responsible AI means building AI that is fair, transparent, safe, privacy-preser
 - **D. Legacy modernization**: This means updating old systems, not governing AI behavior.
 
 **Remember:** Fair, transparent, safe, private, low bias → Responsible AI.
+
+**References:**
+- [cloud.google.com/responsible-ai](https://cloud.google.com/responsible-ai)
+- [developers.google.com/machine-learning/guides/intro-responsible-ai](https://developers.google.com/machine-learning/guides/intro-responsible-ai)
+- [docs.cloud.google.com/architecture/framework/security/use-ai-securely-and-responsibly](https://docs.cloud.google.com/architecture/framework/security/use-ai-securely-and-responsibly)
 
 ---
 
@@ -1148,6 +1363,10 @@ Google designs its own servers and data centers for its workloads, leaving out p
 
 **Remember:** Purpose-built = optimized for the task = more efficient.
 
+**References:**
+- [cloud.google.com/infrastructure](https://cloud.google.com/infrastructure)
+- [datacenters.google/efficiency](https://datacenters.google/efficiency)
+
 ---
 
 ## Question 45
@@ -1173,6 +1392,11 @@ Firestore is a serverless NoSQL document database built for web and mobile apps.
 - **C. BigQuery**: BigQuery is an analytics data warehouse, not an app database.
 
 **Remember:** NoSQL for web and mobile apps → Firestore.
+
+**References:**
+- [cloud.google.com/firestore/native/docs/overview](https://cloud.google.com/firestore/native/docs/overview)
+- [cloud.google.com/spanner/docs](https://cloud.google.com/spanner/docs)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
 
 ---
 
@@ -1200,6 +1424,11 @@ Relational databases store structured data in related tables and use keys to lin
 
 **Remember:** Predictable structure + related tables + transactions → relational database.
 
+**References:**
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/learn/what-is-a-data-lake](https://cloud.google.com/learn/what-is-a-data-lake)
+
 ---
 
 ## Question 47
@@ -1225,6 +1454,11 @@ With OpEx, security is consumed as a service and paid for as it's used. The comp
 - **D. Google guarantees all security**: Security is shared; Google doesn't guarantee every workload is secure.
 
 **Remember:** OpEx security = pay as you use, no big upfront investment.
+
+**References:**
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
 
 ---
 
@@ -1252,6 +1486,11 @@ AI Hypercomputer is Google Cloud's integrated architecture for AI. It combines A
 
 **Remember:** Hardware + open software + ML frameworks + flexible consumption → AI Hypercomputer.
 
+**References:**
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+- [docs.cloud.google.com/ai-hypercomputer/docs/consumption-models](https://docs.cloud.google.com/ai-hypercomputer/docs/consumption-models)
+- [docs.cloud.google.com/docs/ai-ml](https://docs.cloud.google.com/docs/ai-ml)
+
 ---
 
 ## Question 49
@@ -1278,6 +1517,11 @@ Total cost of ownership (TCO) counts all costs over time, including hardware, st
 
 **Remember:** TCO comparison → informs ROI and the business case for migration.
 
+**References:**
+- [cloud.google.com/migration-center/docs/generate-tco-report](https://cloud.google.com/migration-center/docs/generate-tco-report)
+- [cloud.google.com/migration-center/docs/migration-center-overview](https://cloud.google.com/migration-center/docs/migration-center-overview)
+- [cloud.google.com/architecture/framework/cost-optimization](https://cloud.google.com/architecture/framework/cost-optimization)
+
 ---
 
 ## Question 50
@@ -1303,5 +1547,10 @@ Explainable AI shows which factors drove a model's prediction for each case. In 
 - **D. Multi-cloud networking**: This connects multiple clouds and has nothing to do with model decisions.
 
 **Remember:** "Why did the model decide this?" → Explainable AI.
+
+**References:**
+- [cloud.google.com/responsible-ai](https://cloud.google.com/responsible-ai)
+- [docs.cloud.google.com/bigquery/docs/xai-overview](https://docs.cloud.google.com/bigquery/docs/xai-overview)
+- [ibm.com/think/topics/explainable-ai](https://ibm.com/think/topics/explainable-ai)
 
 ---

@@ -1649,16 +1649,16 @@ By choosing Option B, the organization can balance security, flexibility, and de
 
 **In your mobile web application where global users vote on popular topics, with a very high volume of votes expected during each 30-minute voting window for each topic, you need to capture and count votes within these intervals while also storing them for future analysis and reporting. How should you approach this?**
 
-- [ ] I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Looker Studio.
-- [ ] III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Looker Studio.
+- [ ] I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Data Studio.
+- [ ] III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Data Studio.
 - [ ] IV. Implement Firebase for user authentication, enabling the direct publication of votes to Firestore. Export the votes to a CSV file and import them into Sheets for reporting purposes.
-- [x] II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.
+- [x] II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Data Studio.
 
 ### Explanation
 
 Given the high volume of votes expected during each voting window for each topic in your mobile web application, along with the need to capture, count, and store votes for future analysis and reporting, the most suitable approach would be:
 
-**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.**
+**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Data Studio.**
 
 Explanation:
 
@@ -1668,7 +1668,7 @@ Option III proposes publishing votes to Pub/Sub and using Cloud Functions to ins
 
 Option IV suggests using Firebase for user authentication and Firestore for storing votes. While Firebase and Firestore are suitable for real-time data synchronization and user authentication, exporting votes to a CSV file and importing them into Sheets for reporting purposes might not be the most efficient or scalable solution for large volumes of data.
 
-Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Looker Studio allows for easy and customizable reporting and visualization.
+Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Data Studio allows for easy and customizable reporting and visualization.
 
 Therefore, option II is the most appropriate approach for capturing, counting, and storing votes in your mobile web application while also facilitating future analysis and reporting.
 
@@ -1680,7 +1680,7 @@ Therefore, option II is the most appropriate approach for capturing, counting, a
 
   * BigQuery: <https://cloud.google.com/bigquery/docs>
 
-  * Looker Studio: <https://lookerstudio.google.com/>
+  * Data Studio: <https://datastudio.google.com/>
 
 ---
 
@@ -2010,16 +2010,16 @@ Therefore, leveraging Cloud Profiler to identify the functions within the applic
 
 **You’re preparing to load test a Cloud Run service using JMeter and need to orchestrate the process and tools for effective testing and analysis. You aim to follow Google’s recommended practices. What steps should you take?**
 
-- [x] **D.** Set up a **Compute Engine** instance, install **JMeter** on the instance, create a log sink to **BigQuery** , and use **Looker Studio** for analysis.
+- [x] **D.** Set up a **Compute Engine** instance, install **JMeter** on the instance, create a log sink to **BigQuery** , and use **Data Studio** for analysis.
 - [ ] **A.** Install **JMeter** on your local machine, set up a log sink to **BigQuery** , and use **Looker** to analyze the test results.
 - [ ] **C.** Set up a **Compute Engine** instance, install **JMeter** on the instance, create a log sink to a **Cloud Storage** bucket, and use **Looker** for analysis.
-- [ ] **B.** Set up a **Compute Engine** instance, install **JMeter** on the instance, create a log sink to a **Cloud Storage** bucket, and use **Looker Studio** for analysis.
+- [ ] **B.** Set up a **Compute Engine** instance, install **JMeter** on the instance, create a log sink to a **Cloud Storage** bucket, and use **Data Studio** for analysis.
 
 ### Explanation
 
 The correct answer is 
 
-**D. Set up a Compute Engine instance, install JMeter on the instance, create a log sink to BigQuery, and use Looker Studio for analysis.**
+**D. Set up a Compute Engine instance, install JMeter on the instance, create a log sink to BigQuery, and use Data Studio for analysis.**
 
 Explanation:
 
@@ -2029,18 +2029,18 @@ Following Google’s recommended practices for load testing a **Cloud Run** serv
 
   2. **Create a log sink to BigQuery** : BigQuery is designed to handle large volumes of log data efficiently, making it ideal for storing and querying log data generated during load testing. Using BigQuery allows for detailed analysis, flexible querying, and seamless integration with other Google Cloud tools.
 
-  3. **Use Looker Studio for analysis** : Looker Studio (formerly known as Data Studio) provides a powerful and user-friendly platform for visualizing BigQuery data. By connecting Looker Studio to BigQuery, you can create interactive reports and dashboards to analyze test results and gain insights into performance trends and bottlenecks.
+  3. **Use Data Studio for analysis** : Data Studio (called Data Studio from 2022 to 2026) provides a powerful and user-friendly platform for visualizing BigQuery data. By connecting Data Studio to BigQuery, you can create interactive reports and dashboards to analyze test results and gain insights into performance trends and bottlenecks.
 
 **Justifications for Incorrect Options:**
 
   * **Option A: Install JMeter on your local machine, set up a log sink to BigQuery, and use Looker to analyze the test results**  
-Running JMeter on a local machine is not recommended for load testing at scale. Using a Compute Engine instance provides more consistent resources and scalability. Looker can also analyze BigQuery data, but Looker Studio is the simpler, no-cost choice for ad hoc test reports.
+Running JMeter on a local machine is not recommended for load testing at scale. Using a Compute Engine instance provides more consistent resources and scalability. Looker can also analyze BigQuery data, but Data Studio is the simpler, no-cost choice for ad hoc test reports.
 
-  * **Option B: Set up a Compute Engine instance, install JMeter, create a log sink to a Cloud Storage bucket, and use Looker Studio for analysis**  
+  * **Option B: Set up a Compute Engine instance, install JMeter, create a log sink to a Cloud Storage bucket, and use Data Studio for analysis**  
 Storing logs in **BigQuery** is preferred over Cloud Storage because BigQuery offers efficient querying and analysis capabilities, which are essential for analyzing large volumes of load test data.
 
   * **Option C: Set up a Compute Engine instance, install JMeter, create a log sink to Cloud Storage, and use Looker for analysis**  
-This approach is incorrect due to both the use of **Cloud Storage** (instead of BigQuery) for logs and **Looker** (instead of Looker Studio) for analysis. BigQuery and Looker Studio are better suited for handling and visualizing large-scale load testing data.
+This approach is incorrect due to both the use of **Cloud Storage** (instead of BigQuery) for logs and **Looker** (instead of Data Studio) for analysis. BigQuery and Data Studio are better suited for handling and visualizing large-scale load testing data.
 
 **⚠️ Note:** For load testing at scale, Google's documented pattern is distributed load generation (Locust or JMeter) on GKE, scaled with Pods. A single Compute Engine VM is only the best of these four options.
 

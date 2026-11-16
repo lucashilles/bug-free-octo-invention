@@ -28,6 +28,11 @@ Google Cloud offers AI at several skill levels: pre-trained APIs (Vision, Natura
 
 **Remember:** Mixed skill levels = a range of AI tools, from pre-trained APIs to custom training.
 
+**References:**
+- [cloud.google.com/products/ai](https://cloud.google.com/products/ai)
+- [docs.cloud.google.com/docs/ai-ml](https://docs.cloud.google.com/docs/ai-ml)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/beginners-guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/beginners-guide)
+
 </details>
 
 ---
@@ -55,6 +60,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's unified,
 - **C. Google Kubernetes Engine**: GKE can run ML workloads, but it is a container platform, not a managed ML lifecycle service.
 
 **Remember:** Build, train, deploy and monitor custom ML models = Gemini Enterprise Agent Platform.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/model-monitoring/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/model-monitoring/overview)
 
 </details>
 
@@ -84,6 +94,11 @@ Audio recordings are unstructured data. They do not fit into rows and columns. M
 
 **Remember:** Audio, images, video and free text = unstructured. ML is what unlocks value from them.
 
+**References:**
+- [cloud.google.com/speech-to-text](https://cloud.google.com/speech-to-text)
+- [docs.cloud.google.com/natural-language/docs](https://docs.cloud.google.com/natural-language/docs)
+- [docs.cloud.google.com/natural-language/docs/basics](https://docs.cloud.google.com/natural-language/docs/basics)
+
 </details>
 
 ---
@@ -107,10 +122,15 @@ AutoML Vision lets a team train a custom image classification model using its ow
 
 **Why the others are wrong:**
 - **A. Video Intelligence API**: it analyzes video, not still photos.
-- **C. BigQuery ML**: it builds models with SQL on structured data in BigQuery, not image classification.
+- **C. BigQuery ML**: it builds models with SQL on structured data in BigQuery. It is not the direct way to train an image classifier from photos.
 - **D. Looker**: Looker is a BI and reporting tool, not an ML training service.
 
 **Remember:** Custom image categories + labeled photos + little ML expertise = AutoML (Vision).
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model)
+- [docs.cloud.google.com/video-intelligence/docs](https://docs.cloud.google.com/video-intelligence/docs)
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
 
 **⚠️ Note:** "AutoML Vision" is the old standalone product name. AutoML now lives inside Gemini Enterprise Agent Platform. The concept (custom image categories with labeled data and no code = AutoML) is still right, so pick B.
 
@@ -142,6 +162,11 @@ BrightBee wants a custom model that sorts short text messages into its own categ
 
 **Remember:** Custom categories + your own labeled text + little ML expertise → AutoML for text.
 
+**References:**
+- [docs.cloud.google.com/natural-language/docs](https://docs.cloud.google.com/natural-language/docs)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview)
+- [docs.cloud.google.com/pubsub/docs/overview](https://docs.cloud.google.com/pubsub/docs/overview)
+
 **⚠️ Note:** "AutoML Natural Language" is an older standalone product name. Today AutoML is part of the AI platform (Gemini Enterprise Agent Platform, formerly Vertex AI), and Google also steers text classification toward tuning Gemini models. The idea is still right, so pick the keyed answer on this exam.
 
 </details>
@@ -172,6 +197,11 @@ Contact Center AI Platform is Google's customer-service solution. Virtual agents
 
 **Remember:** High-volume customer chats and calls → Contact Center AI.
 
+**References:**
+- [cloud.google.com/solutions/contact-center-ai-platform](https://cloud.google.com/solutions/contact-center-ai-platform)
+- [docs.cloud.google.com/contact-center/ccai-platform/docs](https://docs.cloud.google.com/contact-center/ccai-platform/docs)
+- [docs.cloud.google.com/text-to-speech/docs](https://docs.cloud.google.com/text-to-speech/docs)
+
 </details>
 
 ---
@@ -199,6 +229,11 @@ UrbanPedal already keeps usage and repair history in BigQuery. With BigQuery ML 
 - **D. Move data to Cloud Storage**: Moving data may lower storage costs, but it does nothing for maintenance planning.
 
 **Remember:** Historical data + "predict" + data already in BigQuery → build an ML model in BigQuery.
+
+**References:**
+- [cloud.google.com/bigquery/docs/bqml-introduction](https://cloud.google.com/bigquery/docs/bqml-introduction)
+- [cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create](https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create)
+- [cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
 
 </details>
 
@@ -228,6 +263,11 @@ Machine learning needs clean, consistent data. When 220 studios use different co
 
 **Remember:** Good ML starts with clean, consistent data: prepare and standardize first.
 
+**References:**
+- [docs.cloud.google.com/bigquery/docs/preprocess-overview](https://docs.cloud.google.com/bigquery/docs/preprocess-overview)
+- [docs.cloud.google.com/dataflow/docs/machine-learning/ml-preprocess-data](https://docs.cloud.google.com/dataflow/docs/machine-learning/ml-preprocess-data)
+- [docs.cloud.google.com/architecture/ml-on-gcp-best-practices](https://docs.cloud.google.com/architecture/ml-on-gcp-best-practices)
+
 </details>
 
 ---
@@ -255,6 +295,11 @@ Predicting which current customers will leave (churn) is a classic ML use case. 
 - **D. Report on last year's feedback**: A report describes the past; it does not predict future behavior.
 
 **Remember:** "Predict" + historical examples of the outcome → train an ML model.
+
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [docs.cloud.google.com/bigquery/docs/reference-patterns](https://docs.cloud.google.com/bigquery/docs/reference-patterns)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/bqml](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/bqml)
 
 </details>
 
@@ -284,6 +329,11 @@ Tensor Processing Units (TPUs) are Google's custom chips designed specifically f
 
 **Remember:** Hardware built specifically for ML → TPUs.
 
+**References:**
+- [cloud.google.com/tpu](https://cloud.google.com/tpu)
+- [docs.cloud.google.com/tpu/docs/intro-to-tpu](https://docs.cloud.google.com/tpu/docs/intro-to-tpu)
+- [tensorflow.org/guide/tpu](https://tensorflow.org/guide/tpu)
+
 </details>
 
 ---
@@ -311,6 +361,11 @@ BigQuery ML lets analysts create and run ML models using standard SQL, directly 
 - **D. Spanner**: Spanner is a transactional database, not an ML tool.
 
 **Remember:** SQL skills + data in BigQuery + ML → BigQuery ML.
+
+**References:**
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
+- [docs.cloud.google.com/bigquery/docs/create-machine-learning-model](https://docs.cloud.google.com/bigquery/docs/create-machine-learning-model)
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
 
 </details>
 
@@ -340,6 +395,11 @@ Agentic AI systems pursue a goal on their own. They reason, plan next steps, cal
 
 **Remember:** Goal + plan + use tools + take action = agentic AI.
 
+**References:**
+- [cloud.google.com/discover/what-is-agentic-ai](https://cloud.google.com/discover/what-is-agentic-ai)
+- [cloud.google.com/discover/what-are-ai-agents](https://cloud.google.com/discover/what-are-ai-agents)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+
 </details>
 
 ---
@@ -367,6 +427,11 @@ Pre-trained APIs such as the Cloud Vision API are ready-to-use models that devel
 - **D. BigQuery ML**: It trains models with SQL on data in BigQuery, not a ready-made image analysis service.
 
 **Remember:** Common task + fastest + no training = pre-trained API.
+
+**References:**
+- [cloud.google.com/vision](https://cloud.google.com/vision)
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+- [docs.cloud.google.com/sensitive-data-protection/docs/classification-redaction](https://docs.cloud.google.com/sensitive-data-protection/docs/classification-redaction)
 
 </details>
 
@@ -396,6 +461,11 @@ Generative AI is a subset of AI that creates new content, such as text, images, 
 
 **Remember:** Generative AI = creates new content.
 
+**References:**
+- [cloud.google.com/use-cases/generative-ai](https://cloud.google.com/use-cases/generative-ai)
+- [cloud.google.com/discover/what-is-generative-ai](https://cloud.google.com/discover/what-is-generative-ai)
+- [cloud.google.com/ai/generative-ai](https://cloud.google.com/ai/generative-ai)
+
 </details>
 
 ---
@@ -423,6 +493,11 @@ Generative AI creates new content such as text, images and code from prompts. Em
 - **D. Relational databases**: They store structured data; they are not AI.
 
 **Remember:** Create new content = generative AI.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/beginners-guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/beginners-guide)
+- [cloud.google.com/solutions/generative-ai](https://cloud.google.com/solutions/generative-ai)
+- [cloud.google.com/learn/what-is-artificial-intelligence](https://cloud.google.com/learn/what-is-artificial-intelligence)
 
 </details>
 
@@ -452,6 +527,11 @@ Agent Studio is the no-code and low-code visual interface for designing, prototy
 
 **Remember:** No-code or low-code agent building = Agent Studio.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/run/docs](https://docs.cloud.google.com/run/docs)
+
 </details>
 
 ---
@@ -479,6 +559,11 @@ Building a custom model takes more data work, ML skills, time and money than cal
 - **D. 100% accurate**: No ML model is ever guaranteed to be 100% accurate.
 
 **Remember:** Pre-trained API = fast and easy, low differentiation. Custom model = more effort, more differentiation.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview)
+- [docs.cloud.google.com/architecture/ml-on-gcp-best-practices](https://docs.cloud.google.com/architecture/ml-on-gcp-best-practices)
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
 
 </details>
 
@@ -508,6 +593,11 @@ Speech-to-Text is a pre-trained API that turns audio into written text. Recorded
 
 **Remember:** Audio → text = Speech-to-Text. Text → audio = Text-to-Speech.
 
+**References:**
+- [cloud.google.com/speech-to-text/docs](https://cloud.google.com/speech-to-text/docs)
+- [cloud.google.com/vision/docs](https://cloud.google.com/vision/docs)
+- [cloud.google.com/translate/docs](https://cloud.google.com/translate/docs)
+
 </details>
 
 ---
@@ -535,6 +625,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's managed 
 - **D. Google Kubernetes Engine**: GKE runs containers but would require the team to build and manage the AI stack.
 
 **Remember:** Foundation models + company data + deploy agents → Gemini Enterprise Agent Platform.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [cloud.google.com/model-garden](https://cloud.google.com/model-garden)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/build/runtime](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/runtime)
 
 </details>
 
@@ -564,6 +659,11 @@ Gemini is Google's multimodal foundation model family. It can understand and rea
 
 **Remember:** Multimodal foundation model from Google → Gemini.
 
+**References:**
+- [cloud.google.com/use-cases/multimodal-ai](https://cloud.google.com/use-cases/multimodal-ai)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models)
+- [ai.google.dev/gemini-api/docs/models](https://ai.google.dev/gemini-api/docs/models)
+
 </details>
 
 ---
@@ -591,6 +691,11 @@ GPUs and TPUs are accelerators built for the heavy math in machine learning. TPU
 - **D. VPC routers**: Routers move network traffic; they don't run ML computations.
 
 **Remember:** Train large models fast → GPUs and TPUs (TPUs are Google's ML-specific chips).
+
+**References:**
+- [docs.cloud.google.com/compute/docs/gpus/overview](https://docs.cloud.google.com/compute/docs/gpus/overview)
+- [docs.cloud.google.com/tpu/docs/intro-to-tpu](https://docs.cloud.google.com/tpu/docs/intro-to-tpu)
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
 
 </details>
 
@@ -620,6 +725,11 @@ AutoML trains a custom model on your own labeled data without you writing traini
 
 **Remember:** Custom categories + labeled data + no ML coding → AutoML.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/automl-training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/automl-training-overview)
+- [cloud.google.com/storage/docs/storage-classes](https://cloud.google.com/storage/docs/storage-classes)
+
 </details>
 
 ---
@@ -647,6 +757,11 @@ A model learns patterns from its training data, so the data must represent the c
 - **D. Only severe data, high-risk regions**: Both problems at once: biased regions and no normal cases.
 
 **Remember:** Training data must be representative: every region, normal and extreme cases.
+
+**References:**
+- [developers.google.com/machine-learning/crash-course/overfitting/imbalanced-datasets](https://developers.google.com/machine-learning/crash-course/overfitting/imbalanced-datasets)
+- [developers.google.com/machine-learning/crash-course/classification](https://developers.google.com/machine-learning/crash-course/classification)
+- [developers.google.com/machine-learning/crash-course/fairness/types-of-bias](https://developers.google.com/machine-learning/crash-course/fairness/types-of-bias)
 
 </details>
 
@@ -676,6 +791,11 @@ Responsible AI means building AI that is fair, transparent, safe, privacy-preser
 
 **Remember:** Fair, transparent, safe, private, low bias → Responsible AI.
 
+**References:**
+- [cloud.google.com/responsible-ai](https://cloud.google.com/responsible-ai)
+- [developers.google.com/machine-learning/guides/intro-responsible-ai](https://developers.google.com/machine-learning/guides/intro-responsible-ai)
+- [docs.cloud.google.com/architecture/framework/security/use-ai-securely-and-responsibly](https://docs.cloud.google.com/architecture/framework/security/use-ai-securely-and-responsibly)
+
 </details>
 
 ---
@@ -703,6 +823,11 @@ AI Hypercomputer is Google Cloud's integrated architecture for AI. It combines A
 - **D. DDoS protection**: This is a security capability, such as Cloud Armor.
 
 **Remember:** Hardware + open software + ML frameworks + flexible consumption → AI Hypercomputer.
+
+**References:**
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+- [docs.cloud.google.com/ai-hypercomputer/docs/consumption-models](https://docs.cloud.google.com/ai-hypercomputer/docs/consumption-models)
+- [docs.cloud.google.com/docs/ai-ml](https://docs.cloud.google.com/docs/ai-ml)
 
 </details>
 
@@ -732,6 +857,11 @@ Explainable AI shows which factors drove a model's prediction for each case. In 
 
 **Remember:** "Why did the model decide this?" → Explainable AI.
 
+**References:**
+- [cloud.google.com/responsible-ai](https://cloud.google.com/responsible-ai)
+- [docs.cloud.google.com/bigquery/docs/xai-overview](https://docs.cloud.google.com/bigquery/docs/xai-overview)
+- [ibm.com/think/topics/explainable-ai](https://ibm.com/think/topics/explainable-ai)
+
 </details>
 
 ---
@@ -759,6 +889,11 @@ Vision API is a pre-trained model that labels images out of the box. It detects 
 - **D. Looker**: it is a BI and dashboard tool, not an image analysis service.
 
 **Remember:** Common labels, no training = pre-trained API (Vision API). Your own custom categories = AutoML.
+
+**References:**
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+- [docs.cloud.google.com/vision/docs/detect-labels-image-api](https://docs.cloud.google.com/vision/docs/detect-labels-image-api)
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
 
 </details>
 
@@ -788,6 +923,11 @@ Recognizing condition categories in symptom photos is image classification. A ma
 
 **Remember:** Recognize, classify or predict from images, text or data → machine learning.
 
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+- [docs.cloud.google.com/appengine/docs](https://docs.cloud.google.com/appengine/docs)
+
 </details>
 
 ---
@@ -816,6 +956,11 @@ Ready-to-use AI agents, Google's first-party models (such as Gemini) and a unifi
 
 **Remember:** Agents, Gemini models, AI platform = the AI differentiator.
 
+**References:**
+- [cloud.google.com/gemini-enterprise](https://cloud.google.com/gemini-enterprise)
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+
 </details>
 
 ---
@@ -843,6 +988,11 @@ AI Hub was a catalog of reusable AI and ML assets, such as models, notebooks and
 - **C. Collects, cleans and prepares datasets**: data preparation is a separate step and tool set.
 
 **Remember:** Hub = repository of reusable resources.
+
+**References:**
+- [cloud.google.com/blog/products/ai-machine-learning/introducing-ai-hub-and-kubeflow-pipelines-making-ai-simpler-faster-and-more-useful-for-businesses](https://cloud.google.com/blog/products/ai-machine-learning/introducing-ai-hub-and-kubeflow-pipelines-making-ai-simpler-faster-and-more-useful-for-businesses)
+- [cloud.google.com/model-garden](https://cloud.google.com/model-garden)
+- [cloud.google.com/products/ai](https://cloud.google.com/products/ai)
 
 **⚠️ Note:** AI Hub is an older product. Its role is now mostly filled by Model Garden in the AI platform. The definition is still correct, so pick the key.
 
@@ -874,6 +1024,11 @@ Predictions get better when the model can see how clicks, installs, visits and s
 
 **Remember:** New insights = combine the data, then apply ML.
 
+**References:**
+- [cloud.google.com/bigquery/docs/bigqueryml-intro](https://cloud.google.com/bigquery/docs/bigqueryml-intro)
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [cloud.google.com/learn/what-is-a-data-lake](https://cloud.google.com/learn/what-is-a-data-lake)
+
 </details>
 
 ---
@@ -901,6 +1056,11 @@ ML learns patterns from lots of past data, such as browsing, purchases and ratin
 - **D. Final decisions on ethical dilemmas**: these need human accountability, not a model.
 
 **Remember:** Lots of data + patterns + prediction at scale = good ML fit.
+
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [cloud.google.com/use-cases/recommendations](https://cloud.google.com/use-cases/recommendations)
+- [docs.cloud.google.com/bigquery/docs/recommendation-overview](https://docs.cloud.google.com/bigquery/docs/recommendation-overview)
 
 </details>
 
@@ -930,6 +1090,11 @@ Tensor Processing Units are chips Google designed specifically to speed up machi
 
 **Remember:** Hardware built for ML = TPU.
 
+**References:**
+- [docs.cloud.google.com/tpu/docs/intro-to-tpu](https://docs.cloud.google.com/tpu/docs/intro-to-tpu)
+- [cloud.google.com/tpu](https://cloud.google.com/tpu)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+
 </details>
 
 ---
@@ -957,6 +1122,11 @@ Agentic AI systems don't just answer questions. They understand a goal, decide o
 - **D. Open source software**: it describes how software is licensed, not what it does.
 
 **Remember:** AI that plans and takes actions = agentic AI.
+
+**References:**
+- [cloud.google.com/discover/what-is-agentic-ai](https://cloud.google.com/discover/what-is-agentic-ai)
+- [cloud.google.com/discover/what-are-ai-agents](https://cloud.google.com/discover/what-are-ai-agents)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
 
 </details>
 
@@ -986,6 +1156,11 @@ AI Hypercomputer is Google Cloud's integrated supercomputing architecture for AI
 
 **Remember:** Hardware + open software + flexible consumption for AI = AI Hypercomputer.
 
+**References:**
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+- [cloud.google.com/ai-infrastructure](https://cloud.google.com/ai-infrastructure)
+- [docs.cloud.google.com/ai-hypercomputer/docs/consumption-models](https://docs.cloud.google.com/ai-hypercomputer/docs/consumption-models)
+
 </details>
 
 ---
@@ -1013,6 +1188,11 @@ Agentic AI can plan, reason and complete multi-step tasks toward a goal with lit
 - **D. DNS**: it resolves domain names to IP addresses.
 
 **Remember:** Plan + reason + act on multi-step tasks = agentic AI.
+
+**References:**
+- [cloud.google.com/discover/what-is-agentic-ai](https://cloud.google.com/discover/what-is-agentic-ai)
+- [cloud.google.com/discover/what-are-ai-agents](https://cloud.google.com/discover/what-are-ai-agents)
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
 
 </details>
 
@@ -1042,6 +1222,11 @@ AI Hypercomputer brings together GPUs and TPUs, open software, ML frameworks and
 
 **Remember:** GPUs/TPUs + open software + flexible consumption = AI Hypercomputer.
 
+**References:**
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+- [cloud.google.com/ai-infrastructure](https://cloud.google.com/ai-infrastructure)
+- [docs.cloud.google.com/compute/docs/gpus](https://docs.cloud.google.com/compute/docs/gpus)
+
 </details>
 
 ---
@@ -1069,6 +1254,11 @@ Custom training lets data scientists write their own training code and run it on
 - **D. Prebuilt APIs**: these are pre-trained models; you don't train them yourself.
 
 **Remember:** ML experts + own code = custom training. No code = AutoML. No training = prebuilt APIs.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/start/training-guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/start/training-guide)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning)
 
 </details>
 
@@ -1098,6 +1288,11 @@ Pre-trained APIs, such as the Vision API and Natural Language API, use models Go
 
 **Remember:** Pre-trained API = no model building, no data science team. A developer just calls it.
 
+**References:**
+- [cloud.google.com/ai/apis](https://cloud.google.com/ai/apis)
+- [cloud.google.com/vision/docs](https://cloud.google.com/vision/docs)
+- [cloud.google.com/natural-language](https://cloud.google.com/natural-language)
+
 </details>
 
 ---
@@ -1125,6 +1320,11 @@ Pre-built agents and templates let a company deliver value quickly, because the 
 - **D. Shift to CapEx**: Cloud AI services are usually paid as operating expense (OpEx), not upfront capital spending.
 
 **Remember:** Pre-built = fast, less differentiation. Custom = more effort, more differentiation.
+
+**References:**
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/build/agent-garden](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/agent-garden)
 
 </details>
 
@@ -1154,6 +1354,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) offers a catalog of models
 
 **Remember:** Model choice on Google Cloud = Google + open + partner models in one platform.
 
+**References:**
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [cloud.google.com/model-garden](https://cloud.google.com/model-garden)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/use-partner-models](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/use-partner-models)
+
 </details>
 
 ---
@@ -1181,6 +1386,11 @@ Contact Center AI is Google Cloud's purpose-built solution for customer service.
 - **C. Document AI**: It extracts data from documents such as forms and invoices.
 
 **Remember:** Customer support at scale → Contact Center AI.
+
+**References:**
+- [cloud.google.com/solutions/contact-center-ai-platform](https://cloud.google.com/solutions/contact-center-ai-platform)
+- [docs.cloud.google.com/contact-center/ccai-platform/docs/agent-assist](https://docs.cloud.google.com/contact-center/ccai-platform/docs/agent-assist)
+- [docs.cloud.google.com/text-to-speech/docs](https://docs.cloud.google.com/text-to-speech/docs)
 
 </details>
 
@@ -1210,6 +1420,11 @@ TensorFlow is an open source machine learning library, originally created by Goo
 
 **Remember:** Open source ML library → TensorFlow. Data pipelines → Apache Beam / Dataflow.
 
+**References:**
+- [tensorflow.org](https://tensorflow.org)
+- [tensorflow.org/learn](https://tensorflow.org/learn)
+- [docs.cloud.google.com/dataflow/docs/concepts/beam-programming-model](https://docs.cloud.google.com/dataflow/docs/concepts/beam-programming-model)
+
 </details>
 
 ---
@@ -1237,6 +1452,11 @@ BI looks backward. It summarizes what already happened in reports and dashboards
 - **D. BI needs TPUs, ML only CPUs**: TPUs are hardware for accelerating ML, not BI, and ML is not limited to CPUs.
 
 **Remember:** BI = dashboards about the past. ML = learns from data to predict and decide.
+
+**References:**
+- [cloud.google.com/learn/what-is-business-intelligence](https://cloud.google.com/learn/what-is-business-intelligence)
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
 
 </details>
 
@@ -1266,6 +1486,11 @@ Google Cloud APIs such as the Vision API (text detection) and Document AI can re
 
 **Remember:** Scanned forms → APIs make them searchable and extract key fields.
 
+**References:**
+- [docs.cloud.google.com/document-ai/docs/overview](https://docs.cloud.google.com/document-ai/docs/overview)
+- [docs.cloud.google.com/vision/docs/ocr](https://docs.cloud.google.com/vision/docs/ocr)
+- [docs.cloud.google.com/document-ai/docs/extracting-overview](https://docs.cloud.google.com/document-ai/docs/extracting-overview)
+
 </details>
 
 ---
@@ -1293,6 +1518,11 @@ Machine learning finds patterns in historical data and keeps improving as new da
 - **D. Multiple regression**: A single statistical technique for predicting a number. It is not the broad, self-improving approach the stem describes.
 
 **Remember:** Learns and improves as data grows → machine learning.
+
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [developers.google.com/machine-learning/crash-course](https://developers.google.com/machine-learning/crash-course)
+- [cloud.google.com/discover/what-is-predictive-analytics](https://cloud.google.com/discover/what-is-predictive-analytics)
 
 **⚠️ Note:** Multiple regression is itself a statistical/ML technique, so D is not strictly wrong. "Machine learning" is the broader and best answer because the system must keep improving with new data. Pick the keyed answer on this exam.
 
@@ -1324,6 +1554,11 @@ The Vision API is a pre-trained Google Cloud service that analyzes images. It ca
 
 **Remember:** Generic photo labels, landmarks, text in images → Vision API.
 
+**References:**
+- [cloud.google.com/vision/docs](https://cloud.google.com/vision/docs)
+- [cloud.google.com/vision/docs/ocr](https://cloud.google.com/vision/docs/ocr)
+- [cloud.google.com/bigquery/docs/bqml-introduction](https://cloud.google.com/bigquery/docs/bqml-introduction)
+
 </details>
 
 ---
@@ -1351,6 +1586,11 @@ A machine learning model learns patterns from its training data. More relevant, 
 - **D. Faster CPU processors**: Faster hardware can speed up training, but it does not improve accuracy on its own.
 
 **Remember:** Better accuracy ← more (and better) training data, not more hardware.
+
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [developers.google.com/machine-learning/crash-course/overfitting/data-characteristics](https://developers.google.com/machine-learning/crash-course/overfitting/data-characteristics)
+- [developers.google.com/machine-learning/guides/text-classification/step-1](https://developers.google.com/machine-learning/guides/text-classification/step-1)
 
 </details>
 
@@ -1380,6 +1620,11 @@ Once an agent is built and tested on Gemini Enterprise Agent Platform, applicati
 
 **Remember:** Build agents without code → Agent Studio. Call agents from your apps → Agent Platform API.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/reference/rest](https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/rest)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/apis](https://docs.cloud.google.com/gemini-enterprise-agent-platform/apis)
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
+
 </details>
 
 ---
@@ -1407,6 +1652,11 @@ AutoML lets teams train custom models on their own labeled data without writing 
 - **D. Discovery AI for Retail**: This improves product search and recommendations for retailers, not defect detection.
 
 **Remember:** Labeled data + your own categories + no ML coders → AutoML.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tutorials/image-classification-automl/training](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tutorials/image-classification-automl/training)
+- [cloud.google.com/document-ai/docs/overview](https://cloud.google.com/document-ai/docs/overview)
 
 </details>
 
@@ -1436,6 +1686,11 @@ Artificial intelligence is the broad field of making computers do things that no
 
 **Remember:** AI = tasks that need human cognition. ML = learning from data to predict and decide.
 
+**References:**
+- [cloud.google.com/learn/what-is-artificial-intelligence](https://cloud.google.com/learn/what-is-artificial-intelligence)
+- [cloud.google.com/learn/artificial-intelligence-vs-machine-learning](https://cloud.google.com/learn/artificial-intelligence-vs-machine-learning)
+- [cloud.google.com/discover/deep-learning-vs-machine-learning](https://cloud.google.com/discover/deep-learning-vs-machine-learning)
+
 </details>
 
 ---
@@ -1463,6 +1718,11 @@ BigQuery ML lets people who know SQL create and run machine learning models dire
 - **D. AutoML with labeled data**: AutoML is also low-code, but BigQuery ML is the more direct fit when the data is in BigQuery and the team speaks SQL.
 
 **Remember:** SQL analysts + data in BigQuery → BigQuery ML.
+
+**References:**
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
+- [docs.cloud.google.com/bigquery/docs/create-machine-learning-model](https://docs.cloud.google.com/bigquery/docs/create-machine-learning-model)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tabular-data/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tabular-data/overview)
 
 </details>
 
@@ -1492,6 +1752,11 @@ The Cloud Translation API is a pre-trained service that translates text between 
 
 **Remember:** Audio → Speech-to-Text. Languages → Translation. Text topics and sentiment → Natural Language.
 
+**References:**
+- [cloud.google.com/translate](https://cloud.google.com/translate)
+- [docs.cloud.google.com/translate/docs](https://docs.cloud.google.com/translate/docs)
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+
 </details>
 
 ---
@@ -1519,6 +1784,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's unified,
 - **C. Recommendations AI**: A specialized product for retail recommendations, not a general platform for custom models.
 
 **Remember:** Full managed ML lifecycle, foundation models, agents → Gemini Enterprise Agent Platform.
+
+**References:**
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview)
 
 </details>
 
@@ -1548,6 +1818,11 @@ Foundation models are large models trained on broad data. Companies can adapt th
 
 **Remember:** Foundation models = pre-trained start, fine-tune, save time, still need review.
 
+**References:**
+- [cloud.google.com/discover/what-are-foundation-models](https://cloud.google.com/discover/what-are-foundation-models)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning)
+
 </details>
 
 ---
@@ -1575,6 +1850,11 @@ The Natural Language API is a pre-trained service that analyzes written text. It
 - **C. Cloud Translation API**: It translates between languages but does not find topics.
 
 **Remember:** Text topics, entities, sentiment → Natural Language API.
+
+**References:**
+- [cloud.google.com/natural-language/docs](https://cloud.google.com/natural-language/docs)
+- [cloud.google.com/speech-to-text/docs](https://cloud.google.com/speech-to-text/docs)
+- [cloud.google.com/translate/docs](https://cloud.google.com/translate/docs)
 
 </details>
 

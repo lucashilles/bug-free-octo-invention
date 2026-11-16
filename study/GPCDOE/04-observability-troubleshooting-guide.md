@@ -38,7 +38,7 @@
 | Destination | Use it when the question says… | Don't use it for… | Source |
 |---|---|---|---|
 | **Cloud Storage bucket** | "archive", "cheapest", "years", "immutable" (add a **retention policy + Bucket Lock**) | real-time dashboards (it is processed hourly) | Exam 2 · Q9, Exam 2 · Q43, Exam 1 · Q28 |
-| **BigQuery dataset** | SQL analysis, live dashboard in Data Studio/Looker Studio, "central repository for analysis" | locked retention (BigQuery expiration can be changed) or the cheapest cold archive | Exam 1 · Q28, Exam 3 · Q25, Exam 2 · Q9 |
+| **BigQuery dataset** | SQL analysis, live dashboard in Data Studio, "central repository for analysis" | locked retention (BigQuery expiration can be changed) or the cheapest cold archive | Exam 1 · Q28, Exam 3 · Q25, Exam 2 · Q9 |
 | **Pub/Sub topic** | an external **SIEM** or third-party tool that "ingests via Pub/Sub", or streaming to another system | storage: retention is only weeks (31 days max) | Exam 4 · Q9, Exam 2 · Q43, Exam 4 · Q53 |
 | **Cloud Logging (log) bucket** | centralize logs and still query and alert natively in Cloud Logging, or set custom retention (for example, 365 days) | consumers that can read only Pub/Sub | Exam 2 · Q25, Exam 4 · Q53 |
 
@@ -125,7 +125,7 @@
 - "Cloud Armor blocked requests for `/api` prefix, broken down by parameter name" → **counter metric filtered on `configuredAction="DENY"` + `requestUrl` prefix, label = `matchedFieldName`** (Exam 3 · Q59).
 
 ### Traps
-- A Data Studio/Looker Studio link to Cloud Logging is not a native path (it typically needs a BigQuery export first) (Exam 1 · Q18).
+- A Data Studio link to Cloud Logging is not a native path (it typically needs a BigQuery export first) (Exam 1 · Q18).
 - Profiler cannot read logs (Exam 1 · Q18).
 - A BigQuery sink plus scheduled queries is overkill for a simple frequency chart (Exam 1 · Q18).
 - An Ops Agent **metrics receiver** reports fixed metric sets and **can't break traffic down by client IP** (Exam 2 · Q3).
@@ -358,7 +358,7 @@
 - Archive cheaply for years → sink → **Cloud Storage**; immutable → **retention policy + Bucket Lock**.
 - External SIEM → **Pub/Sub** (it is transport, with ≤31-day retention, never an archive).
 - Keep querying and alerting in Logging → sink to a **Cloud Logging bucket**; 1-year retention → custom log bucket with 365 days.
-- Live, shareable SQL dashboard on logs → sink → **BigQuery → Data Studio/Looker Studio**, with no CSV step.
+- Live, shareable SQL dashboard on logs → sink → **BigQuery → Data Studio**, with no CSV step.
 - Capture elsewhere **and** keep out of Logging → **sink + exclusion**.
 - Cut cost → **exclude non-ERROR + log-based metrics**; retention length isn't the cost driver.
 - GKE: drop app logs but keep ops logs → `--logging=SYSTEM`.

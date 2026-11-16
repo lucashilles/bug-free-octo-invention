@@ -11,7 +11,8 @@
         "Cloud spending is decentralized and variable. On-premises spending was centralized and fixed.",
         "Share cost views with each department so teams see their impact on the bill.",
         "Use labels, projects and folders to break costs down by team.",
-        "Intelligent recommendations (Active Assist) rightsize and clean up resources when demand varies.",
+        "Labels must be meaningful key-value pairs (team, environment, cost center). One shared tag gives no breakdown.",
+        "Intelligent recommendations (Active Assist, also in the FinOps hub) rightsize and clean up resources when demand varies.",
         "Moving to CapEx or buying physical servers is never the cloud cost answer."
       ]
     },
@@ -25,13 +26,14 @@
       "takeaways": [
         "Budget + threshold rule = notification when spend crosses a limit. It does not stop spending by itself.",
         "The Pricing Calculator estimates monthly cost before deployment.",
-        "Sustained use discounts apply automatically. You do nothing.",
+        "Sustained use discounts apply automatically once eligible VMs run more than 25% of the month. You do nothing.",
         "Committed use discounts need a 1- or 3-year commitment.",
+        "SUDs only cover some machine series (not E2) and don't stack with CUDs.",
         "Quotas cap resource usage. They are not a spend alert."
       ]
     },
     "3": {
-      "summary": "The resource hierarchy (organization, folders, projects, resources) lets administrators set policies once and have them inherited downward.",
+      "summary": "The resource hierarchy (organization, folders, projects, resources) lets administrators set IAM and organization policies once and have them inherited downward.",
       "objectives": [
         "Name the levels of the Google Cloud resource hierarchy",
         "Explain how folder-level policies are inherited",
@@ -40,6 +42,7 @@
       "takeaways": [
         "Organization → Folders → Projects → Resources.",
         "A folder policy is inherited by every project in it, and by those projects' resources.",
+        "IAM allow policies (who can do what) and organization policies (what can be configured) both inherit downward. Deny policies can block inherited access.",
         "Policies can be set at any level, not only organization or project.",
         "Inheritance flows down, never sideways to other folders."
       ]
@@ -54,7 +57,9 @@
       "takeaways": [
         "SLI is a measurement, SLO is an internal target, SLA is a contract.",
         "Availability is a percentage of uptime.",
+        "An SLO can target availability or latency, for example 95% of requests within 300 ms.",
         "Five nines (99.999%) allows about 5 minutes of downtime a year.",
+        "Counting incidents or regions is not how availability is measured.",
         "The SLO is set stricter than the SLA so teams react before customers are owed credits."
       ]
     },
@@ -70,7 +75,9 @@
         "Budget remaining → prioritize innovation and feature velocity.",
         "Below the SLO → focus on reliability.",
         "A missed provider SLA typically earns the customer a service credit.",
-        "The real business risk of downtime is customers leaving."
+        "Google Cloud calls them Financial Credits: claimed by the customer and applied to future bills.",
+        "The real business risk of downtime is customers leaving.",
+        "A missed availability SLA means downtime, not deleted data."
       ]
     },
     "6": {
@@ -81,10 +88,10 @@
         "Describe SRE attitudes to toil, failure and postmortems"
       ],
       "takeaways": [
-        "DevOps removes repetitive manual tasks through tools and automation.",
+        "DevOps removes repetitive manual tasks through CI/CD pipelines, automated tests and other tooling.",
         "Silos are fixed by shared responsibility for business results, not blame.",
         "Small incremental changes shorten recovery when bugs appear.",
-        "Roll out new features to a small group first.",
+        "Roll out new features to a small group first to limit the blast radius.",
         "Automate toil.",
         "Failure is normal: accept and learn from it in blameless postmortems."
       ]
@@ -98,14 +105,15 @@
       ],
       "takeaways": [
         "Out-of-the-box observability = monitoring IT infrastructure and applications.",
-        "Monitoring collects predefined and custom metrics.",
+        "Monitoring collects predefined (system) and custom (user-defined) metrics.",
         "Logging records application and operating system events.",
         "Latency = how long a request takes. Saturation = how full capacity is.",
-        "Traffic is demand, errors is the failure rate."
+        "Traffic is demand, errors is the failure rate.",
+        "Recording user actions for compliance is audit logging, not monitoring."
       ]
     },
     "8": {
-      "summary": "Google Cloud Observability provides one tool per job: Monitoring, Logging, Trace, Error Reporting, Profiler and the retired Debugger. The exam tests matching a need to the tool.",
+      "summary": "Google Cloud Observability provides one tool per job: Monitoring, Logging (with Logs Explorer and Cloud Audit Logs), Trace, Error Reporting, Profiler and the retired Debugger. The exam tests matching a need to the tool.",
       "objectives": [
         "Match an operations need to the right Google Cloud Observability tool",
         "Tell Cloud Trace apart from Cloud Profiler",
@@ -114,22 +122,26 @@
       "takeaways": [
         "Metrics, dashboards, alerts, uptime checks → Cloud Monitoring.",
         "Collect, store and search logs in one place → Cloud Logging.",
+        "Search logs in Logs Explorer. VMs send logs through the Ops Agent, GKE sends them by default.",
+        "Who did what, for compliance → Cloud Audit Logs.",
         "One request across microservices → Cloud Trace.",
         "Crashes and exceptions grouped automatically → Error Reporting.",
         "CPU and memory use per code function → Cloud Profiler.",
-        "Live code state without downtime → Cloud Debugger, now retired."
+        "Live code state without downtime → Cloud Debugger, now retired.",
+        "Dialogflow, Cloud SDK and Data Catalog are not logging tools."
       ]
     },
     "9": {
       "summary": "Resilient systems use redundancy so they keep running when a component fails. Moving to an energy-efficient public cloud lets organizations scale quickly while meeting sustainability goals.",
       "objectives": [
-        "Define redundancy and distinguish it from backups",
+        "Define redundancy and distinguish it from backups and durability",
         "Outline resilience patterns across zones and regions",
         "Explain how public cloud supports sustainability goals"
       ],
       "takeaways": [
-        "Redundancy = copies of components so the service survives a failure.",
+        "Redundancy = copies of components so there is no single point of failure.",
         "Backups restore data, redundancy keeps the service running.",
+        "Availability is whether the service is reachable. Durability is whether data survives.",
         "Spread workloads across zones and regions and use autoscaling.",
         "Scale fast and sustainably with a cloud provider's energy-efficient data centers.",
         "The Carbon Footprint tool reports emissions from your Google Cloud usage."
@@ -152,6 +164,12 @@
   },
   "glossary": [
     {
+      "term": "Active Assist",
+      "definition": "Google Cloud's family of intelligent recommendations (Recommender), such as rightsizing VMs and deleting idle resources.",
+      "exam_context": "Variable demand and hard-to-control costs → apply intelligent recommendations.",
+      "lesson": 1
+    },
+    {
       "term": "Availability",
       "definition": "The share of time a service is up and usable, expressed as a percentage of uptime.",
       "exam_context": "Expressed as percentage of uptime. Five nines (99.999%) ≈ 5 minutes of downtime a year.",
@@ -168,6 +186,24 @@
       "definition": "A Cloud Billing budget with threshold rules that sends notifications when actual or forecasted spend crosses set percentages.",
       "exam_context": "Answer for 'notify us when costs cross a limit'. Quotas and past billing reports are distractors.",
       "lesson": 2
+    },
+    {
+      "term": "Canary release",
+      "definition": "Releasing a change to a small group of users first, watching it, then expanding. Limits the blast radius.",
+      "exam_context": "SRE answer for releasing a new feature with less risk. Not everyone at once, and not refusing to launch.",
+      "lesson": 6
+    },
+    {
+      "term": "CI/CD",
+      "definition": "Continuous integration and continuous delivery: automated pipelines that build, test and deploy code changes.",
+      "exam_context": "The DevOps automation that removes repetitive manual tasks and makes small, frequent releases possible.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Audit Logs",
+      "definition": "Logs in Cloud Logging that record admin activity and data access in Google Cloud.",
+      "exam_context": "Who did what, for compliance. Not the same as metric monitoring.",
+      "lesson": 8
     },
     {
       "term": "Cloud Debugger",
@@ -195,13 +231,13 @@
     },
     {
       "term": "Cloud Trace",
-      "definition": "Distributed tracing tool that follows a single request across services and shows time spent at each step.",
+      "definition": "Distributed tracing tool that follows a single request across services. Each trace is made of spans showing time spent at each step.",
       "exam_context": "Pick it for slow requests across microservices. Not Profiler.",
       "lesson": 8
     },
     {
       "term": "Committed use discount (CUD)",
-      "definition": "A discount in exchange for committing to a level of resource usage for 1 or 3 years.",
+      "definition": "A discount in exchange for committing to a minimum level of resource usage or spend for 1 or 3 years.",
       "exam_context": "The 1/3-year commitment option is a CUD, not the way to get sustained use discounts.",
       "lesson": 2
     },
@@ -210,6 +246,12 @@
       "definition": "A set of practices that unites development and operations through shared tools, automation and responsibility.",
       "exam_context": "Solves repetitive manual tasks and team silos.",
       "lesson": 6
+    },
+    {
+      "term": "Durability",
+      "definition": "Whether stored data survives over time, protected by replication, backups and disaster recovery.",
+      "exam_context": "An availability outage makes data unreachable for a while. It doesn't delete it.",
+      "lesson": 9
     },
     {
       "term": "Error budget",
@@ -224,6 +266,12 @@
       "lesson": 8
     },
     {
+      "term": "Errors",
+      "definition": "The rate of failed requests, such as HTTP 5xx responses, failed calls or timeouts.",
+      "exam_context": "Golden signal for failures. A slow request that still succeeds is latency, not errors.",
+      "lesson": 7
+    },
+    {
       "term": "FinOps",
       "definition": "Cloud financial management practice where finance, technology and business teams share accountability for cloud spend.",
       "exam_context": "Cloud spending is decentralized and variable, so share cost views to create accountability.",
@@ -236,9 +284,27 @@
       "lesson": 7
     },
     {
+      "term": "Google Cloud Observability",
+      "definition": "Google Cloud's suite for monitoring, logging, tracing, error reporting and profiling. Formerly the operations suite and Stackdriver.",
+      "exam_context": "Out-of-the-box observability = monitoring infrastructure and applications with these built-in tools.",
+      "lesson": 8
+    },
+    {
+      "term": "IAM allow policy",
+      "definition": "A policy that grants roles (who can do what) on a resource. Set on a folder, it is inherited by its projects and their resources.",
+      "exam_context": "Folder-level access rules apply to every project and resource below, never sideways to other folders.",
+      "lesson": 3
+    },
+    {
       "term": "Intelligent recommendations",
       "definition": "Automated suggestions (Active Assist / Recommender) such as rightsizing VMs or removing idle resources.",
       "exam_context": "Answer for optimizing resource use when demand and costs vary.",
+      "lesson": 1
+    },
+    {
+      "term": "Label",
+      "definition": "A key-value pair attached to a resource (for example team=finance) used to group and filter costs.",
+      "exam_context": "Labels must differ by team or cost center to break down the bill. One identical tag on everything gives no breakdown.",
       "lesson": 1
     },
     {
@@ -248,10 +314,28 @@
       "lesson": 7
     },
     {
+      "term": "Logs Explorer",
+      "definition": "The Cloud Logging interface for searching, filtering and analyzing log entries.",
+      "exam_context": "Searching log entries across GKE containers is Cloud Logging (via Logs Explorer), not the Console itself.",
+      "lesson": 8
+    },
+    {
       "term": "Observability",
       "definition": "Visibility into the health, performance and behavior of systems through metrics, logs and traces.",
       "exam_context": "Out-of-the-box observability = monitoring IT infrastructure and applications.",
       "lesson": 7
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's agent installed on Compute Engine VMs to send logs and metrics to Cloud Logging and Cloud Monitoring.",
+      "exam_context": "How VM logs reach Cloud Logging. GKE sends logs by default.",
+      "lesson": 8
+    },
+    {
+      "term": "Organization policy",
+      "definition": "A constraint set on the organization, a folder or a project that limits what can be configured (for example allowed regions). Inherited downward.",
+      "exam_context": "Like IAM policies, it flows down the hierarchy to projects and their resources.",
+      "lesson": 3
     },
     {
       "term": "Premium Support",
@@ -263,6 +347,12 @@
       "term": "Pricing Calculator",
       "definition": "Google Cloud tool for estimating the cost of a workload before deploying it.",
       "exam_context": "Answer for 'reliable estimate before deploying'. Not a test deployment.",
+      "lesson": 2
+    },
+    {
+      "term": "Quota",
+      "definition": "A limit on how much of a resource (CPUs, API calls) a project can use.",
+      "exam_context": "Quotas cap usage but don't alert on spend. Budget alerts do that.",
       "lesson": 2
     },
     {
@@ -285,7 +375,7 @@
     },
     {
       "term": "Service credit",
-      "definition": "Compensation a provider gives a customer when it misses its SLA.",
+      "definition": "Compensation a provider gives a customer when it misses its SLA. Google Cloud calls them Financial Credits: the customer claims them and they reduce future bills.",
       "exam_context": "What a customer typically gets when the provider misses an SLA.",
       "lesson": 5
     },
@@ -308,16 +398,40 @@
       "lesson": 4
     },
     {
-      "term": "Sustained use discount (SUD)",
-      "definition": "Automatic discount on eligible Compute Engine VMs that run for a large part of the billing month.",
-      "exam_context": "Applied automatically, no action needed.",
+      "term": "Single point of failure",
+      "definition": "A component whose failure takes down the whole system.",
+      "exam_context": "Redundancy removes it, for example several instances behind a load balancer across zones.",
+      "lesson": 9
+    },
+    {
+      "term": "Spot VM",
+      "definition": "A deeply discounted Compute Engine VM that Google can stop at any time. Fits fault-tolerant batch work.",
+      "exam_context": "Distractor in the sustained use discount question: Spot VMs are a separate pricing option.",
       "lesson": 2
+    },
+    {
+      "term": "Sustained use discount (SUD)",
+      "definition": "Automatic discount on eligible Compute Engine VMs (such as N1, N2, N2D, C2) that run for more than 25% of the billing month. It grows with usage.",
+      "exam_context": "Applied automatically, no action needed. Not a 1/3-year commitment and not Spot VMs. Doesn't stack with CUDs.",
+      "lesson": 2
+    },
+    {
+      "term": "Technical Account Manager (TAM)",
+      "definition": "A named Google contact who gives proactive guidance, operational reviews and escalation help. Included in Premium Support.",
+      "exam_context": "Fastest response + dedicated TAM → Premium. Enhanced has no TAM.",
+      "lesson": 10
     },
     {
       "term": "Toil",
       "definition": "Manual, repetitive, automatable operational work that grows with service size.",
       "exam_context": "SRE best practice: prioritize automating it.",
       "lesson": 6
+    },
+    {
+      "term": "Traffic",
+      "definition": "The demand placed on a system, such as requests or transactions per second.",
+      "exam_context": "Golden signal for volume. It doesn't measure how long a request takes.",
+      "lesson": 7
     }
   ]
 }

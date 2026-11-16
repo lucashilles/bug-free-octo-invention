@@ -6,13 +6,16 @@
         "Define AI and machine learning in business terms",
         "Distinguish ML (learn and predict) from BI (report on the past)",
         "Recognize good ML use cases such as recommendations, churn and sentiment from audio",
-        "Spot tasks ML is a poor fit for"
+        "Spot tasks ML is a poor fit for",
+        "Tell descriptive analytics, predictive analytics, supervised and unsupervised learning apart"
       ],
       "takeaways": [
         "AI = tasks that need human cognition. ML = learns from data to make predictions or decisions.",
         "BI uses dashboards and reports on historical data. ML predicts and automates.",
+        "Descriptive analytics reports what happened. Predictive analytics forecasts. AI is the broad field, with ML, deep learning and gen AI inside it.",
         "Unstructured data such as audio, images and free text is where ML adds unique value.",
         "Predict churn by training a model on customers who already left.",
+        "Supervised learning uses labeled examples. Unsupervised learning finds groupings in unlabeled data.",
         "ML needs past examples to learn from and should not make final ethical decisions.",
         "Google Cloud offers AI tools for every skill level, from APIs to custom training."
       ]
@@ -22,11 +25,13 @@
       "objectives": [
         "Explain why more and better training data improves prediction accuracy",
         "Prepare inconsistent data by transforming it into a consistent format",
-        "Describe why training data should be combined and representative"
+        "Describe why training data should be combined and representative",
+        "List the common data preparation steps and why full history matters"
       ],
       "takeaways": [
-        "To improve accuracy, add more good training data. Storage, bandwidth and CPU speed don't help.",
+        "To improve accuracy, add more relevant, good-quality training data. Storage, bandwidth and CPU speed don't help.",
         "Different column names and date formats? Transform to one consistent format before training.",
+        "Preparation means standardizing dates, field names, types and categories, handling missing values and removing duplicates. Keep the full history for seasonality.",
         "Combine related datasets before predicting.",
         "Training data should cover all conditions the model will see, not only extreme cases."
       ]
@@ -41,12 +46,13 @@
       "takeaways": [
         "Pre-built APIs and agents are fastest but give less business differentiation.",
         "Custom models need more effort and expertise but give the most differentiation.",
+        "Pre-trained APIs cover common tasks. Predicting from your own business data needs a model trained on it.",
         "SQL plus BigQuery means BigQuery ML. Labeled data with no ML coders means AutoML.",
         "Neither approach shifts spending to CapEx or guarantees 100% accuracy."
       ]
     },
     "4": {
-      "summary": "Pre-trained APIs give ready-made ML through a simple API call with no training. This lesson maps common inputs (photos, audio, text, scanned forms) to the Vision, Speech-to-Text, Translation and Natural Language APIs.",
+      "summary": "Pre-trained APIs give ready-made ML through a simple API call with no training. This lesson maps common inputs (photos, audio, text, video, scanned forms) to the Vision, Speech-to-Text, Text-to-Speech, Translation, Natural Language, Video Intelligence and Document AI services, plus Sensitive Data Protection for card numbers and personal data.",
       "objectives": [
         "Choose the correct pre-trained API for images, audio, translation and text analysis",
         "Explain why pre-trained APIs speed up AI adoption",
@@ -54,8 +60,10 @@
       ],
       "takeaways": [
         "Generic labels, objects, landmarks and text in photos mean Vision API.",
+        "Card numbers or ID data in photos: Vision OCR plus Sensitive Data Protection, no training needed.",
         "Audio to text means Speech-to-Text. Text into other languages means Translation API.",
         "Topics and sentiment in written text mean Natural Language API.",
+        "Document AI extracts key-value pairs, entities and tables from forms, invoices and receipts. Video Intelligence handles video, not photos.",
         "Scanned forms become searchable text with extracted fields through APIs such as Document AI.",
         "Pre-trained APIs remove the need for ML specialists, not for input data or permissions."
       ]
@@ -69,15 +77,15 @@
         "Reject data-processing tools offered as ML answers"
       ],
       "takeaways": [
-        "Data in BigQuery plus SQL skills means BigQuery ML, with no data export.",
+        "Data in BigQuery plus SQL skills means BigQuery ML (CREATE MODEL), with no data export, even when AutoML is also offered.",
         "Labeled examples in your own categories plus no ML coding skills means AutoML.",
-        "Data scientists writing training code means custom training.",
-        "TensorFlow is Google's open-source ML library. Beam and Dataflow process data instead.",
+        "Data scientists writing training code means custom training: managed jobs with their own framework, containers and accelerators.",
+        "TensorFlow is Google's open-source, end-to-end ML platform. Apache Beam is a pipeline model and Dataflow runs it.",
         "Predictive maintenance in BigQuery ML is a typical business-value example."
       ]
     },
     "6": {
-      "summary": "Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's unified, managed AI platform for the full ML lifecycle and for generative AI and agents. This lesson covers its scope, model choice, Agent Studio, the Agent Platform API and AI Hub.",
+      "summary": "Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's unified, managed AI platform for the full ML lifecycle and for generative AI and agents. This lesson covers its scope, model choice through Model Garden, Agent Studio, the Agent Platform API and AI Hub.",
       "objectives": [
         "Describe the ML lifecycle stages the platform manages",
         "Explain the platform's model choice across Google, open and partner models",
@@ -86,9 +94,10 @@
       ],
       "takeaways": [
         "Prepare, train, deploy and monitor in one managed service means Gemini Enterprise Agent Platform.",
-        "It offers Google, open and third-party partner models.",
+        "It offers Google, open and third-party partner models through Model Garden.",
         "Agent Studio is the no-code or low-code agent builder.",
         "Call a finished agent from mobile or web apps through the Agent Platform API.",
+        "IAM controls who can call an agent, but the Agent Platform API is the interface.",
         "GKE and Compute Engine can run ML but are not managed ML platforms."
       ]
     },
@@ -97,27 +106,31 @@
       "objectives": [
         "Define generative AI and tell it apart from predictive analytics",
         "Explain the strategic value of foundation models",
-        "Identify Gemini as Google's multimodal foundation model"
+        "Identify Gemini as Google's multimodal foundation model",
+        "Name the ways to adapt a foundation model and the risk of hallucinations"
       ],
       "takeaways": [
         "Generative AI is a specific field of AI that creates content such as text, images, audio and code.",
         "Foundation models give a pre-trained starting point that you can fine-tune, which cuts development time.",
+        "Adapt foundation models by prompting, grounding (RAG) or fine-tuning. Ungrounded output can hallucinate.",
         "Gemini understands text, code, audio, images and video together.",
         "Foundation models don't remove governance, don't make compute free and don't guarantee facts."
       ]
     },
     "8": {
-      "summary": "Agentic AI goes beyond generating content. It plans, decides, calls tools and completes multi-step workflows. This lesson also covers Contact Center AI, Google's purpose-built solution for customer support.",
+      "summary": "Agentic AI goes beyond generating content. It plans, decides, calls tools and completes multi-step workflows. This lesson also covers Contact Center AI, Google's purpose-built solution for customer support, the Gemini Enterprise app, and the packaged AI solutions that appear as distractors.",
       "objectives": [
         "Define agentic AI and distinguish it from generative AI and BI",
         "Identify Google Cloud tools for building and calling agents",
-        "Choose Contact Center AI for customer-support scenarios"
+        "Choose Contact Center AI for customer-support scenarios",
+        "Recognize Document AI, Recommendations AI, Discovery AI for Retail and Cloud Talent Solution"
       ],
       "takeaways": [
         "Agentic AI understands goals, plans, calls tools and completes workflows with little human input.",
         "Generative AI creates content, and agentic AI takes actions.",
         "Agent Studio, Gemini Enterprise Agent Platform and the Agent Platform API build and expose agents.",
-        "High-volume chat and phone support with personalization means Contact Center AI."
+        "High-volume chat and phone support with routing, virtual agents, agent assist and personalization means Contact Center AI.",
+        "Talent Solution is for jobs, Discovery AI and Recommendations AI are for retail search and recommendations, Document AI is for documents."
       ]
     },
     "9": {
@@ -128,10 +141,10 @@
         "Identify world-leading AI as a Google Cloud differentiator"
       ],
       "takeaways": [
-        "TPUs are Google's custom chips designed specifically for ML training.",
+        "TPUs are Google's custom ASICs designed specifically for ML training, fast at tensor and matrix math.",
         "For very large foundation models, use GPUs and TPUs.",
-        "AI Hypercomputer combines AI-optimized hardware, open software, ML frameworks and flexible consumption.",
-        "Ready-to-use agents, first-party models and a unified platform make up the world-leading AI differentiator."
+        "AI Hypercomputer combines AI-optimized hardware, networking and storage, open software, ML frameworks and flexible consumption for training, tuning and serving.",
+        "Ready-to-use agents, Gemini models, the Gemini Enterprise app and a unified AI platform make up the world-leading AI differentiator."
       ]
     },
     "10": {
@@ -143,7 +156,7 @@
       ],
       "takeaways": [
         "Transparent, fair, safe, privacy-preserving and low-bias AI is responsible AI.",
-        "Explaining an individual decision to auditors calls for explainable AI.",
+        "Explaining an individual decision to auditors calls for explainable AI, which also helps detect bias.",
         "Bias often starts with unrepresentative training data.",
         "Humans stay accountable for ethical decisions and for reviewing gen AI output."
       ]
@@ -152,14 +165,14 @@
   "glossary": [
     {
       "term": "Agent Platform API",
-      "definition": "Programmatic interface to Gemini Enterprise Agent Platform for calling deployed models and agents from code.",
-      "exam_context": "Answer when a finished agent must be called from Android, iOS or web apps. Billing, Storage and IAM APIs are distractors.",
+      "definition": "Programmatic interface to Gemini Enterprise Agent Platform for managing and calling deployed models and agents from code.",
+      "exam_context": "Answer when a finished agent must be called from Android, iOS or web apps. IAM secures the call but isn't the interface. Billing and Storage APIs are distractors.",
       "lesson": 6
     },
     {
       "term": "Agent Studio",
-      "definition": "No-code / low-code visual interface for designing, prototyping and publishing AI agents.",
-      "exam_context": "Answer when analysts without coding or ML skills must build agents.",
+      "definition": "No-code / low-code visual designer in the Google Cloud console for designing, configuring, testing and publishing AI agents.",
+      "exam_context": "Answer when analysts without coding or ML skills must build agents. It doesn't train models on BigQuery tables.",
       "lesson": 6
     },
     {
@@ -176,9 +189,15 @@
     },
     {
       "term": "AI Hypercomputer",
-      "definition": "Google Cloud's integrated AI supercomputing architecture: AI-optimized hardware (TPUs, GPUs), open software, ML frameworks and flexible consumption models.",
-      "exam_context": "Answer when a question lists hardware + open software + frameworks + flexible consumption for training and serving large models.",
+      "definition": "Google Cloud's integrated AI supercomputing architecture: performance-optimized hardware (TPUs, GPUs), networking and storage, open software, ML frameworks and flexible consumption models.",
+      "exam_context": "Answer when a question lists hardware + open software + frameworks + flexible consumption for training, tuning and serving large models.",
       "lesson": 9
+    },
+    {
+      "term": "Apache Beam / Dataflow",
+      "definition": "Apache Beam is an open-source programming model for batch and streaming data pipelines. Dataflow is Google Cloud's managed service that runs Beam pipelines.",
+      "exam_context": "Data processing, not an ML library. The open-source ML library answer is TensorFlow.",
+      "lesson": 5
     },
     {
       "term": "Artificial intelligence (AI)",
@@ -205,26 +224,44 @@
       "lesson": 1
     },
     {
+      "term": "Cloud Talent Solution",
+      "definition": "Google Cloud AI service that improves job search and candidate matching for recruiting sites.",
+      "exam_context": "Distractor in customer-support questions. It is about hiring, not support.",
+      "lesson": 8
+    },
+    {
       "term": "Cloud Translation API",
-      "definition": "Pre-trained API that translates text between languages.",
-      "exam_context": "Translate product pages into many languages.",
+      "definition": "Pre-trained API that translates text between languages and can detect a text's language.",
+      "exam_context": "Translate product pages into many languages. It doesn't transcribe audio or find topics.",
       "lesson": 4
     },
     {
       "term": "Contact Center AI (CCAI)",
-      "definition": "Google Cloud's purpose-built AI solution for customer service: virtual agents, agent assist and conversation insights.",
+      "definition": "Google Cloud's purpose-built AI solution for customer service: virtual agents, intelligent routing, agent assist and conversation insights across chat and phone.",
       "exam_context": "High-volume chat/phone support that must stay personalized. Text-to-Speech or Recommendations AI alone don't fit.",
       "lesson": 8
     },
     {
       "term": "Custom training",
-      "definition": "Training a model with your own code in Gemini Enterprise Agent Platform for full control.",
-      "exam_context": "Data scientists writing training code. Most effort, highest differentiation.",
+      "definition": "Training a model with your own code as managed jobs in Gemini Enterprise Agent Platform, with your choice of framework, containers and accelerators.",
+      "exam_context": "Data scientists writing training code. Most effort, highest differentiation. Compute Engine would leave the infrastructure to you.",
       "lesson": 5
     },
     {
+      "term": "Descriptive analytics",
+      "definition": "Analysis that summarizes what already happened, through reports and dashboards.",
+      "exam_context": "Doesn't predict or act. Distractor for agentic AI and ML questions.",
+      "lesson": 1
+    },
+    {
+      "term": "Discovery AI for Retail",
+      "definition": "Google Cloud AI for retail product search, recommendations and personalization.",
+      "exam_context": "Distractor for defect detection or custom image classification.",
+      "lesson": 8
+    },
+    {
       "term": "Document AI",
-      "definition": "Pre-trained service that extracts structured fields from documents such as forms and invoices.",
+      "definition": "Pre-trained service that uses OCR and extracts structured data (key-value pairs, entities, tables, fields) from documents such as forms, invoices, receipts and contracts.",
       "exam_context": "Scanned forms become searchable data. Not a general ML platform or a contact-center solution.",
       "lesson": 4
     },
@@ -233,6 +270,12 @@
       "definition": "Techniques that show why a model made a specific prediction.",
       "exam_context": "Regulated decisions (mortgages, credit) where auditors need the reason for each outcome.",
       "lesson": 10
+    },
+    {
+      "term": "Fine-tuning",
+      "definition": "Further training a pre-trained foundation model on your own examples so it fits a specific task.",
+      "exam_context": "One way to adapt a foundation model, alongside prompting and grounding.",
+      "lesson": 7
     },
     {
       "term": "Foundation model",
@@ -245,6 +288,12 @@
       "definition": "Google's multimodal foundation model family that understands text, code, audio, images and video.",
       "exam_context": "Answer for \"multimodal model\" across many input types.",
       "lesson": 7
+    },
+    {
+      "term": "Gemini Enterprise",
+      "definition": "Google's enterprise AI app (formerly Google Agentspace) where employees use Gemini models and ready-made or custom agents over company data.",
+      "exam_context": "Part of the world-leading AI differentiator. Not the same as Gemini Enterprise Agent Platform, the developer platform.",
+      "lesson": 8
     },
     {
       "term": "Gemini Enterprise Agent Platform",
@@ -265,14 +314,32 @@
       "lesson": 9
     },
     {
+      "term": "Grounding / RAG",
+      "definition": "Connecting a model's answers to trusted sources, such as search or your own documents. Retrieval-augmented generation (RAG) fetches relevant content and adds it to the prompt.",
+      "exam_context": "Reduces hallucinations and adapts foundation models to company data without retraining.",
+      "lesson": 7
+    },
+    {
+      "term": "Hallucination",
+      "definition": "Generative AI output that sounds confident but is false, incomplete or outdated.",
+      "exam_context": "Why foundation models don't guarantee accuracy and still need grounding and human review.",
+      "lesson": 7
+    },
+    {
       "term": "Machine learning (ML)",
-      "definition": "Subset of AI in which systems learn patterns from data to make predictions or decisions, improving with more data.",
+      "definition": "Subset of AI in which systems learn patterns from data to make predictions or decisions, improving with more data. Deep learning and generative AI sit inside it.",
       "exam_context": "Recommendations, churn prediction, image classification. Not suited to tasks with no past patterns or ethical final decisions.",
       "lesson": 1
     },
     {
+      "term": "Model Garden",
+      "definition": "Catalog in Gemini Enterprise Agent Platform for discovering and using Google, open and third-party partner models.",
+      "exam_context": "Answer for model choice across providers. It has largely taken over AI Hub's role.",
+      "lesson": 6
+    },
+    {
       "term": "Natural Language API",
-      "definition": "Pre-trained API for sentiment, entities and content classification in text.",
+      "definition": "Pre-trained API for sentiment, entities, syntax and content classification in text.",
       "exam_context": "Find main topics in chat transcripts. Speech must be transcribed first.",
       "lesson": 4
     },
@@ -283,10 +350,28 @@
       "lesson": 3
     },
     {
+      "term": "Predictive analytics",
+      "definition": "Using historical and current data to forecast likely outcomes, such as churn or demand.",
+      "exam_context": "Forecasts, but doesn't create content. Distractor for generative AI questions.",
+      "lesson": 1
+    },
+    {
+      "term": "Recommendations AI",
+      "definition": "Packaged Google Cloud solution for personalized product and content recommendations.",
+      "exam_context": "Not a contact center, not a general ML platform, not a text classifier.",
+      "lesson": 8
+    },
+    {
       "term": "Responsible AI",
       "definition": "Practice of building AI that is transparent, fair, safe, privacy-preserving and accountable and that reduces harmful bias.",
       "exam_context": "Answer when a company defines principles to keep trust in its AI.",
       "lesson": 10
+    },
+    {
+      "term": "Sensitive Data Protection",
+      "definition": "Google Cloud service (formerly Cloud DLP) that discovers, classifies and redacts sensitive data such as payment card numbers and personal information.",
+      "exam_context": "With Vision OCR, flags ID or payment cards in uploaded photos without training a model.",
+      "lesson": 4
     },
     {
       "term": "Speech-to-Text API",
@@ -295,21 +380,33 @@
       "lesson": 4
     },
     {
+      "term": "Supervised learning",
+      "definition": "Training a model on labeled examples so it learns to predict the label for new data.",
+      "exam_context": "AutoML image classification on labeled photos is supervised learning.",
+      "lesson": 1
+    },
+    {
       "term": "TensorFlow",
       "definition": "Google's open-source machine learning library with a large ecosystem of tools and community.",
       "exam_context": "Answer for \"open-source ML library\". Apache Beam and Dataflow are data processing.",
       "lesson": 5
     },
     {
+      "term": "Text-to-Speech",
+      "definition": "Pre-trained API that turns text into natural-sounding spoken audio.",
+      "exam_context": "The reverse of Speech-to-Text. One building block, not a full contact center.",
+      "lesson": 4
+    },
+    {
       "term": "TPU (Tensor Processing Unit)",
-      "definition": "Google's custom chip designed specifically to accelerate machine learning workloads.",
+      "definition": "Google's custom ASIC designed specifically to accelerate machine learning workloads, especially tensor and matrix math.",
       "exam_context": "\"Hardware designed for ML\" or \"domain-specific hardware\" to cut training time.",
       "lesson": 9
     },
     {
       "term": "Training data",
       "definition": "The examples a model learns from. Its quantity, quality and representativeness drive accuracy.",
-      "exam_context": "More training data improves accuracy. Transform inconsistent sources first.",
+      "exam_context": "More relevant, good-quality training data improves accuracy. Transform inconsistent sources first and keep the full history.",
       "lesson": 2
     },
     {
@@ -317,6 +414,18 @@
       "definition": "Data that doesn't fit rows and columns, such as audio, images, video and free text.",
       "exam_context": "Sentiment from call audio is the classic ML-on-unstructured-data example.",
       "lesson": 1
+    },
+    {
+      "term": "Unsupervised learning",
+      "definition": "Finding structure, such as groupings, in data without labels.",
+      "exam_context": "Still needs real patterns in the data. With no useful patterns, ML is a poor fit.",
+      "lesson": 1
+    },
+    {
+      "term": "Video Intelligence API",
+      "definition": "Pre-trained API that detects labels, objects, shots and explicit content in video.",
+      "exam_context": "For video only. Still photos go to Vision API or AutoML.",
+      "lesson": 4
     },
     {
       "term": "Vision API",

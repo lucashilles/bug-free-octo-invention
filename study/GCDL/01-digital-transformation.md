@@ -28,6 +28,11 @@ Public cloud resources are reachable over the internet from anywhere, and they r
 
 **Remember:** Public cloud = global reach, on-demand resources, no hardware to maintain. Never 100% uptime and never zero customer security work.
 
+**References:**
+- [cloud.google.com/learn/what-is-public-cloud](https://cloud.google.com/learn/what-is-public-cloud)
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/discover/types-of-cloud-computing](https://cloud.google.com/discover/types-of-cloud-computing)
+
 </details>
 
 ---
@@ -55,6 +60,11 @@ In the cloud, the provider runs the hardware, data centers and much of the platf
 - **D. Relax data security protocols**: security remains a shared responsibility; the company still protects its data and access.
 
 **Remember:** Cloud = less undifferentiated infrastructure work, more focus on what makes the business unique.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [cloud.google.com/architecture/framework](https://cloud.google.com/architecture/framework)
+- [cloud.google.com/security/shared-responsibility-data-model](https://cloud.google.com/security/shared-responsibility-data-model)
 
 </details>
 
@@ -84,6 +94,11 @@ TalentHive uses a finished application from a vendor. It does not manage servers
 
 **Remember:** Ready-made app you just log in to = SaaS; your code on managed platform = PaaS; your VMs = IaaS.
 
+**References:**
+- [cloud.google.com/learn/what-is-saas](https://cloud.google.com/learn/what-is-saas)
+- [cloud.google.com/learn/what-is-paas](https://cloud.google.com/learn/what-is-paas)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+
 </details>
 
 ---
@@ -111,6 +126,11 @@ With on-premises infrastructure, a company must buy and install enough hardware 
 - **C. Data inaccessible due to perimeter security**: Security design does not explain why capacity is hard and expensive to scale.
 
 **Remember:** On-premises = buy for the peak in advance; cloud = scale on demand and pay for what you use.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [docs.cloud.google.com/architecture/migration-to-google-cloud-best-practices](https://docs.cloud.google.com/architecture/migration-to-google-cloud-best-practices)
+- [cloud.google.com/solutions/serverless](https://cloud.google.com/solutions/serverless)
 
 </details>
 
@@ -140,6 +160,11 @@ In a private data center, the company buys servers and buildings up front, which
 
 **Remember:** Moving to the cloud = CapEx (buy up front) becomes OpEx (pay as you go).
 
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [docs.cloud.google.com/migration-center/docs/generate-tco-report](https://docs.cloud.google.com/migration-center/docs/generate-tco-report)
+
 </details>
 
 ---
@@ -167,6 +192,11 @@ Modern customers expect to reach services anytime, anywhere, on whatever device 
 - **D. Testing only through a mobile app**: Developers can test versions on many platforms, and testing is not the business reason here.
 
 **Remember:** Customer expectations drive transformation: access anywhere, on any device.
+
+**References:**
+- [cloud.google.com/learn/what-is-digital-transformation](https://cloud.google.com/learn/what-is-digital-transformation)
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [docs.cloud.google.com/architecture/framework/security/security-principles](https://docs.cloud.google.com/architecture/framework/security/security-principles)
 
 </details>
 
@@ -196,6 +226,11 @@ In SaaS, the provider runs the application, platform, servers, and networks. The
 
 **Remember:** In SaaS, the customer always owns its data, content, and user access.
 
+**References:**
+- [cloud.google.com/learn/paas-vs-iaas-vs-saas](https://cloud.google.com/learn/paas-vs-iaas-vs-saas)
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [cloud.google.com/learn/what-is-cloud-security](https://cloud.google.com/learn/what-is-cloud-security)
+
 </details>
 
 ---
@@ -224,6 +259,11 @@ Digital transformation means using modern digital technologies, like cloud, anal
 
 **Remember:** Using technology to rethink processes, culture, and customer experience → digital transformation.
 
+**References:**
+- [cloud.google.com/learn/what-is-digital-transformation](https://cloud.google.com/learn/what-is-digital-transformation)
+- [cloud.google.com/learn/what-is-cloud-migration](https://cloud.google.com/learn/what-is-cloud-migration)
+- [cloud.google.com/learn/what-is-operational-efficiency](https://cloud.google.com/learn/what-is-operational-efficiency)
+
 </details>
 
 ---
@@ -246,11 +286,16 @@ Digital transformation means using modern digital technologies, like cloud, anal
 The stem has two clues: learn from trusted Google Cloud content, and share knowledge across teams. Peer-to-peer learning built on official training covers both. Transformation is about people and culture, not only technology, so a lasting learning culture is the goal.
 
 **Why the others are wrong:**
-- **A. Train existing staff instead of hiring**: Training staff is good, but this option says nothing about official content or sharing knowledge.
+- **A. Train existing staff instead of hiring**: Training staff is good, but refusing to hire cloud-experienced people is an early-stage habit; mature organizations upskill and hire. It also says nothing about sharing knowledge.
 - **B. Give elevated access to consultants**: It outsources knowledge instead of building internal skills and weakens least privilege.
 - **C. Self-directed, separate learning**: It uses official materials but misses the knowledge-sharing part.
 
 **Remember:** Upskilling for transformation = official training + a culture of sharing.
+
+**References:**
+- [cloud.google.com/learn/training](https://cloud.google.com/learn/training)
+- [cloud.google.com/learn](https://cloud.google.com/learn)
+- [cloud.google.com/learn/certification](https://cloud.google.com/learn/certification)
 
 </details>
 
@@ -280,6 +325,11 @@ Hybrid cloud combines on-premises or private cloud infrastructure with public cl
 
 **Remember:** Hybrid = on-prem/private + public. Multicloud = more than one public cloud.
 
+**References:**
+- [cloud.google.com/learn/what-is-hybrid-cloud](https://cloud.google.com/learn/what-is-hybrid-cloud)
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [docs.cloud.google.com/architecture/hybrid-multicloud-patterns-and-practices](https://docs.cloud.google.com/architecture/hybrid-multicloud-patterns-and-practices)
+
 </details>
 
 ---
@@ -308,7 +358,10 @@ The problem is buying too much capacity or too little for traffic spikes. Cloud 
 
 **Remember:** Over- or under-provisioning problem = elastic scaling + pay for what you use.
 
-**⚠️ Note:** "Agile infrastructure" is loose wording. The real ideas are elasticity and consumption-based pricing. It is still the best of the options, so pick it on this exam.
+**References:**
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+- [cloud.google.com/security/shared-responsibility-data-model](https://cloud.google.com/security/shared-responsibility-data-model)
 
 </details>
 
@@ -338,6 +391,11 @@ On premises, QuickServeNow bought hardware up front. On Google Cloud it pays for
 
 **Remember:** Moving to cloud = CapEx up front becomes OpEx pay-as-you-go, and the business must learn to manage variable spending.
 
+**References:**
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+- [cloud.google.com/docs/security/overview/whitepaper](https://cloud.google.com/docs/security/overview/whitepaper)
+- [cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+
 </details>
 
 ---
@@ -365,6 +423,11 @@ Modern customers expect help and services to be available whenever they need the
 - **D. Regional access**: The issue is time of day, not geographic location.
 
 **Remember:** "Evenings and weekends", "24/7" → always-on expectations.
+
+**References:**
+- [cloud.google.com/learn/what-is-digital-transformation](https://cloud.google.com/learn/what-is-digital-transformation)
+- [cloud.google.com/blog/products/ai-machine-learning/introducing-customer-engagement-suite-with-google-ai](https://cloud.google.com/blog/products/ai-machine-learning/introducing-customer-engagement-suite-with-google-ai)
+- [docs.cloud.google.com/contact-center/insights/docs](https://docs.cloud.google.com/contact-center/insights/docs)
 
 </details>
 
@@ -394,6 +457,11 @@ Public cloud gives near-unlimited storage and global delivery on a pay-as-you-go
 
 **Remember:** Large-scale storage and delivery without buying hardware → public cloud.
 
+**References:**
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+- [docs.cloud.google.com/storage/docs/introduction](https://docs.cloud.google.com/storage/docs/introduction)
+
 </details>
 
 ---
@@ -421,6 +489,11 @@ When applications move to the cloud, Google runs the physical hardware, power, c
 - **D. Increased cloud hardware management**: The customer doesn't manage cloud hardware; Google does.
 
 **Remember:** Moving to cloud → less infrastructure management for your own team.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-migration](https://cloud.google.com/learn/what-is-cloud-migration)
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/architecture/framework/cost-optimization](https://cloud.google.com/architecture/framework/cost-optimization)
 
 </details>
 
@@ -450,6 +523,11 @@ On premises, a company buys servers and data center equipment up front. That is 
 
 **Remember:** Cloud migration = CapEx → OpEx.
 
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+
 </details>
 
 ---
@@ -477,6 +555,11 @@ The cloud lets developers create environments in minutes, scale on demand and us
 - **D. Optimize on-premises maintenance**: The move is away from on-premises, so this doesn't help developers.
 
 **Remember:** Slow provisioning and fixed capacity → cloud gives on-demand tools and elastic resources.
+
+**References:**
+- [cloud.google.com/docs/overview](https://cloud.google.com/docs/overview)
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [cloud.google.com/architecture/framework/cost-optimization](https://cloud.google.com/architecture/framework/cost-optimization)
 
 </details>
 
@@ -506,6 +589,11 @@ Latency is the delay for data to travel between the user and the server. Users i
 
 **Remember:** Fast connection but slow pages for distant users → latency (distance).
 
+**References:**
+- [cloud.google.com/load-balancing/docs/load-balancing-overview](https://cloud.google.com/load-balancing/docs/load-balancing-overview)
+- [cloud.google.com/cdn/docs/overview](https://cloud.google.com/cdn/docs/overview)
+- [cloud.google.com/docs/geography-and-regions](https://cloud.google.com/docs/geography-and-regions)
+
 </details>
 
 ---
@@ -533,6 +621,11 @@ Digital transformation is more than moving servers. The cloud gives companies th
 - **D. Same model, only lower costs**: Cost savings alone miss the main point of transformation.
 
 **Remember:** Cloud transformation = rethinking the business, not just relocating IT.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [cloud.google.com/architecture/framework](https://cloud.google.com/architecture/framework)
+- [cloud.google.com/transform/digital-transformation](https://cloud.google.com/transform/digital-transformation)
 
 </details>
 
@@ -562,6 +655,11 @@ On-premises technology needs upfront capital spending on servers and facilities.
 
 **Remember:** On-premises → cloud = CapEx → OpEx.
 
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+
 </details>
 
 ---
@@ -589,6 +687,11 @@ Latency comes from physical distance between users and the servers. Running a co
 - **C. More regions in Europe**: Europe is still far from the United States.
 
 **Remember:** Distant users with high latency → deploy closer to them, in their region.
+
+**References:**
+- [docs.cloud.google.com/docs/get-started/consider-geographic-distribution](https://docs.cloud.google.com/docs/get-started/consider-geographic-distribution)
+- [docs.cloud.google.com/architecture/framework/performance-optimization/plan-resource-allocation](https://docs.cloud.google.com/architecture/framework/performance-optimization/plan-resource-allocation)
+- [docs.cloud.google.com/load-balancing/docs/https/http-load-balancing-best-practices](https://docs.cloud.google.com/load-balancing/docs/https/http-load-balancing-best-practices)
 
 </details>
 
@@ -618,6 +721,10 @@ Google designs its own servers and data centers for its workloads, leaving out p
 
 **Remember:** Purpose-built = optimized for the task = more efficient.
 
+**References:**
+- [cloud.google.com/infrastructure](https://cloud.google.com/infrastructure)
+- [datacenters.google/efficiency](https://datacenters.google/efficiency)
+
 </details>
 
 ---
@@ -646,6 +753,11 @@ Total cost of ownership (TCO) counts all costs over time, including hardware, st
 
 **Remember:** TCO comparison → informs ROI and the business case for migration.
 
+**References:**
+- [cloud.google.com/migration-center/docs/generate-tco-report](https://cloud.google.com/migration-center/docs/generate-tco-report)
+- [cloud.google.com/migration-center/docs/migration-center-overview](https://cloud.google.com/migration-center/docs/migration-center-overview)
+- [cloud.google.com/architecture/framework/cost-optimization](https://cloud.google.com/architecture/framework/cost-optimization)
+
 </details>
 
 ---
@@ -669,10 +781,15 @@ Moving from a few cost-saving migrations to a real transformation needs strong e
 
 **Why the others are wrong:**
 - **B. Move funding from OpEx to CapEx**: cloud moves spending the other way, toward OpEx.
-- **C. Driven mainly by individual contributors**: bottom-up effort alone can't change a whole company.
+- **C. Driven mainly by individual contributors**: this is early, tactical adoption in Google's Cloud Adoption Framework; bottom-up effort alone can't change a whole company.
 - **D. Invest in on-premises infrastructure**: this goes against cloud adoption.
 
 **Remember:** Transformation = executive sponsorship + blameless, learning culture.
+
+**References:**
+- [cloud.google.com/adoption-framework](https://cloud.google.com/adoption-framework)
+- [services.google.com/fh/files/misc/google_cloud_adoption_framework_whitepaper.pdf](https://services.google.com/fh/files/misc/google_cloud_adoption_framework_whitepaper.pdf)
+- [sre.google/sre-book/postmortem-culture/](https://sre.google/sre-book/postmortem-culture/)
 
 </details>
 
@@ -702,6 +819,11 @@ IaaS provides the basic building blocks: virtual machines, storage, and networki
 
 **Remember:** Rent VMs, storage, network → IaaS. Deploy code, no servers → PaaS. Ready-made app → SaaS.
 
+**References:**
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+- [cloud.google.com/learn/what-is-saas](https://cloud.google.com/learn/what-is-saas)
+- [cloud.google.com/learn/what-is-paas](https://cloud.google.com/learn/what-is-paas)
+
 </details>
 
 ---
@@ -729,6 +851,11 @@ With PaaS, developers deploy their own application code, and the provider manage
 - **D. Network as a service**: This is about renting network capabilities, not hosting an application.
 
 **Remember:** Your own code + no server management → PaaS.
+
+**References:**
+- [cloud.google.com/learn/paas-vs-iaas-vs-saas](https://cloud.google.com/learn/paas-vs-iaas-vs-saas)
+- [cloud.google.com/appengine](https://cloud.google.com/appengine)
+- [docs.cloud.google.com/appengine/docs](https://docs.cloud.google.com/appengine/docs)
 
 </details>
 
@@ -758,6 +885,11 @@ An on-premises data center has a fixed amount of hardware. When holiday traffic 
 
 **Remember:** On-premises scaling pain = not enough servers for the peak, and adding more is slow and costly.
 
+**References:**
+- [cloud.google.com/architecture/framework/performance-optimization/scalability](https://cloud.google.com/architecture/framework/performance-optimization/scalability)
+- [cloud.google.com/compute/docs/autoscaler](https://cloud.google.com/compute/docs/autoscaler)
+- [cloud.google.com/run/docs/about-functions](https://cloud.google.com/run/docs/about-functions)
+
 </details>
 
 ---
@@ -785,6 +917,11 @@ On-premises, every new server must be bought, delivered, installed, configured, 
 - **D. Multi-cloud complexity**: The company is fully on-premises, not using multiple clouds.
 
 **Remember:** On-premises scaling = slow and costly to add capacity.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [cloud.google.com/learn/benefits-of-cloud-computing](https://cloud.google.com/learn/benefits-of-cloud-computing)
+- [cloud.google.com/discover/what-is-serverless-architecture](https://cloud.google.com/discover/what-is-serverless-architecture)
 
 </details>
 

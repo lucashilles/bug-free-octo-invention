@@ -9,10 +9,12 @@ Expected dump format:
     - [ ] **A. option**
     - [x] **B. option** *(correct answer)*
 
+    ### Explanation        (optional)
+    ...
+
 Corrections to the dumps (wrong keys, broken stems or options) go in <CODE>/fixes.json and
 are applied on every run.
-Dumps carry no explanation or domain label, so domains go in domain-map.json and
-explanations are written into questions.json afterwards. Questions from the given exams
+Dumps carry no domain label, so domains go in domain-map.json. Questions from the given exams
 replace any already in questions.json (keeping an existing explanation when the question
 text is unchanged); other exams are kept.
 """
@@ -36,6 +38,7 @@ def parse_file(path):
     parts = Q_RE.split(src)[1:]
     out = []
     for num, body in zip(parts[::2], parts[1::2]):
+        body, _, explanation = body.partition('\n### Explanation\n')
         qlines, answers = [], []
         for line in body.strip().splitlines():
             m = OPT_RE.match(line)
@@ -48,7 +51,7 @@ def parse_file(path):
         if not question or len(answers) < 2 or not any(a['correct'] for a in answers):
             raise ValueError(f'{path}: question {n} is malformed')
         out.append({'exam': exam, 'n': n, 'question': f'**{question}**', 'answers': answers,
-                    'explanation': '', 'domain': 'Unknown'})
+                    'explanation': explanation.strip(), 'domain': 'Unknown'})
     return exam, out
 
 
@@ -63,11 +66,12 @@ def main():
         print(f'{f}: exam {exam}, {len(qs)} questions')
     for qs in parsed.values():
         apply_fixes(cid, qs, strict=False)  # before matching explanations, which are keyed on the fixed stem
-    # Dumps have no explanations; keep ones already written for the same question.
+    # An explanation already in questions.json for the same question wins over the dump's
+    # (it may have been edited); the dump's own `### Explanation` is used otherwise.
     kept = {(x['exam'], x['n'], x['question']): x['explanation'] for x in existing if x['explanation']}
     for qs in parsed.values():
         for q in qs:
-            q['explanation'] = kept.get((q['exam'], q['n'], q['question']), '')
+            q['explanation'] = kept.get((q['exam'], q['n'], q['question']), q['explanation'])
     merged = [x for x in existing if x['exam'] not in parsed] + [q for qs in parsed.values() for q in qs]
     merged.sort(key=lambda x: (int(x['exam']), x['n']))
     apply_fixes(cid, merged)

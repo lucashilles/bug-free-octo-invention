@@ -26,6 +26,11 @@ Vision API is a pre-trained model that labels images out of the box. It detects 
 
 **Remember:** Common labels, no training = pre-trained API (Vision API). Your own custom categories = AutoML.
 
+**References:**
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+- [docs.cloud.google.com/vision/docs/detect-labels-image-api](https://docs.cloud.google.com/vision/docs/detect-labels-image-api)
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
+
 ---
 
 ## Question 2
@@ -51,6 +56,11 @@ An API lets partners pull current data straight into their own apps in a control
 - **D. Move to a non-relational database**: changing the database type does not give partners access or create revenue.
 
 **Remember:** Monetize data for partners' apps = a paid, managed API.
+
+**References:**
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/monetization/overview](https://docs.cloud.google.com/apigee/docs/api-platform/monetization/overview)
+- [docs.cloud.google.com/api-gateway/docs/about-api-gateway](https://docs.cloud.google.com/api-gateway/docs/about-api-gateway)
 
 ---
 
@@ -78,6 +88,11 @@ APIs let separate systems talk to each other in real time. FitPerks needs gyms, 
 
 **Remember:** Several businesses sharing live data = connect them with APIs.
 
+**References:**
+- [docs.cloud.google.com/apis/docs/overview](https://docs.cloud.google.com/apis/docs/overview)
+- [cloud.google.com/learn/what-is-api-management](https://cloud.google.com/learn/what-is-api-management)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+
 ---
 
 ## Question 4
@@ -103,6 +118,11 @@ A leak soon after buying a new platform shows that tools alone don't create secu
 - **D. Wait for a newer platform**: waiting leaves the company exposed and again relies only on tools.
 
 **Remember:** Security is ongoing expertise and process, not a one-time product purchase.
+
+**References:**
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+- [docs.cloud.google.com/architecture/blueprints/security-foundations](https://docs.cloud.google.com/architecture/blueprints/security-foundations)
+- [nist.gov/cyberframework](https://nist.gov/cyberframework)
 
 **⚠️ Note:** "Hire cybersecurity experts" is vague. The real lesson is that security needs ongoing expertise and process. It is still clearly the best of the four options, so pick it.
 
@@ -132,6 +152,11 @@ Recognizing condition categories in symptom photos is image classification. A ma
 
 **Remember:** Recognize, classify or predict from images, text or data → machine learning.
 
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+- [docs.cloud.google.com/appengine/docs](https://docs.cloud.google.com/appengine/docs)
+
 ---
 
 ## Question 6
@@ -157,6 +182,11 @@ Zero trust means no request is trusted because of where it comes from. Every use
 - **D. CapEx model**: it is a spending model, not a security model.
 
 **Remember:** "Never trust, always verify", regardless of location = zero trust.
+
+**References:**
+- [cloud.google.com/beyondcorp](https://cloud.google.com/beyondcorp)
+- [cloud.google.com/docs/security/zero-trust](https://cloud.google.com/docs/security/zero-trust)
+- [nist.gov/publications/zero-trust-architecture](https://nist.gov/publications/zero-trust-architecture)
 
 ---
 
@@ -184,6 +214,11 @@ Cyber resilience is the ability to prevent attacks where possible, keep essentia
 
 **Remember:** Prevent, withstand, recover = cyber resilience.
 
+**References:**
+- [cloud.google.com/security/resources/cyber-resilience](https://cloud.google.com/security/resources/cyber-resilience)
+- [csrc.nist.gov/glossary/term/cyber_resiliency](https://csrc.nist.gov/glossary/term/cyber_resiliency)
+- [nist.gov/cyberframework](https://nist.gov/cyberframework)
+
 ---
 
 ## Question 8
@@ -209,6 +244,11 @@ Data governance sets the rules for how data is owned, classified, accessed, kept
 - **C. Quarterly access reports**: reporting is one small piece of governance, not the whole answer.
 
 **Remember:** Value + cost + compliance for data = data governance.
+
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/bigquery/docs/data-governance](https://docs.cloud.google.com/bigquery/docs/data-governance)
+- [cloud.google.com/compliance](https://cloud.google.com/compliance)
 
 ---
 
@@ -236,6 +276,11 @@ When data sits in separate systems, teams can't combine it to find insights. A u
 
 **Remember:** Breaking down data silos = new insights and innovation. Watch for "always" and "all" as red flags.
 
+**References:**
+- [cloud.google.com/data-cloud](https://cloud.google.com/data-cloud)
+- [cloud.google.com/solutions/data-analytics-and-ai](https://cloud.google.com/solutions/data-analytics-and-ai)
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+
 ---
 
 ## Question 10
@@ -261,6 +306,11 @@ Google Threat Intelligence combines Mandiant's frontline incident response knowl
 - **D. IAM**: it controls who can access which resources, not threat research.
 
 **Remember:** Mandiant + VirusTotal + Google visibility = Google Threat Intelligence.
+
+**References:**
+- [cloud.google.com/security/products/threat-intelligence](https://cloud.google.com/security/products/threat-intelligence)
+- [gtidocs.virustotal.com/docs/use-cases](https://gtidocs.virustotal.com/docs/use-cases)
+- [docs.cloud.google.com/chronicle/docs/detection](https://docs.cloud.google.com/chronicle/docs/detection)
 
 ---
 
@@ -288,6 +338,11 @@ Ready-to-use AI agents, Google's first-party models (such as Gemini) and a unifi
 
 **Remember:** Agents, Gemini models, AI platform = the AI differentiator.
 
+**References:**
+- [cloud.google.com/gemini-enterprise](https://cloud.google.com/gemini-enterprise)
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+
 ---
 
 ## Question 12
@@ -313,6 +368,11 @@ Cloud Run runs stateless containers without any servers or clusters to manage. I
 - **D. AlloyDB Omni**: a downloadable PostgreSQL-compatible database, not a container hosting service.
 
 **Remember:** Container + serverless + scale to zero = Cloud Run.
+
+**References:**
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [docs.cloud.google.com/run/docs/about-instance-autoscaling](https://docs.cloud.google.com/run/docs/about-instance-autoscaling)
+- [docs.cloud.google.com/compute/docs/instances](https://docs.cloud.google.com/compute/docs/instances)
 
 ---
 
@@ -340,6 +400,11 @@ Rehosting moves existing VMs to the cloud as they are, with the same OS, setting
 
 **Remember:** Same VMs, no changes, quick exit = lift and shift.
 
+**References:**
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [docs.cloud.google.com/migration-center/docs/migration-planning-overview](https://docs.cloud.google.com/migration-center/docs/migration-planning-overview)
+- [cloud.google.com/blog/products/application-development/application-rationalization-what-why-and-how](https://cloud.google.com/blog/products/application-development/application-rationalization-what-why-and-how)
+
 ---
 
 ## Question 14
@@ -365,6 +430,11 @@ A relational database stores structured data in tables with defined relationship
 - **D. Processes unstructured data across locations**: relational databases are for structured data; this fits object storage better.
 
 **Remember:** Database = transactions. Data warehouse = analysis. Data lake = raw data.
+
+**References:**
+- [cloud.google.com/products/databases](https://cloud.google.com/products/databases)
+- [cloud.google.com/sql/docs/introduction](https://cloud.google.com/sql/docs/introduction)
+- [cloud.google.com/learn/what-are-transactional-databases](https://cloud.google.com/learn/what-are-transactional-databases)
 
 ---
 
@@ -392,6 +462,11 @@ Cloud Monitoring collects metrics, events and metadata from applications and Goo
 
 **Remember:** Metrics + dashboards + alerts = Cloud Monitoring. Logs = Cloud Logging. Latency of a request = Cloud Trace.
 
+**References:**
+- [docs.cloud.google.com/monitoring/docs](https://docs.cloud.google.com/monitoring/docs)
+- [docs.cloud.google.com/monitoring/dashboards](https://docs.cloud.google.com/monitoring/dashboards)
+- [docs.cloud.google.com/trace/docs](https://docs.cloud.google.com/trace/docs)
+
 ---
 
 ## Question 16
@@ -417,6 +492,11 @@ AI Hub was a catalog of reusable AI and ML assets, such as models, notebooks and
 - **C. Collects, cleans and prepares datasets**: data preparation is a separate step and tool set.
 
 **Remember:** Hub = repository of reusable resources.
+
+**References:**
+- [cloud.google.com/blog/products/ai-machine-learning/introducing-ai-hub-and-kubeflow-pipelines-making-ai-simpler-faster-and-more-useful-for-businesses](https://cloud.google.com/blog/products/ai-machine-learning/introducing-ai-hub-and-kubeflow-pipelines-making-ai-simpler-faster-and-more-useful-for-businesses)
+- [cloud.google.com/model-garden](https://cloud.google.com/model-garden)
+- [cloud.google.com/products/ai](https://cloud.google.com/products/ai)
 
 **⚠️ Note:** AI Hub is an older product. Its role is now mostly filled by Model Garden in the AI platform. The definition is still correct, so pick the key.
 
@@ -446,6 +526,11 @@ Ransomware encrypts a victim's data and demands payment, often in cryptocurrency
 
 **Remember:** Data locked + payment demanded = ransomware. Mention of crypto doesn't mean cryptomining.
 
+**References:**
+- [cisa.gov/stopransomware/ransomware-101](https://cisa.gov/stopransomware/ransomware-101)
+- [nist.gov/itl/smallbusinesscyber/guidance-topic/ransomware](https://nist.gov/itl/smallbusinesscyber/guidance-topic/ransomware)
+- [docs.cloud.google.com/architecture/security/mitigating-ransomware-attacks](https://docs.cloud.google.com/architecture/security/mitigating-ransomware-attacks)
+
 ---
 
 ## Question 18
@@ -471,6 +556,11 @@ Open standards, open source and interoperable tools let workloads move between p
 - **D. Only SaaS products**: SaaS can tie you to each vendor and doesn't give control over where apps run.
 
 **Remember:** Fear of lock-in + hybrid/multicloud flexibility = openness and interoperability.
+
+**References:**
+- [cloud.google.com/learn/what-is-multicloud](https://cloud.google.com/learn/what-is-multicloud)
+- [docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers](https://docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers)
+- [cloud.google.com/blog/topics/inside-google-cloud/empowering-customers-and-the-ecosystem-with-an-open-cloud](https://cloud.google.com/blog/topics/inside-google-cloud/empowering-customers-and-the-ecosystem-with-an-open-cloud)
 
 ---
 
@@ -498,6 +588,11 @@ Under the shared responsibility model, the customer owns its data and decides wh
 
 **Remember:** Google secures the cloud; the customer secures data and access in the cloud.
 
+**References:**
+- [docs.cloud.google.com/iam/docs/overview](https://docs.cloud.google.com/iam/docs/overview)
+- [docs.cloud.google.com/identity/docs/overview](https://docs.cloud.google.com/identity/docs/overview)
+- [docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
+
 ---
 
 ## Question 20
@@ -523,6 +618,11 @@ The SLO is the internal reliability target. Falling below it usually means the e
 - **D. Lower latency**: performance dropped, so latency would not improve.
 
 **Remember:** SLO missed = focus on reliability. Budget left = innovate.
+
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
+- [cloud.google.com/architecture/framework/reliability](https://cloud.google.com/architecture/framework/reliability)
 
 ---
 
@@ -550,6 +650,11 @@ Predictions get better when the model can see how clicks, installs, visits and s
 
 **Remember:** New insights = combine the data, then apply ML.
 
+**References:**
+- [cloud.google.com/bigquery/docs/bigqueryml-intro](https://cloud.google.com/bigquery/docs/bigqueryml-intro)
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [cloud.google.com/learn/what-is-a-data-lake](https://cloud.google.com/learn/what-is-a-data-lake)
+
 ---
 
 ## Question 22
@@ -575,6 +680,11 @@ A data lake stores large volumes of raw data in its original format, structured 
 - **D. Database**: built for day-to-day transactions, not for storing huge raw datasets for later exploration.
 
 **Remember:** Raw now, decide later = data lake. Structured, ready for analysis = data warehouse.
+
+**References:**
+- [cloud.google.com/discover/what-is-a-data-lake](https://cloud.google.com/discover/what-is-a-data-lake)
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
 
 ---
 
@@ -602,6 +712,11 @@ Google Cloud encrypts all customer data at rest by default, with no action neede
 
 **Remember:** Google Cloud default = encrypted at rest and in transit.
 
+**References:**
+- [cloud.google.com/security/encryption](https://cloud.google.com/security/encryption)
+- [cloud.google.com/docs/security/encryption/default-encryption](https://cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/docs/security/encryption-in-transit](https://cloud.google.com/docs/security/encryption-in-transit)
+
 ---
 
 ## Question 24
@@ -627,6 +742,11 @@ Authentication confirms that users are who they claim to be, for example with a 
 - **D. Encrypting**: it protects data from being read, it doesn't verify identity.
 
 **Remember:** Authentication = who are you? Authorization = what can you do?
+
+**References:**
+- [cloud.google.com/docs/authentication](https://cloud.google.com/docs/authentication)
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
+- [cloud.google.com/identity/docs/overview](https://cloud.google.com/identity/docs/overview)
 
 ---
 
@@ -654,6 +774,11 @@ GKE Enterprise (formerly Anthos) gives one consistent way to manage Kubernetes c
 
 **Remember:** Kubernetes everywhere (hybrid/multicloud), managed from one place = GKE Enterprise.
 
+**References:**
+- [cloud.google.com/kubernetes-engine/docs/fleets-overview](https://cloud.google.com/kubernetes-engine/docs/fleets-overview)
+- [cloud.google.com/kubernetes-engine/multi-cloud/docs](https://cloud.google.com/kubernetes-engine/multi-cloud/docs)
+- [cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
+
 ---
 
 ## Question 26
@@ -679,6 +804,11 @@ Cloud Debugger let developers inspect the state of running code, such as variabl
 - **D. Trace**: it measures request latency across services.
 
 **Remember:** Inspect running code state = Debugger. Resource use by code = Profiler. Latency = Trace.
+
+**References:**
+- [support.google.com/cloud/answer/6323288](https://support.google.com/cloud/answer/6323288)
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
 
 **⚠️ Note:** Cloud Debugger was shut down in 2023; its open-source successor is Snapshot Debugger. The key describes what it did correctly and the other tools don't fit, so pick it on this exam.
 
@@ -708,6 +838,11 @@ Cloud Logging collects, stores, searches and analyzes logs from applications and
 
 **Remember:** Logs = Cloud Logging. Metrics = Cloud Monitoring.
 
+**References:**
+- [cloud.google.com/logging/docs](https://cloud.google.com/logging/docs)
+- [cloud.google.com/monitoring/docs](https://cloud.google.com/monitoring/docs)
+- [cloud.google.com/trace/docs](https://cloud.google.com/trace/docs)
+
 ---
 
 ## Question 28
@@ -729,10 +864,15 @@ Moving from a few cost-saving migrations to a real transformation needs strong e
 
 **Why the others are wrong:**
 - **B. Move funding from OpEx to CapEx**: cloud moves spending the other way, toward OpEx.
-- **C. Driven mainly by individual contributors**: bottom-up effort alone can't change a whole company.
+- **C. Driven mainly by individual contributors**: this is early, tactical adoption in Google's Cloud Adoption Framework; bottom-up effort alone can't change a whole company.
 - **D. Invest in on-premises infrastructure**: this goes against cloud adoption.
 
 **Remember:** Transformation = executive sponsorship + blameless, learning culture.
+
+**References:**
+- [cloud.google.com/adoption-framework](https://cloud.google.com/adoption-framework)
+- [services.google.com/fh/files/misc/google_cloud_adoption_framework_whitepaper.pdf](https://services.google.com/fh/files/misc/google_cloud_adoption_framework_whitepaper.pdf)
+- [sre.google/sre-book/postmortem-culture/](https://sre.google/sre-book/postmortem-culture/)
 
 ---
 
@@ -760,6 +900,11 @@ ML learns patterns from lots of past data, such as browsing, purchases and ratin
 
 **Remember:** Lots of data + patterns + prediction at scale = good ML fit.
 
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [cloud.google.com/use-cases/recommendations](https://cloud.google.com/use-cases/recommendations)
+- [docs.cloud.google.com/bigquery/docs/recommendation-overview](https://docs.cloud.google.com/bigquery/docs/recommendation-overview)
+
 ---
 
 ## Question 30
@@ -785,6 +930,11 @@ Google Cloud automatically encrypts all customer data at rest, with no setup by 
 - **D. When a tag is applied**: encryption doesn't depend on tags; it is always on.
 
 **Remember:** Google Cloud encryption at rest = automatic, on by default.
+
+**References:**
+- [docs.cloud.google.com/docs/security/encryption/default-encryption](https://docs.cloud.google.com/docs/security/encryption/default-encryption)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/sensitive-data-protection/docs/sensitive-data-protection-overview](https://docs.cloud.google.com/sensitive-data-protection/docs/sensitive-data-protection-overview)
 
 ---
 
@@ -812,6 +962,11 @@ Tensor Processing Units are chips Google designed specifically to speed up machi
 
 **Remember:** Hardware built for ML = TPU.
 
+**References:**
+- [docs.cloud.google.com/tpu/docs/intro-to-tpu](https://docs.cloud.google.com/tpu/docs/intro-to-tpu)
+- [cloud.google.com/tpu](https://cloud.google.com/tpu)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+
 ---
 
 ## Question 32
@@ -837,6 +992,11 @@ Agentic AI systems don't just answer questions. They understand a goal, decide o
 - **D. Open source software**: it describes how software is licensed, not what it does.
 
 **Remember:** AI that plans and takes actions = agentic AI.
+
+**References:**
+- [cloud.google.com/discover/what-is-agentic-ai](https://cloud.google.com/discover/what-is-agentic-ai)
+- [cloud.google.com/discover/what-are-ai-agents](https://cloud.google.com/discover/what-are-ai-agents)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
 
 ---
 
@@ -864,6 +1024,11 @@ Cloud adoption usually has two tracks: build new cloud-native apps and migrate e
 
 **Remember:** Cloud adoption = build new cloud-native apps and migrate existing workloads.
 
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/adoption-framework](https://cloud.google.com/adoption-framework)
+
 ---
 
 ## Question 34
@@ -889,6 +1054,11 @@ AI Hypercomputer is Google Cloud's integrated supercomputing architecture for AI
 - **D. Edge locations**: they cache and deliver content close to users, not train large models.
 
 **Remember:** Hardware + open software + flexible consumption for AI = AI Hypercomputer.
+
+**References:**
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+- [cloud.google.com/ai-infrastructure](https://cloud.google.com/ai-infrastructure)
+- [docs.cloud.google.com/ai-hypercomputer/docs/consumption-models](https://docs.cloud.google.com/ai-hypercomputer/docs/consumption-models)
 
 ---
 
@@ -916,6 +1086,11 @@ Cloud Run runs containers in a fully managed, serverless environment. Because an
 
 **Remember:** Any language + no servers to manage = Cloud Run.
 
+**References:**
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [cloud.google.com/products/managed-service-for-apache-spark](https://cloud.google.com/products/managed-service-for-apache-spark)
+- [cloud.google.com/pubsub/docs/overview](https://cloud.google.com/pubsub/docs/overview)
+
 ---
 
 ## Question 36
@@ -941,6 +1116,11 @@ Agentic AI can plan, reason and complete multi-step tasks toward a goal with lit
 - **D. DNS**: it resolves domain names to IP addresses.
 
 **Remember:** Plan + reason + act on multi-step tasks = agentic AI.
+
+**References:**
+- [cloud.google.com/discover/what-is-agentic-ai](https://cloud.google.com/discover/what-is-agentic-ai)
+- [cloud.google.com/discover/what-are-ai-agents](https://cloud.google.com/discover/what-are-ai-agents)
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
 
 ---
 
@@ -968,6 +1148,11 @@ Google Cloud supports open source, open standards and multicloud tools so data p
 
 **Remember:** Avoid lock-in, work across clouds = openness and interoperability.
 
+**References:**
+- [cloud.google.com/data-cloud](https://cloud.google.com/data-cloud)
+- [cloud.google.com/security/compliance/swipo-codes](https://cloud.google.com/security/compliance/swipo-codes)
+- [docs.cloud.google.com/bare-metal/docs/bms-overview](https://docs.cloud.google.com/bare-metal/docs/bms-overview)
+
 ---
 
 ## Question 38
@@ -993,6 +1178,11 @@ An API lets partners' apps and websites request GlobeTrek's latest posts, images
 - **C. App Engine standard environment**: it hosts web apps, but isn't the mechanism for partner integration.
 
 **Remember:** Share data or content with other companies' systems = API.
+
+**References:**
+- [docs.cloud.google.com/api-gateway/docs/glossary](https://docs.cloud.google.com/api-gateway/docs/glossary)
+- [docs.cloud.google.com/api-gateway/docs/about-api-gateway](https://docs.cloud.google.com/api-gateway/docs/about-api-gateway)
+- [docs.cloud.google.com/appengine/docs/standard/overview](https://docs.cloud.google.com/appengine/docs/standard/overview)
 
 ---
 
@@ -1020,6 +1210,11 @@ AI Hypercomputer brings together GPUs and TPUs, open software, ML frameworks and
 
 **Remember:** GPUs/TPUs + open software + flexible consumption = AI Hypercomputer.
 
+**References:**
+- [docs.cloud.google.com/ai-hypercomputer/docs/overview](https://docs.cloud.google.com/ai-hypercomputer/docs/overview)
+- [cloud.google.com/ai-infrastructure](https://cloud.google.com/ai-infrastructure)
+- [docs.cloud.google.com/compute/docs/gpus](https://docs.cloud.google.com/compute/docs/gpus)
+
 ---
 
 ## Question 40
@@ -1045,6 +1240,11 @@ A container packages the application code with its libraries and dependencies. T
 - **D. Load balancing**: it spreads traffic across instances, not about consistent environments.
 
 **Remember:** "Works on my machine" problems = containers.
+
+**References:**
+- [cloud.google.com/learn/what-are-containers](https://cloud.google.com/learn/what-are-containers)
+- [cloud.google.com/discover/what-is-containerization](https://cloud.google.com/discover/what-is-containerization)
+- [docs.cloud.google.com/load-balancing/docs/load-balancing-overview](https://docs.cloud.google.com/load-balancing/docs/load-balancing-overview)
 
 ---
 
@@ -1072,6 +1272,11 @@ Custom training lets data scientists write their own training code and run it on
 
 **Remember:** ML experts + own code = custom training. No code = AutoML. No training = prebuilt APIs.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/start/training-guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/start/training-guide)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning)
+
 ---
 
 ## Question 42
@@ -1097,6 +1302,11 @@ APIs let two companies' systems work together. Connecting the reservation system
 - **C. Move all records into an ML model**: that is forecasting, not the partner integration described.
 
 **Remember:** New partner + combined customer experience = connect systems with APIs.
+
+**References:**
+- [cloud.google.com/apis/docs/overview](https://cloud.google.com/apis/docs/overview)
+- [cloud.google.com/api-gateway/docs/about-api-gateway](https://cloud.google.com/api-gateway/docs/about-api-gateway)
+- [cloud.google.com/solutions/new-channels-using-apis](https://cloud.google.com/solutions/new-channels-using-apis)
 
 ---
 
@@ -1124,6 +1334,11 @@ GKE is Google's managed Kubernetes service. Kubernetes orchestrates containers: 
 
 **Remember:** Orchestrate many containers = Kubernetes = GKE.
 
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/docs](https://docs.cloud.google.com/kubernetes-engine/docs)
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+
 ---
 
 ## Question 44
@@ -1149,6 +1364,11 @@ Open source software has public source code that anyone can view, modify and imp
 - **D. Closed standard**: a specification controlled by one party, the opposite of open.
 
 **Remember:** Public code, anyone can change and contribute = open source.
+
+**References:**
+- [opensource.org/osd](https://opensource.org/osd)
+- [opensource.google/](https://opensource.google/)
+- [cloud.google.com/learn/what-is-paas](https://cloud.google.com/learn/what-is-paas)
 
 ---
 
@@ -1176,6 +1396,11 @@ Slow release cycles stop a company from responding to customer needs, which is e
 
 **Remember:** Slow releases + losing customers = modernize applications.
 
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [cloud.google.com/learn/what-is-cloud-native](https://cloud.google.com/learn/what-is-cloud-native)
+
 ---
 
 ## Question 46
@@ -1201,6 +1426,11 @@ Pre-trained APIs, such as the Vision API and Natural Language API, use models Go
 - **D. All require custom training**: The opposite. They are pre-trained.
 
 **Remember:** Pre-trained API = no model building, no data science team. A developer just calls it.
+
+**References:**
+- [cloud.google.com/ai/apis](https://cloud.google.com/ai/apis)
+- [cloud.google.com/vision/docs](https://cloud.google.com/vision/docs)
+- [cloud.google.com/natural-language](https://cloud.google.com/natural-language)
 
 ---
 
@@ -1228,6 +1458,11 @@ Apigee is Google Cloud's platform for managing APIs. It tracks traffic and analy
 
 **Remember:** Secure, monitor and monetize APIs = Apigee.
 
+**References:**
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/monetization/overview](https://docs.cloud.google.com/apigee/docs/api-platform/monetization/overview)
+- [docs.cloud.google.com/apigee/docs/api-platform/develop/policy-attachment-and-enforcement](https://docs.cloud.google.com/apigee/docs/api-platform/develop/policy-attachment-and-enforcement)
+
 ---
 
 ## Question 48
@@ -1253,6 +1488,11 @@ Google Cloud's data platform brings internal, partner and external data together
 - **D. 2SV**: it is a sign-in security feature.
 
 **Remember:** Unified data prepared for ML = AI-ready data cloud.
+
+**References:**
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+- [cloud.google.com/identity-platform/docs/web/mfa](https://cloud.google.com/identity-platform/docs/web/mfa)
 
 ---
 
@@ -1280,6 +1520,11 @@ Generative AI is only as good as the data it can use. When data is spread across
 
 **Remember:** Good AI starts with unified, AI-ready data.
 
+**References:**
+- [cloud.google.com/data-cloud](https://cloud.google.com/data-cloud)
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+
 ---
 
 ## Question 50
@@ -1305,5 +1550,10 @@ Prompt injection is when an attacker writes inputs that trick a large language m
 - **D. Ransomware**: it encrypts data and demands payment.
 
 **Remember:** Malicious prompts that hijack an AI model = prompt injection.
+
+**References:**
+- [genai.owasp.org/llmrisk/llm01-prompt-injection/](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)
+- [owasp.org/www-community/attacks/PromptInjection](https://owasp.org/www-community/attacks/PromptInjection)
+- [cloud.google.com/security/products/model-armor](https://cloud.google.com/security/products/model-armor)
 
 ---

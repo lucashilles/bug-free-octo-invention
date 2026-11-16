@@ -9,6 +9,7 @@
       ],
       "takeaways": [
         "Cloud + analytics + automation to redesign workflows and customer experience = digital transformation.",
+        "Data center migration, operations optimization and personalization are narrower parts or outcomes of digital transformation, not the whole approach.",
         "Cloud adoption is a business change, not an IT-only change, and not only for large companies.",
         "The long-term value of cloud is that teams focus on building solutions instead of running infrastructure.",
         "Customers expect information on any device and services that are always on.",
@@ -16,32 +17,36 @@
       ]
     },
     "2": {
-      "summary": "On-premises capacity is fixed, so traffic spikes force a choice between paying for idle peak hardware or suffering outages. This lesson explains the scaling pain the exam describes and how elastic cloud capacity removes it.",
+      "summary": "On-premises capacity is fixed, so traffic spikes force a choice between paying for idle peak hardware or suffering outages. This lesson explains the scaling pain the exam describes, how elastic cloud capacity removes it, and what cloud does not promise: 100% availability or freedom from security work.",
       "objectives": [
         "Identify why on-prem infrastructure struggles to scale: buying, installing and maintaining hardware is slow and costly",
         "Explain how cloud elasticity and pay-per-use solve over- and under-provisioning",
-        "Reject serverless, multicloud and compliance distractors in on-prem scenarios"
+        "Reject serverless, multicloud and compliance distractors in on-prem scenarios",
+        "Explain what a cloud SLA promises and why availability still depends on your own design"
       ],
       "takeaways": [
         "On-prem traffic spike problems come down to fixed capacity and the cost of provisioning for peak.",
-        "Cloud lets you pay only for what you need, when you need it.",
+        "'Agile infrastructure' means provisioning, scaling and releasing resources on demand, so you pay only for what you need, when you need it.",
         "Public cloud gives access to data and compute not tied to one physical location.",
         "Public cloud is cost-effective for storing and serving data at large scale.",
-        "Cloud never promises 100% availability or removes the need for security."
+        "Cloud SLAs set targets such as 99.9% or 99.99%, never 100%; uptime still depends on multi-zone design, load balancing and disaster recovery.",
+        "Serverless scales automatically, data quality issues don't cause peak-time outages, and adding capacity doesn't breach compliance by itself."
       ]
     },
     "3": {
-      "summary": "Moving to cloud changes how IT is paid for: from large upfront capital purchases to ongoing operational spending. This lesson covers CapEx vs OpEx, TCO, ROI and the pay-as-you-go model.",
+      "summary": "Moving to cloud changes how IT is paid for and managed: from large upfront capital purchases to ongoing, usage-based operational spending. This lesson covers CapEx vs OpEx, how cost management changes, TCO, ROI and the pay-as-you-go model.",
       "objectives": [
         "Define CapEx and OpEx and state the direction of the shift when moving to cloud",
         "Explain what total cost of ownership includes and why it is reviewed before migration",
-        "Describe how cloud affects infrastructure management and personnel costs"
+        "Describe how cloud affects infrastructure management and personnel costs",
+        "Explain why cost management changes after migration and which practices replace upfront capacity planning"
       ],
       "takeaways": [
         "Moving to cloud shifts spending from CapEx to OpEx. OpEx to CapEx is always the wrong direction.",
         "After migration, the business adapts to a consumption-based, pay-as-you-go model.",
-        "Review TCO before migrating to evaluate return on investment.",
-        "Cloud reduces on-prem infrastructure management costs; the provider maintains the hardware.",
+        "Cost management changes too: monitor billing, set budgets and alerts, label, right-size and remove idle resources.",
+        "Review TCO, including migration effort, before migrating to evaluate return on investment. Cloud TCO is often lower but not guaranteed.",
+        "Cloud reduces on-prem infrastructure management costs; the provider maintains the hardware. Licensing costs don't automatically drop.",
         "Usage-based bills are not automatically more predictable; they need monitoring."
       ]
     },
@@ -56,23 +61,26 @@
         "Hybrid cloud = private or on-prem infrastructure + public cloud services used together.",
         "Multicloud = two or more public cloud providers.",
         "Hybrid lets sensitive systems stay on-prem while analytics and new services use the cloud.",
+        "An organization can be hybrid and multicloud at the same time; the private side of hybrid can be on-prem, a private cloud or the edge.",
         "Deployment models are not service models: 'hybrid cloud' is a distractor in IaaS/PaaS/SaaS questions.",
         "Hybrid and multicloud products such as GKE Enterprise are covered in Domain 4."
       ]
     },
     "5": {
-      "summary": "Service models describe how much the provider manages for you. This lesson covers IaaS, PaaS and SaaS, the shared responsibility split between customer and provider, and the scenario wording that points to each model.",
+      "summary": "Service models describe how much the provider manages for you. This lesson covers IaaS, PaaS and SaaS, the distractor models FaaS and NaaS, the shared responsibility split between customer and provider, and the scenario wording that points to each model.",
       "objectives": [
         "Match a scenario to IaaS, PaaS or SaaS based on what the customer wants to manage",
         "Describe who manages each layer under each service model",
-        "Identify what a SaaS customer remains responsible for"
+        "Identify what a SaaS customer remains responsible for",
+        "Explain why functions as a service and network as a service don't fit 'use a finished app' or 'host my custom app' scenarios"
       ],
       "takeaways": [
         "IaaS: rent VMs, storage and networking and configure them yourself.",
         "PaaS: deploy your own code; the provider runs servers, OS and scaling.",
         "SaaS: use a ready-made application; you manage only your content, data and users.",
         "The provider always manages the physical data center, network and hardware.",
-        "'Network as a service' and 'Functions as a service' are distractors in these questions."
+        "FaaS still means writing event-driven code; NaaS is managed networking. Both are distractors in these questions.",
+        "The provider secures the cloud; the customer secures what it puts in the cloud: identities, access, data and configuration."
       ]
     },
     "6": {
@@ -85,28 +93,48 @@
       ],
       "takeaways": [
         "Far-away users with fast speed tests but slow pages have a latency problem, not a bandwidth problem.",
-        "To serve users on another continent, deploy a replica in a region near them.",
-        "More zones in the same region, or more regions on the same continent, don't help distant users.",
+        "Capacity or configuration problems hit all users; a slowdown only for distant users points to latency.",
+        "To serve users on another continent, deploy a replica in a region near them, with global load balancing sending users to the nearest backend.",
+        "Zones protect against zonal failures; more zones in the same region, or more regions on the same continent, don't help distant users.",
         "Google's purpose-built servers are optimized for specific tasks, which makes them more efficient.",
         "Edge locations and Cloud CDN bring content even closer to users."
       ]
     },
     "7": {
-      "summary": "Technology alone does not transform a company. This lesson covers the leadership and culture side of cloud adoption: executive sponsorship, blameless culture, upskilling through shared learning, and Google's Cloud Adoption Framework.",
+      "summary": "Technology alone does not transform a company. This lesson covers the leadership and culture side of cloud adoption: executive sponsorship, blameless culture, upskilling through shared learning, and how Google's Cloud Adoption Framework separates tactical from transformational behavior.",
       "objectives": [
         "Describe the leadership behaviors that turn small migrations into company-wide transformation",
         "Choose the right approach to building cloud skills across teams",
-        "Outline the themes and phases of the Google Cloud Adoption Framework"
+        "Outline the themes and phases of the Google Cloud Adoption Framework and place a behavior in the tactical, strategic or transformational phase"
       ],
       "takeaways": [
         "Company-wide adoption needs visible top-down sponsorship and a blameless culture.",
         "Build skills through continuous peer-to-peer learning with official training materials.",
-        "Isolated self-study, contractor-only expertise and 'never hire' are weaker choices.",
-        "The Cloud Adoption Framework themes are Learn, Lead, Scale and Secure, across tactical, strategic and transformational phases."
+        "Isolated self-study, contractors with privileged access, 'train instead of hiring' and adoption driven by individual contributors are tactical-phase behaviors.",
+        "The Cloud Adoption Framework themes are Learn, Lead, Scale and Secure, across tactical, strategic and transformational phases.",
+        "At the transformational phase, IT becomes an engine of innovation and a partner to the business."
       ]
     }
   },
   "glossary": [
+    {
+      "term": "Agile infrastructure",
+      "definition": "Infrastructure you can provision, scale and release on demand instead of buying it in advance for peak.",
+      "exam_context": "With consumption pricing, it answers holiday-spike scenarios: pay only for what you need, when you need it.",
+      "lesson": 2
+    },
+    {
+      "term": "Always-on services",
+      "definition": "Services and support available whenever customers need them, not only during business hours.",
+      "exam_context": "Why a company extends support into evenings and weekends. It is about time, not region or personalization.",
+      "lesson": 1
+    },
+    {
+      "term": "App Engine",
+      "definition": "Google Cloud's fully managed, serverless application platform where Google handles provisioning and scaling.",
+      "exam_context": "The classic PaaS example: deploy a custom app without managing servers or the OS.",
+      "lesson": 5
+    },
     {
       "term": "Bandwidth",
       "definition": "The amount of data a network connection can carry per second.",
@@ -127,8 +155,26 @@
     },
     {
       "term": "Cloud Adoption Framework",
-      "definition": "Google's model for cloud maturity, with themes Learn, Lead, Scale and Secure across tactical, strategic and transformational phases.",
-      "exam_context": "Not tested directly in the bank. Use it to reason about leadership and skills questions.",
+      "definition": "Google's model for measuring cloud maturity on four themes (Learn, Lead, Scale, Secure) across three phases (tactical, strategic, transformational).",
+      "exam_context": "Not named in the bank, but its tactical behaviors are the wrong options and its transformational behaviors the keys in skills and leadership questions.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud CDN",
+      "definition": "Google Cloud's content delivery network, which caches content at edge locations close to users.",
+      "exam_context": "Together with global load balancing and nearby regions, it lowers latency for distant users.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Center of Excellence (CCoE)",
+      "definition": "A dedicated cross-functional team that drives cloud adoption across project boundaries.",
+      "exam_context": "A strategic-phase Lead practice in the Cloud Adoption Framework.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud maturity phases",
+      "definition": "The Cloud Adoption Framework's three stages: tactical (quick cost wins, no overall plan), strategic (broader vision, people and processes change) and transformational (IT drives innovation).",
+      "exam_context": "Adoption driven by individual contributors is tactical; company-wide sponsorship and blameless culture are transformational.",
       "lesson": 7
     },
     {
@@ -136,6 +182,12 @@
       "definition": "Paying for cloud resources according to what you actually use, also called pay-as-you-go.",
       "exam_context": "After migrating, the customer adapts to this spending model; it solves over- and under-buying for peaks.",
       "lesson": 3
+    },
+    {
+      "term": "Data center migration",
+      "definition": "Moving workloads, applications and data from an existing data center to another environment such as Google Cloud.",
+      "exam_context": "Can be one step of digital transformation, but it is narrower and doesn't redesign processes by itself.",
+      "lesson": 1
     },
     {
       "term": "Digital transformation",
@@ -150,14 +202,32 @@
       "lesson": 2
     },
     {
+      "term": "Error budget",
+      "definition": "The amount of unreliability a service may have under its service level objective (SLO) before teams must prioritize reliability work.",
+      "exam_context": "An SRE reliability idea, used as a distractor for why you review TCO.",
+      "lesson": 3
+    },
+    {
       "term": "Executive sponsorship",
       "definition": "Visible, top-down support for a transformation from senior leadership.",
       "exam_context": "Needed to move from a few cost-saving migrations to company-wide transformation.",
       "lesson": 7
     },
     {
+      "term": "Functions as a service (FaaS)",
+      "definition": "A serverless model where you write small event-driven functions and define the triggers; the provider runs and scales them.",
+      "exam_context": "You still write code, so FaaS is wrong when the customer wants a ready-made app.",
+      "lesson": 5
+    },
+    {
+      "term": "Global load balancing",
+      "definition": "Load balancing that gives one global entry point and sends each user to the nearest healthy backend across regions.",
+      "exam_context": "Pairs with deploying replicas in regions near users to cut latency.",
+      "lesson": 6
+    },
+    {
       "term": "Hybrid cloud",
-      "definition": "An architecture that combines private or on-premises infrastructure with public cloud services.",
+      "definition": "An architecture that combines private infrastructure (on-premises data center, private cloud or edge) with public cloud services.",
       "exam_context": "Keep sensitive systems on-prem and use Google Cloud for analytics and scaling. Not the same as multicloud.",
       "lesson": 4
     },
@@ -172,6 +242,12 @@
       "definition": "Using services from two or more public cloud providers.",
       "exam_context": "The 'multiple public cloud providers' option is multicloud, the distractor in hybrid questions.",
       "lesson": 4
+    },
+    {
+      "term": "Network as a service (NaaS)",
+      "definition": "Managed networking capabilities such as connectivity, routing and network security functions, delivered as a service.",
+      "exam_context": "A distractor in service-model questions; it doesn't host your application.",
+      "lesson": 5
     },
     {
       "term": "Network latency",
@@ -228,6 +304,24 @@
       "lesson": 3
     },
     {
+      "term": "Serverless computing",
+      "definition": "A cloud model where the provider runs and scales the infrastructure automatically and you deploy only code or containers. Examples: Cloud Run, Cloud Run functions.",
+      "exam_context": "Serverless scales on demand, so 'a serverless function can't scale' is never the cause in on-prem scenarios.",
+      "lesson": 2
+    },
+    {
+      "term": "Service level agreement (SLA)",
+      "definition": "A provider's published commitment to a service's availability, such as 99.9% or 99.99%, with credits if it is missed.",
+      "exam_context": "No cloud service promises 100% availability; uptime also depends on your own architecture.",
+      "lesson": 2
+    },
+    {
+      "term": "Shared fate",
+      "definition": "Google's extension of shared responsibility, where it also provides secure defaults, blueprints and guidance to help customers secure their part.",
+      "exam_context": "Context for shared responsibility; covered in more depth in the security domain.",
+      "lesson": 5
+    },
+    {
       "term": "Shared responsibility model",
       "definition": "The division of security and operational duties between the cloud provider and the customer, which depends on the service model.",
       "exam_context": "In SaaS, the customer is responsible for its own content and data; the provider runs the platform and infrastructure.",
@@ -241,13 +335,13 @@
     },
     {
       "term": "Total cost of ownership (TCO)",
-      "definition": "All costs of a solution over its life: hardware, software, facilities, power, staff, maintenance and downtime.",
+      "definition": "All costs of a solution over its life: hardware, software licenses, facilities, power, staff, maintenance, downtime and, for a move, migration effort.",
       "exam_context": "Compare on-prem vs cloud TCO before migration to evaluate ROI.",
       "lesson": 3
     },
     {
       "term": "Zone",
-      "definition": "An isolated deployment area within a region.",
+      "definition": "An isolated deployment area within a region. Spreading an app across zones protects against a zonal failure.",
       "exam_context": "More zones in the same region improve availability, not latency for users on another continent.",
       "lesson": 6
     }

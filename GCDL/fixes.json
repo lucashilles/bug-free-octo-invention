@@ -1,30 +1,52 @@
 {
-  "_comment": "Corrections applied by tools/parse_md.py on top of the raw dumps. Keys are <exam>-<n>. 'question' is a list of [old, new] text replacements in the stem, 'answers' replaces option text by letter, 'correct' changes the keyed letter, 'why' records the reason.",
+  "_comment": "Corrections applied by tools/fix.py and the parsers on top of the bank. Keys are <exam>-<n>. 'question'/'explanation' are lists of [old, new] replacements (or 'explanation' as a full replacement string), 'answers' replaces option text by label, 'correct' sets the correct label(s), 'note' appends a ⚠️ note, 'why' records the reason.",
   "2-27": {
-    "answers": {"B": "B. To store and analyze large volumes of structured and unstructured data at scale"},
+    "answers": {
+      "B": "B. To store and analyze large volumes of structured and unstructured data at scale"
+    },
     "why": "Key claimed BigQuery analyzes speech files with low-latency processing; BigQuery is not a low-latency engine and doesn't analyze raw audio by itself."
   },
   "2-38": {
-    "answers": {"C": "C. High-memory VMs"},
+    "answers": {
+      "C": "C. High-memory VMs"
+    },
     "why": "Options B and C were both 'CPUs'."
   },
   "3-32": {
-    "question": [["After the migration, what is QuickServeNow responsible for?", "After the migration, which change will QuickServeNow need to adapt to?"]],
+    "question": [
+      [
+        "After the migration, what is QuickServeNow responsible for?",
+        "After the migration, which change will QuickServeNow need to adapt to?"
+      ]
+    ],
     "why": "Asked what the customer is 'responsible for' but keyed a consequence of migrating, not a shared-responsibility duty."
   },
   "4-25": {
-    "question": [["is temporarily below its service level objective, but the team still has remaining error budget", "is meeting its service level objective and the team still has plenty of error budget remaining"]],
+    "question": [
+      [
+        "is temporarily below its service level objective, but the team still has remaining error budget",
+        "is meeting its service level objective and the team still has plenty of error budget remaining"
+      ]
+    ],
     "why": "Premise was contradictory: a service below its SLO has normally used up its error budget."
   },
   "4-29": {
     "question": [
-      ["how this move usually changes the company’s total cost of ownership model", "how this move usually changes the way the company pays for IT"],
-      ["How does TCO generally shift when", "How does the company’s IT spending generally shift when"]
+      [
+        "how this move usually changes the company’s total cost of ownership model",
+        "how this move usually changes the way the company pays for IT"
+      ],
+      [
+        "How does TCO generally shift when",
+        "How does the company’s IT spending generally shift when"
+      ]
     ],
     "why": "TCO is a total, not a spending model; what shifts is the spending structure."
   },
   "4-34": {
-    "answers": {"A": "A. A Spot VM on Compute Engine"},
+    "answers": {
+      "A": "A. A Spot VM on Compute Engine"
+    },
     "why": "Preemptible VMs are the older product; Spot VMs replaced them."
   },
   "4-35": {
@@ -32,26 +54,106 @@
     "why": "Key was 'primarily from high-risk regions'; a model that predicts for all regions needs representative training data from all of them."
   },
   "5-5": {
-    "question": [["Which Google Cloud product or service is most closely related", "Which technology is most closely related"]],
+    "question": [
+      [
+        "Which Google Cloud product or service is most closely related",
+        "Which technology is most closely related"
+      ]
+    ],
     "why": "Asked for a product or service but keyed 'Machine learning', which is a technique."
   },
   "5-46": {
-    "answers": {"A": "A. They don't require data science expertise."},
+    "answers": {
+      "A": "A. They don't require data science expertise."
+    },
     "why": "'Don't require technical specialists' overstated it: a developer still calls the API; what's removed is the need for ML specialists."
   },
   "6-19": {
-    "answers": {"A": "A. Recording application and operating system events as timestamped entries"},
+    "answers": {
+      "A": "A. Recording application and operating system events as timestamped entries"
+    },
     "why": "'Writing events as text' was too loose; Cloud Logging also stores structured entries."
   },
   "6-48": {
     "question": [
-      ["from many internal and external systems", "from systems running on Google Cloud and on two other public cloud providers"],
-      ["bring these data sources together so", "bring these data sources together across providers so"]
+      [
+        "from many internal and external systems",
+        "from systems running on Google Cloud and on two other public cloud providers"
+      ],
+      [
+        "bring these data sources together so",
+        "bring these data sources together across providers so"
+      ]
     ],
     "why": "Keyed 'Multi cloud environment' but the stem never mentioned more than one cloud provider."
   },
   "6-49": {
-    "answers": {"B": "B. Adopt a zero-trust model that verifies users, devices and applications."},
+    "answers": {
+      "B": "B. Adopt a zero-trust model that verifies users, devices and applications."
+    },
     "why": "Key described zero trust as 'multiple layers of network security', mixing it up with defense in depth."
+  },
+  "3-2": {
+    "explanation": [
+      [
+        "- **A. Train existing staff instead of hiring**: Training staff is good, but this option says nothing about official content or sharing knowledge.",
+        "- **A. Train existing staff instead of hiring**: Training staff is good, but refusing to hire cloud-experienced people is an early-stage habit; mature organizations upskill and hire. It also says nothing about sharing knowledge."
+      ]
+    ],
+    "why": "Adds the deciding reason from Google's Cloud Adoption Framework (Learn theme): 'not hiring staff with prior cloud experience' is a tactical-phase trait."
+  },
+  "5-28": {
+    "explanation": [
+      [
+        "- **C. Driven mainly by individual contributors**: bottom-up effort alone can't change a whole company.",
+        "- **C. Driven mainly by individual contributors**: this is early, tactical adoption in Google's Cloud Adoption Framework; bottom-up effort alone can't change a whole company."
+      ]
+    ],
+    "why": "Ties the distractor to the CAF Lead theme, where IC-driven adoption is the tactical phase (CAF whitepaper)."
+  },
+  "1-41": {
+    "explanation": [
+      [
+        "- **C. BigQuery ML**: it builds models with SQL on structured data in BigQuery, not image classification.",
+        "- **C. BigQuery ML**: it builds models with SQL on structured data in BigQuery. It is not the direct way to train an image classifier from photos."
+      ]
+    ],
+    "why": "BigQuery ML can work with images in some setups (imported or remote models), so 'not image classification' overstates it; the dump frames it as not the direct tool."
+  },
+  "2-45": {
+    "explanation": [
+      [
+        "**C. Premium tier virtual machines**: There is no premium VM option meant for saving money; premium choices cost more.",
+        "**C. Premium tier virtual machines**: There is no such VM type. In Google Cloud, Premium Tier is a Network Service Tier (traffic on Google's global network), which affects networking, not compute cost."
+      ]
+    ],
+    "why": "Current text implies a premium VM option exists; Premium Tier is a Network Service Tier, as the dump explains."
+  },
+  "6-1": {
+    "explanation": [
+      [
+        "applied automatically to eligible Compute Engine VMs that run for a large part of the billing month. There is no sign-up and no contract.",
+        "applied automatically to eligible Compute Engine VMs once they run for more than 25% of the billing month, and the discount grows the longer they run. There is no sign-up and no contract."
+      ]
+    ],
+    "why": "SUDs start after 25% of the month (Compute Engine docs); 'a large part' was vague."
+  },
+  "3-17": {
+    "explanation": [
+      [
+        "- **B. Prioritize fixing large bugs in production**: Large changes and bugs are harder to review, not easier.",
+        "- **B. Prioritize fixing large bugs in production**: Bug priority should follow user and business impact, not size, and large bugs are harder to review, not easier."
+      ]
+    ],
+    "why": "Current text missed the deciding reason the dump gives: prioritize bugs by impact, not size."
+  },
+  "3-29": {
+    "explanation": [
+      [
+        "\n\n**⚠️ Note:** \"Agile infrastructure\" is loose wording. The real ideas are elasticity and consumption-based pricing. It is still the best of the options, so pick it on this exam.",
+        ""
+      ]
+    ],
+    "why": "The dump's explanation reads 'agile infrastructure' as provisioning, scaling and releasing on demand, which makes the key sound; the caveat is no longer needed."
   }
 }

@@ -26,6 +26,11 @@ Data processing turns raw data into a clean, consistent, structured form that is
 
 **Remember:** Collect → process (clean, transform) → store → analyze. "Cleaner, structured format" = processing.
 
+**References:**
+- [docs.cloud.google.com/dataflow/docs/overview](https://docs.cloud.google.com/dataflow/docs/overview)
+- [cloud.google.com/learn/what-is-data-analytics](https://cloud.google.com/learn/what-is-data-analytics)
+- [cloud.google.com/learn/certification/data-engineer](https://cloud.google.com/learn/certification/data-engineer)
+
 **⚠️ Note:** The bank calls this sequence both the "data value chain" and the "data supply chain" (see Q35). Treat them as the same idea.
 
 ---
@@ -54,6 +59,11 @@ Google Cloud offers AI at several skill levels: pre-trained APIs (Vision, Natura
 
 **Remember:** Mixed skill levels = a range of AI tools, from pre-trained APIs to custom training.
 
+**References:**
+- [cloud.google.com/products/ai](https://cloud.google.com/products/ai)
+- [docs.cloud.google.com/docs/ai-ml](https://docs.cloud.google.com/docs/ai-ml)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/beginners-guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/beginners-guide)
+
 ---
 
 ## Question 3
@@ -79,6 +89,11 @@ Recording each purchase digitally creates a reliable history of every transactio
 - **C. Improve perimeter security**: the problem is missing records, not network security, and perimeter security is not what digital payments provide.
 
 **Remember:** Digitizing a process creates data you can track, audit and reconcile.
+
+**References:**
+- [cloud.google.com/solutions/financial-services/payments](https://cloud.google.com/solutions/financial-services/payments)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
 
 **⚠️ Note:** "View data history" is vague wording. The real benefit is a digital record of every purchase that can be reconciled against inventory. The other options are clearly wrong, so pick the keyed answer.
 
@@ -108,6 +123,11 @@ AlloyDB is a fully managed, PostgreSQL-compatible database built for demanding t
 
 **Remember:** PostgreSQL + high performance + fast analytics on live data = AlloyDB.
 
+**References:**
+- [cloud.google.com/alloydb/docs/overview](https://cloud.google.com/alloydb/docs/overview)
+- [cloud.google.com/alloydb/docs/columnar-engine/about](https://cloud.google.com/alloydb/docs/columnar-engine/about)
+- [cloud.google.com/sql/docs/postgres/overview](https://cloud.google.com/sql/docs/postgres/overview)
+
 ---
 
 ## Question 5
@@ -133,6 +153,11 @@ Rehosting ("lift and shift") moves an application to the cloud as it is, with no
 - **D. Refactored**: refactoring changes the code, often splitting a monolith into microservices.
 
 **Remember:** No code changes, no redesign = rehost (lift and shift).
+
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [docs.cloud.google.com/migration-center/docs/migration-planning-overview](https://docs.cloud.google.com/migration-center/docs/migration-planning-overview)
 
 ---
 
@@ -160,6 +185,11 @@ A multi-region bucket stores data redundantly across a large geographic area (fo
 
 **Remember:** Users across many countries + high availability = multi-region bucket.
 
+**References:**
+- [cloud.google.com/storage/docs/locations](https://cloud.google.com/storage/docs/locations)
+- [cloud.google.com/storage/docs/availability-durability](https://cloud.google.com/storage/docs/availability-durability)
+- [cloud.google.com/storage/docs/storage-classes](https://cloud.google.com/storage/docs/storage-classes)
+
 ---
 
 ## Question 7
@@ -185,6 +215,11 @@ When a provider misses its SLA, the customer-facing checkout service goes down. 
 - **D. All database information automatically deleted**: an availability failure does not delete stored data.
 
 **Remember:** Missed SLA → downtime → unhappy customers and lost revenue. The provider usually owes service credits.
+
+**References:**
+- [cloud.google.com/architecture/framework/reliability/set-targets](https://cloud.google.com/architecture/framework/reliability/set-targets)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos)
+- [cloud.google.com/terms/sla](https://cloud.google.com/terms/sla)
 
 **⚠️ Note:** Option A is not absurd, since provider downtime does count against your own SLO and error budget. C is keyed because it is the clearest business impact. Pick C on this exam.
 
@@ -214,6 +249,11 @@ Public cloud resources are reachable over the internet from anywhere, and they r
 
 **Remember:** Public cloud = global reach, on-demand resources, no hardware to maintain. Never 100% uptime and never zero customer security work.
 
+**References:**
+- [cloud.google.com/learn/what-is-public-cloud](https://cloud.google.com/learn/what-is-public-cloud)
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/discover/types-of-cloud-computing](https://cloud.google.com/discover/types-of-cloud-computing)
+
 ---
 
 ## Question 9
@@ -239,6 +279,11 @@ An API lets two software systems exchange data in a standard, controlled way. Me
 - **D. A multi-regional database**: a database stores data but does not connect the app to the partner stores' own systems.
 
 **Remember:** Systems need to talk to each other = API.
+
+**References:**
+- [cloud.google.com/apis/docs/overview](https://cloud.google.com/apis/docs/overview)
+- [cloud.google.com/apis/docs/client-libraries-explained](https://cloud.google.com/apis/docs/client-libraries-explained)
+- [cloud.google.com/apis/design](https://cloud.google.com/apis/design)
 
 ---
 
@@ -266,6 +311,11 @@ Data sovereignty means data is subject to the laws of the country (or region) wh
 
 **Remember:** Sovereignty = whose laws apply. Residency = where the data is stored.
 
+**References:**
+- [cloud.google.com/sovereign-cloud](https://cloud.google.com/sovereign-cloud)
+- [docs.cloud.google.com/assured-workloads/docs/data-residency](https://docs.cloud.google.com/assured-workloads/docs/data-residency)
+- [docs.cloud.google.com/architecture/framework/security/meet-regulatory-compliance-and-privacy-needs](https://docs.cloud.google.com/architecture/framework/security/meet-regulatory-compliance-and-privacy-needs)
+
 ---
 
 ## Question 11
@@ -291,6 +341,11 @@ Cloud Billing budgets let you set a planned amount and threshold rules (for exam
 - **D. Review past billing reports**: looking backward is exactly what finance wants to avoid; it is not proactive.
 
 **Remember:** "Notify me when spend crosses X" = budget + threshold alert. Budgets alert; they do not stop spending by themselves.
+
+**References:**
+- [cloud.google.com/billing/docs/how-to/budgets](https://cloud.google.com/billing/docs/how-to/budgets)
+- [cloud.google.com/billing/docs/how-to/budget-api-overview](https://cloud.google.com/billing/docs/how-to/budget-api-overview)
+- [cloud.google.com/docs/quotas/overview](https://cloud.google.com/docs/quotas/overview)
 
 ---
 
@@ -318,6 +373,11 @@ IAM controls who can do what on which resource. The administrator grants the ana
 
 **Remember:** Who can do what on which resource = IAM. Give only the access needed (least privilege).
 
+**References:**
+- [docs.cloud.google.com/iam/docs/overview](https://docs.cloud.google.com/iam/docs/overview)
+- [docs.cloud.google.com/iam/docs/roles-overview](https://docs.cloud.google.com/iam/docs/roles-overview)
+- [docs.cloud.google.com/bigquery/docs/access-control](https://docs.cloud.google.com/bigquery/docs/access-control)
+
 ---
 
 ## Question 13
@@ -343,6 +403,11 @@ AlloyDB is a fully managed, PostgreSQL-compatible database designed for higher p
 - **D. Firestore**: Firestore is a NoSQL document database; moving to it would mean rewriting the data layer.
 
 **Remember:** Existing PostgreSQL that needs more performance with minimal changes = AlloyDB.
+
+**References:**
+- [cloud.google.com/products/alloydb](https://cloud.google.com/products/alloydb)
+- [docs.cloud.google.com/alloydb/docs/overview](https://docs.cloud.google.com/alloydb/docs/overview)
+- [docs.cloud.google.com/spanner/docs/postgresql-interface](https://docs.cloud.google.com/spanner/docs/postgresql-interface)
 
 ---
 
@@ -370,6 +435,11 @@ Out-of-the-box observability means you get visibility into the health and perfor
 
 **Remember:** Observability = visibility into how your systems and apps are running.
 
+**References:**
+- [cloud.google.com/products/operations](https://cloud.google.com/products/operations)
+- [cloud.google.com/monitoring/docs](https://cloud.google.com/monitoring/docs)
+- [cloud.google.com/logging/docs](https://cloud.google.com/logging/docs)
+
 ---
 
 ## Question 15
@@ -395,6 +465,11 @@ GKE is Google's managed Kubernetes service. It deploys, scales and orchestrates 
 - **D. Provides pre-written source code**: GKE runs your code; it does not write it for you.
 
 **Remember:** Containers that need orchestration and scaling = GKE.
+
+**References:**
+- [cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+- [cloud.google.com/kubernetes-engine/docs/deploy-app-cluster](https://cloud.google.com/kubernetes-engine/docs/deploy-app-cluster)
+- [cloud.google.com/kubernetes-engine/docs/get-started/deploy-workloads](https://cloud.google.com/kubernetes-engine/docs/get-started/deploy-workloads)
 
 **⚠️ Note:** "Rapid deployment and testing" is a generic benefit of containers and CI/CD, not something only GKE provides. It is keyed because the other options are clearly false. Pick A on this exam.
 
@@ -424,6 +499,11 @@ Cloud Run functions (formerly Cloud Functions) runs small pieces of code in resp
 
 **Remember:** Small code + triggered by events + no servers = Cloud Run functions.
 
+**References:**
+- [cloud.google.com/functions](https://cloud.google.com/functions)
+- [cloud.google.com/run/docs](https://cloud.google.com/run/docs)
+- [cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+
 ---
 
 ## Question 17
@@ -449,6 +529,11 @@ VirusTotal, part of Google, checks files and URLs against many antivirus engines
 - **D. BigQuery Omni**: it runs BigQuery analytics on data in other clouds; it is not a malware scanner.
 
 **Remember:** Check a suspicious file or URL against many scanners = VirusTotal. Frontline incident-response intelligence = Mandiant.
+
+**References:**
+- [cloud.google.com/security/resources/google-threat-intelligence-virustotal](https://cloud.google.com/security/resources/google-threat-intelligence-virustotal)
+- [docs.virustotal.com/docs/api-overview](https://docs.virustotal.com/docs/api-overview)
+- [docs.virustotal.com/docs/contributors](https://docs.virustotal.com/docs/contributors)
 
 ---
 
@@ -476,6 +561,11 @@ An API exposes selected data and functions from a legacy system in a secure, con
 
 **Remember:** Unlock legacy data without replacing the system = API.
 
+**References:**
+- [cloud.google.com/learn/what-is-api-management](https://cloud.google.com/learn/what-is-api-management)
+- [cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [cloud.google.com/compute/docs/instances/use-cases](https://cloud.google.com/compute/docs/instances/use-cases)
+
 ---
 
 ## Question 19
@@ -501,6 +591,11 @@ Semi-structured data has no fixed table schema but carries its own organizing ma
 - **D. Relational data**: relational data lives in tables with defined relationships, a type of structured data.
 
 **Remember:** Rows and columns = structured. JSON/XML with tags = semi-structured. Images, audio, free text = unstructured.
+
+**References:**
+- [cloud.google.com/bigquery/docs/semi-structured-data](https://cloud.google.com/bigquery/docs/semi-structured-data)
+- [cloud.google.com/bigquery/docs/json-data](https://cloud.google.com/bigquery/docs/json-data)
+- [cloud.google.com/bigquery/docs/xml-functions](https://cloud.google.com/bigquery/docs/xml-functions)
 
 ---
 
@@ -528,6 +623,11 @@ Looker is Google Cloud's business intelligence platform. It gives business users
 
 **Remember:** Self-service reports and dashboards for business users = Looker. Warehouse = BigQuery.
 
+**References:**
+- [cloud.google.com/looker](https://cloud.google.com/looker)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+
 ---
 
 ## Question 21
@@ -553,6 +653,11 @@ APIs wrap existing system capabilities behind a stable interface. New mobile app
 - **D. Move IT spending to pay-as-you-go**: that describes cloud consumption pricing, not the purpose of APIs.
 
 **Remember:** APIs = reuse what you have, connect new services, modernize gradually.
+
+**References:**
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [cloud.google.com/solutions/unlocking-legacy-applications](https://cloud.google.com/solutions/unlocking-legacy-applications)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
 
 ---
 
@@ -580,6 +685,11 @@ Free-form written feedback has no fixed format or schema, so it is unstructured 
 
 **Remember:** Free text, images, audio, video = unstructured. Numbers in fixed fields = structured.
 
+**References:**
+- [cloud.google.com/learn/what-is-big-data](https://cloud.google.com/learn/what-is-big-data)
+- [cloud.google.com/storage](https://cloud.google.com/storage)
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+
 ---
 
 ## Question 23
@@ -605,6 +715,11 @@ Modernizing applications on Google Cloud (managed services, containers, CI/CD) s
 - **D. DevOps requires market trends to be measured**: DevOps is about faster, more reliable software delivery, not tracking market trends.
 
 **Remember:** Modernize → release faster → meet user expectations sooner.
+
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [cloud.google.com/architecture/devops](https://cloud.google.com/architecture/devops)
 
 ---
 
@@ -632,6 +747,11 @@ GKE Enterprise (formerly Anthos) is Google's platform to build, modernize and ma
 
 **Remember:** Containers managed consistently across hybrid and multicloud = GKE Enterprise.
 
+**References:**
+- [cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options](https://cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options)
+- [cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+
 ---
 
 ## Question 25
@@ -657,6 +777,11 @@ Cryptomining (cryptojacking) is when attackers use someone else's computing reso
 - **D. DDoS**: a DDoS floods a service with traffic to make it unavailable; it does not use the victim's VMs to earn money.
 
 **Remember:** Surprise compute bill + unknown VMs + high CPU = cryptomining.
+
+**References:**
+- [cloud.google.com/security-command-center/cryptomining-protection-program](https://cloud.google.com/security-command-center/cryptomining-protection-program)
+- [docs.cloud.google.com/security-command-center/docs/cryptomining-detection-best-practices](https://docs.cloud.google.com/security-command-center/docs/cryptomining-detection-best-practices)
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
 
 ---
 
@@ -684,6 +809,11 @@ The bucket was exposed because an administrator set its access incorrectly. No s
 
 **Remember:** Human error in settings (like a public bucket) = misconfiguration.
 
+**References:**
+- [docs.cloud.google.com/storage/docs/public-access-prevention](https://docs.cloud.google.com/storage/docs/public-access-prevention)
+- [docs.cloud.google.com/storage/docs/access-control](https://docs.cloud.google.com/storage/docs/access-control)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+
 ---
 
 ## Question 27
@@ -709,6 +839,11 @@ Availability is the "A" in the CIA triad (confidentiality, integrity, availabili
 - **C. Data remains correct, complete, and dependable**: this is integrity.
 
 **Remember:** Confidentiality = only the right people. Integrity = correct and unaltered. Availability = there when needed.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-data-security](https://cloud.google.com/learn/what-is-cloud-data-security)
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+- [docs.cloud.google.com/architecture/framework/reliability](https://docs.cloud.google.com/architecture/framework/reliability)
 
 ---
 
@@ -736,6 +871,11 @@ Autoclass automatically moves each object to the most cost-effective storage cla
 
 **Remember:** Access-based, automatic class changes = Autoclass. Rules you write (age, versions) = lifecycle management.
 
+**References:**
+- [cloud.google.com/storage/docs/autoclass](https://cloud.google.com/storage/docs/autoclass)
+- [cloud.google.com/storage/docs/lifecycle](https://cloud.google.com/storage/docs/lifecycle)
+- [cloud.google.com/storage-transfer/docs/overview](https://cloud.google.com/storage-transfer/docs/overview)
+
 ---
 
 ## Question 29
@@ -761,6 +901,11 @@ In the cloud, the provider runs the hardware, data centers and much of the platf
 - **D. Relax data security protocols**: security remains a shared responsibility; the company still protects its data and access.
 
 **Remember:** Cloud = less undifferentiated infrastructure work, more focus on what makes the business unique.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [cloud.google.com/architecture/framework](https://cloud.google.com/architecture/framework)
+- [cloud.google.com/security/shared-responsibility-data-model](https://cloud.google.com/security/shared-responsibility-data-model)
 
 ---
 
@@ -788,6 +933,11 @@ Security Command Center is Google Cloud's central security and risk management s
 
 **Remember:** Central view of security posture, misconfigurations and vulnerabilities across Google Cloud = Security Command Center.
 
+**References:**
+- [docs.cloud.google.com/security-command-center/docs](https://docs.cloud.google.com/security-command-center/docs)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings](https://docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings)
+
 ---
 
 ## Question 31
@@ -813,6 +963,11 @@ Phishing is a social engineering attack. A fake message pretends to come from a 
 - **D. LLM attack**: this targets AI models, such as with prompt injection; no AI model is involved.
 
 **Remember:** Fake message + urgency + fake login page = phishing.
+
+**References:**
+- [support.google.com/mail/answer/8253](https://support.google.com/mail/answer/8253)
+- [cisa.gov/secure-our-world/recognize-and-report-phishing](https://cisa.gov/secure-our-world/recognize-and-report-phishing)
+- [cisa.gov/news-events/news/avoiding-social-engineering-and-phishing-attacks](https://cisa.gov/news-events/news/avoiding-social-engineering-and-phishing-attacks)
 
 ---
 
@@ -840,6 +995,11 @@ Autoclass watches each object's access pattern and automatically moves it to col
 
 **Remember:** Unpredictable access + no manual rules = Autoclass.
 
+**References:**
+- [cloud.google.com/storage/docs/autoclass](https://cloud.google.com/storage/docs/autoclass)
+- [cloud.google.com/storage/docs/lifecycle](https://cloud.google.com/storage/docs/lifecycle)
+- [cloud.google.com/storage/docs/requester-pays](https://cloud.google.com/storage/docs/requester-pays)
+
 ---
 
 ## Question 33
@@ -865,6 +1025,11 @@ Model Armor is a Google Cloud service that screens prompts and responses for gen
 - **D. Cloud Run functions**: it runs event-driven code, not AI prompt and response screening.
 
 **Remember:** Protect gen AI prompts and responses (prompt injection, jailbreaks, harmful output) = Model Armor.
+
+**References:**
+- [docs.cloud.google.com/model-armor/overview](https://docs.cloud.google.com/model-armor/overview)
+- [docs.cloud.google.com/model-armor/sanitize-prompts-responses](https://docs.cloud.google.com/model-armor/sanitize-prompts-responses)
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
 
 ---
 
@@ -892,6 +1057,11 @@ AI-ready data is data that is unified, clean, trusted and well governed, so AI m
 
 **Remember:** Good AI needs good data: unified, high quality, governed = AI-ready data.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [cloud.google.com/learn/what-is-a-data-cloud](https://cloud.google.com/learn/what-is-a-data-cloud)
+- [cloud.google.com/storage/docs/storage-classes](https://cloud.google.com/storage/docs/storage-classes)
+
 ---
 
 ## Question 35
@@ -917,6 +1087,11 @@ The data supply chain (also called the data value chain) describes data's full j
 - **D. Infrastructure as a Service (IaaS)**: IaaS is a cloud service model for renting compute, storage and networking.
 
 **Remember:** Data's end-to-end journey from creation to decisions = data supply chain (data value chain).
+
+**References:**
+- [cloud.google.com/docs/data](https://cloud.google.com/docs/data)
+- [cloud.google.com/blog/topics/developers-practitioners/what-data-pipeline-architecture-should-i-use](https://cloud.google.com/blog/topics/developers-practitioners/what-data-pipeline-architecture-should-i-use)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
 
 **⚠️ Note:** The bank uses "data supply chain" here and "data value chain" in Q1 for the same idea. Treat them as synonyms.
 
@@ -946,6 +1121,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's unified,
 
 **Remember:** Build, train, deploy and monitor custom ML models = Gemini Enterprise Agent Platform.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/model-monitoring/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/model-monitoring/overview)
+
 ---
 
 ## Question 37
@@ -971,6 +1151,11 @@ Audio recordings are unstructured data. They do not fit into rows and columns. M
 - **C. Reviewing payment activity for fraud**: payment records are structured data.
 
 **Remember:** Audio, images, video and free text = unstructured. ML is what unlocks value from them.
+
+**References:**
+- [cloud.google.com/speech-to-text](https://cloud.google.com/speech-to-text)
+- [docs.cloud.google.com/natural-language/docs](https://docs.cloud.google.com/natural-language/docs)
+- [docs.cloud.google.com/natural-language/docs/basics](https://docs.cloud.google.com/natural-language/docs/basics)
 
 ---
 
@@ -998,6 +1183,11 @@ First-party data is collected directly by a company from its own customers throu
 
 **Remember:** Your own channels = first-party. A partner's data = second-party. Bought from aggregators = third-party.
 
+**References:**
+- [support.google.com/adspolicy/answer/6242605](https://support.google.com/adspolicy/answer/6242605)
+- [cloud.google.com/solutions/customer-data-platform](https://cloud.google.com/solutions/customer-data-platform)
+- [cloud.google.com/solutions/marketing-analytics](https://cloud.google.com/solutions/marketing-analytics)
+
 ---
 
 ## Question 39
@@ -1023,6 +1213,11 @@ Third-party data is collected by an outside provider from many sources and sold 
 - **D. Unstructured data**: this describes format, not source; audience segments are typically structured.
 
 **Remember:** Bought from an aggregator with no direct customer relationship = third-party data.
+
+**References:**
+- [cloud.google.com/learn/what-is-big-data](https://cloud.google.com/learn/what-is-big-data)
+- [support.google.com/google-ads/answer/7542935](https://support.google.com/google-ads/answer/7542935)
+- [support.google.com/analytics/answer/11593727](https://support.google.com/analytics/answer/11593727)
 
 ---
 
@@ -1050,6 +1245,11 @@ Google Security Operations (formerly Chronicle) is a cloud-native security opera
 
 **Remember:** Centralize security data, detect, investigate and respond = Google Security Operations.
 
+**References:**
+- [cloud.google.com/security/products/security-operations](https://cloud.google.com/security/products/security-operations)
+- [docs.cloud.google.com/chronicle/docs/secops/secops-overview](https://docs.cloud.google.com/chronicle/docs/secops/secops-overview)
+- [docs.cloud.google.com/chronicle/docs/soar/overview-and-introduction/soar-overview](https://docs.cloud.google.com/chronicle/docs/soar/overview-and-introduction/soar-overview)
+
 ---
 
 ## Question 41
@@ -1071,10 +1271,15 @@ AutoML Vision lets a team train a custom image classification model using its ow
 
 **Why the others are wrong:**
 - **A. Video Intelligence API**: it analyzes video, not still photos.
-- **C. BigQuery ML**: it builds models with SQL on structured data in BigQuery, not image classification.
+- **C. BigQuery ML**: it builds models with SQL on structured data in BigQuery. It is not the direct way to train an image classifier from photos.
 - **D. Looker**: Looker is a BI and reporting tool, not an ML training service.
 
 **Remember:** Custom image categories + labeled photos + little ML expertise = AutoML (Vision).
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model)
+- [docs.cloud.google.com/video-intelligence/docs](https://docs.cloud.google.com/video-intelligence/docs)
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
 
 **⚠️ Note:** "AutoML Vision" is the old standalone product name. AutoML now lives inside Gemini Enterprise Agent Platform. The concept (custom image categories with labeled data and no code = AutoML) is still right, so pick B.
 
@@ -1104,6 +1309,11 @@ Bare Metal Solution provides dedicated physical servers in Google Cloud location
 
 **Remember:** Licensing or hardware needs that rule out VMs = Bare Metal Solution.
 
+**References:**
+- [cloud.google.com/bare-metal/docs/bms-overview](https://cloud.google.com/bare-metal/docs/bms-overview)
+- [cloud.google.com/compute/docs/overview](https://cloud.google.com/compute/docs/overview)
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+
 ---
 
 ## Question 43
@@ -1129,6 +1339,11 @@ Cloud Monitoring collects metrics on the health and performance of infrastructur
 - **D. Cloud Profiler**: it analyzes CPU and memory use in code to find inefficient functions.
 
 **Remember:** Metrics, dashboards, alerts and uptime checks = Cloud Monitoring. Logs = Cloud Logging. Latency of requests = Cloud Trace.
+
+**References:**
+- [docs.cloud.google.com/monitoring/docs/monitoring-overview](https://docs.cloud.google.com/monitoring/docs/monitoring-overview)
+- [docs.cloud.google.com/monitoring/uptime-checks](https://docs.cloud.google.com/monitoring/uptime-checks)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
 
 ---
 
@@ -1156,6 +1371,11 @@ The serverless option of Managed Service for Apache Spark (formerly Dataproc) le
 
 **Remember:** Spark without managing clusters = Managed Service for Apache Spark serverless.
 
+**References:**
+- [cloud.google.com/products/managed-service-for-apache-spark](https://cloud.google.com/products/managed-service-for-apache-spark)
+- [docs.cloud.google.com/managed-spark/docs](https://docs.cloud.google.com/managed-spark/docs)
+- [docs.cloud.google.com/data-fusion/docs/concepts/overview](https://docs.cloud.google.com/data-fusion/docs/concepts/overview)
+
 ---
 
 ## Question 45
@@ -1181,6 +1401,11 @@ Latency is the time it takes to serve a request. Users waiting a long time for t
 - **D. Traffic**: traffic measures demand, such as requests per second.
 
 **Remember:** Slow = latency. Busy = traffic. Failing = errors. Full = saturation.
+
+**References:**
+- [sre.google/sre-book/monitoring-distributed-systems](https://sre.google/sre-book/monitoring-distributed-systems)
+- [docs.cloud.google.com/application-design-center/docs/monitor-applications](https://docs.cloud.google.com/application-design-center/docs/monitor-applications)
+- [docs.cloud.google.com/endpoints/docs/openapi/monitoring-your-api](https://docs.cloud.google.com/endpoints/docs/openapi/monitoring-your-api)
 
 ---
 
@@ -1208,6 +1433,11 @@ Mandiant, part of Google Cloud, is known for frontline threat intelligence. It g
 
 **Remember:** Frontline incident-response experts and intelligence = Mandiant. Crowdsourced file and URL scanning = VirusTotal.
 
+**References:**
+- [cloud.google.com/security/mandiant](https://cloud.google.com/security/mandiant)
+- [cloud.google.com/security/consulting/mandiant-incident-response-services](https://cloud.google.com/security/consulting/mandiant-incident-response-services)
+- [cloud.google.com/security/consulting/threat-intelligence-services](https://cloud.google.com/security/consulting/threat-intelligence-services)
+
 ---
 
 ## Question 47
@@ -1233,6 +1463,11 @@ Cloud Run is a serverless platform that runs container images. It scales automat
 - **C. Google Kubernetes Engine**: GKE runs containers but involves cluster management, more than a small team needs.
 
 **Remember:** Container image + serverless + autoscaling = Cloud Run.
+
+**References:**
+- [docs.cloud.google.com/run/docs](https://docs.cloud.google.com/run/docs)
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
 
 ---
 
@@ -1260,6 +1495,11 @@ BigQuery is Google Cloud's serverless, fully managed data warehouse. It stores v
 
 **Remember:** Serverless data warehouse + SQL analytics = BigQuery.
 
+**References:**
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/spanner/docs/overview](https://cloud.google.com/spanner/docs/overview)
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+
 ---
 
 ## Question 49
@@ -1286,6 +1526,11 @@ Under the shared responsibility model, Google always secures the physical infras
 
 **Remember:** IaaS: Google secures the physical layer; you secure the OS, apps, data and access.
 
+**References:**
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+- [docs.cloud.google.com/architecture/regional-deployment-compute-engine](https://docs.cloud.google.com/architecture/regional-deployment-compute-engine)
+
 ---
 
 ## Question 50
@@ -1311,5 +1556,10 @@ Under the shared responsibility model, Google always secures the physical infras
 - **D. 5 days**: this would be about 98.6% availability.
 
 **Remember:** 99.9% ≈ 8.8 hours/year, 99.99% ≈ 53 minutes/year, 99.999% ≈ 5 minutes/year.
+
+**References:**
+- [sre.google/sre-book/availability-table](https://sre.google/sre-book/availability-table)
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/monitoring/slo-monitoring](https://cloud.google.com/monitoring/slo-monitoring)
 
 ---

@@ -17,7 +17,7 @@
 
 **Correct answer: C. Nothing. Sustained use discounts are automatically applied.**
 
-Sustained use discounts (SUDs) are applied automatically to eligible Compute Engine VMs that run for a large part of the billing month. There is no sign-up and no contract. The clue is "stay active for most of each billing month": that usage pattern earns the discount on its own.
+Sustained use discounts (SUDs) are applied automatically to eligible Compute Engine VMs once they run for more than 25% of the billing month, and the discount grows the longer they run. There is no sign-up and no contract. The clue is "stay active for most of each billing month": that usage pattern earns the discount on its own.
 
 **Why the others are wrong:**
 - **A. Choose Spot VMs**: Spot VMs are a separate, deeply discounted option for interruptible workloads, not a way to get SUDs, and they can be stopped at any time.
@@ -25,6 +25,11 @@ Sustained use discounts (SUDs) are applied automatically to eligible Compute Eng
 - **D. Commit for one or three years**: That describes committed use discounts (CUDs), a different program that requires a commitment.
 
 **Remember:** SUD = automatic, for running most of the month. CUD = you sign a 1- or 3-year commitment.
+
+**References:**
+- [docs.cloud.google.com/compute/docs/sustained-use-discounts](https://docs.cloud.google.com/compute/docs/sustained-use-discounts)
+- [docs.cloud.google.com/compute/docs/instances/committed-use-discounts-overview](https://docs.cloud.google.com/compute/docs/instances/committed-use-discounts-overview)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
 
 ---
 
@@ -52,6 +57,11 @@ Pre-built agents and templates let a company deliver value quickly, because the 
 
 **Remember:** Pre-built = fast, less differentiation. Custom = more effort, more differentiation.
 
+**References:**
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/build/agent-garden](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/agent-garden)
+
 ---
 
 ## Question 3
@@ -77,6 +87,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) offers a catalog of models
 - **D. Limited to open models only**: Open models are one part of the choice, not the only one.
 
 **Remember:** Model choice on Google Cloud = Google + open + partner models in one platform.
+
+**References:**
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [cloud.google.com/model-garden](https://cloud.google.com/model-garden)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/use-partner-models](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/use-partner-models)
 
 ---
 
@@ -104,6 +119,11 @@ Batch processing analyzes data in large chunks on a schedule, here once a quarte
 
 **Remember:** React as it happens → streaming. Periodic reports → batch.
 
+**References:**
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+- [cloud.google.com/dataflow/docs/concepts/streaming-pipelines](https://cloud.google.com/dataflow/docs/concepts/streaming-pipelines)
+- [cloud.google.com/pubsub/docs/overview](https://cloud.google.com/pubsub/docs/overview)
+
 ---
 
 ## Question 5
@@ -129,6 +149,11 @@ Contact Center AI is Google Cloud's purpose-built solution for customer service.
 - **C. Document AI**: It extracts data from documents such as forms and invoices.
 
 **Remember:** Customer support at scale → Contact Center AI.
+
+**References:**
+- [cloud.google.com/solutions/contact-center-ai-platform](https://cloud.google.com/solutions/contact-center-ai-platform)
+- [docs.cloud.google.com/contact-center/ccai-platform/docs/agent-assist](https://docs.cloud.google.com/contact-center/ccai-platform/docs/agent-assist)
+- [docs.cloud.google.com/text-to-speech/docs](https://docs.cloud.google.com/text-to-speech/docs)
 
 ---
 
@@ -156,6 +181,11 @@ Each virtual machine runs its own full guest operating system on top of a hyperv
 
 **Remember:** Dedicated OS per app → virtual machines. Shared OS kernel, lightweight → containers.
 
+**References:**
+- [docs.cloud.google.com/compute/docs/overview](https://docs.cloud.google.com/compute/docs/overview)
+- [docs.cloud.google.com/compute/docs/instances](https://docs.cloud.google.com/compute/docs/instances)
+- [cloud.google.com/discover/containers-vs-vms](https://cloud.google.com/discover/containers-vs-vms)
+
 ---
 
 ## Question 7
@@ -181,6 +211,11 @@ Non-relational (NoSQL) databases do not require a fixed schema. Records can have
 - **D. Joins across several tables**: Joins between related tables are a classic relational database strength.
 
 **Remember:** Changing structure → NoSQL, flexible model. Related tables and transactions → relational.
+
+**References:**
+- [cloud.google.com/discover/what-is-nosql](https://cloud.google.com/discover/what-is-nosql)
+- [cloud.google.com/firestore](https://cloud.google.com/firestore)
+- [docs.cloud.google.com/bigtable/docs](https://docs.cloud.google.com/bigtable/docs)
 
 ---
 
@@ -208,6 +243,11 @@ Unstructured data has no predefined format or fixed fields. Free text, audio, im
 
 **Remember:** Text, audio, video, transcripts → unstructured. Table fields → structured. JSON/XML → semi-structured.
 
+**References:**
+- [cloud.google.com/discover/what-is-unstructured-data](https://cloud.google.com/discover/what-is-unstructured-data)
+- [cloud.google.com/discover/what-is-structured-data](https://cloud.google.com/discover/what-is-structured-data)
+- [cloud.google.com/natural-language/docs](https://cloud.google.com/natural-language/docs)
+
 ---
 
 ## Question 9
@@ -233,6 +273,11 @@ TensorFlow is an open source machine learning library, originally created by Goo
 - **C. Dataflow**: Google's managed service that runs Apache Beam pipelines for batch and streaming data, not an ML library.
 
 **Remember:** Open source ML library → TensorFlow. Data pipelines → Apache Beam / Dataflow.
+
+**References:**
+- [tensorflow.org](https://tensorflow.org)
+- [tensorflow.org/learn](https://tensorflow.org/learn)
+- [docs.cloud.google.com/dataflow/docs/concepts/beam-programming-model](https://docs.cloud.google.com/dataflow/docs/concepts/beam-programming-model)
 
 ---
 
@@ -260,6 +305,11 @@ Cloud Logging collects, stores, searches, and analyzes log data from application
 
 **Remember:** Logs in one place, faster troubleshooting → Cloud Logging. Metrics and alerts → Cloud Monitoring.
 
+**References:**
+- [cloud.google.com/logging/docs/overview](https://cloud.google.com/logging/docs/overview)
+- [cloud.google.com/logging/docs/view/logs-explorer-interface](https://cloud.google.com/logging/docs/view/logs-explorer-interface)
+- [cloud.google.com/logging/docs/log-analytics](https://cloud.google.com/logging/docs/log-analytics)
+
 ---
 
 ## Question 11
@@ -285,6 +335,11 @@ IaaS provides the basic building blocks: virtual machines, storage, and networki
 - **D. Platform as a service**: PaaS hides the servers so developers just deploy code, which is the opposite of building custom servers.
 
 **Remember:** Rent VMs, storage, network → IaaS. Deploy code, no servers → PaaS. Ready-made app → SaaS.
+
+**References:**
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+- [cloud.google.com/learn/what-is-saas](https://cloud.google.com/learn/what-is-saas)
+- [cloud.google.com/learn/what-is-paas](https://cloud.google.com/learn/what-is-paas)
 
 ---
 
@@ -312,6 +367,11 @@ A hybrid cloud combines on-premises infrastructure with public cloud services. S
 
 **Remember:** On-premises + one public cloud → hybrid. Several public clouds → multicloud.
 
+**References:**
+- [cloud.google.com/learn/what-is-hybrid-cloud](https://cloud.google.com/learn/what-is-hybrid-cloud)
+- [cloud.google.com/hybrid-cloud](https://cloud.google.com/hybrid-cloud)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+
 ---
 
 ## Question 13
@@ -337,6 +397,11 @@ With PaaS, developers deploy their own application code, and the provider manage
 - **D. Network as a service**: This is about renting network capabilities, not hosting an application.
 
 **Remember:** Your own code + no server management → PaaS.
+
+**References:**
+- [cloud.google.com/learn/paas-vs-iaas-vs-saas](https://cloud.google.com/learn/paas-vs-iaas-vs-saas)
+- [cloud.google.com/appengine](https://cloud.google.com/appengine)
+- [docs.cloud.google.com/appengine/docs](https://docs.cloud.google.com/appengine/docs)
 
 ---
 
@@ -364,6 +429,11 @@ BI looks backward. It summarizes what already happened in reports and dashboards
 
 **Remember:** BI = dashboards about the past. ML = learns from data to predict and decide.
 
+**References:**
+- [cloud.google.com/learn/what-is-business-intelligence](https://cloud.google.com/learn/what-is-business-intelligence)
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
+
 ---
 
 ## Question 15
@@ -389,6 +459,11 @@ An on-premises data center has a fixed amount of hardware. When holiday traffic 
 - **D. Can only be configured on-premises**: This says nothing about why the app fails under load.
 
 **Remember:** On-premises scaling pain = not enough servers for the peak, and adding more is slow and costly.
+
+**References:**
+- [cloud.google.com/architecture/framework/performance-optimization/scalability](https://cloud.google.com/architecture/framework/performance-optimization/scalability)
+- [cloud.google.com/compute/docs/autoscaler](https://cloud.google.com/compute/docs/autoscaler)
+- [cloud.google.com/run/docs/about-functions](https://cloud.google.com/run/docs/about-functions)
 
 ---
 
@@ -416,6 +491,11 @@ Accuracy measures whether data correctly reflects the real-world value or its tr
 
 **Remember:** Missing → completeness. Matches source → accuracy. Right format → validity. Duplicates → uniqueness. Stale → timeliness.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
+
 ---
 
 ## Question 17
@@ -442,6 +522,11 @@ Google Cloud APIs such as the Vision API (text detection) and Document AI can re
 
 **Remember:** Scanned forms → APIs make them searchable and extract key fields.
 
+**References:**
+- [docs.cloud.google.com/document-ai/docs/overview](https://docs.cloud.google.com/document-ai/docs/overview)
+- [docs.cloud.google.com/vision/docs/ocr](https://docs.cloud.google.com/vision/docs/ocr)
+- [docs.cloud.google.com/document-ai/docs/extracting-overview](https://docs.cloud.google.com/document-ai/docs/extracting-overview)
+
 ---
 
 ## Question 18
@@ -467,6 +552,11 @@ Machine learning finds patterns in historical data and keeps improving as new da
 - **D. Multiple regression**: A single statistical technique for predicting a number. It is not the broad, self-improving approach the stem describes.
 
 **Remember:** Learns and improves as data grows → machine learning.
+
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [developers.google.com/machine-learning/crash-course](https://developers.google.com/machine-learning/crash-course)
+- [cloud.google.com/discover/what-is-predictive-analytics](https://cloud.google.com/discover/what-is-predictive-analytics)
 
 **⚠️ Note:** Multiple regression is itself a statistical/ML technique, so D is not strictly wrong. "Machine learning" is the broader and best answer because the system must keep improving with new data. Pick the keyed answer on this exam.
 
@@ -496,6 +586,11 @@ Logging means recording what happened, when it happened: errors, OS messages, re
 
 **Remember:** Logs = what happened (events). Metrics = how much (numbers over time).
 
+**References:**
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+- [docs.cloud.google.com/logging/docs](https://docs.cloud.google.com/logging/docs)
+- [docs.cloud.google.com/logging/docs/view/logs-explorer-interface](https://docs.cloud.google.com/logging/docs/view/logs-explorer-interface)
+
 ---
 
 ## Question 20
@@ -521,6 +616,11 @@ A data warehouse, such as BigQuery, is built for analytics. It stores structured
 - **D. Structured tables for transactional queries**: That describes a transactional (OLTP) relational database, not an analytics warehouse, and it ignores semi-structured data.
 
 **Remember:** Analyst reporting and ad-hoc queries → data warehouse. Day-to-day transactions → relational database.
+
+**References:**
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/query-overview](https://docs.cloud.google.com/bigquery/docs/query-overview)
 
 ---
 
@@ -548,6 +648,11 @@ Vendor lock-in happens when an application depends on one provider's proprietary
 
 **Remember:** Avoid lock-in → openness: open standards, open source, portable workloads.
 
+**References:**
+- [cloud.google.com/learn/what-is-multicloud](https://cloud.google.com/learn/what-is-multicloud)
+- [docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers](https://docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers)
+- [cloud.google.com/architecture/framework](https://cloud.google.com/architecture/framework)
+
 ---
 
 ## Question 22
@@ -573,6 +678,11 @@ The principle of least privilege means giving each user only the permissions the
 - **D. Security by default**: This means systems ship with secure settings already turned on.
 
 **Remember:** Only what the job needs → least privilege.
+
+**References:**
+- [docs.cloud.google.com/iam/docs/using-iam-securely](https://docs.cloud.google.com/iam/docs/using-iam-securely)
+- [docs.cloud.google.com/iam/docs/resource-hierarchy-access-control](https://docs.cloud.google.com/iam/docs/resource-hierarchy-access-control)
+- [docs.cloud.google.com/iam/docs/roles-overview](https://docs.cloud.google.com/iam/docs/roles-overview)
 
 ---
 
@@ -600,6 +710,11 @@ Backups are copies of data saved at points in time. If storage fails or ransomwa
 
 **Remember:** Need to restore after loss or ransomware → backups.
 
+**References:**
+- [cloud.google.com/backup-disaster-recovery](https://cloud.google.com/backup-disaster-recovery)
+- [cloud.google.com/architecture/dr-scenarios-planning-guide](https://cloud.google.com/architecture/dr-scenarios-planning-guide)
+- [cloud.google.com/monitoring/docs](https://cloud.google.com/monitoring/docs)
+
 ---
 
 ## Question 24
@@ -625,6 +740,11 @@ The Vision API is a pre-trained Google Cloud service that analyzes images. It ca
 - **D. BigQuery ML**: It builds models with SQL on data in BigQuery, not image recognition out of the box.
 
 **Remember:** Generic photo labels, landmarks, text in images → Vision API.
+
+**References:**
+- [cloud.google.com/vision/docs](https://cloud.google.com/vision/docs)
+- [cloud.google.com/vision/docs/ocr](https://cloud.google.com/vision/docs/ocr)
+- [cloud.google.com/bigquery/docs/bqml-introduction](https://cloud.google.com/bigquery/docs/bqml-introduction)
 
 ---
 
@@ -652,6 +772,11 @@ An incident response plan defines in advance who does what when a security event
 
 **Remember:** Restore data → backups. Prepare for a breach → incident response plan.
 
+**References:**
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [cloud.google.com/discover/incident-response-plan-template](https://cloud.google.com/discover/incident-response-plan-template)
+
 ---
 
 ## Question 26
@@ -677,6 +802,11 @@ A machine learning model learns patterns from its training data. More relevant, 
 - **D. Faster CPU processors**: Faster hardware can speed up training, but it does not improve accuracy on its own.
 
 **Remember:** Better accuracy ← more (and better) training data, not more hardware.
+
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [developers.google.com/machine-learning/crash-course/overfitting/data-characteristics](https://developers.google.com/machine-learning/crash-course/overfitting/data-characteristics)
+- [developers.google.com/machine-learning/guides/text-classification/step-1](https://developers.google.com/machine-learning/guides/text-classification/step-1)
 
 ---
 
@@ -704,6 +834,11 @@ In cloud technology, privacy is about controlling who can access personal data a
 
 **Remember:** Privacy = limits on access and sharing. Authentication = verifying identity. Compliance = meeting standards.
 
+**References:**
+- [cloud.google.com/privacy](https://cloud.google.com/privacy)
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [cloud.google.com/docs/security/overview/whitepaper](https://cloud.google.com/docs/security/overview/whitepaper)
+
 ---
 
 ## Question 28
@@ -729,6 +864,11 @@ Validity checks whether data follows the expected format, type, or rules. An ema
 - **D. Uniqueness**: This is about duplicate records, which the stem does not mention.
 
 **Remember:** Wrong format or broken rule → validity. Doesn't match the real value → accuracy.
+
+**References:**
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [docs.cloud.google.com/dataplex/docs/use-auto-data-quality](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality)
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
 
 ---
 
@@ -756,6 +896,11 @@ Uniqueness means each real-world thing is recorded only once. The same scooter s
 
 **Remember:** Duplicates → uniqueness.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
+
 ---
 
 ## Question 30
@@ -781,6 +926,11 @@ Once an agent is built and tested on Gemini Enterprise Agent Platform, applicati
 - **D. IAM**: IAM controls who can access resources. It secures the call but is not the interface for calling the agent.
 
 **Remember:** Build agents without code → Agent Studio. Call agents from your apps → Agent Platform API.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/reference/rest](https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/rest)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/apis](https://docs.cloud.google.com/gemini-enterprise-agent-platform/apis)
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
 
 ---
 
@@ -808,6 +958,11 @@ Cloud Run functions (formerly Cloud Functions) runs small pieces of code in resp
 
 **Remember:** Small code triggered by events, no servers → Cloud Run functions.
 
+**References:**
+- [cloud.google.com/functions](https://cloud.google.com/functions)
+- [docs.cloud.google.com/run/docs/write-functions](https://docs.cloud.google.com/run/docs/write-functions)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+
 ---
 
 ## Question 32
@@ -833,6 +988,11 @@ A public cloud gives near-instant extra capacity for traffic peaks, without buyi
 - **D. Buy efficient on-premises servers**: Buying hardware is slow and costly, and capacity sits idle after the peak.
 
 **Remember:** Scale fast + sustainability → cloud provider with energy-efficient data centers.
+
+**References:**
+- [cloud.google.com/sustainability](https://cloud.google.com/sustainability)
+- [datacenters.google/operating-sustainably](https://datacenters.google/operating-sustainably)
+- [sustainability.google/operations/](https://sustainability.google/operations/)
 
 ---
 
@@ -860,6 +1020,11 @@ AutoML lets teams train custom models on their own labeled data without writing 
 
 **Remember:** Labeled data + your own categories + no ML coders → AutoML.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/image-data/classification/train-model)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tutorials/image-classification-automl/training](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tutorials/image-classification-automl/training)
+- [cloud.google.com/document-ai/docs/overview](https://cloud.google.com/document-ai/docs/overview)
+
 ---
 
 ## Question 34
@@ -885,6 +1050,11 @@ Artificial intelligence is the broad field of making computers do things that no
 - **C. Uses advanced analytics only to create predictions**: Prediction is one AI use, but AI is broader than predictive analytics.
 
 **Remember:** AI = tasks that need human cognition. ML = learning from data to predict and decide.
+
+**References:**
+- [cloud.google.com/learn/what-is-artificial-intelligence](https://cloud.google.com/learn/what-is-artificial-intelligence)
+- [cloud.google.com/learn/artificial-intelligence-vs-machine-learning](https://cloud.google.com/learn/artificial-intelligence-vs-machine-learning)
+- [cloud.google.com/discover/deep-learning-vs-machine-learning](https://cloud.google.com/discover/deep-learning-vs-machine-learning)
 
 ---
 
@@ -912,6 +1082,11 @@ On-premises, every new server must be bought, delivered, installed, configured, 
 
 **Remember:** On-premises scaling = slow and costly to add capacity.
 
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [cloud.google.com/learn/benefits-of-cloud-computing](https://cloud.google.com/learn/benefits-of-cloud-computing)
+- [cloud.google.com/discover/what-is-serverless-architecture](https://cloud.google.com/discover/what-is-serverless-architecture)
+
 ---
 
 ## Question 36
@@ -937,6 +1112,11 @@ BigQuery ML lets people who know SQL create and run machine learning models dire
 - **D. AutoML with labeled data**: AutoML is also low-code, but BigQuery ML is the more direct fit when the data is in BigQuery and the team speaks SQL.
 
 **Remember:** SQL analysts + data in BigQuery → BigQuery ML.
+
+**References:**
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
+- [docs.cloud.google.com/bigquery/docs/create-machine-learning-model](https://docs.cloud.google.com/bigquery/docs/create-machine-learning-model)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tabular-data/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/tabular-data/overview)
 
 ---
 
@@ -964,6 +1144,11 @@ The Cloud Translation API is a pre-trained service that translates text between 
 
 **Remember:** Audio → Speech-to-Text. Languages → Translation. Text topics and sentiment → Natural Language.
 
+**References:**
+- [cloud.google.com/translate](https://cloud.google.com/translate)
+- [docs.cloud.google.com/translate/docs](https://docs.cloud.google.com/translate/docs)
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+
 ---
 
 ## Question 38
@@ -989,6 +1174,11 @@ Compliance Reports Manager gives customers self-service access to Google Cloud's
 - **D. Cloud Monitoring**: It tracks metrics, uptime, and alerts for applications and infrastructure.
 
 **Remember:** Need Google's certificates and audit reports → Compliance Reports Manager.
+
+**References:**
+- [cloud.google.com/security/compliance/compliance-reports-manager](https://cloud.google.com/security/compliance/compliance-reports-manager)
+- [cloud.google.com/security/compliance/iso-27001](https://cloud.google.com/security/compliance/iso-27001)
+- [cloud.google.com/security/products/security-command-center](https://cloud.google.com/security/products/security-command-center)
 
 ---
 
@@ -1016,6 +1206,11 @@ Cloud databases built for transactions, such as Cloud SQL and Spanner, keep each
 
 **Remember:** Transactional data in the cloud → accurate transactions at scale.
 
+**References:**
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/discover/what-is-cloud-scalability](https://cloud.google.com/discover/what-is-cloud-scalability)
+- [docs.cloud.google.com/architecture/scalable-and-resilient-apps](https://docs.cloud.google.com/architecture/scalable-and-resilient-apps)
+
 ---
 
 ## Question 40
@@ -1041,6 +1236,11 @@ Structured data fits into fixed fields, like rows and columns, so it is easy to 
 - **D. Doctor's handwritten notes**: Free-form handwriting is unstructured until it is processed and extracted.
 
 **Remember:** Table fields and numeric readings → structured. Images, video, free text → unstructured.
+
+**References:**
+- [cloud.google.com/learn/what-is-a-relational-database](https://cloud.google.com/learn/what-is-a-relational-database)
+- [cloud.google.com/discover/data-lake-vs-data-warehouse](https://cloud.google.com/discover/data-lake-vs-data-warehouse)
+- [cloud.google.com/learn/what-is-data-cloud](https://cloud.google.com/learn/what-is-data-cloud)
 
 ---
 
@@ -1068,6 +1268,11 @@ Gemini Enterprise Agent Platform (formerly Vertex AI) is Google Cloud's unified,
 
 **Remember:** Full managed ML lifecycle, foundation models, agents → Gemini Enterprise Agent Platform.
 
+**References:**
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview)
+
 ---
 
 ## Question 42
@@ -1093,6 +1298,11 @@ Under the shared responsibility model, the cloud provider always secures the phy
 - **D. FitCart**: FitCart left its own server room. It no longer owns the physical infrastructure.
 
 **Remember:** Physical data center security → Google alone, in every service model.
+
+**References:**
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [docs.cloud.google.com/docs/security/infrastructure/design](https://docs.cloud.google.com/docs/security/infrastructure/design)
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
 
 ---
 
@@ -1120,6 +1330,11 @@ DevOps culture breaks down silos by making development and operations jointly re
 
 **Remember:** Silos are fixed by shared responsibility for outcomes, not by blame.
 
+**References:**
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [docs.cloud.google.com/architecture/devops](https://docs.cloud.google.com/architecture/devops)
+- [cloud.google.com/blog/products/devops-sre/how-communication-contributes-to-software-delivery-success](https://cloud.google.com/blog/products/devops-sre/how-communication-contributes-to-software-delivery-success)
+
 ---
 
 ## Question 44
@@ -1145,6 +1360,11 @@ A hybrid cloud connects on-premises infrastructure with a public cloud. SecureVi
 - **D. Private-cloud**: A private cloud alone would not give access to Google Cloud's ML services.
 
 **Remember:** Data stays on-premises + Google Cloud services → hybrid.
+
+**References:**
+- [cloud.google.com/learn/what-is-hybrid-cloud](https://cloud.google.com/learn/what-is-hybrid-cloud)
+- [docs.cloud.google.com/architecture/deployment-archetypes/hybrid](https://docs.cloud.google.com/architecture/deployment-archetypes/hybrid)
+- [cloud.google.com/distributed-cloud](https://cloud.google.com/distributed-cloud)
 
 ---
 
@@ -1172,6 +1392,11 @@ Foundation models are large models trained on broad data. Companies can adapt th
 
 **Remember:** Foundation models = pre-trained start, fine-tune, save time, still need review.
 
+**References:**
+- [cloud.google.com/discover/what-are-foundation-models](https://cloud.google.com/discover/what-are-foundation-models)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning)
+
 ---
 
 ## Question 46
@@ -1197,6 +1422,11 @@ A data warehouse, such as BigQuery, gathers data from many systems into one plac
 - **C. Data field**: A field is a single column or attribute in a record, not a storage system.
 
 **Remember:** Raw data in its original format → data lake. Analyst reporting and dashboards → data warehouse.
+
+**References:**
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/loading-data](https://docs.cloud.google.com/bigquery/docs/loading-data)
 
 ---
 
@@ -1224,6 +1454,11 @@ The Natural Language API is a pre-trained service that analyzes written text. It
 
 **Remember:** Text topics, entities, sentiment → Natural Language API.
 
+**References:**
+- [cloud.google.com/natural-language/docs](https://cloud.google.com/natural-language/docs)
+- [cloud.google.com/speech-to-text/docs](https://cloud.google.com/speech-to-text/docs)
+- [cloud.google.com/translate/docs](https://cloud.google.com/translate/docs)
+
 ---
 
 ## Question 48
@@ -1249,6 +1484,11 @@ BrightPulse runs on Google Cloud, but some of its data lives with two other publ
 - **D. Container environment**: Containers package applications. They don't define where data from different providers lives.
 
 **Remember:** Several public clouds → multicloud. On-premises + public cloud → hybrid.
+
+**References:**
+- [cloud.google.com/architecture/framework/system-design/compute](https://cloud.google.com/architecture/framework/system-design/compute)
+- [cloud.google.com/discover/what-is-multicloud](https://cloud.google.com/discover/what-is-multicloud)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
 
 ---
 
@@ -1276,6 +1516,11 @@ Zero trust means no user or device is trusted just because it is inside the corp
 
 **Remember:** Verify every request from anywhere → zero trust.
 
+**References:**
+- [cloud.google.com/learn/what-is-zero-trust](https://cloud.google.com/learn/what-is-zero-trust)
+- [cloud.google.com/beyondcorp](https://cloud.google.com/beyondcorp)
+- [docs.cloud.google.com/iam/docs/roles-overview](https://docs.cloud.google.com/iam/docs/roles-overview)
+
 ---
 
 ## Question 50
@@ -1301,5 +1546,9 @@ Site Reliability Engineering (SRE) accepts that no system is 100% reliable. Fail
 - **D. Eliminate all future bugs**: Zero bugs is unrealistic. SRE manages risk with error budgets instead of aiming for perfection.
 
 **Remember:** Failure is normal: accept it, learn from it, run blameless postmortems.
+
+**References:**
+- [docs.google.com/document/u/0/d/1h2TCYk4HqRcrashLlr_Kb8A6esNssGrmxHzdyYH1ydQ/edit](https://docs.google.com/document/u/0/d/1h2TCYk4HqRcrashLlr_Kb8A6esNssGrmxHzdyYH1ydQ/edit)
+- [cloud.google.com/blog/products/management-tools/meeting-reliability-challenges-with-sre-principles](https://cloud.google.com/blog/products/management-tools/meeting-reliability-challenges-with-sre-principles)
 
 ---

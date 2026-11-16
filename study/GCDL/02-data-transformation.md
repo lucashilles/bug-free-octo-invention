@@ -28,6 +28,11 @@ Data processing turns raw data into a clean, consistent, structured form that is
 
 **Remember:** Collect → process (clean, transform) → store → analyze. "Cleaner, structured format" = processing.
 
+**References:**
+- [docs.cloud.google.com/dataflow/docs/overview](https://docs.cloud.google.com/dataflow/docs/overview)
+- [cloud.google.com/learn/what-is-data-analytics](https://cloud.google.com/learn/what-is-data-analytics)
+- [cloud.google.com/learn/certification/data-engineer](https://cloud.google.com/learn/certification/data-engineer)
+
 **⚠️ Note:** The bank calls this sequence both the "data value chain" and the "data supply chain" (see Q35). Treat them as the same idea.
 
 </details>
@@ -57,6 +62,11 @@ Recording each purchase digitally creates a reliable history of every transactio
 - **C. Improve perimeter security**: the problem is missing records, not network security, and perimeter security is not what digital payments provide.
 
 **Remember:** Digitizing a process creates data you can track, audit and reconcile.
+
+**References:**
+- [cloud.google.com/solutions/financial-services/payments](https://cloud.google.com/solutions/financial-services/payments)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
 
 **⚠️ Note:** "View data history" is vague wording. The real benefit is a digital record of every purchase that can be reconciled against inventory. The other options are clearly wrong, so pick the keyed answer.
 
@@ -88,6 +98,11 @@ AlloyDB is a fully managed, PostgreSQL-compatible database built for demanding t
 
 **Remember:** PostgreSQL + high performance + fast analytics on live data = AlloyDB.
 
+**References:**
+- [cloud.google.com/alloydb/docs/overview](https://cloud.google.com/alloydb/docs/overview)
+- [cloud.google.com/alloydb/docs/columnar-engine/about](https://cloud.google.com/alloydb/docs/columnar-engine/about)
+- [cloud.google.com/sql/docs/postgres/overview](https://cloud.google.com/sql/docs/postgres/overview)
+
 </details>
 
 ---
@@ -115,6 +130,11 @@ A multi-region bucket stores data redundantly across a large geographic area (fo
 - **D. Object versioning**: versioning keeps old copies of objects to recover from deletes or overwrites; it is not about location or availability.
 
 **Remember:** Users across many countries + high availability = multi-region bucket.
+
+**References:**
+- [cloud.google.com/storage/docs/locations](https://cloud.google.com/storage/docs/locations)
+- [cloud.google.com/storage/docs/availability-durability](https://cloud.google.com/storage/docs/availability-durability)
+- [cloud.google.com/storage/docs/storage-classes](https://cloud.google.com/storage/docs/storage-classes)
 
 </details>
 
@@ -144,6 +164,11 @@ AlloyDB is a fully managed, PostgreSQL-compatible database designed for higher p
 
 **Remember:** Existing PostgreSQL that needs more performance with minimal changes = AlloyDB.
 
+**References:**
+- [cloud.google.com/products/alloydb](https://cloud.google.com/products/alloydb)
+- [docs.cloud.google.com/alloydb/docs/overview](https://docs.cloud.google.com/alloydb/docs/overview)
+- [docs.cloud.google.com/spanner/docs/postgresql-interface](https://docs.cloud.google.com/spanner/docs/postgresql-interface)
+
 </details>
 
 ---
@@ -171,6 +196,11 @@ Semi-structured data has no fixed table schema but carries its own organizing ma
 - **D. Relational data**: relational data lives in tables with defined relationships, a type of structured data.
 
 **Remember:** Rows and columns = structured. JSON/XML with tags = semi-structured. Images, audio, free text = unstructured.
+
+**References:**
+- [cloud.google.com/bigquery/docs/semi-structured-data](https://cloud.google.com/bigquery/docs/semi-structured-data)
+- [cloud.google.com/bigquery/docs/json-data](https://cloud.google.com/bigquery/docs/json-data)
+- [cloud.google.com/bigquery/docs/xml-functions](https://cloud.google.com/bigquery/docs/xml-functions)
 
 </details>
 
@@ -200,6 +230,11 @@ Looker is Google Cloud's business intelligence platform. It gives business users
 
 **Remember:** Self-service reports and dashboards for business users = Looker. Warehouse = BigQuery.
 
+**References:**
+- [cloud.google.com/looker](https://cloud.google.com/looker)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+
 </details>
 
 ---
@@ -227,6 +262,11 @@ Free-form written feedback has no fixed format or schema, so it is unstructured 
 - **D. Stock quantity records**: inventory counts are classic structured table data.
 
 **Remember:** Free text, images, audio, video = unstructured. Numbers in fixed fields = structured.
+
+**References:**
+- [cloud.google.com/learn/what-is-big-data](https://cloud.google.com/learn/what-is-big-data)
+- [cloud.google.com/storage](https://cloud.google.com/storage)
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
 
 </details>
 
@@ -256,6 +296,11 @@ Autoclass automatically moves each object to the most cost-effective storage cla
 
 **Remember:** Access-based, automatic class changes = Autoclass. Rules you write (age, versions) = lifecycle management.
 
+**References:**
+- [cloud.google.com/storage/docs/autoclass](https://cloud.google.com/storage/docs/autoclass)
+- [cloud.google.com/storage/docs/lifecycle](https://cloud.google.com/storage/docs/lifecycle)
+- [cloud.google.com/storage-transfer/docs/overview](https://cloud.google.com/storage-transfer/docs/overview)
+
 </details>
 
 ---
@@ -283,6 +328,11 @@ Autoclass watches each object's access pattern and automatically moves it to col
 - **D. Requester Pays**: it makes the person downloading the data pay for access; it does not change storage classes.
 
 **Remember:** Unpredictable access + no manual rules = Autoclass.
+
+**References:**
+- [cloud.google.com/storage/docs/autoclass](https://cloud.google.com/storage/docs/autoclass)
+- [cloud.google.com/storage/docs/lifecycle](https://cloud.google.com/storage/docs/lifecycle)
+- [cloud.google.com/storage/docs/requester-pays](https://cloud.google.com/storage/docs/requester-pays)
 
 </details>
 
@@ -312,6 +362,11 @@ AI-ready data is data that is unified, clean, trusted and well governed, so AI m
 
 **Remember:** Good AI needs good data: unified, high quality, governed = AI-ready data.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [cloud.google.com/learn/what-is-a-data-cloud](https://cloud.google.com/learn/what-is-a-data-cloud)
+- [cloud.google.com/storage/docs/storage-classes](https://cloud.google.com/storage/docs/storage-classes)
+
 </details>
 
 ---
@@ -339,6 +394,11 @@ The data supply chain (also called the data value chain) describes data's full j
 - **D. Infrastructure as a Service (IaaS)**: IaaS is a cloud service model for renting compute, storage and networking.
 
 **Remember:** Data's end-to-end journey from creation to decisions = data supply chain (data value chain).
+
+**References:**
+- [cloud.google.com/docs/data](https://cloud.google.com/docs/data)
+- [cloud.google.com/blog/topics/developers-practitioners/what-data-pipeline-architecture-should-i-use](https://cloud.google.com/blog/topics/developers-practitioners/what-data-pipeline-architecture-should-i-use)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
 
 **⚠️ Note:** The bank uses "data supply chain" here and "data value chain" in Q1 for the same idea. Treat them as synonyms.
 
@@ -370,6 +430,11 @@ First-party data is collected directly by a company from its own customers throu
 
 **Remember:** Your own channels = first-party. A partner's data = second-party. Bought from aggregators = third-party.
 
+**References:**
+- [support.google.com/adspolicy/answer/6242605](https://support.google.com/adspolicy/answer/6242605)
+- [cloud.google.com/solutions/customer-data-platform](https://cloud.google.com/solutions/customer-data-platform)
+- [cloud.google.com/solutions/marketing-analytics](https://cloud.google.com/solutions/marketing-analytics)
+
 </details>
 
 ---
@@ -397,6 +462,11 @@ Third-party data is collected by an outside provider from many sources and sold 
 - **D. Unstructured data**: this describes format, not source; audience segments are typically structured.
 
 **Remember:** Bought from an aggregator with no direct customer relationship = third-party data.
+
+**References:**
+- [cloud.google.com/learn/what-is-big-data](https://cloud.google.com/learn/what-is-big-data)
+- [support.google.com/google-ads/answer/7542935](https://support.google.com/google-ads/answer/7542935)
+- [support.google.com/analytics/answer/11593727](https://support.google.com/analytics/answer/11593727)
 
 </details>
 
@@ -426,6 +496,11 @@ The serverless option of Managed Service for Apache Spark (formerly Dataproc) le
 
 **Remember:** Spark without managing clusters = Managed Service for Apache Spark serverless.
 
+**References:**
+- [cloud.google.com/products/managed-service-for-apache-spark](https://cloud.google.com/products/managed-service-for-apache-spark)
+- [docs.cloud.google.com/managed-spark/docs](https://docs.cloud.google.com/managed-spark/docs)
+- [docs.cloud.google.com/data-fusion/docs/concepts/overview](https://docs.cloud.google.com/data-fusion/docs/concepts/overview)
+
 </details>
 
 ---
@@ -453,6 +528,11 @@ BigQuery is Google Cloud's serverless, fully managed data warehouse. It stores v
 - **D. Dataflow**: Dataflow processes streaming and batch data; it is not a warehouse for storing and querying.
 
 **Remember:** Serverless data warehouse + SQL analytics = BigQuery.
+
+**References:**
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/spanner/docs/overview](https://cloud.google.com/spanner/docs/overview)
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
 
 </details>
 
@@ -482,6 +562,11 @@ Looker is Google Cloud's enterprise business intelligence platform. It lets team
 
 **Remember:** Enterprise BI, dashboards, multicloud data modeling → Looker.
 
+**References:**
+- [docs.cloud.google.com/looker/docs](https://docs.cloud.google.com/looker/docs)
+- [docs.cloud.google.com/bigquery/docs/looker](https://docs.cloud.google.com/bigquery/docs/looker)
+- [cloud.google.com/compute/docs/instances/spot](https://cloud.google.com/compute/docs/instances/spot)
+
 </details>
 
 ---
@@ -509,6 +594,11 @@ Looker is a business intelligence (BI) platform. It helps managers and analysts 
 - **C. Robust data roll-back accuracy**: Rolling back data is a database feature, not what Looker provides.
 
 **Remember:** Dashboards and BI for business users → Looker; storing and querying at scale → BigQuery.
+
+**References:**
+- [cloud.google.com/looker](https://cloud.google.com/looker)
+- [docs.cloud.google.com/looker/docs](https://docs.cloud.google.com/looker/docs)
+- [cloud.google.com/looker-bi](https://cloud.google.com/looker-bi)
 
 </details>
 
@@ -538,6 +628,11 @@ Cloud Storage is Google Cloud's object storage for files like images, reports, a
 
 **Remember:** Nearline, Coldline, Archive → Cloud Storage classes for less frequently accessed data.
 
+**References:**
+- [docs.cloud.google.com/storage/docs/storage-classes](https://docs.cloud.google.com/storage/docs/storage-classes)
+- [docs.cloud.google.com/storage/docs/lifecycle](https://docs.cloud.google.com/storage/docs/lifecycle)
+- [docs.cloud.google.com/filestore/docs/overview](https://docs.cloud.google.com/filestore/docs/overview)
+
 </details>
 
 ---
@@ -565,6 +660,11 @@ BigQuery Omni lets you run BigQuery SQL on data stored in other public clouds, s
 - **D. Cloud Run functions**: Cloud Run functions run event-driven code, not SQL analytics across clouds.
 
 **Remember:** Query data in AWS/Azure with BigQuery, without moving it → BigQuery Omni.
+
+**References:**
+- [docs.cloud.google.com/bigquery/docs/omni-introduction](https://docs.cloud.google.com/bigquery/docs/omni-introduction)
+- [docs.cloud.google.com/alloydb/omni/docs](https://docs.cloud.google.com/alloydb/omni/docs)
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
 
 </details>
 
@@ -594,6 +694,11 @@ Wearable IoT devices collect signals like heart rate, activity, and sleep automa
 
 **Remember:** Automatic, continuous data collection from the physical world → IoT devices.
 
+**References:**
+- [docs.cloud.google.com/architecture/connected-devices](https://docs.cloud.google.com/architecture/connected-devices)
+- [docs.cloud.google.com/healthcare-api/docs/concepts/fhir](https://docs.cloud.google.com/healthcare-api/docs/concepts/fhir)
+- [cloud.google.com/solutions/healthcare-life-sciences](https://cloud.google.com/solutions/healthcare-life-sciences)
+
 </details>
 
 ---
@@ -621,6 +726,11 @@ Dataflow is Google Cloud's fully managed service for data processing pipelines. 
 - **C. Pub/Sub**: Pub/Sub moves messages between systems, but it does not transform them.
 
 **Remember:** Transform data in a managed, autoscaling pipeline (ETL, batch or streaming) → Dataflow.
+
+**References:**
+- [cloud.google.com/dataflow/docs](https://cloud.google.com/dataflow/docs)
+- [cloud.google.com/dataflow/docs/concepts/overview](https://cloud.google.com/dataflow/docs/concepts/overview)
+- [cloud.google.com/pubsub/docs/overview](https://cloud.google.com/pubsub/docs/overview)
 
 </details>
 
@@ -650,6 +760,11 @@ Spanner is a globally distributed relational database. It replicates data across
 
 **Remember:** Global, strongly consistent, highly available transactions → Spanner.
 
+**References:**
+- [cloud.google.com/spanner](https://cloud.google.com/spanner)
+- [docs.cloud.google.com/spanner/docs/instance-configurations](https://docs.cloud.google.com/spanner/docs/instance-configurations)
+- [docs.cloud.google.com/spanner/docs/replication](https://docs.cloud.google.com/spanner/docs/replication)
+
 </details>
 
 ---
@@ -677,6 +792,11 @@ BigQuery is a serverless data warehouse built for analyzing very large datasets 
 - **D. Convert records into text and audio**: This is the opposite of analysis and not what a warehouse does.
 
 **Remember:** Analyze huge volumes of mixed data with SQL, serverless → BigQuery.
+
+**References:**
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/bigquery/docs/object-tables](https://cloud.google.com/bigquery/docs/object-tables)
+- [cloud.google.com/bigquery/docs/write-api-streaming](https://cloud.google.com/bigquery/docs/write-api-streaming)
 
 </details>
 
@@ -706,6 +826,11 @@ Cloud SQL is a managed relational database for operational data. It does not cre
 
 **Remember:** Operational database (Cloud SQL) + BI/analytics tools = business insights.
 
+**References:**
+- [cloud.google.com/sql/docs/introduction](https://cloud.google.com/sql/docs/introduction)
+- [cloud.google.com/looker](https://cloud.google.com/looker)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+
 </details>
 
 ---
@@ -733,6 +858,11 @@ A data lake stores large amounts of raw data of any type (structured, semi-struc
 - **D. Data warehouse**: A warehouse holds cleaned, structured data ready for analysis, not raw files in any format.
 
 **Remember:** Raw data, any format, decide later → data lake; cleaned data for analysis → data warehouse.
+
+**References:**
+- [cloud.google.com/learn/what-is-a-data-lake](https://cloud.google.com/learn/what-is-a-data-lake)
+- [cloud.google.com/discover/data-lake-vs-data-warehouse](https://cloud.google.com/discover/data-lake-vs-data-warehouse)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
 
 </details>
 
@@ -762,6 +892,11 @@ AlloyDB Omni is a downloadable version of AlloyDB, Google's PostgreSQL-compatibl
 
 **Remember:** PostgreSQL-compatible, Google tech, run on-premises or in other clouds → AlloyDB Omni.
 
+**References:**
+- [cloud.google.com/alloydb/omni](https://cloud.google.com/alloydb/omni)
+- [docs.cloud.google.com/storage/docs/introduction](https://docs.cloud.google.com/storage/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+
 </details>
 
 ---
@@ -789,6 +924,11 @@ Cloud Storage is Google Cloud's object storage. It holds any amount of unstructu
 - **D. Cloud SQL**: A managed relational database for structured, transactional data.
 
 **Remember:** Files, images, video, backups, archives = Cloud Storage.
+
+**References:**
+- [docs.cloud.google.com/storage/docs/introduction](https://docs.cloud.google.com/storage/docs/introduction)
+- [docs.cloud.google.com/storage/docs/storage-classes](https://docs.cloud.google.com/storage/docs/storage-classes)
+- [docs.cloud.google.com/bigtable/docs/overview](https://docs.cloud.google.com/bigtable/docs/overview)
 
 </details>
 
@@ -818,6 +958,11 @@ Second-party data is another organization's first-party data that it shares dire
 
 **Remember:** Own customers = first-party. Partner shares directly = second-party. Bought = third-party.
 
+**References:**
+- [support.google.com/adspolicy/answer/6242605](https://support.google.com/adspolicy/answer/6242605)
+- [business.google.com/us/privacy/strategy](https://business.google.com/us/privacy/strategy)
+- [business.adobe.com/blog/basics/dmp-cdp-crm-whats-the-difference-and-what-do-you-need](https://business.adobe.com/blog/basics/dmp-cdp-crm-whats-the-difference-and-what-do-you-need)
+
 </details>
 
 ---
@@ -846,6 +991,11 @@ Audio and video files have no fixed schema or rows and columns. That makes them 
 
 **Remember:** Audio, video, images, free text = unstructured. JSON, HTML, XML = semi-structured.
 
+**References:**
+- [cloud.google.com/storage](https://cloud.google.com/storage)
+- [docs.cloud.google.com/bigquery/docs/object-table-introduction](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
+- [docs.cloud.google.com/architecture/ml-on-gcp-best-practices](https://docs.cloud.google.com/architecture/ml-on-gcp-best-practices)
+
 </details>
 
 ---
@@ -873,6 +1023,11 @@ Cloud Storage stores data redundantly, and multi-region or dual-region buckets k
 - **D. Small minimum storage quantity**: Cloud Storage has no minimum storage quantity; this is not a real feature to rely on.
 
 **Remember:** Cloud Storage = durable, redundant, optionally multi-region object storage.
+
+**References:**
+- [cloud.google.com/storage/docs/locations](https://cloud.google.com/storage/docs/locations)
+- [cloud.google.com/storage/docs/availability-durability](https://cloud.google.com/storage/docs/availability-durability)
+- [cloud.google.com/storage/docs/encryption/default-keys](https://cloud.google.com/storage/docs/encryption/default-keys)
 
 **⚠️ Note:** Geographically separate copies are only true for multi-region and dual-region buckets. A regional bucket keeps redundant copies across zones in one region. The key is still the best option, so pick it on this exam.
 
@@ -904,6 +1059,11 @@ Cloud SQL is a managed relational database for transactional (OLTP) workloads li
 
 **Remember:** Relational + regional + cost-effective = Cloud SQL. Relational + global scale = Spanner.
 
+**References:**
+- [docs.cloud.google.com/sql/docs](https://docs.cloud.google.com/sql/docs)
+- [docs.cloud.google.com/bigquery/docs](https://docs.cloud.google.com/bigquery/docs)
+- [docs.cloud.google.com/bigtable/docs](https://docs.cloud.google.com/bigtable/docs)
+
 </details>
 
 ---
@@ -931,6 +1091,11 @@ Completeness asks whether all the required data is present. Profile attributes l
 - **C. Timeliness**: Timeliness is whether data is current and available when needed.
 
 **Remember:** Missing data = completeness. Wrong values = accuracy. Wrong format = validity.
+
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/use-auto-data-quality](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
 
 </details>
 
@@ -960,6 +1125,11 @@ Streaming analytics processes events continuously as they arrive, so insights ar
 
 **Remember:** Streaming = continuous, as it arrives. Batch = scheduled groups.
 
+**References:**
+- [cloud.google.com/learn/what-is-streaming-analytics](https://cloud.google.com/learn/what-is-streaming-analytics)
+- [cloud.google.com/solutions/stream-analytics](https://cloud.google.com/solutions/stream-analytics)
+- [docs.cloud.google.com/dataflow/docs/concepts/streaming-pipelines](https://docs.cloud.google.com/dataflow/docs/concepts/streaming-pipelines)
+
 </details>
 
 ---
@@ -987,6 +1157,11 @@ The data supply chain (also called the data value chain) is the end-to-end journ
 - **D. Multi-cloud networking**: That connects networks across cloud providers.
 
 **Remember:** Collect, transform, use: the end-to-end data journey = data supply chain.
+
+**References:**
+- [cloud.google.com/discover/what-is-data-architecture](https://cloud.google.com/discover/what-is-data-architecture)
+- [docs.cloud.google.com/docs/data](https://docs.cloud.google.com/docs/data)
+- [cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
 
 </details>
 
@@ -1016,6 +1191,11 @@ The serverless option of Managed Service for Apache Spark (formerly Dataproc) ru
 
 **Remember:** Spark with no clusters to manage = the serverless option.
 
+**References:**
+- [docs.cloud.google.com/managed-spark/docs/serverless-overview](https://docs.cloud.google.com/managed-spark/docs/serverless-overview)
+- [cloud.google.com/products/managed-service-for-apache-spark](https://cloud.google.com/products/managed-service-for-apache-spark)
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+
 </details>
 
 ---
@@ -1044,6 +1224,11 @@ An AI-ready data foundation is data that is unified, clean, governed and easy to
 
 **Remember:** Unified, clean, governed data before AI = AI-ready data foundation.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [cloud.google.com/transform/how-to-build-strong-data-foundations-gen-ai](https://cloud.google.com/transform/how-to-build-strong-data-foundations-gen-ai)
+- [docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components](https://docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components)
+
 </details>
 
 ---
@@ -1071,6 +1256,11 @@ AlloyDB for PostgreSQL is a fully managed, PostgreSQL-compatible database built 
 - **D. Firestore in Datastore mode**: A NoSQL document database, not for enterprise relational transactions.
 
 **Remember:** Enterprise performance + PostgreSQL compatibility = AlloyDB.
+
+**References:**
+- [docs.cloud.google.com/alloydb/docs](https://docs.cloud.google.com/alloydb/docs)
+- [docs.cloud.google.com/spanner/docs](https://docs.cloud.google.com/spanner/docs)
+- [docs.cloud.google.com/bigtable/docs](https://docs.cloud.google.com/bigtable/docs)
 
 **⚠️ Note:** AlloyDB itself is not open source. It is compatible with open-source PostgreSQL, which is what "aligned with an open-source engine" means. Spanner also offers a PostgreSQL interface, but AlloyDB is the closer fit, so pick it on this exam.
 
@@ -1102,6 +1292,11 @@ BigQuery is Google Cloud's serverless, fully managed data warehouse. It runs fas
 
 **Remember:** Large-scale analytics with SQL = BigQuery.
 
+**References:**
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/sql/docs/introduction](https://cloud.google.com/sql/docs/introduction)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
+
 </details>
 
 ---
@@ -1129,6 +1324,11 @@ Completeness measures whether all required data is present. Records missing date
 - **D. Validity**: That is about values following the expected format or rules.
 
 **Remember:** Missing required fields = completeness.
+
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [docs.cloud.google.com/dataplex/docs/use-auto-data-quality](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality)
 
 </details>
 
@@ -1158,6 +1358,11 @@ Archive is the cheapest Cloud Storage class for data accessed less than once a y
 
 **Remember:** Monthly → Nearline. Quarterly → Coldline. Yearly or less → Archive.
 
+**References:**
+- [docs.cloud.google.com/storage/docs/storage-classes](https://docs.cloud.google.com/storage/docs/storage-classes)
+- [cloud.google.com/storage/pricing](https://cloud.google.com/storage/pricing)
+- [docs.cloud.google.com/architecture/dr-scenarios-planning-guide](https://docs.cloud.google.com/architecture/dr-scenarios-planning-guide)
+
 </details>
 
 ---
@@ -1185,6 +1390,11 @@ Cloud SQL is Google Cloud's fully managed relational database for MySQL, Postgre
 - **D. Dataflow**: Dataflow processes data in pipelines; it doesn't store it as a database.
 
 **Remember:** Small or medium relational app database, managed → Cloud SQL.
+
+**References:**
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [docs.cloud.google.com/dataflow/docs/overview](https://docs.cloud.google.com/dataflow/docs/overview)
 
 </details>
 
@@ -1214,6 +1424,11 @@ Relational databases hold structured data that fits neatly into rows and columns
 
 **Remember:** Rows and columns → relational database. Images, video, audio → Cloud Storage.
 
+**References:**
+- [cloud.google.com/sql/docs](https://cloud.google.com/sql/docs)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
+- [cloud.google.com/architecture/storage-advisor](https://cloud.google.com/architecture/storage-advisor)
+
 </details>
 
 ---
@@ -1241,6 +1456,11 @@ Dataflow is a serverless service for batch and streaming pipelines. Google provi
 - **D. Guarantees no errors**: No service guarantees error-free data; data quality still needs checks.
 
 **Remember:** Serverless pipeline (Dataflow) = no servers to manage, automatic scaling.
+
+**References:**
+- [cloud.google.com/products/dataflow](https://cloud.google.com/products/dataflow)
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+- [cloud.google.com/dataflow/docs/horizontal-autoscaling](https://cloud.google.com/dataflow/docs/horizontal-autoscaling)
 
 </details>
 
@@ -1270,6 +1490,11 @@ Timeliness means data is current enough for its purpose. Fashion trends change q
 
 **Remember:** Stale data → timeliness. Duplicates → uniqueness. Wrong format → validity.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
+
 </details>
 
 ---
@@ -1297,6 +1522,11 @@ Firestore is a serverless NoSQL document database built for web and mobile apps.
 - **C. BigQuery**: BigQuery is an analytics data warehouse, not an app database.
 
 **Remember:** NoSQL for web and mobile apps → Firestore.
+
+**References:**
+- [cloud.google.com/firestore/native/docs/overview](https://cloud.google.com/firestore/native/docs/overview)
+- [cloud.google.com/spanner/docs](https://cloud.google.com/spanner/docs)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
 
 </details>
 
@@ -1326,6 +1556,11 @@ Relational databases store structured data in related tables and use keys to lin
 
 **Remember:** Predictable structure + related tables + transactions → relational database.
 
+**References:**
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/learn/what-is-a-data-lake](https://cloud.google.com/learn/what-is-a-data-lake)
+
 </details>
 
 ---
@@ -1353,6 +1588,11 @@ Data governance sets the rules for how data is owned, classified, accessed, kept
 - **C. Quarterly access reports**: reporting is one small piece of governance, not the whole answer.
 
 **Remember:** Value + cost + compliance for data = data governance.
+
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/bigquery/docs/data-governance](https://docs.cloud.google.com/bigquery/docs/data-governance)
+- [cloud.google.com/compliance](https://cloud.google.com/compliance)
 
 </details>
 
@@ -1382,6 +1622,11 @@ When data sits in separate systems, teams can't combine it to find insights. A u
 
 **Remember:** Breaking down data silos = new insights and innovation. Watch for "always" and "all" as red flags.
 
+**References:**
+- [cloud.google.com/data-cloud](https://cloud.google.com/data-cloud)
+- [cloud.google.com/solutions/data-analytics-and-ai](https://cloud.google.com/solutions/data-analytics-and-ai)
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+
 </details>
 
 ---
@@ -1409,6 +1654,11 @@ A relational database stores structured data in tables with defined relationship
 - **D. Processes unstructured data across locations**: relational databases are for structured data; this fits object storage better.
 
 **Remember:** Database = transactions. Data warehouse = analysis. Data lake = raw data.
+
+**References:**
+- [cloud.google.com/products/databases](https://cloud.google.com/products/databases)
+- [cloud.google.com/sql/docs/introduction](https://cloud.google.com/sql/docs/introduction)
+- [cloud.google.com/learn/what-are-transactional-databases](https://cloud.google.com/learn/what-are-transactional-databases)
 
 </details>
 
@@ -1438,6 +1688,11 @@ A data lake stores large volumes of raw data in its original format, structured 
 
 **Remember:** Raw now, decide later = data lake. Structured, ready for analysis = data warehouse.
 
+**References:**
+- [cloud.google.com/discover/what-is-a-data-lake](https://cloud.google.com/discover/what-is-a-data-lake)
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+
 </details>
 
 ---
@@ -1465,6 +1720,11 @@ Google Cloud supports open source, open standards and multicloud tools so data p
 - **D. Bare Metal Solution**: dedicated servers for special workloads, unrelated to openness.
 
 **Remember:** Avoid lock-in, work across clouds = openness and interoperability.
+
+**References:**
+- [cloud.google.com/data-cloud](https://cloud.google.com/data-cloud)
+- [cloud.google.com/security/compliance/swipo-codes](https://cloud.google.com/security/compliance/swipo-codes)
+- [docs.cloud.google.com/bare-metal/docs/bms-overview](https://docs.cloud.google.com/bare-metal/docs/bms-overview)
 
 </details>
 
@@ -1494,6 +1754,11 @@ Google Cloud's data platform brings internal, partner and external data together
 
 **Remember:** Unified data prepared for ML = AI-ready data cloud.
 
+**References:**
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+- [cloud.google.com/identity-platform/docs/web/mfa](https://cloud.google.com/identity-platform/docs/web/mfa)
+
 </details>
 
 ---
@@ -1521,6 +1786,11 @@ Generative AI is only as good as the data it can use. When data is spread across
 - **D. Restrict data to on-premises**: this blocks the cloud AI services the company wants to use.
 
 **Remember:** Good AI starts with unified, AI-ready data.
+
+**References:**
+- [cloud.google.com/data-cloud](https://cloud.google.com/data-cloud)
+- [cloud.google.com/bigquery](https://cloud.google.com/bigquery)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
 
 </details>
 
@@ -1550,6 +1820,11 @@ Batch processing analyzes data in large chunks on a schedule, here once a quarte
 
 **Remember:** React as it happens → streaming. Periodic reports → batch.
 
+**References:**
+- [cloud.google.com/dataflow/docs/overview](https://cloud.google.com/dataflow/docs/overview)
+- [cloud.google.com/dataflow/docs/concepts/streaming-pipelines](https://cloud.google.com/dataflow/docs/concepts/streaming-pipelines)
+- [cloud.google.com/pubsub/docs/overview](https://cloud.google.com/pubsub/docs/overview)
+
 </details>
 
 ---
@@ -1577,6 +1852,11 @@ Non-relational (NoSQL) databases do not require a fixed schema. Records can have
 - **D. Joins across several tables**: Joins between related tables are a classic relational database strength.
 
 **Remember:** Changing structure → NoSQL, flexible model. Related tables and transactions → relational.
+
+**References:**
+- [cloud.google.com/discover/what-is-nosql](https://cloud.google.com/discover/what-is-nosql)
+- [cloud.google.com/firestore](https://cloud.google.com/firestore)
+- [docs.cloud.google.com/bigtable/docs](https://docs.cloud.google.com/bigtable/docs)
 
 </details>
 
@@ -1606,6 +1886,11 @@ Unstructured data has no predefined format or fixed fields. Free text, audio, im
 
 **Remember:** Text, audio, video, transcripts → unstructured. Table fields → structured. JSON/XML → semi-structured.
 
+**References:**
+- [cloud.google.com/discover/what-is-unstructured-data](https://cloud.google.com/discover/what-is-unstructured-data)
+- [cloud.google.com/discover/what-is-structured-data](https://cloud.google.com/discover/what-is-structured-data)
+- [cloud.google.com/natural-language/docs](https://cloud.google.com/natural-language/docs)
+
 </details>
 
 ---
@@ -1633,6 +1918,11 @@ Accuracy measures whether data correctly reflects the real-world value or its tr
 - **D. Uniqueness**: This is about duplicate records.
 
 **Remember:** Missing → completeness. Matches source → accuracy. Right format → validity. Duplicates → uniqueness. Stale → timeliness.
+
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
 
 </details>
 
@@ -1662,6 +1952,11 @@ A data warehouse, such as BigQuery, is built for analytics. It stores structured
 
 **Remember:** Analyst reporting and ad-hoc queries → data warehouse. Day-to-day transactions → relational database.
 
+**References:**
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/query-overview](https://docs.cloud.google.com/bigquery/docs/query-overview)
+
 </details>
 
 ---
@@ -1689,6 +1984,11 @@ Validity checks whether data follows the expected format, type, or rules. An ema
 - **D. Uniqueness**: This is about duplicate records, which the stem does not mention.
 
 **Remember:** Wrong format or broken rule → validity. Doesn't match the real value → accuracy.
+
+**References:**
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [docs.cloud.google.com/dataplex/docs/use-auto-data-quality](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality)
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
 
 </details>
 
@@ -1718,6 +2018,11 @@ Uniqueness means each real-world thing is recorded only once. The same scooter s
 
 **Remember:** Duplicates → uniqueness.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
+
 </details>
 
 ---
@@ -1745,6 +2050,11 @@ Cloud databases built for transactions, such as Cloud SQL and Spanner, keep each
 - **D. Physical server access during peaks**: Cloud customers do not get physical server access. The provider manages the hardware.
 
 **Remember:** Transactional data in the cloud → accurate transactions at scale.
+
+**References:**
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/discover/what-is-cloud-scalability](https://cloud.google.com/discover/what-is-cloud-scalability)
+- [docs.cloud.google.com/architecture/scalable-and-resilient-apps](https://docs.cloud.google.com/architecture/scalable-and-resilient-apps)
 
 </details>
 
@@ -1774,6 +2084,11 @@ Structured data fits into fixed fields, like rows and columns, so it is easy to 
 
 **Remember:** Table fields and numeric readings → structured. Images, video, free text → unstructured.
 
+**References:**
+- [cloud.google.com/learn/what-is-a-relational-database](https://cloud.google.com/learn/what-is-a-relational-database)
+- [cloud.google.com/discover/data-lake-vs-data-warehouse](https://cloud.google.com/discover/data-lake-vs-data-warehouse)
+- [cloud.google.com/learn/what-is-data-cloud](https://cloud.google.com/learn/what-is-data-cloud)
+
 </details>
 
 ---
@@ -1801,6 +2116,11 @@ A data warehouse, such as BigQuery, gathers data from many systems into one plac
 - **C. Data field**: A field is a single column or attribute in a record, not a storage system.
 
 **Remember:** Raw data in its original format → data lake. Analyst reporting and dashboards → data warehouse.
+
+**References:**
+- [cloud.google.com/learn/what-is-a-data-warehouse](https://cloud.google.com/learn/what-is-a-data-warehouse)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/loading-data](https://docs.cloud.google.com/bigquery/docs/loading-data)
 
 </details>
 

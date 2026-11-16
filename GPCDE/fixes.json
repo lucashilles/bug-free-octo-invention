@@ -292,7 +292,7 @@
     "explanation": [
       [
         " Additionally, Google recommends using **Looker Studio** rather than Looker for direct integration with BigQuery for reporting.",
-        " Looker can also analyze BigQuery data, but Looker Studio is the simpler, no-cost choice for ad hoc test reports."
+        " Looker can also analyze BigQuery data, but Data Studio is the simpler, no-cost choice for ad hoc test reports."
       ]
     ],
     "note": "For load testing at scale, Google's documented pattern is distributed load generation (Locust or JMeter) on GKE, scaled with Pods. A single Compute Engine VM is only the best of these four options.",
@@ -1109,21 +1109,21 @@
   },
   "4-39": {
     "answers": {
-      "I": "I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Looker Studio.",
-      "III": "III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Looker Studio.",
-      "II": "II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio."
+      "I": "I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Data Studio.",
+      "III": "III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Data Studio.",
+      "II": "II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Data Studio."
     },
     "explanation": [
       [
         "Google Data Studio: <https://datastudio.google.com/>",
-        "Looker Studio: <https://lookerstudio.google.com/>"
+        "Data Studio: <https://datastudio.google.com/>"
       ],
       [
         "Google Data Studio",
-        "Looker Studio"
+        "Data Studio"
       ]
     ],
-    "why": "Data Studio was renamed Looker Studio."
+    "why": "Use the product's current name, Data Studio (it was Looker Studio from 2022 to April 2026)."
   },
   "1-18": {
     "note": "Cloud Endpoints still works, but Google's current API-management products are API Gateway (for serverless backends such as Cloud Run functions) and Apigee. If they appear as options, treat them the same way: an API gateway in front of the backend.",

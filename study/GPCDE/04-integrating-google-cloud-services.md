@@ -2233,18 +2233,18 @@ V. Configure the legacy service's firewall to allow health checks initiated from
 
 **In your mobile web application where global users vote on popular topics, with a very high volume of votes expected during each 30-minute voting window for each topic, you need to capture and count votes within these intervals while also storing them for future analysis and reporting. How should you approach this?**
 
-- I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Looker Studio.
-- III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Looker Studio.
+- I. Save the votes to Memorystore, then utilize Cloud Functions to insert the counts into BigQuery, and visualize the results in Data Studio.
+- III. Publish the votes to Pub/Sub and use Cloud Functions to insert both the counts and votes into Cloud Storage, thereafter displaying the results in Data Studio.
 - IV. Implement Firebase for user authentication, enabling the direct publication of votes to Firestore. Export the votes to a CSV file and import them into Sheets for reporting purposes.
-- II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.
+- II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Data Studio.
 
 <details><summary>Answer &amp; explanation</summary>
 
-**Correct:** II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.
+**Correct:** II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Data Studio.
 
 Given the high volume of votes expected during each voting window for each topic in your mobile web application, along with the need to capture, count, and store votes for future analysis and reporting, the most suitable approach would be:
 
-**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Looker Studio.**
+**II. Publish the votes to Pub/Sub, and employ a Dataflow pipeline to insert both the counts and votes into BigQuery, subsequently visualizing the results in Data Studio.**
 
 Explanation:
 
@@ -2254,7 +2254,7 @@ Option III proposes publishing votes to Pub/Sub and using Cloud Functions to ins
 
 Option IV suggests using Firebase for user authentication and Firestore for storing votes. While Firebase and Firestore are suitable for real-time data synchronization and user authentication, exporting votes to a CSV file and importing them into Sheets for reporting purposes might not be the most efficient or scalable solution for large volumes of data.
 
-Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Looker Studio allows for easy and customizable reporting and visualization.
+Option II is the recommended approach because it leverages Pub/Sub for handling high-volume data streams, Dataflow for processing and transforming data in real-time, and BigQuery for storing and analyzing structured data. Visualizing the results in Data Studio allows for easy and customizable reporting and visualization.
 
 Therefore, option II is the most appropriate approach for capturing, counting, and storing votes in your mobile web application while also facilitating future analysis and reporting.
 
@@ -2266,7 +2266,7 @@ Therefore, option II is the most appropriate approach for capturing, counting, a
 
   * BigQuery: <https://cloud.google.com/bigquery/docs>
 
-  * Looker Studio: <https://lookerstudio.google.com/>
+  * Data Studio: <https://datastudio.google.com/>
 
 </details>
 

@@ -185,14 +185,14 @@
 
 - Google's reference pattern is **distributed load testing on GKE**: Locust or JMeter in pods, scaled out by adding pods (Exam 1 · Q9), (Exam 2 · Q2).
 - During a load test, **Cloud Trace** shows where time goes across services and databases (Exam 1 · Q9), (Exam 6 · Q10).
-- For JMeter results analysis, the bank keys **log sink → BigQuery → Looker Studio** (Exam 4 · Q48).
+- For JMeter results analysis, the bank keys **log sink → BigQuery → Data Studio** (Exam 4 · Q48).
 
 ### Decision rules
 
 - Load test that must autoscale to thousands of reads and writes per second and find bottlenecks: **GKE + Locust or JMeter, analyzed in Cloud Trace** (Exam 1 · Q9).
 - REST APIs on Cloud Run, Google best practice: a **distributed load-testing framework on a private GKE cluster, scaled with more pods** (Exam 2 · Q2).
 - Bottlenecks across several microservices on Cloud Run under load: **enable Cloud Trace and review request timings** (Exam 6 · Q10).
-- JMeter orchestration with a Compute Engine instance as the only load generator: **sink to BigQuery, visualize in Looker Studio**. Cloud Storage and Looker are distractors (Exam 4 · Q48).
+- JMeter orchestration with a Compute Engine instance as the only load generator: **sink to BigQuery, visualize in Data Studio**. Cloud Storage and Looker are distractors (Exam 4 · Q48).
 - Performance tests against Spanner: use a **real, ephemeral instance per build** (Exam 4 · Q52).
 
 ### Traps

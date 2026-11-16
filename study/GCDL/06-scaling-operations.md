@@ -28,6 +28,11 @@ When a provider misses its SLA, the customer-facing checkout service goes down. 
 
 **Remember:** Missed SLA → downtime → unhappy customers and lost revenue. The provider usually owes service credits.
 
+**References:**
+- [cloud.google.com/architecture/framework/reliability/set-targets](https://cloud.google.com/architecture/framework/reliability/set-targets)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-slis-slas-and-slos)
+- [cloud.google.com/terms/sla](https://cloud.google.com/terms/sla)
+
 **⚠️ Note:** Option A is not absurd, since provider downtime does count against your own SLO and error budget. C is keyed because it is the clearest business impact. Pick C on this exam.
 
 </details>
@@ -58,6 +63,11 @@ Cloud Billing budgets let you set a planned amount and threshold rules (for exam
 
 **Remember:** "Notify me when spend crosses X" = budget + threshold alert. Budgets alert; they do not stop spending by themselves.
 
+**References:**
+- [cloud.google.com/billing/docs/how-to/budgets](https://cloud.google.com/billing/docs/how-to/budgets)
+- [cloud.google.com/billing/docs/how-to/budget-api-overview](https://cloud.google.com/billing/docs/how-to/budget-api-overview)
+- [cloud.google.com/docs/quotas/overview](https://cloud.google.com/docs/quotas/overview)
+
 </details>
 
 ---
@@ -85,6 +95,11 @@ Out-of-the-box observability means you get visibility into the health and perfor
 - **D. Monitoring monthly cloud billing**: cost tracking is billing management, not observability.
 
 **Remember:** Observability = visibility into how your systems and apps are running.
+
+**References:**
+- [cloud.google.com/products/operations](https://cloud.google.com/products/operations)
+- [cloud.google.com/monitoring/docs](https://cloud.google.com/monitoring/docs)
+- [cloud.google.com/logging/docs](https://cloud.google.com/logging/docs)
 
 </details>
 
@@ -114,6 +129,11 @@ Cloud Monitoring collects metrics on the health and performance of infrastructur
 
 **Remember:** Metrics, dashboards, alerts and uptime checks = Cloud Monitoring. Logs = Cloud Logging. Latency of requests = Cloud Trace.
 
+**References:**
+- [docs.cloud.google.com/monitoring/docs/monitoring-overview](https://docs.cloud.google.com/monitoring/docs/monitoring-overview)
+- [docs.cloud.google.com/monitoring/uptime-checks](https://docs.cloud.google.com/monitoring/uptime-checks)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+
 </details>
 
 ---
@@ -141,6 +161,11 @@ Latency is the time it takes to serve a request. Users waiting a long time for t
 - **D. Traffic**: traffic measures demand, such as requests per second.
 
 **Remember:** Slow = latency. Busy = traffic. Failing = errors. Full = saturation.
+
+**References:**
+- [sre.google/sre-book/monitoring-distributed-systems](https://sre.google/sre-book/monitoring-distributed-systems)
+- [docs.cloud.google.com/application-design-center/docs/monitor-applications](https://docs.cloud.google.com/application-design-center/docs/monitor-applications)
+- [docs.cloud.google.com/endpoints/docs/openapi/monitoring-your-api](https://docs.cloud.google.com/endpoints/docs/openapi/monitoring-your-api)
 
 </details>
 
@@ -170,6 +195,11 @@ Latency is the time it takes to serve a request. Users waiting a long time for t
 
 **Remember:** 99.9% ≈ 8.8 hours/year, 99.99% ≈ 53 minutes/year, 99.999% ≈ 5 minutes/year.
 
+**References:**
+- [sre.google/sre-book/availability-table](https://sre.google/sre-book/availability-table)
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/monitoring/slo-monitoring](https://cloud.google.com/monitoring/slo-monitoring)
+
 </details>
 
 ---
@@ -197,6 +227,11 @@ A service-level indicator (SLI) is a direct, measured value of how the service i
 - **D. Service-level objective**: An SLO is the target value for an SLI, not the measurement itself.
 
 **Remember:** SLI = what you measure; SLO = the goal; SLA = the promise with penalties.
+
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring](https://docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
 
 </details>
 
@@ -226,6 +261,11 @@ In the cloud, many teams can create resources themselves, so spending decisions 
 
 **Remember:** Cloud spending = decentralized and variable; that is why FinOps and cost controls matter.
 
+**References:**
+- [cloud.google.com/cost-management](https://cloud.google.com/cost-management)
+- [docs.cloud.google.com/docs/costs-usage](https://docs.cloud.google.com/docs/costs-usage)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+
 </details>
 
 ---
@@ -253,6 +293,11 @@ The resource hierarchy is organization, then folders, then projects, then resour
 - **D. Only on individual projects**: Setting policies project by project is possible, but it is not the only option and is what the admin wants to avoid.
 
 **Remember:** Group projects in folders; policies flow down the hierarchy.
+
+**References:**
+- [docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
+- [docs.cloud.google.com/iam/docs/resource-hierarchy-access-control](https://docs.cloud.google.com/iam/docs/resource-hierarchy-access-control)
+- [docs.cloud.google.com/iam/docs/allow-policies](https://docs.cloud.google.com/iam/docs/allow-policies)
 
 </details>
 
@@ -282,6 +327,11 @@ The Google Cloud Pricing Calculator estimates monthly costs for planned services
 
 **Remember:** Estimate cost before deploying → Pricing Calculator; track actual cost → billing reports and budgets.
 
+**References:**
+- [cloud.google.com/products/calculator](https://cloud.google.com/products/calculator)
+- [docs.cloud.google.com/billing/docs/how-to/estimate-costs](https://docs.cloud.google.com/billing/docs/how-to/estimate-costs)
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+
 </details>
 
 ---
@@ -309,6 +359,11 @@ An SLA is a contract that promises a level of service. If the provider misses it
 - **D. Expansion of the error budget**: The error budget is an internal SRE concept tied to the SLO; it does not grow because of an outage.
 
 **Remember:** Missed SLA → service credits for the customer.
+
+**References:**
+- [cloud.google.com/terms/sla](https://cloud.google.com/terms/sla)
+- [cloud.google.com/storage/sla](https://cloud.google.com/storage/sla)
+- [docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring](https://docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring)
 
 **⚠️ Note:** Under Google Cloud SLAs, customers usually must request credits within a time window; they are not automatic. "Service credit" is still the right answer.
 
@@ -340,6 +395,11 @@ DevOps uses automation, like CI/CD pipelines and automated testing, to remove sl
 
 **Remember:** DevOps = automate repetitive work to ship faster and more reliably.
 
+**References:**
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [docs.cloud.google.com/architecture/devops](https://docs.cloud.google.com/architecture/devops)
+- [docs.cloud.google.com/architecture/framework/operational-excellence/automate-and-manage-change](https://docs.cloud.google.com/architecture/framework/operational-excellence/automate-and-manage-change)
+
 </details>
 
 ---
@@ -367,6 +427,11 @@ Cloud Debugger let developers take snapshots of a live application's variables a
 - **D. Analyze code only after taking the app offline**: The whole point was to avoid downtime, so this is the opposite.
 
 **Remember:** Debugger = look inside a running app without stopping it.
+
+**References:**
+- [docs.cloud.google.com/stackdriver/docs/deprecations/debugger-deprecation](https://docs.cloud.google.com/stackdriver/docs/deprecations/debugger-deprecation)
+- [cloud.google.com/blog/products/gcp/diagnose-problems-in-your-production-apps-faster-with-google-cloud-debugger](https://cloud.google.com/blog/products/gcp/diagnose-problems-in-your-production-apps-faster-with-google-cloud-debugger)
+- [support.google.com/cloud/answer/6323288?hl=en](https://support.google.com/cloud/answer/6323288?hl=en)
 
 **⚠️ Note:** Cloud Debugger was deprecated in 2022 and shut down in 2023; its open-source successor is Snapshot Debugger. The answer correctly describes what it did, so pick the keyed answer on this exam.
 
@@ -398,6 +463,11 @@ In cloud operations, monitoring means collecting metrics, both built-in ones lik
 
 **Remember:** Monitoring = metrics. Logging = events. Tracing = request paths.
 
+**References:**
+- [docs.cloud.google.com/monitoring/docs](https://docs.cloud.google.com/monitoring/docs)
+- [docs.cloud.google.com/monitoring/docs/collect-metrics-overview](https://docs.cloud.google.com/monitoring/docs/collect-metrics-overview)
+- [docs.cloud.google.com/stackdriver/docs](https://docs.cloud.google.com/stackdriver/docs)
+
 </details>
 
 ---
@@ -425,6 +495,11 @@ Saturation measures how full the system is: how much CPU, memory or I/O capacity
 - **D. Errors**: Errors is the rate of failed requests.
 
 **Remember:** Four golden signals: latency (time), traffic (demand), errors (failures), saturation (how full).
+
+**References:**
+- [sre.google/sre-book/monitoring-distributed-systems/](https://sre.google/sre-book/monitoring-distributed-systems/)
+- [sre.google/sre-book/service-level-objectives/](https://sre.google/sre-book/service-level-objectives/)
+- [docs.cloud.google.com/architecture/framework/perspectives/fsi/operational-excellence](https://docs.cloud.google.com/architecture/framework/perspectives/fsi/operational-excellence)
 
 </details>
 
@@ -454,6 +529,11 @@ Cloud Trace is distributed tracing. It follows a single request as it moves thro
 
 **Remember:** Slow request across microservices = Cloud Trace.
 
+**References:**
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+
 </details>
 
 ---
@@ -477,10 +557,15 @@ A core DevOps and SRE practice is to ship small, frequent changes. Small changes
 
 **Why the others are wrong:**
 - **A. Pause production until all bugs are gone**: Bug-free software is not realistic; this stops delivery.
-- **B. Prioritize fixing large bugs in production**: Large changes and bugs are harder to review, not easier.
+- **B. Prioritize fixing large bugs in production**: Bug priority should follow user and business impact, not size, and large bugs are harder to review, not easier.
 - **D. Large changes together make rollback easier**: Large batches make rollback harder and riskier.
 
 **Remember:** Small, incremental releases = faster recovery, less risk.
+
+**References:**
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [cloud.google.com/architecture/devops](https://cloud.google.com/architecture/devops)
+- [cloud.google.com/architecture/devops/devops-tech-continuous-delivery](https://cloud.google.com/architecture/devops/devops-tech-continuous-delivery)
 
 </details>
 
@@ -510,6 +595,11 @@ Latency is the time between a request and its response. The stem describes exact
 
 **Remember:** Wait time = latency.
 
+**References:**
+- [sre.google/sre-book/monitoring-distributed-systems/](https://sre.google/sre-book/monitoring-distributed-systems/)
+- [sre.google/sre-book/service-level-objectives/](https://sre.google/sre-book/service-level-objectives/)
+- [docs.cloud.google.com/architecture/framework/operational-excellence/measure-and-achieve-reliability-goals](https://docs.cloud.google.com/architecture/framework/operational-excellence/measure-and-achieve-reliability-goals)
+
 </details>
 
 ---
@@ -537,6 +627,11 @@ Premium Support is the Customer Care tier for business-critical workloads. It ha
 - **D. Standard**: Meant for smaller workloads with slower response times and no TAM.
 
 **Remember:** Fastest response + TAM = Premium.
+
+**References:**
+- [cloud.google.com/support](https://cloud.google.com/support)
+- [docs.cloud.google.com/support/docs/overview](https://docs.cloud.google.com/support/docs/overview)
+- [docs.cloud.google.com/support/docs/premium](https://docs.cloud.google.com/support/docs/premium)
 
 </details>
 
@@ -566,6 +661,11 @@ Teams can't control costs they can't see. Giving each department visibility into
 
 **Remember:** Visibility per team = accountability = cost control.
 
+**References:**
+- [cloud.google.com/cost-management](https://cloud.google.com/cost-management)
+- [docs.cloud.google.com/billing/docs/reports](https://docs.cloud.google.com/billing/docs/reports)
+- [docs.cloud.google.com/resource-manager/docs/labels-overview](https://docs.cloud.google.com/resource-manager/docs/labels-overview)
+
 </details>
 
 ---
@@ -593,6 +693,11 @@ In SRE, toil is manual, repetitive operational work that adds no lasting value. 
 - **C. Reduce effort understanding outages**: SRE uses blameless postmortems to learn from outages, not ignore them.
 
 **Remember:** Manual, repetitive work = toil. SRE answer = automate it.
+
+**References:**
+- [sre.google/sre-book/eliminating-toil/](https://sre.google/sre-book/eliminating-toil/)
+- [sre.google/workbook/eliminating-toil/](https://sre.google/workbook/eliminating-toil/)
+- [docs.cloud.google.com/architecture/framework/operational-excellence](https://docs.cloud.google.com/architecture/framework/operational-excellence)
 
 </details>
 
@@ -622,6 +727,11 @@ Google Cloud's intelligent recommendations (Active Assist and Recommender) analy
 
 **Remember:** Variable demand + optimize resources = intelligent recommendations.
 
+**References:**
+- [cloud.google.com/cost-management](https://cloud.google.com/cost-management)
+- [docs.cloud.google.com/recommender/docs/whatis-activeassist](https://docs.cloud.google.com/recommender/docs/whatis-activeassist)
+- [docs.cloud.google.com/billing/docs/how-to/finops-hub](https://docs.cloud.google.com/billing/docs/how-to/finops-hub)
+
 </details>
 
 ---
@@ -649,6 +759,11 @@ In the Google Cloud resource hierarchy (organization, folders, projects, resourc
 - **D. Folder only, not inherited**: Inheritance is how the hierarchy works.
 
 **Remember:** Policies flow down the hierarchy: organization, folder, project, resource.
+
+**References:**
+- [docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
+- [docs.cloud.google.com/iam/docs/resource-hierarchy-access-control](https://docs.cloud.google.com/iam/docs/resource-hierarchy-access-control)
+- [docs.cloud.google.com/iam/docs/allow-policies](https://docs.cloud.google.com/iam/docs/allow-policies)
 
 </details>
 
@@ -678,6 +793,11 @@ Cloud Logging is the managed service to collect, store, search and analyze logs 
 
 **Remember:** Logs from anywhere in Google Cloud = Cloud Logging.
 
+**References:**
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+- [docs.cloud.google.com/logging/docs/integrate/gke](https://docs.cloud.google.com/logging/docs/integrate/gke)
+- [docs.cloud.google.com/stackdriver/docs/solutions/agents/ops-agent](https://docs.cloud.google.com/stackdriver/docs/solutions/agents/ops-agent)
+
 </details>
 
 ---
@@ -705,6 +825,11 @@ Error Reporting automatically collects application crashes and exceptions, group
 - **D. Cloud Monitoring**: It tracks metrics and alerts, but doesn't group exceptions.
 
 **Remember:** Crashes and exceptions grouped for you = Error Reporting.
+
+**References:**
+- [docs.cloud.google.com/error-reporting/docs/grouping-errors](https://docs.cloud.google.com/error-reporting/docs/grouping-errors)
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
 
 </details>
 
@@ -734,6 +859,11 @@ SRE favors gradual rollouts, such as a canary release to a small group first. If
 
 **Remember:** New feature + reduce risk = roll out to a small group first.
 
+**References:**
+- [sre.google/sre-book/release-engineering](https://sre.google/sre-book/release-engineering)
+- [sre.google/workbook/canarying-releases](https://sre.google/workbook/canarying-releases)
+- [cloud.google.com/deploy/docs/deployment-strategies/canary](https://cloud.google.com/deploy/docs/deployment-strategies/canary)
+
 </details>
 
 ---
@@ -761,6 +891,11 @@ Cloud Profiler continuously collects CPU and memory-allocation data from running
 - **C. Error Reporting**: It groups crashes and exceptions.
 
 **Remember:** Which code uses the most CPU or memory = Cloud Profiler.
+
+**References:**
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
 
 </details>
 
@@ -790,6 +925,11 @@ Cloud Logging collects, stores and lets you search log entries from applications
 
 **Remember:** Search log entries / error messages → Cloud Logging. Metrics and alerts → Monitoring. Latency → Trace.
 
+**References:**
+- [docs.cloud.google.com/logging/docs/view/logs-explorer-interface](https://docs.cloud.google.com/logging/docs/view/logs-explorer-interface)
+- [docs.cloud.google.com/kubernetes-engine/docs/how-to/view-logs](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/view-logs)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+
 </details>
 
 ---
@@ -817,6 +957,11 @@ A service-level objective (SLO) is the target level of reliability or performanc
 - **D. Service-level indicator**: An SLI is the measurement itself (for example the success rate), not the target.
 
 **Remember:** SLI = what you measure. SLO = the target. SLA = the contract with penalties.
+
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
+- [sre.google/resources/practices-and-processes/art-of-slos/](https://sre.google/resources/practices-and-processes/art-of-slos/)
 
 </details>
 
@@ -846,6 +991,11 @@ A service-level objective (SLO) is the target value for reliability and responsi
 
 **Remember:** "Target" → SLO. "Measurement" → SLI.
 
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
+- [sre.google/resources/practices-and-processes/art-of-slos/](https://sre.google/resources/practices-and-processes/art-of-slos/)
+
 </details>
 
 ---
@@ -873,6 +1023,11 @@ Availability is the share of time a service is up and working, expressed as a pe
 - **D. Number of downtime incidents**: The count of incidents ignores how long each one lasted, so it isn't the standard measure.
 
 **Remember:** Availability = % uptime (the "nines").
+
+**References:**
+- [cloud.google.com/compute/sla](https://cloud.google.com/compute/sla)
+- [cloud.google.com/storage/sla](https://cloud.google.com/storage/sla)
+- [cloud.google.com/architecture/framework/reliability/use-slos-and-slis](https://cloud.google.com/architecture/framework/reliability/use-slos-and-slis)
 
 </details>
 
@@ -902,6 +1057,11 @@ An error budget is the amount of unreliability the SLO allows (100% − SLO). Ru
 
 **Remember:** Budget left → innovate. SLO missed / budget gone → reliability.
 
+**References:**
+- [cloud.google.com/sre](https://cloud.google.com/sre)
+- [sre.google/workbook/error-budget-policy](https://sre.google/workbook/error-budget-policy)
+- [docs.cloud.google.com/service-mesh/docs/observability/design-slo](https://docs.cloud.google.com/service-mesh/docs/observability/design-slo)
+
 </details>
 
 ---
@@ -929,6 +1089,11 @@ Redundancy means running duplicate copies of important components, such as insta
 - **D. Security**: Security protects against threats, not against component failure.
 
 **Remember:** Keep running when something fails → redundancy. Recover lost data → backups.
+
+**References:**
+- [docs.cloud.google.com/architecture/framework/reliability/build-highly-available-systems](https://docs.cloud.google.com/architecture/framework/reliability/build-highly-available-systems)
+- [docs.cloud.google.com/architecture/framework/reliability](https://docs.cloud.google.com/architecture/framework/reliability)
+- [docs.cloud.google.com/architecture/infra-reliability-guide/design](https://docs.cloud.google.com/architecture/infra-reliability-guide/design)
 
 </details>
 
@@ -958,6 +1123,11 @@ Cloud Monitoring collects metrics, events and metadata from applications and Goo
 
 **Remember:** Metrics + dashboards + alerts = Cloud Monitoring. Logs = Cloud Logging. Latency of a request = Cloud Trace.
 
+**References:**
+- [docs.cloud.google.com/monitoring/docs](https://docs.cloud.google.com/monitoring/docs)
+- [docs.cloud.google.com/monitoring/dashboards](https://docs.cloud.google.com/monitoring/dashboards)
+- [docs.cloud.google.com/trace/docs](https://docs.cloud.google.com/trace/docs)
+
 </details>
 
 ---
@@ -986,6 +1156,11 @@ The SLO is the internal reliability target. Falling below it usually means the e
 
 **Remember:** SLO missed = focus on reliability. Budget left = innovate.
 
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
+- [cloud.google.com/architecture/framework/reliability](https://cloud.google.com/architecture/framework/reliability)
+
 </details>
 
 ---
@@ -1013,6 +1188,11 @@ Cloud Debugger let developers inspect the state of running code, such as variabl
 - **D. Trace**: it measures request latency across services.
 
 **Remember:** Inspect running code state = Debugger. Resource use by code = Profiler. Latency = Trace.
+
+**References:**
+- [support.google.com/cloud/answer/6323288](https://support.google.com/cloud/answer/6323288)
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
 
 **⚠️ Note:** Cloud Debugger was shut down in 2023; its open-source successor is Snapshot Debugger. The key describes what it did correctly and the other tools don't fit, so pick it on this exam.
 
@@ -1044,6 +1224,11 @@ Cloud Logging collects, stores, searches and analyzes logs from applications and
 
 **Remember:** Logs = Cloud Logging. Metrics = Cloud Monitoring.
 
+**References:**
+- [cloud.google.com/logging/docs](https://cloud.google.com/logging/docs)
+- [cloud.google.com/monitoring/docs](https://cloud.google.com/monitoring/docs)
+- [cloud.google.com/trace/docs](https://cloud.google.com/trace/docs)
+
 </details>
 
 ---
@@ -1063,7 +1248,7 @@ Cloud Logging collects, stores, searches and analyzes logs from applications and
 
 **Correct answer: C. Nothing. Sustained use discounts are automatically applied.**
 
-Sustained use discounts (SUDs) are applied automatically to eligible Compute Engine VMs that run for a large part of the billing month. There is no sign-up and no contract. The clue is "stay active for most of each billing month": that usage pattern earns the discount on its own.
+Sustained use discounts (SUDs) are applied automatically to eligible Compute Engine VMs once they run for more than 25% of the billing month, and the discount grows the longer they run. There is no sign-up and no contract. The clue is "stay active for most of each billing month": that usage pattern earns the discount on its own.
 
 **Why the others are wrong:**
 - **A. Choose Spot VMs**: Spot VMs are a separate, deeply discounted option for interruptible workloads, not a way to get SUDs, and they can be stopped at any time.
@@ -1071,6 +1256,11 @@ Sustained use discounts (SUDs) are applied automatically to eligible Compute Eng
 - **D. Commit for one or three years**: That describes committed use discounts (CUDs), a different program that requires a commitment.
 
 **Remember:** SUD = automatic, for running most of the month. CUD = you sign a 1- or 3-year commitment.
+
+**References:**
+- [docs.cloud.google.com/compute/docs/sustained-use-discounts](https://docs.cloud.google.com/compute/docs/sustained-use-discounts)
+- [docs.cloud.google.com/compute/docs/instances/committed-use-discounts-overview](https://docs.cloud.google.com/compute/docs/instances/committed-use-discounts-overview)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
 
 </details>
 
@@ -1100,6 +1290,11 @@ Cloud Logging collects, stores, searches, and analyzes log data from application
 
 **Remember:** Logs in one place, faster troubleshooting → Cloud Logging. Metrics and alerts → Cloud Monitoring.
 
+**References:**
+- [cloud.google.com/logging/docs/overview](https://cloud.google.com/logging/docs/overview)
+- [cloud.google.com/logging/docs/view/logs-explorer-interface](https://cloud.google.com/logging/docs/view/logs-explorer-interface)
+- [cloud.google.com/logging/docs/log-analytics](https://cloud.google.com/logging/docs/log-analytics)
+
 </details>
 
 ---
@@ -1127,6 +1322,11 @@ Logging means recording what happened, when it happened: errors, OS messages, re
 - **D. Recording hardware expenditure**: That's billing and cost reporting.
 
 **Remember:** Logs = what happened (events). Metrics = how much (numbers over time).
+
+**References:**
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+- [docs.cloud.google.com/logging/docs](https://docs.cloud.google.com/logging/docs)
+- [docs.cloud.google.com/logging/docs/view/logs-explorer-interface](https://docs.cloud.google.com/logging/docs/view/logs-explorer-interface)
 
 </details>
 
@@ -1156,6 +1356,11 @@ A public cloud gives near-instant extra capacity for traffic peaks, without buyi
 
 **Remember:** Scale fast + sustainability → cloud provider with energy-efficient data centers.
 
+**References:**
+- [cloud.google.com/sustainability](https://cloud.google.com/sustainability)
+- [datacenters.google/operating-sustainably](https://datacenters.google/operating-sustainably)
+- [sustainability.google/operations/](https://sustainability.google/operations/)
+
 </details>
 
 ---
@@ -1184,6 +1389,11 @@ DevOps culture breaks down silos by making development and operations jointly re
 
 **Remember:** Silos are fixed by shared responsibility for outcomes, not by blame.
 
+**References:**
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [docs.cloud.google.com/architecture/devops](https://docs.cloud.google.com/architecture/devops)
+- [cloud.google.com/blog/products/devops-sre/how-communication-contributes-to-software-delivery-success](https://cloud.google.com/blog/products/devops-sre/how-communication-contributes-to-software-delivery-success)
+
 </details>
 
 ---
@@ -1211,6 +1421,10 @@ Site Reliability Engineering (SRE) accepts that no system is 100% reliable. Fail
 - **D. Eliminate all future bugs**: Zero bugs is unrealistic. SRE manages risk with error budgets instead of aiming for perfection.
 
 **Remember:** Failure is normal: accept it, learn from it, run blameless postmortems.
+
+**References:**
+- [docs.google.com/document/u/0/d/1h2TCYk4HqRcrashLlr_Kb8A6esNssGrmxHzdyYH1ydQ/edit](https://docs.google.com/document/u/0/d/1h2TCYk4HqRcrashLlr_Kb8A6esNssGrmxHzdyYH1ydQ/edit)
+- [cloud.google.com/blog/products/management-tools/meeting-reliability-challenges-with-sre-principles](https://cloud.google.com/blog/products/management-tools/meeting-reliability-challenges-with-sre-principles)
 
 </details>
 

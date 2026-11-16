@@ -18,123 +18,147 @@
       ]
     },
     "2": {
-      "summary": "AI is only as good as its data. This lesson covers AI-ready data (unified, clean, trusted, governed), data governance programs, and Google Cloud's openness and interoperability differentiator.",
+      "summary": "AI is only as good as its data. This lesson covers AI-ready data (unified, clean, trusted, governed, discoverable), what a data governance program includes, Knowledge Catalog for governing data, and Google Cloud's openness and interoperability differentiator.",
       "objectives": [
         "Define AI-ready data and recognize it as the foundation for generative AI and agents",
         "Explain what a data governance program achieves for value, cost and compliance",
-        "Connect openness and interoperability with avoiding vendor lock-in"
+        "List what a governance program covers: ownership, classification, access, retention, quality, lineage and auditing",
+        "Connect openness and interoperability with avoiding vendor lock-in",
+        "Recognize Knowledge Catalog (formerly Dataplex Universal Catalog) as the governance catalog, not a storage service"
       ],
       "takeaways": [
         "Fragmented, inconsistent, ungoverned data plus an AI goal means building AI-ready data.",
         "Combining own, partner and external data to train models is the AI-ready data cloud.",
         "Value, cost control and compliance together point to a data governance program.",
+        "One-off actions such as blanket deletion or quarterly reports are only pieces of governance.",
         "Avoiding lock-in across clouds is openness and interoperability.",
-        "Cloud shifts spend from CapEx to OpEx, never the reverse."
+        "Cloud shifts spend from CapEx to OpEx, never the reverse.",
+        "Knowledge Catalog describes, governs and checks data quality; it does not store files."
       ]
     },
     "3": {
-      "summary": "The exam classifies data two ways: by structure (structured, semi-structured, unstructured) and by source (first-, second- and third-party). This lesson shows how to place any example in the right bucket.",
+      "summary": "The exam classifies data two ways: by structure (structured, semi-structured, unstructured) and by source (first-, second- and third-party). This lesson shows how to place any example in the right bucket, and how media files and their metadata are stored and analyzed.",
       "objectives": [
         "Classify examples as structured, semi-structured or unstructured",
         "Recognize JSON and XML as semi-structured",
-        "Distinguish first-, second- and third-party data by who collected it"
+        "Distinguish first-, second- and third-party data by who collected it",
+        "Separate a media file (unstructured) from its metadata (structured) and know where each is stored"
       ],
       "takeaways": [
         "Table fields and numbers are structured; JSON and XML are semi-structured.",
         "Free text, transcripts, audio, video and images are unstructured.",
         "Only structured raw data fits a relational database without processing.",
+        "Metadata about a video is structured; the video itself is unstructured and belongs in Cloud Storage.",
+        "NLP, sentiment analysis and OCR turn unstructured text and images into insight.",
         "First-party is collected by you, second-party is shared by a partner, third-party is bought from an aggregator."
       ]
     },
     "4": {
-      "summary": "Weak models and bad reports often come from poor data quality. This lesson maps common symptoms to the data quality dimensions the exam tests: completeness, accuracy, validity, uniqueness and timeliness.",
+      "summary": "Weak models and bad reports often come from poor data quality. This lesson maps common symptoms to the data quality dimensions the exam tests: completeness, accuracy, validity, uniqueness, timeliness and consistency, and shows how each one hurts an ML model.",
       "objectives": [
         "Match a data-quality symptom to its dimension",
-        "Tell validity apart from accuracy",
-        "Recognize stale data as a timeliness problem"
+        "Tell validity apart from accuracy and uniqueness",
+        "Recognize stale data as a timeliness (freshness) problem",
+        "Explain how quality gaps weaken ML models"
       ],
       "takeaways": [
         "Missing attributes break completeness.",
         "A value that differs from the source of truth breaks accuracy.",
-        "A value that fails a format rule breaks validity.",
-        "Duplicate records break uniqueness.",
-        "Old data in a fast-changing domain breaks timeliness."
+        "A value that fails a format, range or allowed-value rule breaks validity.",
+        "Duplicate records break uniqueness, even when each record looks valid.",
+        "Old data in a fast-changing domain breaks timeliness, also called freshness.",
+        "Two systems disagreeing on the same fact breaks consistency."
       ]
     },
     "5": {
-      "summary": "Different stores serve different jobs. This lesson compares relational and non-relational databases, data lakes and data warehouses, and the phrases the exam uses for each.",
+      "summary": "Different stores serve different jobs. This lesson compares relational and non-relational databases, data lakes and data warehouses, the OLTP vs OLAP split behind them, and the phrases the exam uses for each.",
       "objectives": [
         "Describe what relational and non-relational databases are designed for",
         "Distinguish a data lake from a data warehouse",
+        "Explain OLTP vs OLAP and match each to databases or warehouses",
         "Pick the right store from scenario wording"
       ],
       "takeaways": [
         "Related tables and transactions mean a relational database.",
         "A flexible data model is the defining feature of NoSQL.",
+        "NoSQL models include document, key-value, wide-column and graph.",
         "Raw data kept in its original format for later processing goes in a data lake.",
         "Processed data for ad-hoc queries, reports and dashboards goes in a data warehouse.",
+        "Databases do OLTP; warehouses do OLAP.",
         "'Data field' is a fake distractor."
       ]
     },
     "6": {
-      "summary": "Google Cloud offers several managed operational databases. This lesson covers when to pick Cloud SQL, AlloyDB for PostgreSQL, AlloyDB Omni, Spanner or Firestore, with Bigtable as a recurring distractor.",
+      "summary": "Google Cloud offers several managed operational databases. This lesson covers when to pick Cloud SQL, AlloyDB for PostgreSQL (HTAP with a columnar engine), AlloyDB Omni, Spanner or Firestore, with Bigtable as a recurring distractor, and how databases feed BI and ML tools.",
       "objectives": [
         "Choose between Cloud SQL, AlloyDB and Spanner for relational workloads",
         "Identify AlloyDB's columnar engine and PostgreSQL compatibility",
         "Know where AlloyDB Omni runs",
+        "Explain why Spanner's PostgreSQL interface is not the same as PostgreSQL compatibility",
         "Pick Firestore for NoSQL web and mobile apps"
       ],
       "takeaways": [
         "Single region and cost-effective relational means Cloud SQL.",
-        "PostgreSQL plus performance or a columnar engine means AlloyDB.",
-        "AlloyDB in your own data center means AlloyDB Omni.",
-        "Global, multi-region consistent transactions mean Spanner.",
-        "NoSQL for web and mobile apps means Firestore."
+        "PostgreSQL plus performance or a columnar engine means AlloyDB; transactions plus analytics on one database is HTAP.",
+        "AlloyDB in your own data center means AlloyDB Omni, which is self-managed.",
+        "Global, multi-region consistent transactions mean Spanner; its PostgreSQL interface still needs app changes.",
+        "NoSQL for web and mobile apps with real-time sync and offline support means Firestore.",
+        "Operational databases feed Looker, Data Studio and BigQuery ML; they don't make dashboards or predictions themselves."
       ]
     },
     "7": {
-      "summary": "Cloud Storage holds unstructured objects at any scale. This lesson covers storage classes, multi-region locations, Autoclass and lifecycle rules for keeping costs low.",
+      "summary": "Cloud Storage holds unstructured objects at any scale. This lesson covers storage classes and their minimum storage durations, bucket location types, encryption options, Autoclass and lifecycle rules for keeping costs low.",
       "objectives": [
         "Match access frequency to Standard, Nearline, Coldline or Archive",
+        "Know the minimum storage durations: Nearline 30, Coldline 90, Archive 365 days",
         "Choose Autoclass over lifecycle rules when access is unpredictable",
-        "Explain the availability benefit of multi-region buckets"
+        "Explain the availability benefit of multi-region buckets",
+        "Choose a bucket location type: region, dual-region or multi-region"
       ],
       "takeaways": [
         "Media and backup files belong in Cloud Storage.",
-        "Data read about once a year belongs in Archive.",
-        "Unpredictable access with no rules to write means Autoclass.",
-        "Known patterns such as 'after 45 days' mean lifecycle rules.",
+        "Data read about once a year belongs in Archive (365-day minimum).",
+        "Colder classes cost less to store but more to read.",
+        "Unpredictable access with no rules to write means Autoclass; accessed objects move back to Standard.",
+        "Known patterns such as 'after 45 days' mean lifecycle rules, which can change class or delete.",
         "Multi-region buckets give broad access and geo-redundant copies.",
-        "Encryption at rest is default and free."
+        "Encryption at rest is default and free; CMEK adds customer control."
       ]
     },
     "8": {
-      "summary": "BigQuery is the serverless warehouse that stores and queries data at scale, and Looker is the BI layer that lets business users explore it. This lesson also covers BigQuery Omni for data in other clouds.",
+      "summary": "BigQuery is the serverless warehouse that stores and queries data at scale, with BigQuery ML built in, and Looker is the governed BI layer that lets business users explore it. This lesson also covers BigQuery Omni for data in other clouds and Data Studio (formerly Looker Studio) for lighter dashboards.",
       "objectives": [
         "Recognize BigQuery from 'serverless data warehouse' and petabyte-scale SQL",
         "Use BigQuery Omni to query data in other clouds in place",
-        "Explain what Looker adds: self-service, governed BI across clouds"
+        "Explain what Looker adds: self-service, governed BI across clouds",
+        "Tell Looker (governed enterprise BI) from Data Studio (free, lighter dashboards)"
       ],
       "takeaways": [
-        "Serverless warehouse with fast SQL at petabyte scale is BigQuery.",
+        "Serverless warehouse with fast SQL at petabyte scale is BigQuery; it separates storage and compute.",
+        "BigQuery ML builds ML models with SQL inside BigQuery.",
         "Querying AWS or Azure data without copying it is BigQuery Omni.",
         "Business users exploring data and building reports means Looker.",
-        "Looker's benefit is advanced business intelligence and analytics.",
-        "Looker works across Google Cloud, AWS and Azure data sources."
+        "Looker's governed semantic model keeps metric definitions consistent.",
+        "Looker works across Google Cloud, AWS and Azure data sources.",
+        "Data Studio is the free dashboard tool, renamed back from Looker Studio in 2026."
       ]
     },
     "9": {
-      "summary": "Data must be processed before it is useful. This lesson contrasts batch and streaming processing and covers the managed services for pipelines: Dataflow and Managed Service for Apache Spark (formerly Dataproc) serverless.",
+      "summary": "Data must be processed before it is useful. This lesson contrasts batch and streaming processing and covers the managed services for pipelines: Pub/Sub for ingesting events, Dataflow, Managed Service for Apache Spark (formerly Dataproc) serverless, Cloud Data Fusion, and Storage Transfer Service for moving data in.",
       "objectives": [
         "Explain the difference between batch and stream processing",
         "Identify Dataflow as the serverless, auto-scaling pipeline service",
-        "Choose serverless Spark when a team wants to run Spark without managing clusters"
+        "Place Pub/Sub, Dataflow and BigQuery in a streaming pipeline",
+        "Choose serverless Spark when a team wants to run Spark without managing clusters",
+        "Recognize Cloud Data Fusion as visual ETL/ELT"
       ],
       "takeaways": [
         "Streaming processes records continuously; it is how you react as things happen.",
-        "Running batches more often is not the same as streaming.",
+        "Running batches more often is not the same as streaming; backfills are batch.",
+        "Pub/Sub ingests events, Dataflow transforms them, BigQuery analyzes them.",
         "Dataflow manages and scales pipeline infrastructure automatically.",
         "Spark without cluster work means Managed Service for Apache Spark serverless.",
+        "Cloud Data Fusion builds ETL/ELT pipelines visually; it is not a Spark runtime.",
         "Serverless never means full control or error-free data."
       ]
     }
@@ -160,9 +184,15 @@
     },
     {
       "term": "AlloyDB Omni",
-      "definition": "Downloadable edition of AlloyDB that runs in your own data center or other clouds.",
+      "definition": "Downloadable, self-managed edition of AlloyDB that runs in your own data center, at the edge or in other clouds.",
       "exam_context": "PostgreSQL-compatible Google database that must stay on-premises for compliance.",
       "lesson": 6
+    },
+    {
+      "term": "Archive storage",
+      "definition": "Coldest, cheapest Cloud Storage class for data read less than once a year; 365-day minimum storage duration and higher retrieval costs.",
+      "exam_context": "Disaster-recovery exports read once a year during testing.",
+      "lesson": 7
     },
     {
       "term": "Autoclass",
@@ -171,16 +201,40 @@
       "lesson": 7
     },
     {
+      "term": "Batch processing",
+      "definition": "Processing data in groups on a schedule or after enough has accumulated, such as daily reports or backfills.",
+      "exam_context": "Quarterly or fortnightly batch jobs can't let managers react as demand happens; switch to streaming.",
+      "lesson": 9
+    },
+    {
       "term": "BigQuery",
-      "definition": "Google Cloud's serverless data warehouse for fast SQL analysis at petabyte scale.",
+      "definition": "Google Cloud's serverless data warehouse for fast SQL analysis at petabyte scale; separates storage and compute and includes BigQuery ML.",
       "exam_context": "Serverless warehouse, large datasets, SQL analysis without managing servers.",
       "lesson": 8
     },
     {
+      "term": "BigQuery ML",
+      "definition": "BigQuery feature for creating and running machine learning models with SQL, inside the warehouse.",
+      "exam_context": "Predictions from operational data come from tools like BigQuery ML, not from Cloud SQL itself.",
+      "lesson": 8
+    },
+    {
       "term": "BigQuery Omni",
-      "definition": "Runs BigQuery SQL on data that stays in AWS or Azure storage.",
+      "definition": "Runs BigQuery SQL on data that stays in AWS or Azure storage (Amazon S3, Azure Blob Storage), using BigLake tables.",
       "exam_context": "Analyze data in another public cloud without copying it into Google Cloud first.",
       "lesson": 8
+    },
+    {
+      "term": "Bigtable",
+      "definition": "Fully managed wide-column NoSQL database for very large, low-latency, high-throughput workloads such as IoT time series and financial data.",
+      "exam_context": "A recurring distractor: not relational, not PostgreSQL-compatible, not for media files or pipelines.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Data Fusion",
+      "definition": "Fully managed, visual (low-code) service for building ETL and ELT data integration pipelines.",
+      "exam_context": "A distractor for serverless Spark: it builds pipelines graphically but isn't a Spark runtime.",
+      "lesson": 9
     },
     {
       "term": "Cloud SQL",
@@ -195,10 +249,28 @@
       "lesson": 7
     },
     {
+      "term": "Columnar engine",
+      "definition": "AlloyDB feature that keeps data in a column format in memory to speed up analytical scans, joins and aggregates on live transactional data.",
+      "exam_context": "PostgreSQL-compatible database with a columnar engine for analytics without moving data means AlloyDB.",
+      "lesson": 6
+    },
+    {
       "term": "Completeness",
       "definition": "Data quality dimension: all required records and attributes are present.",
       "exam_context": "Missing age, location, date of birth or diagnosis codes means a completeness problem.",
       "lesson": 4
+    },
+    {
+      "term": "Consistency",
+      "definition": "Data quality dimension: the same fact agrees across systems and records.",
+      "exam_context": "A distractor in timeliness questions; it applies when two systems disagree, not when data is old.",
+      "lesson": 4
+    },
+    {
+      "term": "Customer-managed encryption keys (CMEK)",
+      "definition": "Encryption keys you create and control in Cloud KMS, used instead of Google's default keys.",
+      "exam_context": "Encryption at rest is on by default and free; CMEK only adds control, it isn't needed to turn encryption on.",
+      "lesson": 7
     },
     {
       "term": "Data governance",
@@ -211,6 +283,12 @@
       "definition": "Repository that stores large volumes of raw data in its original format, of any structure.",
       "exam_context": "Keep everything now and decide how to process it later.",
       "lesson": 5
+    },
+    {
+      "term": "Data Studio",
+      "definition": "Google's free, self-service dashboarding and reporting tool, with a paid Data Studio Pro edition; called Looker Studio from 2022 until April 2026.",
+      "exam_context": "Dashboards on Cloud SQL or BigQuery data come from Data Studio or Looker, not from the database.",
+      "lesson": 8
     },
     {
       "term": "Data supply chain",
@@ -231,8 +309,14 @@
       "lesson": 9
     },
     {
+      "term": "ETL and ELT",
+      "definition": "Extract, transform, load (transform before loading into the warehouse) versus extract, load, transform (load raw data first, transform inside the warehouse).",
+      "exam_context": "Transforming data before loading it into a warehouse is a Dataflow-style ETL pipeline.",
+      "lesson": 9
+    },
+    {
       "term": "Firestore",
-      "definition": "Serverless NoSQL document database designed for web and mobile apps.",
+      "definition": "Serverless NoSQL document database for web and mobile apps, with real-time sync, offline support and Firebase integration.",
       "exam_context": "Flexible, scalable NoSQL for user profiles, posts, comments and app settings.",
       "lesson": 6
     },
@@ -243,8 +327,20 @@
       "lesson": 3
     },
     {
+      "term": "HTAP",
+      "definition": "Hybrid transactional and analytical processing: running OLTP transactions and OLAP queries on the same database.",
+      "exam_context": "AlloyDB's columnar engine gives fast analytics on live PostgreSQL transactional data.",
+      "lesson": 6
+    },
+    {
+      "term": "Knowledge Catalog",
+      "definition": "Google Cloud's data catalog for governance (formerly Dataplex Universal Catalog, renamed April 2026): discovery, metadata, lineage, data quality and business glossaries.",
+      "exam_context": "A distractor in storage questions: it describes and governs data but doesn't store objects.",
+      "lesson": 2
+    },
+    {
       "term": "Looker",
-      "definition": "Google Cloud's enterprise business intelligence platform for modeling, exploring and visualizing data.",
+      "definition": "Google Cloud's enterprise business intelligence platform for modeling, exploring and visualizing data through a governed semantic model; also supports embedded analytics.",
       "exam_context": "Self-service BI for business users, including across Google Cloud, AWS and Azure.",
       "lesson": 8
     },
@@ -255,9 +351,33 @@
       "lesson": 9
     },
     {
+      "term": "Multi-region bucket",
+      "definition": "Cloud Storage location type that stores data redundantly across a large area such as the US, EU or Asia.",
+      "exam_context": "Users in many countries plus high availability means a multi-region (or dual-region) bucket.",
+      "lesson": 7
+    },
+    {
       "term": "Non-relational database",
       "definition": "Database (NoSQL) with a flexible data model rather than fixed related tables.",
       "exam_context": "Its defining feature is a flexible data model for changing structures.",
+      "lesson": 5
+    },
+    {
+      "term": "Object Lifecycle Management",
+      "definition": "Cloud Storage rules you define, on conditions such as age, creation date or number of newer versions, that change an object's class or delete it.",
+      "exam_context": "Known patterns ('after 45 days') mean lifecycle rules; unpredictable access with no rules means Autoclass.",
+      "lesson": 7
+    },
+    {
+      "term": "OLAP",
+      "definition": "Online analytical processing: large scans and aggregations over historical data for reporting and analysis.",
+      "exam_context": "Petabyte-scale analysis and ad-hoc reporting point to a warehouse such as BigQuery.",
+      "lesson": 5
+    },
+    {
+      "term": "OLTP",
+      "definition": "Online transaction processing: many small, fast reads and writes of individual records such as orders and payments.",
+      "exam_context": "App transactions point to an operational database such as Cloud SQL, AlloyDB or Spanner, not BigQuery.",
       "lesson": 5
     },
     {
@@ -265,6 +385,12 @@
       "definition": "Google Cloud's commitment to open standards, open source and multicloud tools.",
       "exam_context": "Data platforms working across clouds without vendor lock-in.",
       "lesson": 2
+    },
+    {
+      "term": "Pub/Sub",
+      "definition": "Managed messaging service that ingests event streams and decouples the systems that send and receive them.",
+      "exam_context": "It moves messages but doesn't transform them; the usual streaming pipeline is Pub/Sub, then Dataflow, then BigQuery.",
+      "lesson": 9
     },
     {
       "term": "Second-party data",
@@ -280,15 +406,27 @@
     },
     {
       "term": "Spanner",
-      "definition": "Relational, strongly consistent, horizontally scalable database that replicates across regions.",
-      "exam_context": "Global transactional apps needing consistency and availability across continents.",
+      "definition": "Relational, strongly consistent (ACID), horizontally scalable database that replicates across regions; also supports key-value, graph and search, and offers a PostgreSQL interface.",
+      "exam_context": "Global transactional apps needing consistency and availability across continents. Too costly for a single-region app, and its PostgreSQL interface still needs app changes.",
       "lesson": 6
+    },
+    {
+      "term": "Storage Transfer Service",
+      "definition": "Service that moves or syncs data into Cloud Storage from Amazon S3, Azure Blob Storage, on-premises storage or other buckets.",
+      "exam_context": "A distractor in Autoclass questions: it transfers data but doesn't change storage classes.",
+      "lesson": 9
     },
     {
       "term": "Streaming analytics",
       "definition": "Processing data records continuously as they arrive to give near real-time insight.",
       "exam_context": "Reacting to demand as it happens means switching from batch to streaming.",
       "lesson": 9
+    },
+    {
+      "term": "Structured data",
+      "definition": "Data organized into fixed fields, rows and columns with a predefined schema.",
+      "exam_context": "Blood pressure history, stock levels and star ratings are structured; they fit a relational table without processing.",
+      "lesson": 3
     },
     {
       "term": "Third-party data",
@@ -298,7 +436,7 @@
     },
     {
       "term": "Timeliness",
-      "definition": "Data quality dimension: data is current enough for its use.",
+      "definition": "Data quality dimension: data is current enough and available when needed; also called freshness.",
       "exam_context": "A fashion model trained on three-year-old data suffers from poor timeliness.",
       "lesson": 4
     },
@@ -316,7 +454,7 @@
     },
     {
       "term": "Validity",
-      "definition": "Data quality dimension: values conform to the expected format, type or rule.",
+      "definition": "Data quality dimension: values conform to the expected format, type, range or list of allowed values.",
       "exam_context": "Email values missing the '@' character fail validity.",
       "lesson": 4
     }

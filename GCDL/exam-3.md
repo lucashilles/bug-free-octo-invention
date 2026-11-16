@@ -26,6 +26,11 @@ Cloud Debugger let developers take snapshots of a live application's variables a
 
 **Remember:** Debugger = look inside a running app without stopping it.
 
+**References:**
+- [docs.cloud.google.com/stackdriver/docs/deprecations/debugger-deprecation](https://docs.cloud.google.com/stackdriver/docs/deprecations/debugger-deprecation)
+- [cloud.google.com/blog/products/gcp/diagnose-problems-in-your-production-apps-faster-with-google-cloud-debugger](https://cloud.google.com/blog/products/gcp/diagnose-problems-in-your-production-apps-faster-with-google-cloud-debugger)
+- [support.google.com/cloud/answer/6323288?hl=en](https://support.google.com/cloud/answer/6323288?hl=en)
+
 **⚠️ Note:** Cloud Debugger was deprecated in 2022 and shut down in 2023; its open-source successor is Snapshot Debugger. The answer correctly describes what it did, so pick the keyed answer on this exam.
 
 ---
@@ -48,11 +53,16 @@ Cloud Debugger let developers take snapshots of a live application's variables a
 The stem has two clues: learn from trusted Google Cloud content, and share knowledge across teams. Peer-to-peer learning built on official training covers both. Transformation is about people and culture, not only technology, so a lasting learning culture is the goal.
 
 **Why the others are wrong:**
-- **A. Train existing staff instead of hiring**: Training staff is good, but this option says nothing about official content or sharing knowledge.
+- **A. Train existing staff instead of hiring**: Training staff is good, but refusing to hire cloud-experienced people is an early-stage habit; mature organizations upskill and hire. It also says nothing about sharing knowledge.
 - **B. Give elevated access to consultants**: It outsources knowledge instead of building internal skills and weakens least privilege.
 - **C. Self-directed, separate learning**: It uses official materials but misses the knowledge-sharing part.
 
 **Remember:** Upskilling for transformation = official training + a culture of sharing.
+
+**References:**
+- [cloud.google.com/learn/training](https://cloud.google.com/learn/training)
+- [cloud.google.com/learn](https://cloud.google.com/learn)
+- [cloud.google.com/learn/certification](https://cloud.google.com/learn/certification)
 
 ---
 
@@ -80,6 +90,11 @@ Agentic AI systems pursue a goal on their own. They reason, plan next steps, cal
 
 **Remember:** Goal + plan + use tools + take action = agentic AI.
 
+**References:**
+- [cloud.google.com/discover/what-is-agentic-ai](https://cloud.google.com/discover/what-is-agentic-ai)
+- [cloud.google.com/discover/what-are-ai-agents](https://cloud.google.com/discover/what-are-ai-agents)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+
 ---
 
 ## Question 4
@@ -105,6 +120,11 @@ Cloud Storage is Google Cloud's object storage. It holds any amount of unstructu
 - **D. Cloud SQL**: A managed relational database for structured, transactional data.
 
 **Remember:** Files, images, video, backups, archives = Cloud Storage.
+
+**References:**
+- [docs.cloud.google.com/storage/docs/introduction](https://docs.cloud.google.com/storage/docs/introduction)
+- [docs.cloud.google.com/storage/docs/storage-classes](https://docs.cloud.google.com/storage/docs/storage-classes)
+- [docs.cloud.google.com/bigtable/docs/overview](https://docs.cloud.google.com/bigtable/docs/overview)
 
 ---
 
@@ -132,6 +152,11 @@ Second-party data is another organization's first-party data that it shares dire
 
 **Remember:** Own customers = first-party. Partner shares directly = second-party. Bought = third-party.
 
+**References:**
+- [support.google.com/adspolicy/answer/6242605](https://support.google.com/adspolicy/answer/6242605)
+- [business.google.com/us/privacy/strategy](https://business.google.com/us/privacy/strategy)
+- [business.adobe.com/blog/basics/dmp-cdp-crm-whats-the-difference-and-what-do-you-need](https://business.adobe.com/blog/basics/dmp-cdp-crm-whats-the-difference-and-what-do-you-need)
+
 ---
 
 ## Question 6
@@ -158,6 +183,11 @@ Audio and video files have no fixed schema or rows and columns. That makes them 
 
 **Remember:** Audio, video, images, free text = unstructured. JSON, HTML, XML = semi-structured.
 
+**References:**
+- [cloud.google.com/storage](https://cloud.google.com/storage)
+- [docs.cloud.google.com/bigquery/docs/object-table-introduction](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
+- [docs.cloud.google.com/architecture/ml-on-gcp-best-practices](https://docs.cloud.google.com/architecture/ml-on-gcp-best-practices)
+
 ---
 
 ## Question 7
@@ -183,6 +213,11 @@ Each team needs different permissions, so define roles by what each job requires
 - **D. One shared service account for all departments**: It removes accountability and gives everyone the same access.
 
 **Remember:** Grant roles by job function to groups, not to individuals.
+
+**References:**
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
+- [cloud.google.com/iam/docs/roles-overview](https://cloud.google.com/iam/docs/roles-overview)
+- [cloud.google.com/iam/docs/choose-predefined-roles](https://cloud.google.com/iam/docs/choose-predefined-roles)
 
 **⚠️ Note:** Google's stated best practice is to grant roles to groups. Read "map roles to job functions for each department" as the group-based answer. It is the best option here.
 
@@ -212,6 +247,11 @@ Security posture is the overall state of an organization's security: its network
 
 **Remember:** Overall security readiness across the environment = security posture.
 
+**References:**
+- [docs.cloud.google.com/security-command-center/docs/security-posture-overview](https://docs.cloud.google.com/security-command-center/docs/security-posture-overview)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+
 ---
 
 ## Question 9
@@ -237,6 +277,11 @@ Cloud Storage stores data redundantly, and multi-region or dual-region buckets k
 - **D. Small minimum storage quantity**: Cloud Storage has no minimum storage quantity; this is not a real feature to rely on.
 
 **Remember:** Cloud Storage = durable, redundant, optionally multi-region object storage.
+
+**References:**
+- [cloud.google.com/storage/docs/locations](https://cloud.google.com/storage/docs/locations)
+- [cloud.google.com/storage/docs/availability-durability](https://cloud.google.com/storage/docs/availability-durability)
+- [cloud.google.com/storage/docs/encryption/default-keys](https://cloud.google.com/storage/docs/encryption/default-keys)
 
 **⚠️ Note:** Geographically separate copies are only true for multi-region and dual-region buckets. A regional bucket keeps redundant copies across zones in one region. The key is still the best option, so pick it on this exam.
 
@@ -266,6 +311,11 @@ Google Cloud Armor protects applications behind Google's load balancers from DDo
 
 **Remember:** DDoS or web attack protection = Cloud Armor.
 
+**References:**
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/kms/docs/key-management-service](https://docs.cloud.google.com/kms/docs/key-management-service)
+
 ---
 
 ## Question 11
@@ -292,6 +342,11 @@ In cloud operations, monitoring means collecting metrics, both built-in ones lik
 
 **Remember:** Monitoring = metrics. Logging = events. Tracing = request paths.
 
+**References:**
+- [docs.cloud.google.com/monitoring/docs](https://docs.cloud.google.com/monitoring/docs)
+- [docs.cloud.google.com/monitoring/docs/collect-metrics-overview](https://docs.cloud.google.com/monitoring/docs/collect-metrics-overview)
+- [docs.cloud.google.com/stackdriver/docs](https://docs.cloud.google.com/stackdriver/docs)
+
 ---
 
 ## Question 12
@@ -317,6 +372,11 @@ GKE runs containers and supports fast, repeatable deployments, rolling updates a
 - **D. Copies source code across servers**: GKE runs container images, not shared copies of source code for collaboration.
 
 **Remember:** GKE = fast, consistent container deployments and rollbacks.
+
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+- [docs.cloud.google.com/kubernetes-engine/docs](https://docs.cloud.google.com/kubernetes-engine/docs)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/best-practices-continuous-integration-delivery-kubernetes](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/best-practices-continuous-integration-delivery-kubernetes)
 
 **⚠️ Note:** The keyed answer is vague. Faster testing is a general benefit of containers and CI/CD, not something only GKE provides. It is keyed because the other options are clearly false.
 
@@ -346,6 +406,11 @@ Saturation measures how full the system is: how much CPU, memory or I/O capacity
 
 **Remember:** Four golden signals: latency (time), traffic (demand), errors (failures), saturation (how full).
 
+**References:**
+- [sre.google/sre-book/monitoring-distributed-systems/](https://sre.google/sre-book/monitoring-distributed-systems/)
+- [sre.google/sre-book/service-level-objectives/](https://sre.google/sre-book/service-level-objectives/)
+- [docs.cloud.google.com/architecture/framework/perspectives/fsi/operational-excellence](https://docs.cloud.google.com/architecture/framework/perspectives/fsi/operational-excellence)
+
 ---
 
 ## Question 14
@@ -371,6 +436,11 @@ Cloud Trace is distributed tracing. It follows a single request as it moves thro
 - **D. GKE**: It runs containers; it is not an observability tool.
 
 **Remember:** Slow request across microservices = Cloud Trace.
+
+**References:**
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
 
 ---
 
@@ -398,6 +468,11 @@ Cloud SQL is a managed relational database for transactional (OLTP) workloads li
 
 **Remember:** Relational + regional + cost-effective = Cloud SQL. Relational + global scale = Spanner.
 
+**References:**
+- [docs.cloud.google.com/sql/docs](https://docs.cloud.google.com/sql/docs)
+- [docs.cloud.google.com/bigquery/docs](https://docs.cloud.google.com/bigquery/docs)
+- [docs.cloud.google.com/bigtable/docs](https://docs.cloud.google.com/bigtable/docs)
+
 ---
 
 ## Question 16
@@ -424,6 +499,11 @@ Completeness asks whether all the required data is present. Profile attributes l
 
 **Remember:** Missing data = completeness. Wrong values = accuracy. Wrong format = validity.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/use-auto-data-quality](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality)
+- [ibm.com/think/topics/data-quality-dimensions](https://ibm.com/think/topics/data-quality-dimensions)
+
 ---
 
 ## Question 17
@@ -445,10 +525,15 @@ A core DevOps and SRE practice is to ship small, frequent changes. Small changes
 
 **Why the others are wrong:**
 - **A. Pause production until all bugs are gone**: Bug-free software is not realistic; this stops delivery.
-- **B. Prioritize fixing large bugs in production**: Large changes and bugs are harder to review, not easier.
+- **B. Prioritize fixing large bugs in production**: Bug priority should follow user and business impact, not size, and large bugs are harder to review, not easier.
 - **D. Large changes together make rollback easier**: Large batches make rollback harder and riskier.
 
 **Remember:** Small, incremental releases = faster recovery, less risk.
+
+**References:**
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [cloud.google.com/architecture/devops](https://cloud.google.com/architecture/devops)
+- [cloud.google.com/architecture/devops/devops-tech-continuous-delivery](https://cloud.google.com/architecture/devops/devops-tech-continuous-delivery)
 
 ---
 
@@ -476,6 +561,11 @@ Latency is the time between a request and its response. The stem describes exact
 
 **Remember:** Wait time = latency.
 
+**References:**
+- [sre.google/sre-book/monitoring-distributed-systems/](https://sre.google/sre-book/monitoring-distributed-systems/)
+- [sre.google/sre-book/service-level-objectives/](https://sre.google/sre-book/service-level-objectives/)
+- [docs.cloud.google.com/architecture/framework/operational-excellence/measure-and-achieve-reliability-goals](https://docs.cloud.google.com/architecture/framework/operational-excellence/measure-and-achieve-reliability-goals)
+
 ---
 
 ## Question 19
@@ -501,6 +591,11 @@ Threat intelligence is analyzed information about attackers: their goals, target
 - **D. Identity management**: That controls user identities and access.
 
 **Remember:** Knowledge about attackers and their methods = threat intelligence.
+
+**References:**
+- [docs.cloud.google.com/chronicle/docs/detection](https://docs.cloud.google.com/chronicle/docs/detection)
+- [cloud.google.com/security/products/threat-intelligence](https://cloud.google.com/security/products/threat-intelligence)
+- [docs.cloud.google.com/chronicle/docs/overview](https://docs.cloud.google.com/chronicle/docs/overview)
 
 ---
 
@@ -528,6 +623,11 @@ The attackers came in through an outside vendor's plugin connected to the softwa
 
 **Remember:** Breach through a vendor's plugin or library = third-party / supply chain risk.
 
+**References:**
+- [docs.cloud.google.com/software-supply-chain-security/docs/overview](https://docs.cloud.google.com/software-supply-chain-security/docs/overview)
+- [docs.cloud.google.com/software-supply-chain-security/docs/dependencies](https://docs.cloud.google.com/software-supply-chain-security/docs/dependencies)
+- [cloud.google.com/solutions/ciso-third-party-risk-management](https://cloud.google.com/solutions/ciso-third-party-risk-management)
+
 ---
 
 ## Question 21
@@ -553,6 +653,11 @@ Premium Support is the Customer Care tier for business-critical workloads. It ha
 - **D. Standard**: Meant for smaller workloads with slower response times and no TAM.
 
 **Remember:** Fastest response + TAM = Premium.
+
+**References:**
+- [cloud.google.com/support](https://cloud.google.com/support)
+- [docs.cloud.google.com/support/docs/overview](https://docs.cloud.google.com/support/docs/overview)
+- [docs.cloud.google.com/support/docs/premium](https://docs.cloud.google.com/support/docs/premium)
 
 ---
 
@@ -580,6 +685,11 @@ Hybrid cloud combines on-premises or private cloud infrastructure with public cl
 
 **Remember:** Hybrid = on-prem/private + public. Multicloud = more than one public cloud.
 
+**References:**
+- [cloud.google.com/learn/what-is-hybrid-cloud](https://cloud.google.com/learn/what-is-hybrid-cloud)
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [docs.cloud.google.com/architecture/hybrid-multicloud-patterns-and-practices](https://docs.cloud.google.com/architecture/hybrid-multicloud-patterns-and-practices)
+
 ---
 
 ## Question 23
@@ -605,6 +715,11 @@ Pre-trained APIs such as the Cloud Vision API are ready-to-use models that devel
 - **D. BigQuery ML**: It trains models with SQL on data in BigQuery, not a ready-made image analysis service.
 
 **Remember:** Common task + fastest + no training = pre-trained API.
+
+**References:**
+- [cloud.google.com/vision](https://cloud.google.com/vision)
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+- [docs.cloud.google.com/sensitive-data-protection/docs/classification-redaction](https://docs.cloud.google.com/sensitive-data-protection/docs/classification-redaction)
 
 ---
 
@@ -632,6 +747,11 @@ Generative AI is a subset of AI that creates new content, such as text, images, 
 
 **Remember:** Generative AI = creates new content.
 
+**References:**
+- [cloud.google.com/use-cases/generative-ai](https://cloud.google.com/use-cases/generative-ai)
+- [cloud.google.com/discover/what-is-generative-ai](https://cloud.google.com/discover/what-is-generative-ai)
+- [cloud.google.com/ai/generative-ai](https://cloud.google.com/ai/generative-ai)
+
 ---
 
 ## Question 25
@@ -657,6 +777,11 @@ Teams can't control costs they can't see. Giving each department visibility into
 - **D. One common tag on every resource**: One tag for everything can't separate costs by team. Labels must differ per team to help.
 
 **Remember:** Visibility per team = accountability = cost control.
+
+**References:**
+- [cloud.google.com/cost-management](https://cloud.google.com/cost-management)
+- [docs.cloud.google.com/billing/docs/reports](https://docs.cloud.google.com/billing/docs/reports)
+- [docs.cloud.google.com/resource-manager/docs/labels-overview](https://docs.cloud.google.com/resource-manager/docs/labels-overview)
 
 ---
 
@@ -684,6 +809,11 @@ Streaming analytics processes events continuously as they arrive, so insights ar
 
 **Remember:** Streaming = continuous, as it arrives. Batch = scheduled groups.
 
+**References:**
+- [cloud.google.com/learn/what-is-streaming-analytics](https://cloud.google.com/learn/what-is-streaming-analytics)
+- [cloud.google.com/solutions/stream-analytics](https://cloud.google.com/solutions/stream-analytics)
+- [docs.cloud.google.com/dataflow/docs/concepts/streaming-pipelines](https://docs.cloud.google.com/dataflow/docs/concepts/streaming-pipelines)
+
 ---
 
 ## Question 27
@@ -710,6 +840,11 @@ Firewall rules define which incoming and outgoing network traffic is allowed or 
 
 **Remember:** Allow or deny network traffic = firewall rules.
 
+**References:**
+- [docs.cloud.google.com/firewall/docs/firewalls](https://docs.cloud.google.com/firewall/docs/firewalls)
+- [docs.cloud.google.com/firewall/docs/using-firewalls](https://docs.cloud.google.com/firewall/docs/using-firewalls)
+- [docs.cloud.google.com/firewall/docs/firewall-policies-rule-details](https://docs.cloud.google.com/firewall/docs/firewall-policies-rule-details)
+
 ---
 
 ## Question 28
@@ -735,6 +870,11 @@ Protecting personal data is a key part of data protection rules in many countrie
 - **D. Follow only headquarters' data policies**: Companies must respect the laws of every country where they serve users.
 
 **Remember:** Global data protection starts with protecting PII; ignoring local laws or weakening auth is always wrong.
+
+**References:**
+- [cloud.google.com/security/compliance/offerings](https://cloud.google.com/security/compliance/offerings)
+- [docs.cloud.google.com/docs/security/encryption/default-encryption](https://docs.cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/trust-center](https://cloud.google.com/trust-center)
 
 **⚠️ Note:** Encryption alone doesn't meet global compliance. Data residency, consent and local rules matter too, and Google Cloud already encrypts all data at rest by default. Pick the keyed answer because the other options are clearly worse.
 
@@ -764,7 +904,10 @@ The problem is buying too much capacity or too little for traffic spikes. Cloud 
 
 **Remember:** Over- or under-provisioning problem = elastic scaling + pay for what you use.
 
-**⚠️ Note:** "Agile infrastructure" is loose wording. The real ideas are elasticity and consumption-based pricing. It is still the best of the options, so pick it on this exam.
+**References:**
+- [cloud.google.com/learn/advantages-of-cloud-computing](https://cloud.google.com/learn/advantages-of-cloud-computing)
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+- [cloud.google.com/security/shared-responsibility-data-model](https://cloud.google.com/security/shared-responsibility-data-model)
 
 ---
 
@@ -792,6 +935,11 @@ In Google's framing, "invent in brownfield" means building a new cloud-native ap
 
 **Remember:** New app, nothing existing = greenfield. New app that replaces a legacy one = brownfield.
 
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/solutions/infrastructure-modernization](https://cloud.google.com/solutions/infrastructure-modernization)
+
 ---
 
 ## Question 31
@@ -817,6 +965,11 @@ GKE Enterprise (formerly Anthos) is Google Cloud's platform for managing applica
 - **D. Compute Engine**: Virtual machines in Google Cloud; it doesn't manage on-premises environments.
 
 **Remember:** Consistent management across on-prem and clouds = GKE Enterprise.
+
+**References:**
+- [cloud.google.com/kubernetes-engine/enterprise](https://cloud.google.com/kubernetes-engine/enterprise)
+- [docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options](https://docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options)
+- [docs.cloud.google.com/functions/docs/concepts/overview](https://docs.cloud.google.com/functions/docs/concepts/overview)
 
 ---
 
@@ -844,6 +997,11 @@ On premises, QuickServeNow bought hardware up front. On Google Cloud it pays for
 
 **Remember:** Moving to cloud = CapEx up front becomes OpEx pay-as-you-go, and the business must learn to manage variable spending.
 
+**References:**
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
+- [cloud.google.com/docs/security/overview/whitepaper](https://cloud.google.com/docs/security/overview/whitepaper)
+- [cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+
 ---
 
 ## Question 33
@@ -869,6 +1027,11 @@ The data supply chain (also called the data value chain) is the end-to-end journ
 - **D. Multi-cloud networking**: That connects networks across cloud providers.
 
 **Remember:** Collect, transform, use: the end-to-end data journey = data supply chain.
+
+**References:**
+- [cloud.google.com/discover/what-is-data-architecture](https://cloud.google.com/discover/what-is-data-architecture)
+- [docs.cloud.google.com/docs/data](https://docs.cloud.google.com/docs/data)
+- [cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
 
 ---
 
@@ -896,6 +1059,11 @@ The serverless option of Managed Service for Apache Spark (formerly Dataproc) ru
 
 **Remember:** Spark with no clusters to manage = the serverless option.
 
+**References:**
+- [docs.cloud.google.com/managed-spark/docs/serverless-overview](https://docs.cloud.google.com/managed-spark/docs/serverless-overview)
+- [cloud.google.com/products/managed-service-for-apache-spark](https://cloud.google.com/products/managed-service-for-apache-spark)
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+
 ---
 
 ## Question 35
@@ -921,6 +1089,11 @@ In SRE, toil is manual, repetitive operational work that adds no lasting value. 
 - **C. Reduce effort understanding outages**: SRE uses blameless postmortems to learn from outages, not ignore them.
 
 **Remember:** Manual, repetitive work = toil. SRE answer = automate it.
+
+**References:**
+- [sre.google/sre-book/eliminating-toil/](https://sre.google/sre-book/eliminating-toil/)
+- [sre.google/workbook/eliminating-toil/](https://sre.google/workbook/eliminating-toil/)
+- [docs.cloud.google.com/architecture/framework/operational-excellence](https://docs.cloud.google.com/architecture/framework/operational-excellence)
 
 ---
 
@@ -948,6 +1121,11 @@ Google Cloud's intelligent recommendations (Active Assist and Recommender) analy
 
 **Remember:** Variable demand + optimize resources = intelligent recommendations.
 
+**References:**
+- [cloud.google.com/cost-management](https://cloud.google.com/cost-management)
+- [docs.cloud.google.com/recommender/docs/whatis-activeassist](https://docs.cloud.google.com/recommender/docs/whatis-activeassist)
+- [docs.cloud.google.com/billing/docs/how-to/finops-hub](https://docs.cloud.google.com/billing/docs/how-to/finops-hub)
+
 ---
 
 ## Question 37
@@ -973,6 +1151,11 @@ Compute Engine gives full control over virtual machines, including the operating
 - **D. App Engine**: A serverless app platform that hides the underlying VMs.
 
 **Remember:** Need control of VMs and OS = Compute Engine.
+
+**References:**
+- [docs.cloud.google.com/compute/docs/instance-groups](https://docs.cloud.google.com/compute/docs/instance-groups)
+- [docs.cloud.google.com/compute/docs/autoscaler](https://docs.cloud.google.com/compute/docs/autoscaler)
+- [docs.cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups](https://docs.cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups)
 
 ---
 
@@ -1000,6 +1183,11 @@ An AI-ready data foundation is data that is unified, clean, governed and easy to
 
 **Remember:** Unified, clean, governed data before AI = AI-ready data foundation.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [cloud.google.com/transform/how-to-build-strong-data-foundations-gen-ai](https://cloud.google.com/transform/how-to-build-strong-data-foundations-gen-ai)
+- [docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components](https://docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components)
+
 ---
 
 ## Question 39
@@ -1025,6 +1213,11 @@ AlloyDB for PostgreSQL is a fully managed, PostgreSQL-compatible database built 
 - **D. Firestore in Datastore mode**: A NoSQL document database, not for enterprise relational transactions.
 
 **Remember:** Enterprise performance + PostgreSQL compatibility = AlloyDB.
+
+**References:**
+- [docs.cloud.google.com/alloydb/docs](https://docs.cloud.google.com/alloydb/docs)
+- [docs.cloud.google.com/spanner/docs](https://docs.cloud.google.com/spanner/docs)
+- [docs.cloud.google.com/bigtable/docs](https://docs.cloud.google.com/bigtable/docs)
 
 **⚠️ Note:** AlloyDB itself is not open source. It is compatible with open-source PostgreSQL, which is what "aligned with an open-source engine" means. Spanner also offers a PostgreSQL interface, but AlloyDB is the closer fit, so pick it on this exam.
 
@@ -1054,6 +1247,11 @@ Generative AI creates new content such as text, images and code from prompts. Em
 
 **Remember:** Create new content = generative AI.
 
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/models/beginners-guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/beginners-guide)
+- [cloud.google.com/solutions/generative-ai](https://cloud.google.com/solutions/generative-ai)
+- [cloud.google.com/learn/what-is-artificial-intelligence](https://cloud.google.com/learn/what-is-artificial-intelligence)
+
 ---
 
 ## Question 41
@@ -1079,6 +1277,11 @@ BigQuery is Google Cloud's serverless, fully managed data warehouse. It runs fas
 - **D. Cloud Storage**: It stores files cheaply but isn't a query and analysis engine by itself.
 
 **Remember:** Large-scale analytics with SQL = BigQuery.
+
+**References:**
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/sql/docs/introduction](https://cloud.google.com/sql/docs/introduction)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
 
 ---
 
@@ -1106,6 +1309,11 @@ In the Google Cloud resource hierarchy (organization, folders, projects, resourc
 
 **Remember:** Policies flow down the hierarchy: organization, folder, project, resource.
 
+**References:**
+- [docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
+- [docs.cloud.google.com/iam/docs/resource-hierarchy-access-control](https://docs.cloud.google.com/iam/docs/resource-hierarchy-access-control)
+- [docs.cloud.google.com/iam/docs/allow-policies](https://docs.cloud.google.com/iam/docs/allow-policies)
+
 ---
 
 ## Question 43
@@ -1131,6 +1339,11 @@ Cloud Logging is the managed service to collect, store, search and analyze logs 
 - **D. Data Catalog**: A metadata service for discovering data assets, not logs.
 
 **Remember:** Logs from anywhere in Google Cloud = Cloud Logging.
+
+**References:**
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
+- [docs.cloud.google.com/logging/docs/integrate/gke](https://docs.cloud.google.com/logging/docs/integrate/gke)
+- [docs.cloud.google.com/stackdriver/docs/solutions/agents/ops-agent](https://docs.cloud.google.com/stackdriver/docs/solutions/agents/ops-agent)
 
 ---
 
@@ -1158,6 +1371,11 @@ Greenfield means starting fresh with no existing application. BrightCart is buil
 
 **Remember:** Nothing existing = greenfield.
 
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/solutions/camp](https://cloud.google.com/solutions/camp)
+
 ---
 
 ## Question 45
@@ -1183,6 +1401,11 @@ Agent Studio is the no-code and low-code visual interface for designing, prototy
 - **D. Cloud Run**: A serverless platform for running containers; it needs developers.
 
 **Remember:** No-code or low-code agent building = Agent Studio.
+
+**References:**
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview)
+- [cloud.google.com/products/gemini-enterprise-agent-platform](https://cloud.google.com/products/gemini-enterprise-agent-platform)
+- [docs.cloud.google.com/run/docs](https://docs.cloud.google.com/run/docs)
 
 ---
 
@@ -1210,6 +1433,11 @@ Completeness measures whether all required data is present. Records missing date
 
 **Remember:** Missing required fields = completeness.
 
+**References:**
+- [cloud.google.com/learn/what-is-data-governance](https://cloud.google.com/learn/what-is-data-governance)
+- [docs.cloud.google.com/dataplex/docs/auto-data-quality-overview](https://docs.cloud.google.com/dataplex/docs/auto-data-quality-overview)
+- [docs.cloud.google.com/dataplex/docs/use-auto-data-quality](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality)
+
 ---
 
 ## Question 47
@@ -1235,6 +1463,11 @@ Two-step verification, a form of multi-factor authentication, requires a passwor
 - **D. Threat intelligence sharing**: Shares information about attackers; it doesn't verify identity.
 
 **Remember:** Password + second proof = 2SV / MFA.
+
+**References:**
+- [docs.cloud.google.com/docs/authentication/mfa-requirement](https://docs.cloud.google.com/docs/authentication/mfa-requirement)
+- [docs.cloud.google.com/docs/authentication/use-cases](https://docs.cloud.google.com/docs/authentication/use-cases)
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
 
 ---
 
@@ -1262,6 +1495,11 @@ Error Reporting automatically collects application crashes and exceptions, group
 
 **Remember:** Crashes and exceptions grouped for you = Error Reporting.
 
+**References:**
+- [docs.cloud.google.com/error-reporting/docs/grouping-errors](https://docs.cloud.google.com/error-reporting/docs/grouping-errors)
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+
 ---
 
 ## Question 49
@@ -1288,6 +1526,11 @@ SRE favors gradual rollouts, such as a canary release to a small group first. If
 
 **Remember:** New feature + reduce risk = roll out to a small group first.
 
+**References:**
+- [sre.google/sre-book/release-engineering](https://sre.google/sre-book/release-engineering)
+- [sre.google/workbook/canarying-releases](https://sre.google/workbook/canarying-releases)
+- [cloud.google.com/deploy/docs/deployment-strategies/canary](https://cloud.google.com/deploy/docs/deployment-strategies/canary)
+
 ---
 
 ## Question 50
@@ -1313,5 +1556,10 @@ Cloud Profiler continuously collects CPU and memory-allocation data from running
 - **C. Error Reporting**: It groups crashes and exceptions.
 
 **Remember:** Which code uses the most CPU or memory = Cloud Profiler.
+
+**References:**
+- [docs.cloud.google.com/profiler/docs/about-profiler](https://docs.cloud.google.com/profiler/docs/about-profiler)
+- [docs.cloud.google.com/trace/docs/overview](https://docs.cloud.google.com/trace/docs/overview)
+- [docs.cloud.google.com/logging/docs/overview](https://docs.cloud.google.com/logging/docs/overview)
 
 ---

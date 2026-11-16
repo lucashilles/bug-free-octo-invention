@@ -28,6 +28,11 @@ Rehosting ("lift and shift") moves an application to the cloud as it is, with no
 
 **Remember:** No code changes, no redesign = rehost (lift and shift).
 
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [docs.cloud.google.com/migration-center/docs/migration-planning-overview](https://docs.cloud.google.com/migration-center/docs/migration-planning-overview)
+
 </details>
 
 ---
@@ -56,6 +61,11 @@ An API lets two software systems exchange data in a standard, controlled way. Me
 
 **Remember:** Systems need to talk to each other = API.
 
+**References:**
+- [cloud.google.com/apis/docs/overview](https://cloud.google.com/apis/docs/overview)
+- [cloud.google.com/apis/docs/client-libraries-explained](https://cloud.google.com/apis/docs/client-libraries-explained)
+- [cloud.google.com/apis/design](https://cloud.google.com/apis/design)
+
 </details>
 
 ---
@@ -83,6 +93,11 @@ GKE is Google's managed Kubernetes service. It deploys, scales and orchestrates 
 - **D. Provides pre-written source code**: GKE runs your code; it does not write it for you.
 
 **Remember:** Containers that need orchestration and scaling = GKE.
+
+**References:**
+- [cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+- [cloud.google.com/kubernetes-engine/docs/deploy-app-cluster](https://cloud.google.com/kubernetes-engine/docs/deploy-app-cluster)
+- [cloud.google.com/kubernetes-engine/docs/get-started/deploy-workloads](https://cloud.google.com/kubernetes-engine/docs/get-started/deploy-workloads)
 
 **⚠️ Note:** "Rapid deployment and testing" is a generic benefit of containers and CI/CD, not something only GKE provides. It is keyed because the other options are clearly false. Pick A on this exam.
 
@@ -114,6 +129,11 @@ Cloud Run functions (formerly Cloud Functions) runs small pieces of code in resp
 
 **Remember:** Small code + triggered by events + no servers = Cloud Run functions.
 
+**References:**
+- [cloud.google.com/functions](https://cloud.google.com/functions)
+- [cloud.google.com/run/docs](https://cloud.google.com/run/docs)
+- [cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+
 </details>
 
 ---
@@ -141,6 +161,11 @@ An API exposes selected data and functions from a legacy system in a secure, con
 - **D. Google Kubernetes Engine**: GKE runs containers; it does not expose legacy data to partners.
 
 **Remember:** Unlock legacy data without replacing the system = API.
+
+**References:**
+- [cloud.google.com/learn/what-is-api-management](https://cloud.google.com/learn/what-is-api-management)
+- [cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [cloud.google.com/compute/docs/instances/use-cases](https://cloud.google.com/compute/docs/instances/use-cases)
 
 </details>
 
@@ -170,6 +195,11 @@ APIs wrap existing system capabilities behind a stable interface. New mobile app
 
 **Remember:** APIs = reuse what you have, connect new services, modernize gradually.
 
+**References:**
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [cloud.google.com/solutions/unlocking-legacy-applications](https://cloud.google.com/solutions/unlocking-legacy-applications)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+
 </details>
 
 ---
@@ -197,6 +227,11 @@ Modernizing applications on Google Cloud (managed services, containers, CI/CD) s
 - **D. DevOps requires market trends to be measured**: DevOps is about faster, more reliable software delivery, not tracking market trends.
 
 **Remember:** Modernize → release faster → meet user expectations sooner.
+
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [cloud.google.com/architecture/devops](https://cloud.google.com/architecture/devops)
 
 </details>
 
@@ -226,6 +261,11 @@ GKE Enterprise (formerly Anthos) is Google's platform to build, modernize and ma
 
 **Remember:** Containers managed consistently across hybrid and multicloud = GKE Enterprise.
 
+**References:**
+- [cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options](https://cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options)
+- [cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+
 </details>
 
 ---
@@ -253,6 +293,11 @@ Bare Metal Solution provides dedicated physical servers in Google Cloud location
 - **D. Cloud Run functions**: event-driven serverless functions are far from a legacy database platform.
 
 **Remember:** Licensing or hardware needs that rule out VMs = Bare Metal Solution.
+
+**References:**
+- [cloud.google.com/bare-metal/docs/bms-overview](https://cloud.google.com/bare-metal/docs/bms-overview)
+- [cloud.google.com/compute/docs/overview](https://cloud.google.com/compute/docs/overview)
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
 
 </details>
 
@@ -282,6 +327,11 @@ Cloud Run is a serverless platform that runs container images. It scales automat
 
 **Remember:** Container image + serverless + autoscaling = Cloud Run.
 
+**References:**
+- [docs.cloud.google.com/run/docs](https://docs.cloud.google.com/run/docs)
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+
 </details>
 
 ---
@@ -309,6 +359,11 @@ Apigee is Google Cloud's API management platform. It lets teams publish existing
 - **D. AppSheet**: AppSheet is a no-code app builder for business users, not a tool for managing APIs.
 
 **Remember:** Expose, secure, and manage APIs → Apigee.
+
+**References:**
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/appengine/docs/flexible/overview](https://docs.cloud.google.com/appengine/docs/flexible/overview)
 
 </details>
 
@@ -338,6 +393,11 @@ In serverless computing, developers write the code and Google Cloud handles serv
 
 **Remember:** "Just write the code, no servers to manage" → serverless.
 
+**References:**
+- [cloud.google.com/serverless](https://cloud.google.com/serverless)
+- [cloud.google.com/run/docs](https://cloud.google.com/run/docs)
+- [cloud.google.com/artifact-registry/docs](https://cloud.google.com/artifact-registry/docs)
+
 </details>
 
 ---
@@ -365,6 +425,11 @@ Serverless platforms scale automatically with demand, from zero users to many th
 - **D. Built-in security**: Security is a benefit of managed platforms, but it does not address variable demand.
 
 **Remember:** Unknown or spiky traffic on serverless → automatic scaling (up and down to zero).
+
+**References:**
+- [cloud.google.com/serverless](https://cloud.google.com/serverless)
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [cloud.google.com/run/pricing](https://cloud.google.com/run/pricing)
 
 **⚠️ Note:** "Avoid paying when no users are active" is really a pay-per-use cost benefit (scale to zero). Scalability is still the best of the four options, so pick the keyed answer.
 
@@ -396,6 +461,11 @@ Cloud Run functions (formerly Cloud Functions) run small pieces of code in respo
 
 **Remember:** Small code triggered by an event, no servers → Cloud Run functions.
 
+**References:**
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+- [docs.cloud.google.com/run/docs/tutorials/trigger-functions-storage](https://docs.cloud.google.com/run/docs/tutorials/trigger-functions-storage)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+
 </details>
 
 ---
@@ -423,6 +493,11 @@ GKE Enterprise (formerly Anthos) gives one central way to manage Kubernetes clus
 - **D. BigQuery Omni**: BigQuery Omni is multicloud analytics, not container management.
 
 **Remember:** Manage Kubernetes across hybrid and multicloud from one place → GKE Enterprise.
+
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options](https://docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options)
+- [docs.cloud.google.com/kubernetes-engine/docs/fleets-overview](https://docs.cloud.google.com/kubernetes-engine/docs/fleets-overview)
+- [docs.cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://docs.cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
 
 </details>
 
@@ -452,6 +527,11 @@ With managed services, Google Cloud takes over routine admin work such as OS pat
 
 **Remember:** Less patching and maintenance, more time for innovation → managed services.
 
+**References:**
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+- [docs.cloud.google.com/sql/docs](https://docs.cloud.google.com/sql/docs)
+- [cloud.google.com/products](https://cloud.google.com/products)
+
 </details>
 
 ---
@@ -479,6 +559,11 @@ Microservices architecture splits an application into small, independent service
 - **D. Hardware virtualization**: Virtualization runs many VMs on one machine; it does not describe how an app is designed.
 
 **Remember:** Small, independent, separately deployable services → microservices.
+
+**References:**
+- [cloud.google.com/learn/what-is-microservices-architecture](https://cloud.google.com/learn/what-is-microservices-architecture)
+- [cloud.google.com/blog/topics/developers-practitioners/microservices-architecture-google-cloud](https://cloud.google.com/blog/topics/developers-practitioners/microservices-architecture-google-cloud)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
 
 </details>
 
@@ -508,6 +593,11 @@ A managed service handles routine maintenance for you, such as applying security
 
 **Remember:** Managed service = provider does patching, upgrades, and maintenance; you own access and data.
 
+**References:**
+- [cloud.google.com/discover/what-is-managed-database-service](https://cloud.google.com/discover/what-is-managed-database-service)
+- [docs.cloud.google.com/compute/vm-manager/docs/patch](https://docs.cloud.google.com/compute/vm-manager/docs/patch)
+- [cloud.google.com/security/shared-responsibility-model](https://cloud.google.com/security/shared-responsibility-model)
+
 </details>
 
 ---
@@ -535,6 +625,11 @@ App Engine can run several versions of an app at once and split traffic between 
 - **D. Different versions for the same user**: Traffic splitting sends different users to different versions, not one user to several.
 
 **Remember:** App Engine traffic splitting → A/B tests and gradual rollouts across user groups.
+
+**References:**
+- [cloud.google.com/appengine/docs/standard/splitting-traffic](https://cloud.google.com/appengine/docs/standard/splitting-traffic)
+- [cloud.google.com/appengine/docs/an-overview-of-app-engine](https://cloud.google.com/appengine/docs/an-overview-of-app-engine)
+- [cloud.google.com/appengine/docs/standard/how-requests-are-routed](https://cloud.google.com/appengine/docs/standard/how-requests-are-routed)
 
 </details>
 
@@ -564,6 +659,11 @@ Replatforming moves an app to the cloud and makes a few targeted improvements, l
 
 **Remember:** Copy as is = rehost; small improvements like managed services = replatform; rewrite = refactor.
 
+**References:**
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [docs.cloud.google.com/migration-center/docs/migration-planning-overview](https://docs.cloud.google.com/migration-center/docs/migration-planning-overview)
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+
 </details>
 
 ---
@@ -591,6 +691,11 @@ Refactoring rewrites an application to be cloud native, for example as microserv
 - **D. Automatically PCI-DSS compliant**: No architecture makes an app compliant automatically; compliance is a shared responsibility.
 
 **Remember:** Refactor = most work, most cloud benefit (scalability, efficiency).
+
+**References:**
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/learn/what-is-microservices-architecture](https://cloud.google.com/learn/what-is-microservices-architecture)
+- [cloud.google.com/security/compliance/pci-dss](https://cloud.google.com/security/compliance/pci-dss)
 
 </details>
 
@@ -620,6 +725,11 @@ An API (application programming interface) is a contract that defines how one pi
 
 **Remember:** API = agreed rules for apps to talk to each other.
 
+**References:**
+- [cloud.google.com/apis/docs/overview](https://cloud.google.com/apis/docs/overview)
+- [cloud.google.com/api-gateway/docs](https://cloud.google.com/api-gateway/docs)
+- [cloud.google.com/endpoints/docs/openapi/about-cloud-endpoints](https://cloud.google.com/endpoints/docs/openapi/about-cloud-endpoints)
+
 </details>
 
 ---
@@ -648,6 +758,11 @@ GKE Autopilot is a mode of Google Kubernetes Engine where Google manages the nod
 
 **Remember:** Kubernetes without managing nodes → GKE Autopilot; full node control → GKE Standard.
 
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/choose-cluster-mode](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/choose-cluster-mode)
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+
 </details>
 
 ---
@@ -671,10 +786,15 @@ Spot VMs are spare Google Cloud capacity at a large discount. Google can stop th
 
 **Why the others are wrong:**
 - **B. Managed services**: This is a general approach, not a low-cost interruptible compute option.
-- **C. Premium tier virtual machines**: There is no premium VM option meant for saving money; premium choices cost more.
+- **C. Premium tier virtual machines**: There is no such VM type. In Google Cloud, Premium Tier is a Network Service Tier (traffic on Google's global network), which affects networking, not compute cost.
 - **D. Cloud Run functions**: Functions are for short event-driven code, not long nightly batch jobs over millions of records.
 
 **Remember:** Fault-tolerant batch + lowest cost + OK to be interrupted → Spot VMs.
+
+**References:**
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+- [docs.cloud.google.com/compute/docs/instances/create-use-spot](https://docs.cloud.google.com/compute/docs/instances/create-use-spot)
+- [docs.cloud.google.com/compute/docs/instances/provisioning-models](https://docs.cloud.google.com/compute/docs/instances/provisioning-models)
 
 </details>
 
@@ -704,6 +824,11 @@ Google Cloud VMware Engine runs a full VMware environment as a managed service o
 
 **Remember:** Move VMware workloads and keep VMware tools → Google Cloud VMware Engine.
 
+**References:**
+- [cloud.google.com/vmware-engine](https://cloud.google.com/vmware-engine)
+- [docs.cloud.google.com/vmware-engine/docs/overview](https://docs.cloud.google.com/vmware-engine/docs/overview)
+- [docs.cloud.google.com/vmware-engine/docs/workloads/howto-migrate-workloads](https://docs.cloud.google.com/vmware-engine/docs/workloads/howto-migrate-workloads)
+
 </details>
 
 ---
@@ -731,6 +856,11 @@ App Engine is a fully managed platform (PaaS) for web applications. Developers d
 - **C. AutoML**: AutoML trains custom ML models, not web applications.
 
 **Remember:** Deploy web app code, Google handles scaling and infrastructure → App Engine (or Cloud Run).
+
+**References:**
+- [cloud.google.com/appengine](https://cloud.google.com/appengine)
+- [docs.cloud.google.com/appengine/docs](https://docs.cloud.google.com/appengine/docs)
+- [docs.cloud.google.com/appengine/docs/standard/how-instances-are-managed](https://docs.cloud.google.com/appengine/docs/standard/how-instances-are-managed)
 
 **⚠️ Note:** App Engine is right among these options, but for new web apps Google now usually steers toward Cloud Run. Pick the keyed answer on this exam.
 
@@ -762,6 +892,11 @@ GKE runs containers and supports fast, repeatable deployments, rolling updates a
 
 **Remember:** GKE = fast, consistent container deployments and rollbacks.
 
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
+- [docs.cloud.google.com/kubernetes-engine/docs](https://docs.cloud.google.com/kubernetes-engine/docs)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/best-practices-continuous-integration-delivery-kubernetes](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/best-practices-continuous-integration-delivery-kubernetes)
+
 **⚠️ Note:** The keyed answer is vague. Faster testing is a general benefit of containers and CI/CD, not something only GKE provides. It is keyed because the other options are clearly false.
 
 </details>
@@ -792,6 +927,11 @@ In Google's framing, "invent in brownfield" means building a new cloud-native ap
 
 **Remember:** New app, nothing existing = greenfield. New app that replaces a legacy one = brownfield.
 
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/solutions/infrastructure-modernization](https://cloud.google.com/solutions/infrastructure-modernization)
+
 </details>
 
 ---
@@ -819,6 +959,11 @@ GKE Enterprise (formerly Anthos) is Google Cloud's platform for managing applica
 - **D. Compute Engine**: Virtual machines in Google Cloud; it doesn't manage on-premises environments.
 
 **Remember:** Consistent management across on-prem and clouds = GKE Enterprise.
+
+**References:**
+- [cloud.google.com/kubernetes-engine/enterprise](https://cloud.google.com/kubernetes-engine/enterprise)
+- [docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options](https://docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options)
+- [docs.cloud.google.com/functions/docs/concepts/overview](https://docs.cloud.google.com/functions/docs/concepts/overview)
 
 </details>
 
@@ -848,6 +993,11 @@ Compute Engine gives full control over virtual machines, including the operating
 
 **Remember:** Need control of VMs and OS = Compute Engine.
 
+**References:**
+- [docs.cloud.google.com/compute/docs/instance-groups](https://docs.cloud.google.com/compute/docs/instance-groups)
+- [docs.cloud.google.com/compute/docs/autoscaler](https://docs.cloud.google.com/compute/docs/autoscaler)
+- [docs.cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups](https://docs.cloud.google.com/compute/docs/instance-groups/rolling-out-updates-to-managed-instance-groups)
+
 </details>
 
 ---
@@ -875,6 +1025,11 @@ Greenfield means starting fresh with no existing application. BrightCart is buil
 - **D. Invent in brownfield**: Brownfield means building a new app to replace an existing system.
 
 **Remember:** Nothing existing = greenfield.
+
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/solutions/camp](https://cloud.google.com/solutions/camp)
 
 </details>
 
@@ -904,6 +1059,11 @@ Multi-cloud means using more than one public cloud provider. Here TrailPilot run
 
 **Remember:** Several public clouds → multi-cloud. On-premises + public cloud → hybrid.
 
+**References:**
+- [cloud.google.com/learn/what-is-multicloud](https://cloud.google.com/learn/what-is-multicloud)
+- [cloud.google.com/kubernetes-engine/multi-cloud/docs](https://cloud.google.com/kubernetes-engine/multi-cloud/docs)
+- [cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
+
 </details>
 
 ---
@@ -931,6 +1091,11 @@ An API exposes the existing system's data and functions to new apps in a standar
 - **C. Automatically convert to cloud-native**: An API doesn't turn an old system into a cloud-native one by itself.
 
 **Remember:** API on top of a legacy system = new experiences without rewriting the old system.
+
+**References:**
+- [cloud.google.com/solutions/unlocking-legacy-applications](https://cloud.google.com/solutions/unlocking-legacy-applications)
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
 
 </details>
 
@@ -960,6 +1125,11 @@ The problem is that the website shows stale stock because it isn't connected to 
 
 **Remember:** APIs connect systems programmatically so data stays in sync.
 
+**References:**
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [cloud.google.com/solutions/unlocking-legacy-applications](https://cloud.google.com/solutions/unlocking-legacy-applications)
+
 </details>
 
 ---
@@ -987,6 +1157,11 @@ A hypervisor is the software layer that creates and runs virtual machines. It sp
 - **D. Open source**: Open source is a licensing model, not a virtualization technology.
 
 **Remember:** Multiple operating systems on one physical machine → hypervisor (VMs).
+
+**References:**
+- [cloud.google.com/learn/what-is-a-virtual-machine](https://cloud.google.com/learn/what-is-a-virtual-machine)
+- [cloud.google.com/discover/containers-vs-vms](https://cloud.google.com/discover/containers-vs-vms)
+- [docs.cloud.google.com/compute/docs/overview](https://docs.cloud.google.com/compute/docs/overview)
 
 </details>
 
@@ -1016,6 +1191,11 @@ Spot VMs run on Google's spare capacity at a large discount. Google can stop the
 
 **Remember:** Interruptible + restartable + cheapest → Spot VMs (the successor to Preemptible VMs).
 
+**References:**
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+- [cloud.google.com/spot-vms/pricing](https://cloud.google.com/spot-vms/pricing)
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+
 </details>
 
 ---
@@ -1043,6 +1223,11 @@ Cloud-native apps are built from microservices, containers and managed services.
 - **D. Speed up CapEx planning**: Cloud-native apps use pay-as-you-go OpEx, not more capital planning.
 
 **Remember:** Cloud-native → frequent, agile releases.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-native](https://cloud.google.com/learn/what-is-cloud-native)
+- [cloud.google.com/resources/rearchitecting-to-cloud-native](https://cloud.google.com/resources/rearchitecting-to-cloud-native)
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
 
 </details>
 
@@ -1072,6 +1257,11 @@ Cloud SQL supports SQL Server as a managed service, so Google handles patching, 
 
 **Remember:** Keep the same relational engine, stop managing it → Cloud SQL (via Database Migration Service).
 
+**References:**
+- [docs.cloud.google.com/sql/docs/sqlserver](https://docs.cloud.google.com/sql/docs/sqlserver)
+- [docs.cloud.google.com/database-migration/docs/sqlserver/guide](https://docs.cloud.google.com/database-migration/docs/sqlserver/guide)
+- [cloud.google.com/sql](https://cloud.google.com/sql)
+
 </details>
 
 ---
@@ -1099,6 +1289,11 @@ An API lets partners pull current data straight into their own apps in a control
 - **D. Move to a non-relational database**: changing the database type does not give partners access or create revenue.
 
 **Remember:** Monetize data for partners' apps = a paid, managed API.
+
+**References:**
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/monetization/overview](https://docs.cloud.google.com/apigee/docs/api-platform/monetization/overview)
+- [docs.cloud.google.com/api-gateway/docs/about-api-gateway](https://docs.cloud.google.com/api-gateway/docs/about-api-gateway)
 
 </details>
 
@@ -1128,6 +1323,11 @@ APIs let separate systems talk to each other in real time. FitPerks needs gyms, 
 
 **Remember:** Several businesses sharing live data = connect them with APIs.
 
+**References:**
+- [docs.cloud.google.com/apis/docs/overview](https://docs.cloud.google.com/apis/docs/overview)
+- [cloud.google.com/learn/what-is-api-management](https://cloud.google.com/learn/what-is-api-management)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+
 </details>
 
 ---
@@ -1155,6 +1355,11 @@ Cloud Run runs stateless containers without any servers or clusters to manage. I
 - **D. AlloyDB Omni**: a downloadable PostgreSQL-compatible database, not a container hosting service.
 
 **Remember:** Container + serverless + scale to zero = Cloud Run.
+
+**References:**
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [docs.cloud.google.com/run/docs/about-instance-autoscaling](https://docs.cloud.google.com/run/docs/about-instance-autoscaling)
+- [docs.cloud.google.com/compute/docs/instances](https://docs.cloud.google.com/compute/docs/instances)
 
 </details>
 
@@ -1184,6 +1389,11 @@ Rehosting moves existing VMs to the cloud as they are, with the same OS, setting
 
 **Remember:** Same VMs, no changes, quick exit = lift and shift.
 
+**References:**
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [docs.cloud.google.com/migration-center/docs/migration-planning-overview](https://docs.cloud.google.com/migration-center/docs/migration-planning-overview)
+- [cloud.google.com/blog/products/application-development/application-rationalization-what-why-and-how](https://cloud.google.com/blog/products/application-development/application-rationalization-what-why-and-how)
+
 </details>
 
 ---
@@ -1211,6 +1421,11 @@ Open standards, open source and interoperable tools let workloads move between p
 - **D. Only SaaS products**: SaaS can tie you to each vendor and doesn't give control over where apps run.
 
 **Remember:** Fear of lock-in + hybrid/multicloud flexibility = openness and interoperability.
+
+**References:**
+- [cloud.google.com/learn/what-is-multicloud](https://cloud.google.com/learn/what-is-multicloud)
+- [docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers](https://docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers)
+- [cloud.google.com/blog/topics/inside-google-cloud/empowering-customers-and-the-ecosystem-with-an-open-cloud](https://cloud.google.com/blog/topics/inside-google-cloud/empowering-customers-and-the-ecosystem-with-an-open-cloud)
 
 </details>
 
@@ -1240,6 +1455,11 @@ GKE Enterprise (formerly Anthos) gives one consistent way to manage Kubernetes c
 
 **Remember:** Kubernetes everywhere (hybrid/multicloud), managed from one place = GKE Enterprise.
 
+**References:**
+- [cloud.google.com/kubernetes-engine/docs/fleets-overview](https://cloud.google.com/kubernetes-engine/docs/fleets-overview)
+- [cloud.google.com/kubernetes-engine/multi-cloud/docs](https://cloud.google.com/kubernetes-engine/multi-cloud/docs)
+- [cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
+
 </details>
 
 ---
@@ -1267,6 +1487,11 @@ Cloud adoption usually has two tracks: build new cloud-native apps and migrate e
 - **D. Increase on-premises capital spending**: this moves away from the cloud and its OpEx model.
 
 **Remember:** Cloud adoption = build new cloud-native apps and migrate existing workloads.
+
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/adoption-framework](https://cloud.google.com/adoption-framework)
 
 </details>
 
@@ -1296,6 +1521,11 @@ Cloud Run runs containers in a fully managed, serverless environment. Because an
 
 **Remember:** Any language + no servers to manage = Cloud Run.
 
+**References:**
+- [cloud.google.com/run/docs/overview/what-is-cloud-run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [cloud.google.com/products/managed-service-for-apache-spark](https://cloud.google.com/products/managed-service-for-apache-spark)
+- [cloud.google.com/pubsub/docs/overview](https://cloud.google.com/pubsub/docs/overview)
+
 </details>
 
 ---
@@ -1323,6 +1553,11 @@ An API lets partners' apps and websites request GlobeTrek's latest posts, images
 - **C. App Engine standard environment**: it hosts web apps, but isn't the mechanism for partner integration.
 
 **Remember:** Share data or content with other companies' systems = API.
+
+**References:**
+- [docs.cloud.google.com/api-gateway/docs/glossary](https://docs.cloud.google.com/api-gateway/docs/glossary)
+- [docs.cloud.google.com/api-gateway/docs/about-api-gateway](https://docs.cloud.google.com/api-gateway/docs/about-api-gateway)
+- [docs.cloud.google.com/appengine/docs/standard/overview](https://docs.cloud.google.com/appengine/docs/standard/overview)
 
 </details>
 
@@ -1352,6 +1587,11 @@ A container packages the application code with its libraries and dependencies. T
 
 **Remember:** "Works on my machine" problems = containers.
 
+**References:**
+- [cloud.google.com/learn/what-are-containers](https://cloud.google.com/learn/what-are-containers)
+- [cloud.google.com/discover/what-is-containerization](https://cloud.google.com/discover/what-is-containerization)
+- [docs.cloud.google.com/load-balancing/docs/load-balancing-overview](https://docs.cloud.google.com/load-balancing/docs/load-balancing-overview)
+
 </details>
 
 ---
@@ -1379,6 +1619,11 @@ APIs let two companies' systems work together. Connecting the reservation system
 - **C. Move all records into an ML model**: that is forecasting, not the partner integration described.
 
 **Remember:** New partner + combined customer experience = connect systems with APIs.
+
+**References:**
+- [cloud.google.com/apis/docs/overview](https://cloud.google.com/apis/docs/overview)
+- [cloud.google.com/api-gateway/docs/about-api-gateway](https://cloud.google.com/api-gateway/docs/about-api-gateway)
+- [cloud.google.com/solutions/new-channels-using-apis](https://cloud.google.com/solutions/new-channels-using-apis)
 
 </details>
 
@@ -1408,6 +1653,11 @@ GKE is Google's managed Kubernetes service. Kubernetes orchestrates containers: 
 
 **Remember:** Orchestrate many containers = Kubernetes = GKE.
 
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/docs](https://docs.cloud.google.com/kubernetes-engine/docs)
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+
 </details>
 
 ---
@@ -1435,6 +1685,11 @@ Open source software has public source code that anyone can view, modify and imp
 - **D. Closed standard**: a specification controlled by one party, the opposite of open.
 
 **Remember:** Public code, anyone can change and contribute = open source.
+
+**References:**
+- [opensource.org/osd](https://opensource.org/osd)
+- [opensource.google/](https://opensource.google/)
+- [cloud.google.com/learn/what-is-paas](https://cloud.google.com/learn/what-is-paas)
 
 </details>
 
@@ -1464,6 +1719,11 @@ Slow release cycles stop a company from responding to customer needs, which is e
 
 **Remember:** Slow releases + losing customers = modernize applications.
 
+**References:**
+- [cloud.google.com/solutions/application-modernization](https://cloud.google.com/solutions/application-modernization)
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [cloud.google.com/learn/what-is-cloud-native](https://cloud.google.com/learn/what-is-cloud-native)
+
 </details>
 
 ---
@@ -1491,6 +1751,11 @@ Apigee is Google Cloud's platform for managing APIs. It tracks traffic and analy
 - **D. Cloud Run functions**: it runs event-driven code, not API management.
 
 **Remember:** Secure, monitor and monetize APIs = Apigee.
+
+**References:**
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [docs.cloud.google.com/apigee/docs/api-platform/monetization/overview](https://docs.cloud.google.com/apigee/docs/api-platform/monetization/overview)
+- [docs.cloud.google.com/apigee/docs/api-platform/develop/policy-attachment-and-enforcement](https://docs.cloud.google.com/apigee/docs/api-platform/develop/policy-attachment-and-enforcement)
 
 </details>
 
@@ -1520,6 +1785,11 @@ Each virtual machine runs its own full guest operating system on top of a hyperv
 
 **Remember:** Dedicated OS per app → virtual machines. Shared OS kernel, lightweight → containers.
 
+**References:**
+- [docs.cloud.google.com/compute/docs/overview](https://docs.cloud.google.com/compute/docs/overview)
+- [docs.cloud.google.com/compute/docs/instances](https://docs.cloud.google.com/compute/docs/instances)
+- [cloud.google.com/discover/containers-vs-vms](https://cloud.google.com/discover/containers-vs-vms)
+
 </details>
 
 ---
@@ -1547,6 +1817,11 @@ A hybrid cloud combines on-premises infrastructure with public cloud services. S
 - **C. Multi-cloud**: Multi-cloud means using more than one public cloud provider. The stem mentions only Google Cloud and a private data center.
 
 **Remember:** On-premises + one public cloud → hybrid. Several public clouds → multicloud.
+
+**References:**
+- [cloud.google.com/learn/what-is-hybrid-cloud](https://cloud.google.com/learn/what-is-hybrid-cloud)
+- [cloud.google.com/hybrid-cloud](https://cloud.google.com/hybrid-cloud)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
 
 </details>
 
@@ -1576,6 +1851,11 @@ Vendor lock-in happens when an application depends on one provider's proprietary
 
 **Remember:** Avoid lock-in → openness: open standards, open source, portable workloads.
 
+**References:**
+- [cloud.google.com/learn/what-is-multicloud](https://cloud.google.com/learn/what-is-multicloud)
+- [docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers](https://docs.cloud.google.com/architecture/hybrid-multicloud-patterns/drivers)
+- [cloud.google.com/architecture/framework](https://cloud.google.com/architecture/framework)
+
 </details>
 
 ---
@@ -1603,6 +1883,11 @@ Cloud Run functions (formerly Cloud Functions) runs small pieces of code in resp
 - **D. Compute Engine**: Virtual machines that you must manage yourself.
 
 **Remember:** Small code triggered by events, no servers → Cloud Run functions.
+
+**References:**
+- [cloud.google.com/functions](https://cloud.google.com/functions)
+- [docs.cloud.google.com/run/docs/write-functions](https://docs.cloud.google.com/run/docs/write-functions)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview)
 
 </details>
 
@@ -1632,6 +1917,11 @@ A hybrid cloud connects on-premises infrastructure with a public cloud. SecureVi
 
 **Remember:** Data stays on-premises + Google Cloud services → hybrid.
 
+**References:**
+- [cloud.google.com/learn/what-is-hybrid-cloud](https://cloud.google.com/learn/what-is-hybrid-cloud)
+- [docs.cloud.google.com/architecture/deployment-archetypes/hybrid](https://docs.cloud.google.com/architecture/deployment-archetypes/hybrid)
+- [cloud.google.com/distributed-cloud](https://cloud.google.com/distributed-cloud)
+
 </details>
 
 ---
@@ -1659,6 +1949,11 @@ BrightPulse runs on Google Cloud, but some of its data lives with two other publ
 - **D. Container environment**: Containers package applications. They don't define where data from different providers lives.
 
 **Remember:** Several public clouds → multicloud. On-premises + public cloud → hybrid.
+
+**References:**
+- [cloud.google.com/architecture/framework/system-design/compute](https://cloud.google.com/architecture/framework/system-design/compute)
+- [cloud.google.com/discover/what-is-multicloud](https://cloud.google.com/discover/what-is-multicloud)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
 
 </details>
 

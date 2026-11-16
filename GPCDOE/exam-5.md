@@ -487,7 +487,7 @@ Let's analyze the shortcomings of the other options:
 
 **What should you do?**
 
-- [ ] **A.** **Link Cloud Logging** as a source in **Looker Studio (formerly Data Studio)**. **Filter the logs on cache misses**.
+- [ ] **A.** **Link Cloud Logging** as a source in **Data Studio**. **Filter the logs on cache misses**.
 - [ ] **B.** **Configure Cloud Profiler** to identify and visualize when the **cache misses occur** based on the logs.
 - [x] **C.** **Create a logs-based metric in Cloud Logging** and a **dashboard for that metric in Cloud Monitoring**.
 - [ ] **D.** **Configure BigQuery as a sink** for **Cloud Logging**. **Create a scheduled query** to filter the **cache miss logs** and write them to a **separate table**.
@@ -516,7 +516,7 @@ Let's analyze the shortcomings of the other options:
 
 **Why Other Options Are Incorrect:**
 
-**A. Linking Cloud Logging to Looker Studio and filtering logs** – **Looker Studio is not optimized for real-time log-based monitoring**. **Logs-based metrics in Cloud Monitoring are more efficient** for tracking cache misses.
+**A. Linking Cloud Logging to Data Studio and filtering logs** – **Data Studio is not optimized for real-time log-based monitoring**. **Logs-based metrics in Cloud Monitoring are more efficient** for tracking cache misses.
 
 **B. Using Cloud Profiler** – **Cloud Profiler is for analyzing CPU and memory performance** , **not tracking log-based events like cache misses**.
 

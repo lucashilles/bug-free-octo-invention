@@ -26,6 +26,11 @@ TalentHive uses a finished application from a vendor. It does not manage servers
 
 **Remember:** Ready-made app you just log in to = SaaS; your code on managed platform = PaaS; your VMs = IaaS.
 
+**References:**
+- [cloud.google.com/learn/what-is-saas](https://cloud.google.com/learn/what-is-saas)
+- [cloud.google.com/learn/what-is-paas](https://cloud.google.com/learn/what-is-paas)
+- [cloud.google.com/learn/what-is-iaas](https://cloud.google.com/learn/what-is-iaas)
+
 ---
 
 ## Question 2
@@ -51,6 +56,11 @@ Apigee is Google Cloud's API management platform. It lets teams publish existing
 - **D. AppSheet**: AppSheet is a no-code app builder for business users, not a tool for managing APIs.
 
 **Remember:** Expose, secure, and manage APIs → Apigee.
+
+**References:**
+- [docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+- [cloud.google.com/apigee](https://cloud.google.com/apigee)
+- [docs.cloud.google.com/appengine/docs/flexible/overview](https://docs.cloud.google.com/appengine/docs/flexible/overview)
 
 ---
 
@@ -78,6 +88,11 @@ With on-premises infrastructure, a company must buy and install enough hardware 
 
 **Remember:** On-premises = buy for the peak in advance; cloud = scale on demand and pay for what you use.
 
+**References:**
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [docs.cloud.google.com/architecture/migration-to-google-cloud-best-practices](https://docs.cloud.google.com/architecture/migration-to-google-cloud-best-practices)
+- [cloud.google.com/solutions/serverless](https://cloud.google.com/solutions/serverless)
+
 ---
 
 ## Question 4
@@ -103,6 +118,11 @@ In a private data center, the company buys servers and buildings up front, which
 - **D. Same management, higher TCO**: Cost management changes, and the cloud is not assumed to raise TCO.
 
 **Remember:** Moving to the cloud = CapEx (buy up front) becomes OpEx (pay as you go).
+
+**References:**
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [docs.cloud.google.com/migration-center/docs/generate-tco-report](https://docs.cloud.google.com/migration-center/docs/generate-tco-report)
 
 ---
 
@@ -130,6 +150,11 @@ Looker is Google Cloud's enterprise business intelligence platform. It lets team
 
 **Remember:** Enterprise BI, dashboards, multicloud data modeling → Looker.
 
+**References:**
+- [docs.cloud.google.com/looker/docs](https://docs.cloud.google.com/looker/docs)
+- [docs.cloud.google.com/bigquery/docs/looker](https://docs.cloud.google.com/bigquery/docs/looker)
+- [cloud.google.com/compute/docs/instances/spot](https://cloud.google.com/compute/docs/instances/spot)
+
 ---
 
 ## Question 6
@@ -155,6 +180,11 @@ BrightBee wants a custom model that sorts short text messages into its own categ
 - **D. Pub/Sub**: Pub/Sub is a messaging service for moving events, not for training models.
 
 **Remember:** Custom categories + your own labeled text + little ML expertise → AutoML for text.
+
+**References:**
+- [docs.cloud.google.com/natural-language/docs](https://docs.cloud.google.com/natural-language/docs)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/training-overview)
+- [docs.cloud.google.com/pubsub/docs/overview](https://docs.cloud.google.com/pubsub/docs/overview)
 
 **⚠️ Note:** "AutoML Natural Language" is an older standalone product name. Today AutoML is part of the AI platform (Gemini Enterprise Agent Platform, formerly Vertex AI), and Google also steers text classification toward tuning Gemini models. The idea is still right, so pick the keyed answer on this exam.
 
@@ -184,6 +214,11 @@ Modern customers expect to reach services anytime, anywhere, on whatever device 
 
 **Remember:** Customer expectations drive transformation: access anywhere, on any device.
 
+**References:**
+- [cloud.google.com/learn/what-is-digital-transformation](https://cloud.google.com/learn/what-is-digital-transformation)
+- [cloud.google.com/learn/what-is-cloud-computing](https://cloud.google.com/learn/what-is-cloud-computing)
+- [docs.cloud.google.com/architecture/framework/security/security-principles](https://docs.cloud.google.com/architecture/framework/security/security-principles)
+
 ---
 
 ## Question 8
@@ -209,6 +244,11 @@ Looker is a business intelligence (BI) platform. It helps managers and analysts 
 - **C. Robust data roll-back accuracy**: Rolling back data is a database feature, not what Looker provides.
 
 **Remember:** Dashboards and BI for business users → Looker; storing and querying at scale → BigQuery.
+
+**References:**
+- [cloud.google.com/looker](https://cloud.google.com/looker)
+- [docs.cloud.google.com/looker/docs](https://docs.cloud.google.com/looker/docs)
+- [cloud.google.com/looker-bi](https://cloud.google.com/looker-bi)
 
 ---
 
@@ -236,6 +276,11 @@ In serverless computing, developers write the code and Google Cloud handles serv
 
 **Remember:** "Just write the code, no servers to manage" → serverless.
 
+**References:**
+- [cloud.google.com/serverless](https://cloud.google.com/serverless)
+- [cloud.google.com/run/docs](https://cloud.google.com/run/docs)
+- [cloud.google.com/artifact-registry/docs](https://cloud.google.com/artifact-registry/docs)
+
 ---
 
 ## Question 10
@@ -261,6 +306,11 @@ A service-level indicator (SLI) is a direct, measured value of how the service i
 - **D. Service-level objective**: An SLO is the target value for an SLI, not the measurement itself.
 
 **Remember:** SLI = what you measure; SLO = the goal; SLA = the promise with penalties.
+
+**References:**
+- [sre.google/sre-book/service-level-objectives](https://sre.google/sre-book/service-level-objectives)
+- [docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring](https://docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring)
+- [cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla](https://cloud.google.com/blog/products/devops-sre/sre-fundamentals-sli-vs-slo-vs-sla)
 
 ---
 
@@ -288,6 +338,11 @@ In the cloud, many teams can create resources themselves, so spending decisions 
 
 **Remember:** Cloud spending = decentralized and variable; that is why FinOps and cost controls matter.
 
+**References:**
+- [cloud.google.com/cost-management](https://cloud.google.com/cost-management)
+- [docs.cloud.google.com/docs/costs-usage](https://docs.cloud.google.com/docs/costs-usage)
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+
 ---
 
 ## Question 12
@@ -313,6 +368,11 @@ Cloud Storage is Google Cloud's object storage for files like images, reports, a
 - **D. Spanner**: Spanner is a relational database for transactions, not low-cost file storage.
 
 **Remember:** Nearline, Coldline, Archive → Cloud Storage classes for less frequently accessed data.
+
+**References:**
+- [docs.cloud.google.com/storage/docs/storage-classes](https://docs.cloud.google.com/storage/docs/storage-classes)
+- [docs.cloud.google.com/storage/docs/lifecycle](https://docs.cloud.google.com/storage/docs/lifecycle)
+- [docs.cloud.google.com/filestore/docs/overview](https://docs.cloud.google.com/filestore/docs/overview)
 
 ---
 
@@ -340,6 +400,11 @@ Contact Center AI Platform is Google's customer-service solution. Virtual agents
 
 **Remember:** High-volume customer chats and calls → Contact Center AI.
 
+**References:**
+- [cloud.google.com/solutions/contact-center-ai-platform](https://cloud.google.com/solutions/contact-center-ai-platform)
+- [docs.cloud.google.com/contact-center/ccai-platform/docs](https://docs.cloud.google.com/contact-center/ccai-platform/docs)
+- [docs.cloud.google.com/text-to-speech/docs](https://docs.cloud.google.com/text-to-speech/docs)
+
 ---
 
 ## Question 14
@@ -365,6 +430,11 @@ BigQuery Omni lets you run BigQuery SQL on data stored in other public clouds, s
 - **D. Cloud Run functions**: Cloud Run functions run event-driven code, not SQL analytics across clouds.
 
 **Remember:** Query data in AWS/Azure with BigQuery, without moving it → BigQuery Omni.
+
+**References:**
+- [docs.cloud.google.com/bigquery/docs/omni-introduction](https://docs.cloud.google.com/bigquery/docs/omni-introduction)
+- [docs.cloud.google.com/alloydb/omni/docs](https://docs.cloud.google.com/alloydb/omni/docs)
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
 
 ---
 
@@ -392,6 +462,11 @@ UrbanPedal already keeps usage and repair history in BigQuery. With BigQuery ML 
 
 **Remember:** Historical data + "predict" + data already in BigQuery → build an ML model in BigQuery.
 
+**References:**
+- [cloud.google.com/bigquery/docs/bqml-introduction](https://cloud.google.com/bigquery/docs/bqml-introduction)
+- [cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create](https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create)
+- [cloud.google.com/apigee/docs/api-platform/get-started/what-apigee](https://cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+
 ---
 
 ## Question 16
@@ -417,6 +492,11 @@ Serverless platforms scale automatically with demand, from zero users to many th
 - **D. Built-in security**: Security is a benefit of managed platforms, but it does not address variable demand.
 
 **Remember:** Unknown or spiky traffic on serverless → automatic scaling (up and down to zero).
+
+**References:**
+- [cloud.google.com/serverless](https://cloud.google.com/serverless)
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+- [cloud.google.com/run/pricing](https://cloud.google.com/run/pricing)
 
 **⚠️ Note:** "Avoid paying when no users are active" is really a pay-per-use cost benefit (scale to zero). Scalability is still the best of the four options, so pick the keyed answer.
 
@@ -446,6 +526,11 @@ Machine learning needs clean, consistent data. When 220 studios use different co
 
 **Remember:** Good ML starts with clean, consistent data: prepare and standardize first.
 
+**References:**
+- [docs.cloud.google.com/bigquery/docs/preprocess-overview](https://docs.cloud.google.com/bigquery/docs/preprocess-overview)
+- [docs.cloud.google.com/dataflow/docs/machine-learning/ml-preprocess-data](https://docs.cloud.google.com/dataflow/docs/machine-learning/ml-preprocess-data)
+- [docs.cloud.google.com/architecture/ml-on-gcp-best-practices](https://docs.cloud.google.com/architecture/ml-on-gcp-best-practices)
+
 ---
 
 ## Question 18
@@ -471,6 +556,11 @@ Cloud Run functions (formerly Cloud Functions) run small pieces of code in respo
 - **D. Spot VMs**: Spot VMs are discounted virtual machines; they are still VMs to manage.
 
 **Remember:** Small code triggered by an event, no servers → Cloud Run functions.
+
+**References:**
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+- [docs.cloud.google.com/run/docs/tutorials/trigger-functions-storage](https://docs.cloud.google.com/run/docs/tutorials/trigger-functions-storage)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
 
 ---
 
@@ -498,6 +588,11 @@ The resource hierarchy is organization, then folders, then projects, then resour
 
 **Remember:** Group projects in folders; policies flow down the hierarchy.
 
+**References:**
+- [docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
+- [docs.cloud.google.com/iam/docs/resource-hierarchy-access-control](https://docs.cloud.google.com/iam/docs/resource-hierarchy-access-control)
+- [docs.cloud.google.com/iam/docs/allow-policies](https://docs.cloud.google.com/iam/docs/allow-policies)
+
 ---
 
 ## Question 20
@@ -523,6 +618,11 @@ GKE Enterprise (formerly Anthos) gives one central way to manage Kubernetes clus
 - **D. BigQuery Omni**: BigQuery Omni is multicloud analytics, not container management.
 
 **Remember:** Manage Kubernetes across hybrid and multicloud from one place → GKE Enterprise.
+
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options](https://docs.cloud.google.com/kubernetes-engine/enterprise/docs/deployment-options)
+- [docs.cloud.google.com/kubernetes-engine/docs/fleets-overview](https://docs.cloud.google.com/kubernetes-engine/docs/fleets-overview)
+- [docs.cloud.google.com/kubernetes-engine/enterprise/clusters/docs](https://docs.cloud.google.com/kubernetes-engine/enterprise/clusters/docs)
 
 ---
 
@@ -550,6 +650,11 @@ Wearable IoT devices collect signals like heart rate, activity, and sleep automa
 
 **Remember:** Automatic, continuous data collection from the physical world → IoT devices.
 
+**References:**
+- [docs.cloud.google.com/architecture/connected-devices](https://docs.cloud.google.com/architecture/connected-devices)
+- [docs.cloud.google.com/healthcare-api/docs/concepts/fhir](https://docs.cloud.google.com/healthcare-api/docs/concepts/fhir)
+- [cloud.google.com/solutions/healthcare-life-sciences](https://cloud.google.com/solutions/healthcare-life-sciences)
+
 ---
 
 ## Question 22
@@ -575,6 +680,11 @@ In SaaS, the provider runs the application, platform, servers, and networks. The
 - **D. Monitoring computer networks**: Underlying networks are also managed by the provider.
 
 **Remember:** In SaaS, the customer always owns its data, content, and user access.
+
+**References:**
+- [cloud.google.com/learn/paas-vs-iaas-vs-saas](https://cloud.google.com/learn/paas-vs-iaas-vs-saas)
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [cloud.google.com/learn/what-is-cloud-security](https://cloud.google.com/learn/what-is-cloud-security)
 
 ---
 
@@ -602,6 +712,11 @@ Dataflow is Google Cloud's fully managed service for data processing pipelines. 
 
 **Remember:** Transform data in a managed, autoscaling pipeline (ETL, batch or streaming) → Dataflow.
 
+**References:**
+- [cloud.google.com/dataflow/docs](https://cloud.google.com/dataflow/docs)
+- [cloud.google.com/dataflow/docs/concepts/overview](https://cloud.google.com/dataflow/docs/concepts/overview)
+- [cloud.google.com/pubsub/docs/overview](https://cloud.google.com/pubsub/docs/overview)
+
 ---
 
 ## Question 24
@@ -627,6 +742,11 @@ With managed services, Google Cloud takes over routine admin work such as OS pat
 - **D. Edge computing**: Edge computing moves processing closer to users or devices; it does not reduce admin work.
 
 **Remember:** Less patching and maintenance, more time for innovation → managed services.
+
+**References:**
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
+- [docs.cloud.google.com/sql/docs](https://docs.cloud.google.com/sql/docs)
+- [cloud.google.com/products](https://cloud.google.com/products)
 
 ---
 
@@ -654,6 +774,11 @@ Spanner is a globally distributed relational database. It replicates data across
 
 **Remember:** Global, strongly consistent, highly available transactions → Spanner.
 
+**References:**
+- [cloud.google.com/spanner](https://cloud.google.com/spanner)
+- [docs.cloud.google.com/spanner/docs/instance-configurations](https://docs.cloud.google.com/spanner/docs/instance-configurations)
+- [docs.cloud.google.com/spanner/docs/replication](https://docs.cloud.google.com/spanner/docs/replication)
+
 ---
 
 ## Question 26
@@ -679,6 +804,11 @@ Microservices architecture splits an application into small, independent service
 - **D. Hardware virtualization**: Virtualization runs many VMs on one machine; it does not describe how an app is designed.
 
 **Remember:** Small, independent, separately deployable services → microservices.
+
+**References:**
+- [cloud.google.com/learn/what-is-microservices-architecture](https://cloud.google.com/learn/what-is-microservices-architecture)
+- [cloud.google.com/blog/topics/developers-practitioners/microservices-architecture-google-cloud](https://cloud.google.com/blog/topics/developers-practitioners/microservices-architecture-google-cloud)
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
 
 ---
 
@@ -706,6 +836,11 @@ BigQuery is a serverless data warehouse built for analyzing very large datasets 
 
 **Remember:** Analyze huge volumes of mixed data with SQL, serverless → BigQuery.
 
+**References:**
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
+- [cloud.google.com/bigquery/docs/object-tables](https://cloud.google.com/bigquery/docs/object-tables)
+- [cloud.google.com/bigquery/docs/write-api-streaming](https://cloud.google.com/bigquery/docs/write-api-streaming)
+
 ---
 
 ## Question 28
@@ -731,6 +866,11 @@ Phishing is a fake message that pretends to come from a trusted source to trick 
 - **C. Spamming**: Spam is unwanted bulk email; this message is a targeted attempt to steal credentials.
 
 **Remember:** Fake trusted message asking for passwords or financial data → phishing.
+
+**References:**
+- [cisa.gov/secure-our-world/recognize-and-report-phishing](https://cisa.gov/secure-our-world/recognize-and-report-phishing)
+- [support.microsoft.com/en-us/security/protect-yourself-from-phishing](https://support.microsoft.com/en-us/security/protect-yourself-from-phishing)
+- [docs.cloud.google.com/web-risk/docs/overview](https://docs.cloud.google.com/web-risk/docs/overview)
 
 ---
 
@@ -758,6 +898,11 @@ Predicting which current customers will leave (churn) is a classic ML use case. 
 
 **Remember:** "Predict" + historical examples of the outcome → train an ML model.
 
+**References:**
+- [cloud.google.com/learn/what-is-machine-learning](https://cloud.google.com/learn/what-is-machine-learning)
+- [docs.cloud.google.com/bigquery/docs/reference-patterns](https://docs.cloud.google.com/bigquery/docs/reference-patterns)
+- [docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/bqml](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/beginner/bqml)
+
 ---
 
 ## Question 30
@@ -783,6 +928,11 @@ Cloud SQL is a managed relational database for operational data. It does not cre
 - **D. Converts unstructured files to tables**: Cloud SQL stores structured data; it does not convert unstructured files.
 
 **Remember:** Operational database (Cloud SQL) + BI/analytics tools = business insights.
+
+**References:**
+- [cloud.google.com/sql/docs/introduction](https://cloud.google.com/sql/docs/introduction)
+- [cloud.google.com/looker](https://cloud.google.com/looker)
+- [cloud.google.com/bigquery/docs/introduction](https://cloud.google.com/bigquery/docs/introduction)
 
 ---
 
@@ -810,6 +960,11 @@ A managed service handles routine maintenance for you, such as applying security
 
 **Remember:** Managed service = provider does patching, upgrades, and maintenance; you own access and data.
 
+**References:**
+- [cloud.google.com/discover/what-is-managed-database-service](https://cloud.google.com/discover/what-is-managed-database-service)
+- [docs.cloud.google.com/compute/vm-manager/docs/patch](https://docs.cloud.google.com/compute/vm-manager/docs/patch)
+- [cloud.google.com/security/shared-responsibility-model](https://cloud.google.com/security/shared-responsibility-model)
+
 ---
 
 ## Question 32
@@ -835,6 +990,11 @@ App Engine can run several versions of an app at once and split traffic between 
 - **D. Different versions for the same user**: Traffic splitting sends different users to different versions, not one user to several.
 
 **Remember:** App Engine traffic splitting → A/B tests and gradual rollouts across user groups.
+
+**References:**
+- [cloud.google.com/appengine/docs/standard/splitting-traffic](https://cloud.google.com/appengine/docs/standard/splitting-traffic)
+- [cloud.google.com/appengine/docs/an-overview-of-app-engine](https://cloud.google.com/appengine/docs/an-overview-of-app-engine)
+- [cloud.google.com/appengine/docs/standard/how-requests-are-routed](https://cloud.google.com/appengine/docs/standard/how-requests-are-routed)
 
 ---
 
@@ -862,6 +1022,11 @@ A data lake stores large amounts of raw data of any type (structured, semi-struc
 
 **Remember:** Raw data, any format, decide later → data lake; cleaned data for analysis → data warehouse.
 
+**References:**
+- [cloud.google.com/learn/what-is-a-data-lake](https://cloud.google.com/learn/what-is-a-data-lake)
+- [cloud.google.com/discover/data-lake-vs-data-warehouse](https://cloud.google.com/discover/data-lake-vs-data-warehouse)
+- [cloud.google.com/storage/docs/introduction](https://cloud.google.com/storage/docs/introduction)
+
 ---
 
 ## Question 34
@@ -887,6 +1052,11 @@ Replatforming moves an app to the cloud and makes a few targeted improvements, l
 - **D. Retire**: Retire means shutting the app down.
 
 **Remember:** Copy as is = rehost; small improvements like managed services = replatform; rewrite = refactor.
+
+**References:**
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [docs.cloud.google.com/migration-center/docs/migration-planning-overview](https://docs.cloud.google.com/migration-center/docs/migration-planning-overview)
+- [docs.cloud.google.com/sql/docs/introduction](https://docs.cloud.google.com/sql/docs/introduction)
 
 ---
 
@@ -914,6 +1084,11 @@ Security Command Center is Google Cloud's central security and risk management s
 
 **Remember:** One central view of security risks and findings in Google Cloud → Security Command Center.
 
+**References:**
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings](https://docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings)
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
+
 ---
 
 ## Question 36
@@ -939,6 +1114,11 @@ The Google Cloud Pricing Calculator estimates monthly costs for planned services
 - **D. Manually calculate from pricing pages**: This is slow and easy to get wrong; the calculator does it for you.
 
 **Remember:** Estimate cost before deploying → Pricing Calculator; track actual cost → billing reports and budgets.
+
+**References:**
+- [cloud.google.com/products/calculator](https://cloud.google.com/products/calculator)
+- [docs.cloud.google.com/billing/docs/how-to/estimate-costs](https://docs.cloud.google.com/billing/docs/how-to/estimate-costs)
+- [cloud.google.com/pricing](https://cloud.google.com/pricing)
 
 ---
 
@@ -966,6 +1146,11 @@ Refactoring rewrites an application to be cloud native, for example as microserv
 
 **Remember:** Refactor = most work, most cloud benefit (scalability, efficiency).
 
+**References:**
+- [docs.cloud.google.com/architecture/migration-to-gcp-getting-started](https://docs.cloud.google.com/architecture/migration-to-gcp-getting-started)
+- [cloud.google.com/learn/what-is-microservices-architecture](https://cloud.google.com/learn/what-is-microservices-architecture)
+- [cloud.google.com/security/compliance/pci-dss](https://cloud.google.com/security/compliance/pci-dss)
+
 ---
 
 ## Question 38
@@ -991,6 +1176,11 @@ Tensor Processing Units (TPUs) are Google's custom chips designed specifically f
 - **D. GPUs**: GPUs also accelerate ML training and are a valid choice, but they were designed for graphics first. "Designed specifically for ML" points to TPUs.
 
 **Remember:** Hardware built specifically for ML → TPUs.
+
+**References:**
+- [cloud.google.com/tpu](https://cloud.google.com/tpu)
+- [docs.cloud.google.com/tpu/docs/intro-to-tpu](https://docs.cloud.google.com/tpu/docs/intro-to-tpu)
+- [tensorflow.org/guide/tpu](https://tensorflow.org/guide/tpu)
 
 ---
 
@@ -1018,6 +1208,11 @@ Digital transformation means using modern digital technologies, like cloud, anal
 
 **Remember:** Using technology to rethink processes, culture, and customer experience → digital transformation.
 
+**References:**
+- [cloud.google.com/learn/what-is-digital-transformation](https://cloud.google.com/learn/what-is-digital-transformation)
+- [cloud.google.com/learn/what-is-cloud-migration](https://cloud.google.com/learn/what-is-cloud-migration)
+- [cloud.google.com/learn/what-is-operational-efficiency](https://cloud.google.com/learn/what-is-operational-efficiency)
+
 ---
 
 ## Question 40
@@ -1043,6 +1238,11 @@ AlloyDB Omni is a downloadable version of AlloyDB, Google's PostgreSQL-compatibl
 - **D. Cloud Run**: Cloud Run runs containers serverlessly; it is not a database.
 
 **Remember:** PostgreSQL-compatible, Google tech, run on-premises or in other clouds → AlloyDB Omni.
+
+**References:**
+- [cloud.google.com/alloydb/omni](https://cloud.google.com/alloydb/omni)
+- [docs.cloud.google.com/storage/docs/introduction](https://docs.cloud.google.com/storage/docs/introduction)
+- [docs.cloud.google.com/bigquery/docs/introduction](https://docs.cloud.google.com/bigquery/docs/introduction)
 
 ---
 
@@ -1070,6 +1270,11 @@ Phishing is a social engineering attack. Attackers send messages that look legit
 
 **Remember:** Tricking people into giving secrets or clicking links → phishing (social engineering).
 
+**References:**
+- [csrc.nist.gov/glossary/term/social_engineering](https://csrc.nist.gov/glossary/term/social_engineering)
+- [csrc.nist.gov/glossary/term/phishing](https://csrc.nist.gov/glossary/term/phishing)
+- [cloud.google.com/web-risk/docs/advisory](https://cloud.google.com/web-risk/docs/advisory)
+
 ---
 
 ## Question 42
@@ -1095,6 +1300,11 @@ An API (application programming interface) is a contract that defines how one pi
 - **D. Schedule containerized applications**: Scheduling containers is the job of Kubernetes, such as GKE.
 
 **Remember:** API = agreed rules for apps to talk to each other.
+
+**References:**
+- [cloud.google.com/apis/docs/overview](https://cloud.google.com/apis/docs/overview)
+- [cloud.google.com/api-gateway/docs](https://cloud.google.com/api-gateway/docs)
+- [cloud.google.com/endpoints/docs/openapi/about-cloud-endpoints](https://cloud.google.com/endpoints/docs/openapi/about-cloud-endpoints)
 
 ---
 
@@ -1122,6 +1332,11 @@ GKE Autopilot is a mode of Google Kubernetes Engine where Google manages the nod
 
 **Remember:** Kubernetes without managing nodes → GKE Autopilot; full node control → GKE Standard.
 
+**References:**
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview)
+- [docs.cloud.google.com/kubernetes-engine/docs/concepts/choose-cluster-mode](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/choose-cluster-mode)
+- [docs.cloud.google.com/run/docs/overview/what-is-cloud-run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)
+
 ---
 
 ## Question 44
@@ -1148,6 +1363,11 @@ BigQuery ML lets analysts create and run ML models using standard SQL, directly 
 
 **Remember:** SQL skills + data in BigQuery + ML → BigQuery ML.
 
+**References:**
+- [docs.cloud.google.com/bigquery/docs/bqml-introduction](https://docs.cloud.google.com/bigquery/docs/bqml-introduction)
+- [docs.cloud.google.com/bigquery/docs/create-machine-learning-model](https://docs.cloud.google.com/bigquery/docs/create-machine-learning-model)
+- [docs.cloud.google.com/vision/docs](https://docs.cloud.google.com/vision/docs)
+
 ---
 
 ## Question 45
@@ -1169,10 +1389,15 @@ Spot VMs are spare Google Cloud capacity at a large discount. Google can stop th
 
 **Why the others are wrong:**
 - **B. Managed services**: This is a general approach, not a low-cost interruptible compute option.
-- **C. Premium tier virtual machines**: There is no premium VM option meant for saving money; premium choices cost more.
+- **C. Premium tier virtual machines**: There is no such VM type. In Google Cloud, Premium Tier is a Network Service Tier (traffic on Google's global network), which affects networking, not compute cost.
 - **D. Cloud Run functions**: Functions are for short event-driven code, not long nightly batch jobs over millions of records.
 
 **Remember:** Fault-tolerant batch + lowest cost + OK to be interrupted → Spot VMs.
+
+**References:**
+- [docs.cloud.google.com/compute/docs/instances/spot](https://docs.cloud.google.com/compute/docs/instances/spot)
+- [docs.cloud.google.com/compute/docs/instances/create-use-spot](https://docs.cloud.google.com/compute/docs/instances/create-use-spot)
+- [docs.cloud.google.com/compute/docs/instances/provisioning-models](https://docs.cloud.google.com/compute/docs/instances/provisioning-models)
 
 ---
 
@@ -1200,6 +1425,11 @@ Malware is any malicious software, such as viruses, spyware, or trojans, that ca
 
 **Remember:** Malicious software that secretly harms data → malware; locks data for payment → ransomware.
 
+**References:**
+- [csrc.nist.gov/glossary/term/malware](https://csrc.nist.gov/glossary/term/malware)
+- [csrc.nist.gov/glossary/term/ransomware](https://csrc.nist.gov/glossary/term/ransomware)
+- [cisa.gov/topics/cyber-threats-and-advisories/malware-phishing-and-ransomware](https://cisa.gov/topics/cyber-threats-and-advisories/malware-phishing-and-ransomware)
+
 ---
 
 ## Question 47
@@ -1226,6 +1456,11 @@ Google Cloud VMware Engine runs a full VMware environment as a managed service o
 
 **Remember:** Move VMware workloads and keep VMware tools → Google Cloud VMware Engine.
 
+**References:**
+- [cloud.google.com/vmware-engine](https://cloud.google.com/vmware-engine)
+- [docs.cloud.google.com/vmware-engine/docs/overview](https://docs.cloud.google.com/vmware-engine/docs/overview)
+- [docs.cloud.google.com/vmware-engine/docs/workloads/howto-migrate-workloads](https://docs.cloud.google.com/vmware-engine/docs/workloads/howto-migrate-workloads)
+
 ---
 
 ## Question 48
@@ -1251,6 +1486,11 @@ An SLA is a contract that promises a level of service. If the provider misses it
 - **D. Expansion of the error budget**: The error budget is an internal SRE concept tied to the SLO; it does not grow because of an outage.
 
 **Remember:** Missed SLA → service credits for the customer.
+
+**References:**
+- [cloud.google.com/terms/sla](https://cloud.google.com/terms/sla)
+- [cloud.google.com/storage/sla](https://cloud.google.com/storage/sla)
+- [docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring](https://docs.cloud.google.com/stackdriver/docs/solutions/slo-monitoring)
 
 **⚠️ Note:** Under Google Cloud SLAs, customers usually must request credits within a time window; they are not automatic. "Service credit" is still the right answer.
 
@@ -1280,6 +1520,11 @@ DevOps uses automation, like CI/CD pipelines and automated testing, to remove sl
 
 **Remember:** DevOps = automate repetitive work to ship faster and more reliably.
 
+**References:**
+- [cloud.google.com/devops](https://cloud.google.com/devops)
+- [docs.cloud.google.com/architecture/devops](https://docs.cloud.google.com/architecture/devops)
+- [docs.cloud.google.com/architecture/framework/operational-excellence/automate-and-manage-change](https://docs.cloud.google.com/architecture/framework/operational-excellence/automate-and-manage-change)
+
 ---
 
 ## Question 50
@@ -1305,6 +1550,11 @@ App Engine is a fully managed platform (PaaS) for web applications. Developers d
 - **C. AutoML**: AutoML trains custom ML models, not web applications.
 
 **Remember:** Deploy web app code, Google handles scaling and infrastructure → App Engine (or Cloud Run).
+
+**References:**
+- [cloud.google.com/appengine](https://cloud.google.com/appengine)
+- [docs.cloud.google.com/appengine/docs](https://docs.cloud.google.com/appengine/docs)
+- [docs.cloud.google.com/appengine/docs/standard/how-instances-are-managed](https://docs.cloud.google.com/appengine/docs/standard/how-instances-are-managed)
 
 **⚠️ Note:** App Engine is right among these options, but for new web apps Google now usually steers toward Cloud Run. Pick the keyed answer on this exam.
 

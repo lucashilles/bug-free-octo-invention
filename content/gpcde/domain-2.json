@@ -87,13 +87,13 @@
       "objectives": [
         "Design a scalable distributed load test on GKE",
         "Use Cloud Trace to locate bottlenecks under load",
-        "Route load test results to BigQuery and Looker Studio for analysis"
+        "Route load test results to BigQuery and Data Studio for analysis"
       ],
       "takeaways": [
         "Google pattern: Locust or JMeter in GKE pods, scaled by adding pods.",
         "Bottlenecks across microservices under load: Cloud Trace.",
         "cURL on instance groups or containers in Cloud Shell are distractors.",
-        "JMeter results: log sink to BigQuery, then Looker Studio."
+        "JMeter results: log sink to BigQuery, then Data Studio."
       ]
     },
     "7": {

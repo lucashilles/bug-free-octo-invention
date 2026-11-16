@@ -28,6 +28,11 @@ Data sovereignty means data is subject to the laws of the country (or region) wh
 
 **Remember:** Sovereignty = whose laws apply. Residency = where the data is stored.
 
+**References:**
+- [cloud.google.com/sovereign-cloud](https://cloud.google.com/sovereign-cloud)
+- [docs.cloud.google.com/assured-workloads/docs/data-residency](https://docs.cloud.google.com/assured-workloads/docs/data-residency)
+- [docs.cloud.google.com/architecture/framework/security/meet-regulatory-compliance-and-privacy-needs](https://docs.cloud.google.com/architecture/framework/security/meet-regulatory-compliance-and-privacy-needs)
+
 </details>
 
 ---
@@ -55,6 +60,11 @@ IAM controls who can do what on which resource. The administrator grants the ana
 - **D. Cloud Trace**: Cloud Trace measures request latency in applications.
 
 **Remember:** Who can do what on which resource = IAM. Give only the access needed (least privilege).
+
+**References:**
+- [docs.cloud.google.com/iam/docs/overview](https://docs.cloud.google.com/iam/docs/overview)
+- [docs.cloud.google.com/iam/docs/roles-overview](https://docs.cloud.google.com/iam/docs/roles-overview)
+- [docs.cloud.google.com/bigquery/docs/access-control](https://docs.cloud.google.com/bigquery/docs/access-control)
 
 </details>
 
@@ -84,6 +94,11 @@ VirusTotal, part of Google, checks files and URLs against many antivirus engines
 
 **Remember:** Check a suspicious file or URL against many scanners = VirusTotal. Frontline incident-response intelligence = Mandiant.
 
+**References:**
+- [cloud.google.com/security/resources/google-threat-intelligence-virustotal](https://cloud.google.com/security/resources/google-threat-intelligence-virustotal)
+- [docs.virustotal.com/docs/api-overview](https://docs.virustotal.com/docs/api-overview)
+- [docs.virustotal.com/docs/contributors](https://docs.virustotal.com/docs/contributors)
+
 </details>
 
 ---
@@ -111,6 +126,11 @@ Cryptomining (cryptojacking) is when attackers use someone else's computing reso
 - **D. DDoS**: a DDoS floods a service with traffic to make it unavailable; it does not use the victim's VMs to earn money.
 
 **Remember:** Surprise compute bill + unknown VMs + high CPU = cryptomining.
+
+**References:**
+- [cloud.google.com/security-command-center/cryptomining-protection-program](https://cloud.google.com/security-command-center/cryptomining-protection-program)
+- [docs.cloud.google.com/security-command-center/docs/cryptomining-detection-best-practices](https://docs.cloud.google.com/security-command-center/docs/cryptomining-detection-best-practices)
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
 
 </details>
 
@@ -140,6 +160,11 @@ The bucket was exposed because an administrator set its access incorrectly. No s
 
 **Remember:** Human error in settings (like a public bucket) = misconfiguration.
 
+**References:**
+- [docs.cloud.google.com/storage/docs/public-access-prevention](https://docs.cloud.google.com/storage/docs/public-access-prevention)
+- [docs.cloud.google.com/storage/docs/access-control](https://docs.cloud.google.com/storage/docs/access-control)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+
 </details>
 
 ---
@@ -167,6 +192,11 @@ Availability is the "A" in the CIA triad (confidentiality, integrity, availabili
 - **C. Data remains correct, complete, and dependable**: this is integrity.
 
 **Remember:** Confidentiality = only the right people. Integrity = correct and unaltered. Availability = there when needed.
+
+**References:**
+- [cloud.google.com/learn/what-is-cloud-data-security](https://cloud.google.com/learn/what-is-cloud-data-security)
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+- [docs.cloud.google.com/architecture/framework/reliability](https://docs.cloud.google.com/architecture/framework/reliability)
 
 </details>
 
@@ -196,6 +226,11 @@ Security Command Center is Google Cloud's central security and risk management s
 
 **Remember:** Central view of security posture, misconfigurations and vulnerabilities across Google Cloud = Security Command Center.
 
+**References:**
+- [docs.cloud.google.com/security-command-center/docs](https://docs.cloud.google.com/security-command-center/docs)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings](https://docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings)
+
 </details>
 
 ---
@@ -223,6 +258,11 @@ Phishing is a social engineering attack. A fake message pretends to come from a 
 - **D. LLM attack**: this targets AI models, such as with prompt injection; no AI model is involved.
 
 **Remember:** Fake message + urgency + fake login page = phishing.
+
+**References:**
+- [support.google.com/mail/answer/8253](https://support.google.com/mail/answer/8253)
+- [cisa.gov/secure-our-world/recognize-and-report-phishing](https://cisa.gov/secure-our-world/recognize-and-report-phishing)
+- [cisa.gov/news-events/news/avoiding-social-engineering-and-phishing-attacks](https://cisa.gov/news-events/news/avoiding-social-engineering-and-phishing-attacks)
 
 </details>
 
@@ -252,6 +292,11 @@ Model Armor is a Google Cloud service that screens prompts and responses for gen
 
 **Remember:** Protect gen AI prompts and responses (prompt injection, jailbreaks, harmful output) = Model Armor.
 
+**References:**
+- [docs.cloud.google.com/model-armor/overview](https://docs.cloud.google.com/model-armor/overview)
+- [docs.cloud.google.com/model-armor/sanitize-prompts-responses](https://docs.cloud.google.com/model-armor/sanitize-prompts-responses)
+- [docs.cloud.google.com/functions/docs](https://docs.cloud.google.com/functions/docs)
+
 </details>
 
 ---
@@ -279,6 +324,11 @@ Google Security Operations (formerly Chronicle) is a cloud-native security opera
 - **D. Cloud Spanner**: it is a globally distributed relational database.
 
 **Remember:** Centralize security data, detect, investigate and respond = Google Security Operations.
+
+**References:**
+- [cloud.google.com/security/products/security-operations](https://cloud.google.com/security/products/security-operations)
+- [docs.cloud.google.com/chronicle/docs/secops/secops-overview](https://docs.cloud.google.com/chronicle/docs/secops/secops-overview)
+- [docs.cloud.google.com/chronicle/docs/soar/overview-and-introduction/soar-overview](https://docs.cloud.google.com/chronicle/docs/soar/overview-and-introduction/soar-overview)
 
 </details>
 
@@ -308,6 +358,11 @@ Mandiant, part of Google Cloud, is known for frontline threat intelligence. It g
 
 **Remember:** Frontline incident-response experts and intelligence = Mandiant. Crowdsourced file and URL scanning = VirusTotal.
 
+**References:**
+- [cloud.google.com/security/mandiant](https://cloud.google.com/security/mandiant)
+- [cloud.google.com/security/consulting/mandiant-incident-response-services](https://cloud.google.com/security/consulting/mandiant-incident-response-services)
+- [cloud.google.com/security/consulting/threat-intelligence-services](https://cloud.google.com/security/consulting/threat-intelligence-services)
+
 </details>
 
 ---
@@ -335,6 +390,11 @@ Under the shared responsibility model, Google always secures the physical infras
 - **D. Applying OS patches to VMs**: with IaaS the customer manages the guest operating system, including patches.
 
 **Remember:** IaaS: Google secures the physical layer; you secure the OS, apps, data and access.
+
+**References:**
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+- [docs.cloud.google.com/architecture/regional-deployment-compute-engine](https://docs.cloud.google.com/architecture/regional-deployment-compute-engine)
 
 </details>
 
@@ -364,6 +424,11 @@ Phishing is a fake message that pretends to come from a trusted source to trick 
 
 **Remember:** Fake trusted message asking for passwords or financial data → phishing.
 
+**References:**
+- [cisa.gov/secure-our-world/recognize-and-report-phishing](https://cisa.gov/secure-our-world/recognize-and-report-phishing)
+- [support.microsoft.com/en-us/security/protect-yourself-from-phishing](https://support.microsoft.com/en-us/security/protect-yourself-from-phishing)
+- [docs.cloud.google.com/web-risk/docs/overview](https://docs.cloud.google.com/web-risk/docs/overview)
+
 </details>
 
 ---
@@ -391,6 +456,11 @@ Security Command Center is Google Cloud's central security and risk management s
 - **D. VPC networks**: VPCs are private networks for your resources, not a risk discovery tool.
 
 **Remember:** One central view of security risks and findings in Google Cloud → Security Command Center.
+
+**References:**
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings](https://docs.cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings)
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
 
 </details>
 
@@ -420,6 +490,11 @@ Phishing is a social engineering attack. Attackers send messages that look legit
 
 **Remember:** Tricking people into giving secrets or clicking links → phishing (social engineering).
 
+**References:**
+- [csrc.nist.gov/glossary/term/social_engineering](https://csrc.nist.gov/glossary/term/social_engineering)
+- [csrc.nist.gov/glossary/term/phishing](https://csrc.nist.gov/glossary/term/phishing)
+- [cloud.google.com/web-risk/docs/advisory](https://cloud.google.com/web-risk/docs/advisory)
+
 </details>
 
 ---
@@ -448,6 +523,11 @@ Malware is any malicious software, such as viruses, spyware, or trojans, that ca
 
 **Remember:** Malicious software that secretly harms data → malware; locks data for payment → ransomware.
 
+**References:**
+- [csrc.nist.gov/glossary/term/malware](https://csrc.nist.gov/glossary/term/malware)
+- [csrc.nist.gov/glossary/term/ransomware](https://csrc.nist.gov/glossary/term/ransomware)
+- [cisa.gov/topics/cyber-threats-and-advisories/malware-phishing-and-ransomware](https://cisa.gov/topics/cyber-threats-and-advisories/malware-phishing-and-ransomware)
+
 </details>
 
 ---
@@ -475,6 +555,11 @@ Each team needs different permissions, so define roles by what each job requires
 - **D. One shared service account for all departments**: It removes accountability and gives everyone the same access.
 
 **Remember:** Grant roles by job function to groups, not to individuals.
+
+**References:**
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
+- [cloud.google.com/iam/docs/roles-overview](https://cloud.google.com/iam/docs/roles-overview)
+- [cloud.google.com/iam/docs/choose-predefined-roles](https://cloud.google.com/iam/docs/choose-predefined-roles)
 
 **⚠️ Note:** Google's stated best practice is to grant roles to groups. Read "map roles to job functions for each department" as the group-based answer. It is the best option here.
 
@@ -506,6 +591,11 @@ Security posture is the overall state of an organization's security: its network
 
 **Remember:** Overall security readiness across the environment = security posture.
 
+**References:**
+- [docs.cloud.google.com/security-command-center/docs/security-posture-overview](https://docs.cloud.google.com/security-command-center/docs/security-posture-overview)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+
 </details>
 
 ---
@@ -533,6 +623,11 @@ Google Cloud Armor protects applications behind Google's load balancers from DDo
 - **D. Cloud KMS**: It manages encryption keys.
 
 **Remember:** DDoS or web attack protection = Cloud Armor.
+
+**References:**
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/kms/docs/key-management-service](https://docs.cloud.google.com/kms/docs/key-management-service)
 
 </details>
 
@@ -562,6 +657,11 @@ Threat intelligence is analyzed information about attackers: their goals, target
 
 **Remember:** Knowledge about attackers and their methods = threat intelligence.
 
+**References:**
+- [docs.cloud.google.com/chronicle/docs/detection](https://docs.cloud.google.com/chronicle/docs/detection)
+- [cloud.google.com/security/products/threat-intelligence](https://cloud.google.com/security/products/threat-intelligence)
+- [docs.cloud.google.com/chronicle/docs/overview](https://docs.cloud.google.com/chronicle/docs/overview)
+
 </details>
 
 ---
@@ -589,6 +689,11 @@ The attackers came in through an outside vendor's plugin connected to the softwa
 - **D. Zero trust architecture**: Zero trust is a security model, not a threat vector.
 
 **Remember:** Breach through a vendor's plugin or library = third-party / supply chain risk.
+
+**References:**
+- [docs.cloud.google.com/software-supply-chain-security/docs/overview](https://docs.cloud.google.com/software-supply-chain-security/docs/overview)
+- [docs.cloud.google.com/software-supply-chain-security/docs/dependencies](https://docs.cloud.google.com/software-supply-chain-security/docs/dependencies)
+- [cloud.google.com/solutions/ciso-third-party-risk-management](https://cloud.google.com/solutions/ciso-third-party-risk-management)
 
 </details>
 
@@ -618,6 +723,11 @@ Firewall rules define which incoming and outgoing network traffic is allowed or 
 
 **Remember:** Allow or deny network traffic = firewall rules.
 
+**References:**
+- [docs.cloud.google.com/firewall/docs/firewalls](https://docs.cloud.google.com/firewall/docs/firewalls)
+- [docs.cloud.google.com/firewall/docs/using-firewalls](https://docs.cloud.google.com/firewall/docs/using-firewalls)
+- [docs.cloud.google.com/firewall/docs/firewall-policies-rule-details](https://docs.cloud.google.com/firewall/docs/firewall-policies-rule-details)
+
 </details>
 
 ---
@@ -645,6 +755,11 @@ Protecting personal data is a key part of data protection rules in many countrie
 - **D. Follow only headquarters' data policies**: Companies must respect the laws of every country where they serve users.
 
 **Remember:** Global data protection starts with protecting PII; ignoring local laws or weakening auth is always wrong.
+
+**References:**
+- [cloud.google.com/security/compliance/offerings](https://cloud.google.com/security/compliance/offerings)
+- [docs.cloud.google.com/docs/security/encryption/default-encryption](https://docs.cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/trust-center](https://cloud.google.com/trust-center)
 
 **⚠️ Note:** Encryption alone doesn't meet global compliance. Data residency, consent and local rules matter too, and Google Cloud already encrypts all data at rest by default. Pick the keyed answer because the other options are clearly worse.
 
@@ -676,6 +791,11 @@ Two-step verification, a form of multi-factor authentication, requires a passwor
 
 **Remember:** Password + second proof = 2SV / MFA.
 
+**References:**
+- [docs.cloud.google.com/docs/authentication/mfa-requirement](https://docs.cloud.google.com/docs/authentication/mfa-requirement)
+- [docs.cloud.google.com/docs/authentication/use-cases](https://docs.cloud.google.com/docs/authentication/use-cases)
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
+
 </details>
 
 ---
@@ -703,6 +823,11 @@ Google Cloud Armor protects internet-facing apps from DDoS attacks and common we
 - **D. Security Command Center**: It gives a central view of security risks and findings, but it doesn't filter incoming DDoS traffic.
 
 **Remember:** DDoS or web attacks on a public site → Cloud Armor.
+
+**References:**
+- [docs.cloud.google.com/armor/docs/cloud-armor-overview](https://docs.cloud.google.com/armor/docs/cloud-armor-overview)
+- [docs.cloud.google.com/armor/docs/advanced-network-ddos](https://docs.cloud.google.com/armor/docs/advanced-network-ddos)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
 
 </details>
 
@@ -732,6 +857,11 @@ Google Cloud encrypts all customer data at rest by default. If someone physicall
 
 **Remember:** Physical theft of a disk → encryption at rest makes the data unreadable.
 
+**References:**
+- [cloud.google.com/docs/security/encryption/default-encryption](https://cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/security/encryption](https://cloud.google.com/security/encryption)
+- [cloud.google.com/docs/security/encryption-in-transit](https://cloud.google.com/docs/security/encryption-in-transit)
+
 </details>
 
 ---
@@ -759,6 +889,11 @@ Under Google Cloud's terms, customers own their data. Google only processes it t
 - **C. Google**: Google is the processor of the data, not its owner.
 
 **Remember:** Your data stays yours. Google processes it, never owns it.
+
+**References:**
+- [cloud.google.com/privacy](https://cloud.google.com/privacy)
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [docs.cloud.google.com/docs/security/deletion](https://docs.cloud.google.com/docs/security/deletion)
 
 </details>
 
@@ -788,6 +923,11 @@ Google Cloud's privacy commitments say the customer owns and controls its data. 
 
 **Remember:** Customer owns the data → customer can move it out anytime.
 
+**References:**
+- [cloud.google.com/privacy](https://cloud.google.com/privacy)
+- [cloud.google.com/privacy/common-privacy-principles](https://cloud.google.com/privacy/common-privacy-principles)
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+
 </details>
 
 ---
@@ -815,6 +955,11 @@ Google Cloud's privacy controls are checked by independent third-party audits ag
 - **D. Privacy reviews for customer applications**: Google doesn't review the privacy of each customer's own applications; that is the customer's job.
 
 **Remember:** Proof of privacy and security → independent audits and certifications (ISO, SOC).
+
+**References:**
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [cloud.google.com/docs/security/encryption/default-encryption](https://cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/security/compliance/offerings](https://cloud.google.com/security/compliance/offerings)
 
 **⚠️ Note:** The idea is right (third-party audits against standards such as ISO 27018), but the wording is loose and D can sound plausible. C is still the best option; pick it on this exam.
 
@@ -846,6 +991,11 @@ Google Cloud commits that it doesn't use customer data for ads. Customer data is
 
 **Remember:** Google Cloud privacy commitment: your data is not used for ads.
 
+**References:**
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [cloud.google.com/privacy/data-protection-impact-assessment](https://cloud.google.com/privacy/data-protection-impact-assessment)
+- [docs.cloud.google.com/docs/security/encryption/default-encryption](https://docs.cloud.google.com/docs/security/encryption/default-encryption)
+
 </details>
 
 ---
@@ -873,6 +1023,11 @@ Moving to Google Cloud means relying on security that is built into the platform
 - **D. Increase physical hardware capacity**: In the cloud the provider manages hardware; the company doesn't buy more.
 
 **Remember:** Moving to Google Cloud → you gain built-in, default security layers.
+
+**References:**
+- [cloud.google.com/docs/security/overview/whitepaper](https://cloud.google.com/docs/security/overview/whitepaper)
+- [cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [cloud.google.com/learn/cloud-migration](https://cloud.google.com/learn/cloud-migration)
 
 **⚠️ Note:** The keyed wording is vague. It means Google's default protections (encryption, secure infrastructure). The other options are plainly wrong, so pick A on this exam.
 
@@ -904,6 +1059,11 @@ In the shared responsibility model, Google always secures the physical layer: bu
 
 **Remember:** Google always owns physical security. In IaaS, the customer owns the OS and everything above it.
 
+**References:**
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+- [cloud.google.com/security/infrastructure](https://cloud.google.com/security/infrastructure)
+
 </details>
 
 ---
@@ -932,6 +1092,11 @@ With OpEx, security is consumed as a service and paid for as it's used. The comp
 
 **Remember:** OpEx security = pay as you use, no big upfront investment.
 
+**References:**
+- [docs.cloud.google.com/architecture/framework/cost-optimization](https://docs.cloud.google.com/architecture/framework/cost-optimization)
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+
 </details>
 
 ---
@@ -959,6 +1124,11 @@ A leak soon after buying a new platform shows that tools alone don't create secu
 - **D. Wait for a newer platform**: waiting leaves the company exposed and again relies only on tools.
 
 **Remember:** Security is ongoing expertise and process, not a one-time product purchase.
+
+**References:**
+- [docs.cloud.google.com/architecture/framework/security](https://docs.cloud.google.com/architecture/framework/security)
+- [docs.cloud.google.com/architecture/blueprints/security-foundations](https://docs.cloud.google.com/architecture/blueprints/security-foundations)
+- [nist.gov/cyberframework](https://nist.gov/cyberframework)
 
 **⚠️ Note:** "Hire cybersecurity experts" is vague. The real lesson is that security needs ongoing expertise and process. It is still clearly the best of the four options, so pick it.
 
@@ -990,6 +1160,11 @@ Zero trust means no request is trusted because of where it comes from. Every use
 
 **Remember:** "Never trust, always verify", regardless of location = zero trust.
 
+**References:**
+- [cloud.google.com/beyondcorp](https://cloud.google.com/beyondcorp)
+- [cloud.google.com/docs/security/zero-trust](https://cloud.google.com/docs/security/zero-trust)
+- [nist.gov/publications/zero-trust-architecture](https://nist.gov/publications/zero-trust-architecture)
+
 </details>
 
 ---
@@ -1017,6 +1192,11 @@ Cyber resilience is the ability to prevent attacks where possible, keep essentia
 - **D. Vendor lock-in**: it is a risk of depending on one provider, unrelated to recovering from attacks.
 
 **Remember:** Prevent, withstand, recover = cyber resilience.
+
+**References:**
+- [cloud.google.com/security/resources/cyber-resilience](https://cloud.google.com/security/resources/cyber-resilience)
+- [csrc.nist.gov/glossary/term/cyber_resiliency](https://csrc.nist.gov/glossary/term/cyber_resiliency)
+- [nist.gov/cyberframework](https://nist.gov/cyberframework)
 
 </details>
 
@@ -1046,6 +1226,11 @@ Google Threat Intelligence combines Mandiant's frontline incident response knowl
 
 **Remember:** Mandiant + VirusTotal + Google visibility = Google Threat Intelligence.
 
+**References:**
+- [cloud.google.com/security/products/threat-intelligence](https://cloud.google.com/security/products/threat-intelligence)
+- [gtidocs.virustotal.com/docs/use-cases](https://gtidocs.virustotal.com/docs/use-cases)
+- [docs.cloud.google.com/chronicle/docs/detection](https://docs.cloud.google.com/chronicle/docs/detection)
+
 </details>
 
 ---
@@ -1073,6 +1258,11 @@ Ransomware encrypts a victim's data and demands payment, often in cryptocurrency
 - **D. Hardware failure**: it is an accident, not an attack with a ransom demand.
 
 **Remember:** Data locked + payment demanded = ransomware. Mention of crypto doesn't mean cryptomining.
+
+**References:**
+- [cisa.gov/stopransomware/ransomware-101](https://cisa.gov/stopransomware/ransomware-101)
+- [nist.gov/itl/smallbusinesscyber/guidance-topic/ransomware](https://nist.gov/itl/smallbusinesscyber/guidance-topic/ransomware)
+- [docs.cloud.google.com/architecture/security/mitigating-ransomware-attacks](https://docs.cloud.google.com/architecture/security/mitigating-ransomware-attacks)
 
 </details>
 
@@ -1102,6 +1292,11 @@ Under the shared responsibility model, the customer owns its data and decides wh
 
 **Remember:** Google secures the cloud; the customer secures data and access in the cloud.
 
+**References:**
+- [docs.cloud.google.com/iam/docs/overview](https://docs.cloud.google.com/iam/docs/overview)
+- [docs.cloud.google.com/identity/docs/overview](https://docs.cloud.google.com/identity/docs/overview)
+- [docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy)
+
 </details>
 
 ---
@@ -1129,6 +1324,11 @@ Google Cloud encrypts all customer data at rest by default, with no action neede
 - **D. At rest only**: data in transit is encrypted as well.
 
 **Remember:** Google Cloud default = encrypted at rest and in transit.
+
+**References:**
+- [cloud.google.com/security/encryption](https://cloud.google.com/security/encryption)
+- [cloud.google.com/docs/security/encryption/default-encryption](https://cloud.google.com/docs/security/encryption/default-encryption)
+- [cloud.google.com/docs/security/encryption-in-transit](https://cloud.google.com/docs/security/encryption-in-transit)
 
 </details>
 
@@ -1158,6 +1358,11 @@ Authentication confirms that users are who they claim to be, for example with a 
 
 **Remember:** Authentication = who are you? Authorization = what can you do?
 
+**References:**
+- [cloud.google.com/docs/authentication](https://cloud.google.com/docs/authentication)
+- [cloud.google.com/iam/docs/overview](https://cloud.google.com/iam/docs/overview)
+- [cloud.google.com/identity/docs/overview](https://cloud.google.com/identity/docs/overview)
+
 </details>
 
 ---
@@ -1185,6 +1390,11 @@ Google Cloud automatically encrypts all customer data at rest, with no setup by 
 - **D. When a tag is applied**: encryption doesn't depend on tags; it is always on.
 
 **Remember:** Google Cloud encryption at rest = automatic, on by default.
+
+**References:**
+- [docs.cloud.google.com/docs/security/encryption/default-encryption](https://docs.cloud.google.com/docs/security/encryption/default-encryption)
+- [docs.cloud.google.com/security-command-center/docs/security-command-center-overview](https://docs.cloud.google.com/security-command-center/docs/security-command-center-overview)
+- [docs.cloud.google.com/sensitive-data-protection/docs/sensitive-data-protection-overview](https://docs.cloud.google.com/sensitive-data-protection/docs/sensitive-data-protection-overview)
 
 </details>
 
@@ -1214,6 +1424,11 @@ Prompt injection is when an attacker writes inputs that trick a large language m
 
 **Remember:** Malicious prompts that hijack an AI model = prompt injection.
 
+**References:**
+- [genai.owasp.org/llmrisk/llm01-prompt-injection/](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)
+- [owasp.org/www-community/attacks/PromptInjection](https://owasp.org/www-community/attacks/PromptInjection)
+- [cloud.google.com/security/products/model-armor](https://cloud.google.com/security/products/model-armor)
+
 </details>
 
 ---
@@ -1241,6 +1456,11 @@ The principle of least privilege means giving each user only the permissions the
 - **D. Security by default**: This means systems ship with secure settings already turned on.
 
 **Remember:** Only what the job needs → least privilege.
+
+**References:**
+- [docs.cloud.google.com/iam/docs/using-iam-securely](https://docs.cloud.google.com/iam/docs/using-iam-securely)
+- [docs.cloud.google.com/iam/docs/resource-hierarchy-access-control](https://docs.cloud.google.com/iam/docs/resource-hierarchy-access-control)
+- [docs.cloud.google.com/iam/docs/roles-overview](https://docs.cloud.google.com/iam/docs/roles-overview)
 
 </details>
 
@@ -1270,6 +1490,11 @@ Backups are copies of data saved at points in time. If storage fails or ransomwa
 
 **Remember:** Need to restore after loss or ransomware → backups.
 
+**References:**
+- [cloud.google.com/backup-disaster-recovery](https://cloud.google.com/backup-disaster-recovery)
+- [cloud.google.com/architecture/dr-scenarios-planning-guide](https://cloud.google.com/architecture/dr-scenarios-planning-guide)
+- [cloud.google.com/monitoring/docs](https://cloud.google.com/monitoring/docs)
+
 </details>
 
 ---
@@ -1297,6 +1522,11 @@ An incident response plan defines in advance who does what when a security event
 - **D. Improve physical security of its own data center**: ClearFunds runs everything on Google Cloud, and Google secures the physical data centers.
 
 **Remember:** Restore data → backups. Prepare for a breach → incident response plan.
+
+**References:**
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [cloud.google.com/discover/incident-response-plan-template](https://cloud.google.com/discover/incident-response-plan-template)
 
 </details>
 
@@ -1326,6 +1556,11 @@ In cloud technology, privacy is about controlling who can access personal data a
 
 **Remember:** Privacy = limits on access and sharing. Authentication = verifying identity. Compliance = meeting standards.
 
+**References:**
+- [cloud.google.com/privacy](https://cloud.google.com/privacy)
+- [cloud.google.com/transparency](https://cloud.google.com/transparency)
+- [cloud.google.com/docs/security/overview/whitepaper](https://cloud.google.com/docs/security/overview/whitepaper)
+
 </details>
 
 ---
@@ -1353,6 +1588,11 @@ Compliance Reports Manager gives customers self-service access to Google Cloud's
 - **D. Cloud Monitoring**: It tracks metrics, uptime, and alerts for applications and infrastructure.
 
 **Remember:** Need Google's certificates and audit reports → Compliance Reports Manager.
+
+**References:**
+- [cloud.google.com/security/compliance/compliance-reports-manager](https://cloud.google.com/security/compliance/compliance-reports-manager)
+- [cloud.google.com/security/compliance/iso-27001](https://cloud.google.com/security/compliance/iso-27001)
+- [cloud.google.com/security/products/security-command-center](https://cloud.google.com/security/products/security-command-center)
 
 </details>
 
@@ -1382,6 +1622,11 @@ Under the shared responsibility model, the cloud provider always secures the phy
 
 **Remember:** Physical data center security → Google alone, in every service model.
 
+**References:**
+- [docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate](https://docs.cloud.google.com/architecture/framework/security/shared-responsibility-shared-fate)
+- [docs.cloud.google.com/docs/security/infrastructure/design](https://docs.cloud.google.com/docs/security/infrastructure/design)
+- [docs.cloud.google.com/docs/security/overview/whitepaper](https://docs.cloud.google.com/docs/security/overview/whitepaper)
+
 </details>
 
 ---
@@ -1409,6 +1654,11 @@ Zero trust means no user or device is trusted just because it is inside the corp
 - **D. Mainly the three basic roles**: Owner, editor and viewer are too broad and go against least privilege.
 
 **Remember:** Verify every request from anywhere → zero trust.
+
+**References:**
+- [cloud.google.com/learn/what-is-zero-trust](https://cloud.google.com/learn/what-is-zero-trust)
+- [cloud.google.com/beyondcorp](https://cloud.google.com/beyondcorp)
+- [docs.cloud.google.com/iam/docs/roles-overview](https://docs.cloud.google.com/iam/docs/roles-overview)
 
 </details>
 
