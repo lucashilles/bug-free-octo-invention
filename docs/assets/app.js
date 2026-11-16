@@ -567,7 +567,7 @@
       <div class="cards">${CERTS.map(c => {
         const s = certStore(c.id), done = Object.keys(s.done).length;
         return `<a class="card" href="#/${c.id}/">
-          <div class="card-head"><span class="badge" style="background:var(--accent)">${esc(c.code)}</span></div>
+          <div class="card-head"><span class="badge" style="--c:var(--accent)">${esc(c.code)}</span></div>
           <h3>${esc(c.name)}</h3>
           <p>${c.domains.length} domains · ${c.lessons} lessons · ${c.questions} questions from ${c.exams} practice exams</p>
           <div class="meta"><span>Progress</span><span>${done}/${c.lessons} lessons</span></div>
