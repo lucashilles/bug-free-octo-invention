@@ -337,11 +337,27 @@
       <div id="qbox"></div>
       <div class="row no-print"><button class="btn primary" id="nextQ" style="display:none">${i + 1 < ids.length ? 'Next question →' : 'See results'}</button>
       <button class="btn" id="quitDrill">End drill</button></div>`;
+    const next = () => { drill.i++; drillStep(main); window.scrollTo(0, 0); };
     const card = quizCard(ids[i], {
-      onReveal: ok => { results[ids[i]] = ok; $('#nextQ').style.display = ''; $('#nextQ').focus(); },
+      onReveal: ok => {
+        results[ids[i]] = ok;
+        $('#nextQ').style.display = '';
+        // A second Next button under the Correct/Incorrect line, above the explanation, so you don't have to scroll past it.
+        const row = document.createElement('div');
+        row.className = 'row no-print';
+        row.style.marginBottom = '10px';
+        const top = document.createElement('button');
+        top.className = 'btn primary';
+        top.textContent = $('#nextQ').textContent;
+        top.onclick = next;
+        row.appendChild(top);
+        $('.result', card).after(row);
+        // Keep the view where it is: focusing without preventScroll jumps the page to the button.
+        top.focus({ preventScroll: true });
+      },
     });
     $('#qbox').appendChild(card);
-    $('#nextQ').onclick = () => { drill.i++; drillStep(main); window.scrollTo(0, 0); };
+    $('#nextQ').onclick = next;
     $('#quitDrill').onclick = () => { drill.ids = ids.slice(0, Math.max(answered, 0)); drill.i = drill.ids.length; drillStep(main); };
   }
   function drillSummary(main) {
