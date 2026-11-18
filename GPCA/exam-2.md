@@ -2656,13 +2656,21 @@ Why option A works
   - Every VPC automatically has an ***implied allow-egress* rule** (priority 65535) that lets all outbound traffic through unless a higher-priority rule blocks it. [Google Cloud](https://cloud.google.com/firewall/docs/firewalls)
 3. **Result of the two explicit rules in option A**
 
-![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)
+| Traffic type | Matches rule | Action | Reason |
+|---|---|---|---|
+| AD ports you list in the allow rule (e.g. TCP 389/636/3268 …, UDP 88/123 …) | **Priority 100** allow | **Allowed** | Highest-priority match permits it |
+| Any other outbound traffic | Skips priority 100 (ports don't match) → hits **priority 1000** deny | **Blocked** | Deny overrides the implied allow |
+| Anything not caught by the explicit rules | Implied allow-egress rule (priority 65535) | **Ignored** | Lower priority, so never reached |
 
 Thus all VMs can talk only to the specified AD ports, and everything else is dropped.
 
 **Why the other options are incorrect:**
 
-![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)
+| Option | What happens | Why it fails |
+|---|---|---|
+| **B**: deny 100, allow 1000 | Traffic hits the **deny (priority 100)** first and is blocked before it reaches the lower-priority allow rule. | Lower number → higher priority. |
+| **C**: allow 1000 only, rely on an "implied deny 100" | There is **no implied deny-egress rule**. The implied rule is *allow*, so all other traffic stays open. | The implied egress rule is allow (priority 65535), not deny. |
+| **D**: allow 100 only, rely on an "implied deny 1000" | Again, no implied deny-egress rule exists. Traffic that doesn't match the allow rule falls through to the implied **allow-egress**, so nothing is blocked. | Same as C. |
 
 ---
 

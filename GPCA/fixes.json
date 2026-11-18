@@ -120,14 +120,14 @@
     "explanation": [
       [
         " ![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)",
-        "![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)"
+        "| Traffic type | Matches rule | Action | Reason |\n|---|---|---|---|\n| AD ports you list in the allow rule (e.g. TCP 389/636/3268 …, UDP 88/123 …) | **Priority 100** allow | **Allowed** | Highest-priority match permits it |\n| Any other outbound traffic | Skips priority 100 (ports don't match) → hits **priority 1000** deny | **Blocked** | Deny overrides the implied allow |\n| Anything not caught by the explicit rules | Implied allow-egress rule (priority 65535) | **Ignored** | Lower priority, so never reached |"
       ],
       [
         "\n\n [![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)](https://cloud.google.com/firewall/docs/firewalls)",
-        "\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)"
+        "\n\n| Option | What happens | Why it fails |\n|---|---|---|\n| **B**: deny 100, allow 1000 | Traffic hits the **deny (priority 100)** first and is blocked before it reaches the lower-priority allow rule. | Lower number → higher priority. |\n| **C**: allow 1000 only, rely on an \"implied deny 100\" | There is **no implied deny-egress rule**. The implied rule is *allow*, so all other traffic stays open. | The implied egress rule is allow (priority 65535), not deny. |\n| **D**: allow 100 only, rely on an \"implied deny 1000\" | Again, no implied deny-egress rule exists. Traffic that doesn't match the allow rule falls through to the implied **allow-egress**, so nothing is blocked. | Same as C. |"
       ]
     ],
-    "why": "The dump repeats each explanation image (one copy wrapped in a link); keep one plain copy of each."
+    "why": "The dump repeats each explanation image, hotlinked from Udemy; both are screenshots of tables, so they are written out as Markdown tables."
   },
   "2-32": {
     "note": "Deployment Manager reached end of support in March 2026 (use Terraform or Infrastructure Manager), and Stackdriver is now Cloud Monitoring and Cloud Logging. The principle still holds: automate provisioning and monitor DR tests with Cloud Monitoring.",
@@ -344,10 +344,10 @@
     "question": [
       [
         "![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)",
-        "![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)"
+        "![Network diagram: VPC#1, VPC#2 and VPC#3, each with one subnet and one Compute Engine instance (Instance1, Instance2, Instance3)](assets/img/gpca/e4q53-network.jpg)"
       ]
     ],
-    "why": "The dump repeats the diagram image; keep one copy."
+    "why": "The dump repeats the diagram image, hotlinked from Udemy; keep one copy, stored in the repo."
   },
   "4-58": {
     "note": "The options don't really address PII deletion. C works because BigQuery can hold the logs cheaply, drop old partitions on a schedule (partition expiration) and feed Data Studio (called Looker Studio from 2022 to 2026) reports.",

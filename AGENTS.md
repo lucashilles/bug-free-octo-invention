@@ -28,6 +28,7 @@ Certifications and their domains are defined in `tools/certs.py`. The code (`GPC
 | `content/<id>/domain-N.json` | Lesson summaries, objectives and takeaways, plus the glossary | **Hand** |
 | `docs/assets/certs.js`, `docs/assets/data-<id>.js` | Site data | `build.py` (generated) |
 | `docs/index.html`, `docs/assets/app.js`, `docs/assets/styles.css` | The site itself, plain HTML/CSS/JS with no build step | **Hand** |
+| `docs/assets/img/<id>/` | Images used by questions, referenced from `fixes.json` as `assets/img/<id>/<file>` (relative to `docs/`). Don't hotlink images from the source site; download them here. If an image is only a screenshot of a table, write it as a Markdown table instead. | **Hand** |
 | `tools/` | The Python pipeline | **Hand** |
 
 **Never hand-edit generated files.** Change the source, then regenerate.

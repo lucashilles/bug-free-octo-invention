@@ -4698,7 +4698,7 @@ Here's a breakdown of the error, potential causes, and the best solution:
 
 **Your company has a project in Google Cloud with three Virtual Private Clouds (VPCs). There is a Compute Engine instance on each VPC. Network subnets do not overlap and must remain separated. The network configuration is shown below. Instance #1 is an exception and must communicate directly with both Instance #2 and Instance #3 via internal IPs. How should you accomplish this?**
 
-![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)
+![Network diagram: VPC#1, VPC#2 and VPC#3, each with one subnet and one Compute Engine instance (Instance1, Instance2, Instance3)](assets/img/gpca/e4q53-network.jpg)
 
 - [ ] A. Create a cloud router to advertise subnet #2 and subnet #3 to subnet #1.
 - [x] B. Add two additional NICs to Instance #1 with the following configuration: NIC1: VPC: VPC #2, SUBNETWORK: subnet #2 NIC2: VPC: VPC #3, SUBNETWORK: subnet #3 Update firewall rules to enable traffic between instances.
