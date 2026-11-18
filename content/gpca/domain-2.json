@@ -1,0 +1,422 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson compares the ways to connect on-premises sites to Google Cloud: HA VPN, Dedicated Interconnect, Partner Interconnect and peering. Exam answers depend on bandwidth, the availability target, whether a colocation facility is reachable, and how much the team wants to operate.",
+      "objectives": [
+        "Choose between HA VPN, Dedicated Interconnect and Partner Interconnect from bandwidth, latency and cost cues.",
+        "Describe the redundant topologies behind the 99.99% SLAs for HA VPN and Cloud Interconnect.",
+        "Explain why Direct and Carrier Peering don't give private access to a VPC.",
+        "Pick Premium Tier networking when the stem asks for consistent latency."
+      ],
+      "takeaways": [
+        "Low throughput + 99.99% + cost-effective → one HA VPN gateway with two tunnels.",
+        "Large replication, 20 Gbps or more, or VPN packet loss → Dedicated Interconnect.",
+        "No colocation facility within reach, or less to operate → Partner Interconnect with redundant VLAN attachments and Cloud Router.",
+        "99.99% Interconnect = four connections, two in each of two metros.",
+        "Cloud VPN gateways are regional: one per region that needs a tunnel."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers IP address planning and the ways to connect VPC networks: peering, VPN between VPCs, Hybrid NAT, multi-NIC VMs and Shared VPC. Overlapping ranges and non-transitive peering decide most of these questions.",
+      "objectives": [
+        "Plan non-overlapping custom-mode VPC ranges for hybrid and multi-VPC designs.",
+        "Use VPC Network Peering, including its non-transitive behavior, to connect or deliberately isolate networks.",
+        "Connect networks with overlapping ranges using Cloud VPN route control or Hybrid NAT.",
+        "Choose Shared VPC or multi-NIC VMs when the scenario calls for them."
+      ],
+      "takeaways": [
+        "Always plan Google Cloud ranges that don't overlap with on-premises; avoid default and auto-mode VPCs for hybrid designs.",
+        "Peering works across organizations but refuses overlapping subnets and is not transitive.",
+        "Hub-and-spoke peering lets every environment reach shared services while keeping dev, test and prod apart.",
+        "Partial overlap between two orgs' VPCs → Cloud VPN between them; overlap with on-prem → Hybrid NAT.",
+        "One VM that must reach two otherwise separate VPCs → give it a NIC in each."
+      ]
+    },
+    "3": {
+      "summary": "This lesson explains how VPC firewall rules, Private Google Access and Cloud NAT control traffic between tiers and out of private VMs. Questions test rule priority, implied rules, tag and service-account targeting, and which egress feature reaches what.",
+      "objectives": [
+        "Apply firewall rule priority and the implied ingress-deny and egress-allow rules.",
+        "Isolate application tiers with firewall rules that target network tags or service accounts.",
+        "Distinguish Private Google Access, Cloud NAT and IAP TCP forwarding."
+      ],
+      "takeaways": [
+        "Lower priority number wins; the implied rules are deny ingress and allow egress at 65535.",
+        "To allow only some egress, create a deny-all egress rule plus a higher-priority allow rule.",
+        "Tier isolation = firewall rules on tags or service accounts, not subnets or routes.",
+        "Private Google Access reaches Google APIs only; Cloud NAT reaches the internet outbound only.",
+        "Private GKE cluster that calls third-party APIs → Cloud NAT."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers the Application Load Balancer, health checks, Cloud CDN cache keys, serverless NEGs and how serverless services reach private networks. It also covers locking Cloud Run behind a load balancer with Cloud Armor.",
+      "objectives": [
+        "Route API versions with URL maps while keeping one IP, certificate and DNS name.",
+        "Diagnose backend churn caused by blocked health checks.",
+        "Front multi-region Cloud Run with serverless NEGs and restrict direct access with ingress settings.",
+        "Connect App Engine and Cloud Run to VPC and on-premises resources."
+      ],
+      "takeaways": [
+        "New API version on the same domain → path rules to separate backend pools.",
+        "VMs recreated every minute behind an LB → allow 130.211.0.0/22 and 35.191.0.0/16 in the firewall.",
+        "Improve CDN hit ratio by customizing cache keys, for example dropping the protocol.",
+        "Cloud Run ingress 'internal and Cloud Load Balancing' forces traffic through the LB and Cloud Armor.",
+        "Serverless to private IPs: Direct VPC egress or a Serverless VPC Access connector; App Engine flexible is already in the VPC."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers provisioning Compute Engine at scale: custom images, instance templates and managed instance groups, autoscaling signals, Spot VMs, shutdown scripts and sole-tenant nodes.",
+      "objectives": [
+        "Build the custom image → instance template → MIG chain and explain why images speed up scale-out.",
+        "Configure memory-based autoscaling with the Ops Agent metric and the right filter.",
+        "Choose Spot VMs for interruptible work and handle shutdown gracefully.",
+        "Place VMs on specific sole-tenant nodes with affinity labels."
+      ],
+      "takeaways": [
+        "Custom image from the disk, then an instance template, then an autoscaled MIG.",
+        "Bake OS dependencies into the image rather than installing them at boot.",
+        "Memory autoscaling: agent.googleapis.com/memory/percent_used, filter state = 'used', GAUGE.",
+        "Spot VMs replace preemptible VMs; use the shutdown-script metadata key for graceful stops.",
+        "One dedicated host per client → node affinity on the node name."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers Persistent Disk operations that come up on the exam: resizing a disk online, how performance scales with size, and backup options and their limits.",
+      "objectives": [
+        "Grow a Persistent Disk and its file system without downtime.",
+        "Explain how SSD Persistent Disk IOPS scale with size and with the VM's limits.",
+        "Compare PD snapshots, Local SSD and LVM-based approaches for database backups."
+      ],
+      "takeaways": [
+        "Resize the PD in place, then run resize2fs (ext4) or xfs_growfs; no restart needed.",
+        "Bigger SSD PD = more IOPS (6,000 + 30 per GB), the quickest fix for a disk-bound database.",
+        "Changing RAM or machine type requires a stop; disk resizing doesn't.",
+        "PD snapshots capture a whole disk; Local SSD is fast but ephemeral."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers data lifecycle settings in Cloud Storage and BigQuery: storage classes, lifecycle rules, Object Versioning, retention, and partition expiration.",
+      "objectives": [
+        "Choose a Cloud Storage class from access frequency and minimum storage duration.",
+        "Write lifecycle rules that transition or delete objects automatically.",
+        "Distinguish Object Versioning, retention policies and lifecycle deletion.",
+        "Expire BigQuery data with time-partitioned tables."
+      ],
+      "takeaways": [
+        "Monthly access → Nearline, quarterly → Coldline, yearly → Archive; all return data in milliseconds.",
+        "Automatic deletion or tiering → JSON lifecycle rules, never cron scripts.",
+        "History and undo → Object Versioning; can't-delete-before → retention policy or Bucket Lock.",
+        "BigQuery rolling window → partition expiration, not table expiration."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers how GKE workloads scale and are exposed: HPA and Cluster Autoscaler, custom-metric autoscaling, Services, Ingress, StatefulSets, resource requests and multi-cluster Gateway.",
+      "objectives": [
+        "Combine HPA and Cluster Autoscaler, and enable autoscaling on an existing cluster.",
+        "Scale a Pub/Sub consumer on backlog instead of CPU.",
+        "Pick ClusterIP, Ingress or StatefulSet for the addressing need in the stem.",
+        "Right-size requests and design region-failure-tolerant GKE deployments."
+      ],
+      "takeaways": [
+        "HPA scales pods, Cluster Autoscaler scales nodes; don't touch the node MIG directly.",
+        "Pub/Sub backlog → HPA on subscription/num_undelivered_messages.",
+        "Internal stable address → ClusterIP Service DNS; HTTPS from outside → Ingress; stable pod names → StatefulSet.",
+        "Set requests slightly above typical usage and keep limits higher for bursts.",
+        "Region-proof GKE → fleet, full app in every region, multi-cluster Gateway."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers the AI topics in this domain: Vertex AI as the ML platform, Model Garden and regional deployment of open models, the pre-built AI APIs, and cost-effective infrastructure for training.",
+      "objectives": [
+        "Recommend Vertex AI with MLOps workflows to replace self-managed notebooks.",
+        "Meet data-residency rules by deploying a Model Garden model to a regional endpoint.",
+        "Tell the pre-built AI APIs apart from generative models.",
+        "Design interruptible accelerator training with Spot VMs, checkpoints and Cloud Storage FUSE."
+      ],
+      "takeaways": [
+        "Shared, scalable ML platform with deployment hand-off → Vertex AI + MLOps.",
+        "Strict in-country processing → an open model such as Gemma on a Vertex AI endpoint in that region.",
+        "Natural Language API classifies and extracts; it doesn't summarize.",
+        "Interruptible GPU batch → Spot VMs + Persistent Disk + checkpointing; Local SSD loses data.",
+        "Many VMs need file access to a bucket → gcsfuse."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Autoclass",
+      "definition": "A Cloud Storage bucket setting that moves each object between storage classes automatically based on its access pattern.",
+      "exam_context": "An alternative to hand-written lifecycle transitions when access patterns are unknown.",
+      "lesson": 7
+    },
+    {
+      "term": "Bucket Lock",
+      "definition": "Locking a Cloud Storage retention policy so it can't be shortened or removed, which makes objects write-once-read-many until they age out.",
+      "exam_context": "Prevents deletion before a date; it doesn't keep version history, which is Object Versioning's job.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud CDN",
+      "definition": "Google's edge cache in front of an external Application Load Balancer.",
+      "exam_context": "Raise the hit ratio by customizing the cache key, for example removing the protocol.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Interconnect",
+      "definition": "Private, high-bandwidth physical connectivity between on-premises networks and a VPC, offered as Dedicated or Partner Interconnect.",
+      "exam_context": "The answer for large replication, 10 Gbps or more, or when VPN latency and packet loss hurt.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud NAT",
+      "definition": "Managed network address translation that gives resources without external IPs outbound internet access.",
+      "exam_context": "Private VMs or private GKE nodes that must reach external repositories or APIs.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Router",
+      "definition": "A managed BGP speaker that exchanges routes dynamically between a VPC and on-premises or other networks.",
+      "exam_context": "Required for HA VPN and Interconnect VLAN attachments; pairs with redundant attachments.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Storage FUSE",
+      "definition": "An adapter (gcsfuse) that mounts a Cloud Storage bucket as a local file system.",
+      "exam_context": "The simplest, cheapest way for many training VMs to read a large dataset as files.",
+      "lesson": 9
+    },
+    {
+      "term": "Cluster Autoscaler",
+      "definition": "The GKE feature that adds or removes nodes in a node pool when pods can't be scheduled or nodes are underused.",
+      "exam_context": "Paired with HPA; enable it on an existing cluster with clusters update --enable-autoscaling.",
+      "lesson": 8
+    },
+    {
+      "term": "ClusterIP Service",
+      "definition": "A Kubernetes Service type that gives a set of pods a stable internal virtual IP and DNS name.",
+      "exam_context": "Internal microservices address each other through the Service DNS name.",
+      "lesson": 8
+    },
+    {
+      "term": "Coldline Storage",
+      "definition": "A Cloud Storage class for data accessed about once a quarter, with a 90-day minimum storage duration.",
+      "exam_context": "Data older than 30 days that is read quarterly for reporting.",
+      "lesson": 7
+    },
+    {
+      "term": "Custom image",
+      "definition": "A boot disk image you create from a disk, snapshot or other image, usable across projects.",
+      "exam_context": "Bake dependencies into it, then reference it from an instance template for a MIG.",
+      "lesson": 5
+    },
+    {
+      "term": "Dedicated Interconnect",
+      "definition": "A direct physical connection between your network and Google's at a colocation facility, in 10 or 100 Gbps circuits.",
+      "exam_context": "Four connections across two metros give the 99.99% topology.",
+      "lesson": 1
+    },
+    {
+      "term": "Direct Peering",
+      "definition": "A connection between your network and Google's edge for reaching Google's public services, not private VPC addresses.",
+      "exam_context": "A distractor when the stem asks for private access to VMs.",
+      "lesson": 1
+    },
+    {
+      "term": "Direct VPC egress",
+      "definition": "A Cloud Run feature that sends traffic straight into a VPC subnet without a Serverless VPC Access connector.",
+      "exam_context": "Lets Cloud Run reach an AlloyDB instance that has only a private IP.",
+      "lesson": 4
+    },
+    {
+      "term": "Firewall rule priority",
+      "definition": "An integer from 0 to 65535 on each VPC firewall rule; the lowest number takes precedence.",
+      "exam_context": "Allow-AD egress at 100 overrides deny-all egress at 1000.",
+      "lesson": 3
+    },
+    {
+      "term": "Gemma",
+      "definition": "Google's family of open-weight models, available through Vertex AI Model Garden.",
+      "exam_context": "Deploy it to a Vertex AI endpoint in a specific region to meet strict data residency.",
+      "lesson": 9
+    },
+    {
+      "term": "HA VPN",
+      "definition": "A Cloud VPN gateway with two interfaces that offers a 99.99% SLA when configured with two tunnels and BGP.",
+      "exam_context": "The cost-effective answer for low-throughput, high-availability private links.",
+      "lesson": 1
+    },
+    {
+      "term": "Health check firewall rule",
+      "definition": "An ingress rule allowing Google's probe ranges 130.211.0.0/22 and 35.191.0.0/16 to reach backends.",
+      "exam_context": "Missing it makes backends unhealthy and MIG autohealing recreates VMs every minute.",
+      "lesson": 4
+    },
+    {
+      "term": "Horizontal Pod Autoscaler",
+      "definition": "A Kubernetes controller that changes a workload's replica count based on CPU, memory or custom/external metrics.",
+      "exam_context": "Scale a Pub/Sub consumer on num_undelivered_messages rather than CPU.",
+      "lesson": 8
+    },
+    {
+      "term": "Hybrid NAT",
+      "definition": "Private NAT for traffic from a VPC to on-premises or other-cloud networks over Cloud VPN or Interconnect, translating into a non-overlapping range.",
+      "exam_context": "Connects an acquired company's VPC whose ranges overlap the data center.",
+      "lesson": 2
+    },
+    {
+      "term": "Ingress (GKE)",
+      "definition": "A Kubernetes resource that, on GKE, provisions an external Application Load Balancer for HTTP(S) routing.",
+      "exam_context": "Use it for HTTPS apps instead of a Service of type LoadBalancer.",
+      "lesson": 8
+    },
+    {
+      "term": "Instance template",
+      "definition": "A resource that defines a VM's machine type, image, disks and metadata for creating VMs or MIGs.",
+      "exam_context": "Created from a custom image, then used by an autoscaled MIG.",
+      "lesson": 5
+    },
+    {
+      "term": "Lifecycle management rule",
+      "definition": "A Cloud Storage bucket rule, written in JSON, that deletes objects or changes their class when conditions such as age are met.",
+      "exam_context": "Delete backups after 90 days or tier media from Standard to Coldline automatically.",
+      "lesson": 7
+    },
+    {
+      "term": "Managed instance group (MIG)",
+      "definition": "A group of identical VMs created from an instance template, with autoscaling, autohealing and rolling updates.",
+      "exam_context": "The backend for a global load balancer in the legacy Mountkirk Games case.",
+      "lesson": 5
+    },
+    {
+      "term": "Model Garden",
+      "definition": "The Vertex AI catalog of Google, partner and open models that you can try, tune and deploy.",
+      "exam_context": "Source of Gemma for in-region summarization.",
+      "lesson": 9
+    },
+    {
+      "term": "Multi-cluster Gateway",
+      "definition": "A GKE Gateway that load-balances across clusters in a fleet with one global load balancer.",
+      "exam_context": "Full app in each region's cluster to survive a regional outage.",
+      "lesson": 8
+    },
+    {
+      "term": "Multiple network interfaces",
+      "definition": "Up to 8 NICs on one VM (depending on vCPUs), each in a different VPC.",
+      "exam_context": "Lets one instance talk to two VPCs that otherwise stay separate.",
+      "lesson": 2
+    },
+    {
+      "term": "Network Service Tiers",
+      "definition": "Premium Tier carries traffic on Google's global backbone; Standard Tier uses the public internet for most of the path.",
+      "exam_context": "Consistent low latency to plants needs Premium Tier plus Interconnect.",
+      "lesson": 1
+    },
+    {
+      "term": "Object Versioning",
+      "definition": "A Cloud Storage setting that keeps noncurrent versions of overwritten or deleted objects.",
+      "exam_context": "Full change history and recovery from accidental edits or deletions.",
+      "lesson": 7
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's agent that collects VM logs and metrics, including memory, for Cloud Monitoring.",
+      "exam_context": "Needed before a MIG can autoscale on agent.googleapis.com/memory/percent_used.",
+      "lesson": 5
+    },
+    {
+      "term": "Partition expiration",
+      "definition": "A BigQuery setting that deletes each partition of a time-partitioned table once it reaches a set age.",
+      "exam_context": "Keep a rolling 45-day window of logs without deleting whole tables.",
+      "lesson": 7
+    },
+    {
+      "term": "Partner Interconnect",
+      "definition": "Private connectivity to Google through a supported service provider, from 50 Mbps to 50 Gbps.",
+      "exam_context": "Data centers that can't reach a colocation facility, or teams that want less to operate.",
+      "lesson": 1
+    },
+    {
+      "term": "Persistent Disk resize",
+      "definition": "Increasing a Persistent Disk's size while it is attached and in use; disks can't be shrunk.",
+      "exam_context": "Follow with resize2fs to grow an ext4 file system online.",
+      "lesson": 6
+    },
+    {
+      "term": "Private Google Access",
+      "definition": "A subnet setting that lets VMs with only internal IPs reach Google APIs and services.",
+      "exam_context": "Download installers from Cloud Storage without internet access.",
+      "lesson": 3
+    },
+    {
+      "term": "Serverless NEG",
+      "definition": "A network endpoint group that points a load balancer backend at Cloud Run, Cloud Run functions or App Engine.",
+      "exam_context": "Multi-region Cloud Run behind one global Application Load Balancer.",
+      "lesson": 4
+    },
+    {
+      "term": "Serverless VPC Access",
+      "definition": "A connector that lets App Engine standard, Cloud Run and Cloud Run functions send traffic into a VPC.",
+      "exam_context": "App Engine standard reaching an on-premises database over existing Cloud VPN.",
+      "lesson": 4
+    },
+    {
+      "term": "Shared VPC",
+      "definition": "A model where a host project owns a VPC network and attached service projects deploy into its subnets.",
+      "exam_context": "Keeps migrated VMs and new modernized workloads on one low-latency network.",
+      "lesson": 2
+    },
+    {
+      "term": "shutdown-script",
+      "definition": "The Compute Engine metadata key whose script runs when a VM stops or is preempted.",
+      "exam_context": "Graceful shutdown for Spot and preemptible VMs.",
+      "lesson": 5
+    },
+    {
+      "term": "Sole-tenant node",
+      "definition": "A Compute Engine host dedicated to one project's VMs, for isolation and licensing.",
+      "exam_context": "Use node affinity on the node name to give each client its own host.",
+      "lesson": 5
+    },
+    {
+      "term": "Spot VM",
+      "definition": "A Compute Engine VM priced well below standard VMs that Google can stop at any time; the successor to preemptible VMs.",
+      "exam_context": "Interruptible batch and accelerator jobs, with checkpointing to Persistent Disk.",
+      "lesson": 5
+    },
+    {
+      "term": "SSD Persistent Disk",
+      "definition": "Zonal or regional block storage on SSDs whose IOPS scale with size (6,000 baseline + 30 per GB, capped by the VM).",
+      "exam_context": "Resizing from 80 GB to 500 GB is the quick fix for a disk-bound MySQL server.",
+      "lesson": 6
+    },
+    {
+      "term": "StatefulSet",
+      "definition": "A Kubernetes workload that gives pods stable, ordered names and per-pod storage.",
+      "exam_context": "Required when a workload needs consistent hostnames across restarts.",
+      "lesson": 8
+    },
+    {
+      "term": "Storage classes",
+      "definition": "Cloud Storage tiers: Standard, Nearline (30-day minimum), Coldline (90-day), Archive (365-day), all with millisecond access.",
+      "exam_context": "Pick by access frequency; Archive is too costly for quarterly reads.",
+      "lesson": 7
+    },
+    {
+      "term": "Vertex AI",
+      "definition": "Google Cloud's unified ML platform for data preparation, training, pipelines, model registry, deployment and monitoring; formerly AI Platform.",
+      "exam_context": "Replaces self-managed Jupyter with a shared, scalable platform and MLOps.",
+      "lesson": 9
+    },
+    {
+      "term": "Vertex AI Pipelines",
+      "definition": "A managed service that runs Kubeflow or TFX pipelines to automate and orchestrate ML workflows.",
+      "exam_context": "The MLOps building block for repeatable training and deployment.",
+      "lesson": 9
+    },
+    {
+      "term": "VPC Network Peering",
+      "definition": "A private connection between two VPCs, in any projects or organizations, using internal IPs; it is non-transitive and refuses overlapping ranges.",
+      "exam_context": "Hub-and-spoke peering isolates environments while sharing services.",
+      "lesson": 2
+    }
+  ]
+}

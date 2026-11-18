@@ -1,0 +1,361 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how logs reach Cloud Logging and where they go next: audit logs, the Ops Agent on VMs, GKE container logs, sinks, aggregated sinks and Log Analytics. Questions test which logs are automatic, at what level to route them, and how to analyze or act on them.",
+      "objectives": [
+        "Tell which logs Cloud Logging collects automatically and which need the Ops Agent.",
+        "Find logs for a crash-looping GKE workload and enable logging on an existing cluster.",
+        "Design a folder-level aggregated sink that covers current and future projects.",
+        "Use Log Analytics and a linked BigQuery dataset for SQL analysis and dashboards.",
+        "Trigger automation from a log entry through a sink and Pub/Sub."
+      ],
+      "takeaways": [
+        "Admin Activity audit logs are automatic; VM OS logs need the Ops Agent on every VM.",
+        "GKE stdout/stderr lands in Cloud Logging under k8s_container and survives pod restarts.",
+        "Current and future projects in one folder → aggregated sink on that folder.",
+        "SQL over logs → Log Analytics, linked BigQuery dataset, Data Studio dashboards.",
+        "Don't trust shutdown scripts for cleanup; react to the instance-removal log entry.",
+        "Firewall Insights needs Firewall Rules Logging; BigQuery usage per user comes from INFORMATION_SCHEMA.JOBS."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers Cloud Monitoring: custom metrics, predefined dashboards, alerting policies, uptime checks, Cloud SQL alerts and Managed Service for Prometheus. The exam rewards the managed, built-in option over scripts and self-run tooling.",
+      "objectives": [
+        "Send custom metrics and display them on a Monitoring dashboard.",
+        "Set up GKE incident triage with predefined dashboards and alerting policies.",
+        "Build an automated response to downtime with an uptime check, Pub/Sub and a function.",
+        "Choose Managed Service for Prometheus for PromQL workloads across clouds.",
+        "Pick the right metric for end-to-end request time."
+      ],
+      "takeaways": [
+        "Live KPIs → custom metrics + Monitoring dashboard, not BigQuery batch loads.",
+        "Fast triage → predefined dashboards + added metrics + alerting policies, prepared before incidents.",
+        "Uptime check → alert → Pub/Sub notification channel → Cloud Run function.",
+        "Cloud SQL: auto storage increase, alerts on CPU and replication lag.",
+        "Prometheus users wanting a managed backend → Managed Service for Prometheus.",
+        "\"How long a request takes\" → request latency."
+      ]
+    },
+    "3": {
+      "summary": "This lesson explains SRE practice as the exam tests it: user-centric SLIs, request-based SLOs, error budgets and burn-rate alerting, and SLOs for services in a service mesh.",
+      "objectives": [
+        "Choose user-centric SLIs over infrastructure metrics.",
+        "Write SLOs as percentages of requests meeting success or latency targets.",
+        "Explain error budgets, burn rate and error budget policies.",
+        "Configure latency SLOs and SLO alerts for mesh-enabled GKE services."
+      ],
+      "takeaways": [
+        "User view → request latency and error rate, not CPU, memory or uptime.",
+        "Good SLO: 99% of requests return 2xx; 99% complete within 100 ms.",
+        "Mean latency hides the tail; use percentiles or ratios.",
+        "Page on fast error-budget burn, not on CPU or every ERROR log.",
+        "Service mesh on the cluster → define the SLO and its alert in the console."
+      ]
+    },
+    "4": {
+      "summary": "This lesson matches performance questions to the right tool: Cloud Trace for latency across services, Cloud Profiler for CPU and memory in code, Cloud Service Mesh telemetry for slow microservices, and Vertex AI Model Monitoring for drifting model inputs.",
+      "objectives": [
+        "Use Cloud Trace to find which microservice adds latency.",
+        "Use Cloud Profiler to analyze CPU and memory use of running code.",
+        "Use service mesh telemetry to locate a slow service.",
+        "Distinguish training-serving skew from prediction drift."
+      ],
+      "takeaways": [
+        "Request crosses many services → Cloud Trace.",
+        "CPU or memory hot spots in code → Cloud Profiler.",
+        "Cloud Debugger was shut down in 2023; it was never a performance tool.",
+        "Mesh installed → read its topology and telemetry, don't reinstall Istio.",
+        "Inputs change over time → prediction drift; differ from training data → skew."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers supporting a running system: roll back first, investigate with evidence, debug VMs and MIGs, and restore capacity when autoscaling hits limits or quotas.",
+      "objectives": [
+        "Apply mitigate-first incident response after a bad release.",
+        "Roll back through the deployment pipeline instead of changing servers by hand.",
+        "Gather logs, serial console output and metrics for a VM failure.",
+        "Get access to MIG instances that autohealing keeps recreating.",
+        "Restore capacity when the autoscaler is at its maximum or quotas block it."
+      ],
+      "takeaways": [
+        "Broke after an update → roll back, then debug in a non-production environment.",
+        "Revert the commit and rerun the pipeline; self-healing groups undo manual fixes.",
+        "First step for unexplained slowness → Cloud Logging and Cloud Monitoring.",
+        "VM crash → logs, serial console and metrics at the failure time.",
+        "MIG restart loop → remove the health check, then grant SSH access.",
+        "Autoscaler at max with CPU at 100% → raise the max; autoscaling stuck after growth → check quotas."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers the operational excellence pillar in practice: safe releases with probes and blue/green or canary strategies, testing types, load testing plans, chaos engineering and OS patching with VM Manager.",
+      "objectives": [
+        "Summarize the operational excellence pillar of the Well-Architected Framework.",
+        "Prevent rollout outages in GKE with readiness and liveness probes.",
+        "Compare blue/green, canary and rolling releases.",
+        "Plan a load test that is isolated, realistic and observable.",
+        "Patch large VM fleets with VM Manager patch jobs."
+      ],
+      "takeaways": [
+        "Readiness probes keep bad new pods out of service during rolling updates.",
+        "Blue/green and smaller services reduce rollbacks.",
+        "Unit tests check one service alone; load tests check behaviour at scale.",
+        "Load tests: expected concurrency, separate project, metrics on both sides, never production.",
+        "Patch fleets with VM Manager: OS Config agent plus patch jobs or patch deployments."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Admin Activity audit logs",
+      "definition": "Cloud Audit Logs entries for API calls that change configuration or metadata. Always on, free, and not configurable.",
+      "exam_context": "Collected automatically, unlike VM OS logs which need an agent.",
+      "lesson": 1
+    },
+    {
+      "term": "Aggregated sink",
+      "definition": "A log sink created on a folder or organization that routes logs from all child projects, including ones created later.",
+      "exam_context": "Production folder sink to a central bucket covers current and future production projects only.",
+      "lesson": 1
+    },
+    {
+      "term": "Alerting policy",
+      "definition": "A Cloud Monitoring rule made of conditions (threshold, absence, log match, SLO burn rate) and notification channels.",
+      "exam_context": "Paired with predefined dashboards for fast GKE triage.",
+      "lesson": 2
+    },
+    {
+      "term": "Autohealing",
+      "definition": "A MIG feature that recreates instances failing an application health check.",
+      "exam_context": "All VMs restarting every few seconds → remove the health check before debugging.",
+      "lesson": 5
+    },
+    {
+      "term": "Autoscaler maximum",
+      "definition": "The upper limit on instances a MIG autoscaler can create.",
+      "exam_context": "CPU at 100% with the autoscaler at max → raise the maximum to restore traffic.",
+      "lesson": 5
+    },
+    {
+      "term": "Blue/green deployment",
+      "definition": "Running two full environments and switching traffic from the old (blue) to the new (green), with instant switch-back to roll back.",
+      "exam_context": "Chosen to reduce unplanned rollbacks.",
+      "lesson": 6
+    },
+    {
+      "term": "Burn rate",
+      "definition": "How fast a service consumes its error budget relative to the SLO window.",
+      "exam_context": "Page when the budget would be gone within about 24 hours; reduces alert noise.",
+      "lesson": 3
+    },
+    {
+      "term": "Canary release",
+      "definition": "Sending a small share of traffic to a new version before rolling it out fully.",
+      "exam_context": "A way to limit blast radius; not a replacement for QA.",
+      "lesson": 6
+    },
+    {
+      "term": "Chaos engineering",
+      "definition": "Deliberately injecting failures (instances, zones, dependencies) under control to verify recovery.",
+      "exam_context": "Part of reliability testing in production-like conditions.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Audit Logs",
+      "definition": "Logs recording who did what, where and when in Google Cloud: Admin Activity, Data Access, System Event and Policy Denied.",
+      "exam_context": "Not the simplest way to count BigQuery queries per user; use INFORMATION_SCHEMA.JOBS.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Debugger",
+      "definition": "A former tool for inspecting running code state; shut down in 2023. Snapshot Debugger is its open-source successor.",
+      "exam_context": "Never the answer for load testing or performance analysis.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Profiler",
+      "definition": "A low-overhead, continuous profiler that samples CPU and heap use of running Java, Go, Node.js and Python code.",
+      "exam_context": "Evaluate performance of a Java pipeline → Profiler, not Trace or logs.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Service Mesh",
+      "definition": "Google's managed Istio-based service mesh, formerly Anthos Service Mesh and Traffic Director. Provides service topology, telemetry and SLOs.",
+      "exam_context": "Find the slow microservice or set a latency SLO without code changes.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Trace",
+      "definition": "A distributed tracing system that records the latency of each step of a request across services.",
+      "exam_context": "Some requests slow across many microservices → Trace.",
+      "lesson": 4
+    },
+    {
+      "term": "Custom metric",
+      "definition": "An application-defined metric written to Cloud Monitoring through the API or OpenTelemetry.",
+      "exam_context": "Real-time game KPIs → custom metrics on a Monitoring dashboard.",
+      "lesson": 2
+    },
+    {
+      "term": "Error budget",
+      "definition": "The allowed amount of unreliability: 100% minus the SLO.",
+      "exam_context": "An error budget policy decides what happens when it is spent.",
+      "lesson": 3
+    },
+    {
+      "term": "Firewall Rules Logging",
+      "definition": "Per-rule logging of connections allowed or denied by VPC firewall rules.",
+      "exam_context": "Must be enabled for Firewall Insights to show data.",
+      "lesson": 1
+    },
+    {
+      "term": "Golden signals",
+      "definition": "Latency, traffic, errors and saturation: the four key signals for monitoring a service.",
+      "exam_context": "\"How long a request takes\" is latency, not throughput or QPS.",
+      "lesson": 2
+    },
+    {
+      "term": "INFORMATION_SCHEMA.JOBS",
+      "definition": "BigQuery views holding metadata for every job, including user, type and creation time.",
+      "exam_context": "Query it to count queries per user over a month.",
+      "lesson": 1
+    },
+    {
+      "term": "Liveness probe",
+      "definition": "A Kubernetes check that restarts a container when it stops responding.",
+      "exam_context": "Used with readiness probes to prevent rollout outages.",
+      "lesson": 6
+    },
+    {
+      "term": "Load testing",
+      "definition": "Simulating expected users and requests to measure latency, errors and scaling under load.",
+      "exam_context": "Run at expected concurrency in a separate project with metrics on both sides.",
+      "lesson": 6
+    },
+    {
+      "term": "Log Analytics",
+      "definition": "A Cloud Logging feature that lets you query log buckets with SQL and link them to a BigQuery dataset.",
+      "exam_context": "SQL-loving teams build log dashboards on the linked dataset in Data Studio.",
+      "lesson": 1
+    },
+    {
+      "term": "Log Router",
+      "definition": "The Cloud Logging component that evaluates sinks and sends each log entry to its destinations.",
+      "exam_context": "Sinks can go to buckets, Cloud Storage, BigQuery, Pub/Sub or other projects.",
+      "lesson": 1
+    },
+    {
+      "term": "Log sink",
+      "definition": "A Log Router rule with a filter and a destination.",
+      "exam_context": "Sink to Pub/Sub to trigger a function on instance-removal events.",
+      "lesson": 1
+    },
+    {
+      "term": "Managed Service for Prometheus",
+      "definition": "Google Cloud's managed Prometheus backend, built on Cloud Monitoring, supporting PromQL across GKE, other clouds and on-premises.",
+      "exam_context": "PromQL + managed + multi-cloud → this, not a self-run Prometheus Operator.",
+      "lesson": 2
+    },
+    {
+      "term": "Metrics scope",
+      "definition": "The set of projects whose metrics a Cloud Monitoring project can view; replaced the older Monitoring workspace.",
+      "exam_context": "Questions still say \"Cloud Monitoring workspace\".",
+      "lesson": 2
+    },
+    {
+      "term": "Operational excellence pillar",
+      "definition": "The Well-Architected Framework pillar on operational readiness, incident management, resource management, change automation and continuous improvement.",
+      "exam_context": "Answers in this domain favor automation, observability and small reversible changes.",
+      "lesson": 6
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's agent for Compute Engine that collects both logs and metrics; replaces the legacy Logging and Monitoring agents.",
+      "exam_context": "Must run on each VM to collect OS and application logs.",
+      "lesson": 1
+    },
+    {
+      "term": "OS Config agent",
+      "definition": "The VM Manager agent on each Compute Engine VM that runs patch jobs and reports inventory.",
+      "exam_context": "Required for VM Manager patching.",
+      "lesson": 6
+    },
+    {
+      "term": "Patch job",
+      "definition": "A VM Manager operation that applies OS updates to a filtered set of VMs, now or on a schedule (patch deployment).",
+      "exam_context": "Hundreds of Ubuntu and RHEL VMs → patch jobs, not SSH scripts.",
+      "lesson": 6
+    },
+    {
+      "term": "Post-mortem",
+      "definition": "A blameless review of an incident, built from logs and metrics, that records causes and follow-up actions.",
+      "exam_context": "Start from GKE and Cloud SQL logs, not restarts or restores.",
+      "lesson": 5
+    },
+    {
+      "term": "Prediction drift",
+      "definition": "A significant change over time in the distribution of a deployed model's production inputs.",
+      "exam_context": "Gradually changing customer preferences → enable drift detection.",
+      "lesson": 4
+    },
+    {
+      "term": "Project quota",
+      "definition": "Limits on resources such as CPUs, IP addresses and instances per project and region.",
+      "exam_context": "Autoscaling failing after growth with 503s → check quotas first.",
+      "lesson": 5
+    },
+    {
+      "term": "Readiness probe",
+      "definition": "A Kubernetes check that keeps a pod out of Service endpoints until it is ready to serve.",
+      "exam_context": "Stops misconfigured new pods from taking traffic during rolling updates.",
+      "lesson": 6
+    },
+    {
+      "term": "Rollback",
+      "definition": "Returning to the last known good release.",
+      "exam_context": "Broken after an update → roll back first, then investigate off production.",
+      "lesson": 5
+    },
+    {
+      "term": "Serial console",
+      "definition": "Access to a VM's serial port output and, if enabled, an interactive console, even without SSH.",
+      "exam_context": "Read kernel panics after a bad kernel module.",
+      "lesson": 5
+    },
+    {
+      "term": "Service level indicator (SLI)",
+      "definition": "A measured ratio of good events to valid events, such as successful or fast requests.",
+      "exam_context": "User-centric SLIs are request latency and error rate.",
+      "lesson": 3
+    },
+    {
+      "term": "Service level objective (SLO)",
+      "definition": "A target value for an SLI over a time window.",
+      "exam_context": "\"99% of requests return 2xx\" and \"99% under 100 ms\".",
+      "lesson": 3
+    },
+    {
+      "term": "Training-serving skew",
+      "definition": "A difference between production input distributions and the training data distribution.",
+      "exam_context": "Detects mismatch with training data, not gradual change over time.",
+      "lesson": 4
+    },
+    {
+      "term": "Uptime check",
+      "definition": "A Cloud Monitoring probe that tests a URL or port from several locations.",
+      "exam_context": "Combine with an alert to Pub/Sub and a function to react to downtime.",
+      "lesson": 2
+    },
+    {
+      "term": "Vertex AI Model Monitoring",
+      "definition": "A Vertex AI service that monitors deployed models for skew and drift and alerts on them.",
+      "exam_context": "Pick drift detection for evolving customer behavior.",
+      "lesson": 4
+    },
+    {
+      "term": "VM Manager",
+      "definition": "Compute Engine tools for patching, OS inventory and OS policies on VM fleets.",
+      "exam_context": "Secure, scalable OS patching across hundreds of VMs.",
+      "lesson": 6
+    }
+  ]
+}

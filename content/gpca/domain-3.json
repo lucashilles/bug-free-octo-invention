@@ -1,0 +1,461 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how people sign in to Google Cloud: Cloud Identity accounts, directory sync from Active Directory, SAML single sign-on and Workforce Identity Federation. Questions reward federating to the existing identity provider and enforcing domain limits with an organization policy.",
+      "objectives": [
+        "Explain the roles of Cloud Identity, Google Cloud Directory Sync and SAML SSO in a hybrid identity design.",
+        "Choose federation over password sync when the security team controls password storage.",
+        "Restrict IAM grants to the company's own domain with domain restricted sharing."
+      ],
+      "takeaways": [
+        "Keep AD as the source of truth → GCDS to sync accounts + SAML SSO to sign in.",
+        "Strict password rules + minimal disruption → federate via SAML; never copy passwords into Google.",
+        "Block grants to outside identities from now on → org policy restricting identities by domain.",
+        "Scheduled clean-up scripts are reactive; an organization policy prevents the grant."
+      ]
+    },
+    "2": {
+      "summary": "This lesson explains the organization, folder and project hierarchy and how IAM allow policies inherit as a union. Exam scenarios ask you to lay out folders per department or environment, isolate environments in projects and remove over-broad inherited grants at their source.",
+      "objectives": [
+        "Design a single-organization hierarchy with folders for departments, business units and environments.",
+        "Predict the effective IAM policy at a node from inherited grants.",
+        "Fix over-broad access by removing the grant where it was made.",
+        "Grant audit and security teams organization-wide read-only visibility."
+      ],
+      "takeaways": [
+        "One organization; folders per department or environment; groups get roles on folders.",
+        "Effective allow policy = union of the node and its ancestors; lower grants can't take access away.",
+        "Owner at the org can't be reduced by Viewer on a folder; remove the org grant.",
+        "Dev, staging and prod each get their own project.",
+        "Security team visibility → Organization Viewer + Project Viewer."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers predefined roles, least privilege, groups and how workloads authenticate with service accounts, Workload Identity and ID tokens. It also covers temporary access with IAM Conditions, signed URLs, and separation of duties with Shared VPC.",
+      "objectives": [
+        "Assign BigQuery roles so queries bill to one project while data stays read-only.",
+        "Pick the right workload identity: attached service account, Workload Identity for GKE, or Workload Identity Federation.",
+        "Secure service-to-service calls with the Invoker role and ID tokens.",
+        "Grant time-limited access with IAM Conditions or signed URLs.",
+        "Separate network and application duties with Shared VPC host and service projects."
+      ],
+      "takeaways": [
+        "BigQuery: jobUser on the billing project, dataViewer on the data projects.",
+        "VMs use their attached service account with IAM roles; access scopes are not roles.",
+        "GKE pods → Workload Identity, never Kubernetes Secrets holding keys.",
+        "Only function X may call Y → require authentication, Invoker role for X's own SA, ID token.",
+        "Temporary auditor access → time-based IAM Condition on the group binding.",
+        "Network team vs app team → Shared VPC host project vs service project."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers preventive guardrails: organization policy constraints, hierarchical firewall policies, Cloud Armor and private GKE clusters. Organization policies limit what can be configured regardless of who has IAM permission.",
+      "objectives": [
+        "Use organization policy constraints for external IPs, resource locations and domains.",
+        "Apply hierarchical firewall policies at the right folder so teams can't override them.",
+        "Use Cloud Armor for DDoS protection and CDN IP allow lists.",
+        "Minimize GKE attack surface with private clusters and private endpoints."
+      ],
+      "takeaways": [
+        "Only approved VMs with public IPs → compute.vmExternalIpAccess allow list.",
+        "Regions only → Resource Location Restriction (gcp.resourceLocations) at the org or folder.",
+        "Prod-wide ingress rules teams can't override → hierarchical firewall policy on production folders, not the org root.",
+        "Multi-layer DDoS → Cloud Armor; allow only a CDN → Cloud Armor named IP list.",
+        "IAM, alerts, quotas and Terraform defaults are not enforcement."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers VPC Service Controls: service perimeters, access levels, Private Google Access for on-premises hosts and the API names to protect. VPC-SC is the answer whenever the stem says data exfiltration.",
+      "objectives": [
+        "Explain how a service perimeter stops exfiltration even with valid credentials.",
+        "Allow access from the office network with an access level.",
+        "Connect on-premises hosts to a perimeter through Private Google Access.",
+        "Scope perimeters around sensitive projects when developers need tools like Cloud Shell."
+      ],
+      "takeaways": [
+        "Exfiltration by insiders, compromised code or oversharing → VPC Service Controls (+ PGA for on-prem).",
+        "Office-only access → perimeter + access level on the office CIDR.",
+        "Vertex AI perimeter → aiplatform.googleapis.com and notebooks.googleapis.com.",
+        "Private Google Access alone is routing, not protection.",
+        "Developers need Cloud Shell → perimeter only around sensitive projects, developers outside it."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers zero-trust access: BeyondCorp principles, Identity-Aware Proxy for web apps and on-prem apps, IAP TCP forwarding for SSH, and Chrome Enterprise Premium. Questions replace VPNs and bastion hosts with identity-based access.",
+      "objectives": [
+        "Describe zero-trust principles and how they apply across hybrid environments.",
+        "Protect web apps, including on-prem ones, with IAP.",
+        "SSH to private VMs with IAP TCP forwarding."
+      ],
+      "takeaways": [
+        "Replace VPN for a web app → IAP (connector or hybrid NEG for on-prem apps).",
+        "SSH with no public IP and no VPN → IAP TCP forwarding + IAP-secured Tunnel User.",
+        "Zero trust = identity + context on every request, central logging and automated controls.",
+        "Cloud NAT is outbound only; Cloud Armor filters traffic but doesn't authenticate users."
+      ]
+    },
+    "7": {
+      "summary": "This lesson covers encryption at rest and key choices (Google-managed, CMEK, Cloud HSM, Cloud EKM, imported keys and CSEK), plus Secret Manager and digital signatures. Match the key option to who generates, stores and controls the key.",
+      "objectives": [
+        "Choose between CMEK, Cloud HSM, Cloud EKM, key import and CSEK from a requirement.",
+        "Set a CMEK as a bucket's default key so other services read data transparently.",
+        "Store service credentials in Secret Manager.",
+        "Use digital signatures to prove authorship and log authenticity."
+      ],
+      "takeaways": [
+        "Rotation, ownership and audit of keys → CMEK in Cloud KMS.",
+        "Generated and stored only in an HSM, fully managed → Cloud KMS key at HSM protection level.",
+        "Generated outside Google → import into Cloud KMS; BigQuery has no CSEK.",
+        "gsutil CSEK → .boto file; gcloud storage → --encryption-key.",
+        "Credentials → Secret Manager; anti-spoofing → sign with the sender's private key."
+      ]
+    },
+    "8": {
+      "summary": "This lesson covers protecting PII and card data with Sensitive Data Protection, tokenization, BigQuery authorized views and deletion on request, and securing AI with Confidential Computing, Model Armor and VPC-SC around Vertex AI.",
+      "objectives": [
+        "De-identify PII in an ingest pipeline with the DLP API.",
+        "Reduce PCI scope with tokenization.",
+        "Expose non-PII columns through authorized views in a separate dataset.",
+        "Protect PII during model training without lowering model quality."
+      ],
+      "takeaways": [
+        "Strip PII before storage → DLP API de-identification in Dataflow.",
+        "Reduce PCI scope but keep analytics → tokenization.",
+        "PII split between teams → authorized views in a separate dataset.",
+        "Right to erasure → unique ID + delete the rows.",
+        "Protect data in use during training → Confidential GKE Nodes; screen LLM prompts and responses → Model Armor."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers the software supply chain: Artifact Registry, Artifact Analysis scanning and SBOMs, Cloud Build provenance, Binary Authorization attestations and shift-left security in CI/CD, plus basic GKE workload hardening.",
+      "objectives": [
+        "Combine Cloud Build, Artifact Registry and Artifact Analysis for scanning, provenance and SBOMs.",
+        "Enforce promotion through environments with Binary Authorization attestations.",
+        "Automate SAST and vulnerability scanning in the pipeline.",
+        "Find authoritative information about CVEs affecting Google Cloud."
+      ],
+      "takeaways": [
+        "Scan + provenance + dependency inventory → Cloud Build + Artifact Registry + Artifact Analysis.",
+        "Images skipping staging → Binary Authorization with attestations from CI.",
+        "Fast releases + security → SAST and vulnerability scanning in CI/CD, not manual reviews.",
+        "Block vulnerable images → scan early, Google-maintained base images, fail on critical findings.",
+        "CVE impact → Security Bulletins + support case."
+      ]
+    },
+    "10": {
+      "summary": "This lesson covers shared responsibility and the main compliance regimes: PCI DSS, HIPAA with a BAA, GDPR, ISO 27001 and SOC 2, and where to get Google's official compliance reports.",
+      "objectives": [
+        "Explain what Google's certifications cover and what remains the customer's job.",
+        "Prepare a healthcare workload for a privacy audit.",
+        "Find Google's official compliance reports."
+      ],
+      "takeaways": [
+        "Google certifies the platform; you design and configure a compliant workload.",
+        "HIPAA → sign a BAA and use only covered services.",
+        "GDPR → design the security architecture for it; there's no compliance switch.",
+        "PCI DSS on GKE is possible with the right configuration.",
+        "ISO/SOC reports → Compliance Reports Manager."
+      ]
+    },
+    "11": {
+      "summary": "This lesson covers Cloud Audit Logs, GKE audit logging, log sinks to Cloud Storage, BigQuery and Pub/Sub, metric retention, and immutable storage with retention policies, Bucket Lock and Object Versioning.",
+      "objectives": [
+        "Find who changed what with Admin Activity audit logs.",
+        "Pick a sink destination for retention, analysis or real-time response.",
+        "Design cost-efficient long-term log retention.",
+        "Make records undeletable with locked retention policies and recoverable with versioning."
+      ],
+      "takeaways": [
+        "Who created X → Admin Activity audit logs in Logs Explorer.",
+        "Retain for years → sink to Cloud Storage + lifecycle to Coldline + Bucket Lock.",
+        "Auditors analyze changes → sink to BigQuery with restricted access.",
+        "React in real time → sink to Pub/Sub triggering a function.",
+        "Can't delete for N years → locked retention policy; plus quick recovery → Object Versioning."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Access level",
+      "definition": "An Access Context Manager condition (IP range, device, identity) that lets requests from outside a VPC Service Controls perimeter in.",
+      "exam_context": "Restrict analysts to the office network's CIDR.",
+      "lesson": 5
+    },
+    {
+      "term": "Access scopes",
+      "definition": "Legacy per-VM limits on which APIs the attached service account can call, applied on top of IAM.",
+      "exam_context": "A VM whose scopes exclude BigQuery can't call it even with the right role.",
+      "lesson": 3
+    },
+    {
+      "term": "Admin Activity audit logs",
+      "definition": "Always-on, free audit logs recording configuration changes such as creating a network or VM.",
+      "exam_context": "Use them in Logs Explorer to find who created a resource and when.",
+      "lesson": 11
+    },
+    {
+      "term": "Artifact Analysis",
+      "definition": "Scans images in Artifact Registry for vulnerabilities and stores metadata such as SBOMs and build provenance.",
+      "exam_context": "Detect vulnerabilities and keep a dependency inventory from CI/CD.",
+      "lesson": 9
+    },
+    {
+      "term": "Authorized view",
+      "definition": "A BigQuery view in one dataset that is allowed to read tables in another dataset the viewer can't access.",
+      "exam_context": "Expose non-PII columns to data scientists from a separate dataset.",
+      "lesson": 8
+    },
+    {
+      "term": "BeyondCorp",
+      "definition": "Google's zero-trust model: access is decided per request from identity and context, not network location.",
+      "exam_context": "Replacing a VPN for remote sales staff with IAP.",
+      "lesson": 6
+    },
+    {
+      "term": "Binary Authorization",
+      "definition": "Deploy-time policy that admits container images to GKE or Cloud Run only if they carry required attestations.",
+      "exam_context": "Stop images going to production without passing dev and staging.",
+      "lesson": 9
+    },
+    {
+      "term": "Bucket Lock",
+      "definition": "Locking a Cloud Storage retention policy so it can't be shortened or removed, making objects WORM until they expire.",
+      "exam_context": "Mortgage or trade documents that no one may delete for years.",
+      "lesson": 11
+    },
+    {
+      "term": "Business Associate Agreement (BAA)",
+      "definition": "The HIPAA contract between a covered entity and Google covering protected health information on covered services.",
+      "exam_context": "First step for a healthcare company's privacy audit.",
+      "lesson": 10
+    },
+    {
+      "term": "Chrome Enterprise Premium",
+      "definition": "Google's zero-trust access product (formerly BeyondCorp Enterprise) adding context-aware access and threat protection on top of IAP.",
+      "exam_context": "Named in the exam guide under secure remote access.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Armor",
+      "definition": "Web application firewall and DDoS protection for external Application Load Balancers.",
+      "exam_context": "Multi-layer DDoS mitigation and allowing only a CDN's IP ranges.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud EKM",
+      "definition": "Cloud External Key Manager: Cloud KMS keys whose material stays in a supported external key manager.",
+      "exam_context": "Wrong when keys must live in Google's HSMs.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud HSM",
+      "definition": "Cloud KMS keys at the HSM protection level, generated and used inside FIPS 140-2 Level 3 hardware managed by Google.",
+      "exam_context": "Keys must be generated and stored only in a certified HSM, fully managed.",
+      "lesson": 7
+    },
+    {
+      "term": "Cloud Identity",
+      "definition": "Google's identity service for users and groups without Workspace apps.",
+      "exam_context": "The account store that GCDS syncs into and SAML federates.",
+      "lesson": 1
+    },
+    {
+      "term": "Compliance Reports Manager",
+      "definition": "Console tool for downloading Google's official compliance reports and certifications such as ISO 27001, SOC 2 and PCI DSS.",
+      "exam_context": "Gather Google's ISO 27001 evidence for an audit.",
+      "lesson": 10
+    },
+    {
+      "term": "Confidential GKE Nodes",
+      "definition": "GKE nodes on Confidential VMs, which encrypt data in memory while it's being processed.",
+      "exam_context": "Protect PII during model training without de-identifying it.",
+      "lesson": 8
+    },
+    {
+      "term": "Customer-managed encryption key (CMEK)",
+      "definition": "A Cloud KMS key you control, used by Google services to encrypt your data at rest.",
+      "exam_context": "Key ownership, rotation and audit for buckets and datasets.",
+      "lesson": 7
+    },
+    {
+      "term": "Customer-supplied encryption key (CSEK)",
+      "definition": "A raw AES-256 key you send with each request; Google doesn't store it. Only Cloud Storage and Compute Engine support it.",
+      "exam_context": "Set in the .boto file for gsutil; not available in BigQuery.",
+      "lesson": 7
+    },
+    {
+      "term": "Deterministic encryption",
+      "definition": "Encryption that always gives the same output for the same input with the same key.",
+      "exam_context": "Detect duplicate credit cards in a tokenization service.",
+      "lesson": 8
+    },
+    {
+      "term": "Domain restricted sharing",
+      "definition": "Organization policy constraint iam.allowedPolicyMemberDomains that limits IAM grants to listed customer IDs.",
+      "exam_context": "Block grants to users outside the company domain.",
+      "lesson": 1
+    },
+    {
+      "term": "GKE audit logging",
+      "definition": "Kubernetes API server audit logs sent to Cloud Logging.",
+      "exam_context": "Record who deployed images, changed the cluster or used kubectl on pods and Secrets.",
+      "lesson": 11
+    },
+    {
+      "term": "Google Cloud Directory Sync (GCDS)",
+      "definition": "One-way tool that syncs users and groups from Active Directory or LDAP to Cloud Identity or Workspace.",
+      "exam_context": "Keep the on-prem AD as the identity source.",
+      "lesson": 1
+    },
+    {
+      "term": "Hierarchical firewall policy",
+      "definition": "Firewall rules attached to the organization or a folder, evaluated before VPC rules and not overridable by projects.",
+      "exam_context": "Deny internet ingress on all production projects except HTTPS to tagged VMs.",
+      "lesson": 4
+    },
+    {
+      "term": "IAM Condition",
+      "definition": "An attribute-based condition on a role binding, such as a date/time window or resource name.",
+      "exam_context": "Give auditors read access only for October.",
+      "lesson": 3
+    },
+    {
+      "term": "IAM deny policy",
+      "definition": "A policy that blocks listed permissions for principals regardless of allow policies; evaluated first.",
+      "exam_context": "Exists since 2022; older questions assume IAM is allow-only.",
+      "lesson": 2
+    },
+    {
+      "term": "IAP TCP forwarding",
+      "definition": "IAP tunnels for SSH, RDP or other TCP traffic to VMs without external IPs.",
+      "exam_context": "SSH to a private VM with no VPN, using the IAP-secured Tunnel User role.",
+      "lesson": 6
+    },
+    {
+      "term": "Identity-Aware Proxy (IAP)",
+      "definition": "Google-managed proxy that checks identity and IAM before letting users reach an app or VM.",
+      "exam_context": "Employee-only web apps and BeyondCorp access to on-prem apps.",
+      "lesson": 6
+    },
+    {
+      "term": "Key import",
+      "definition": "Bringing key material generated outside Google into a Cloud KMS key.",
+      "exam_context": "The policy says keys must be generated externally.",
+      "lesson": 7
+    },
+    {
+      "term": "Model Armor",
+      "definition": "Service that screens LLM prompts and responses for prompt injection, jailbreaks, sensitive data and harmful content.",
+      "exam_context": "Securing generative AI apps in the exam guide.",
+      "lesson": 8
+    },
+    {
+      "term": "Object Versioning",
+      "definition": "Cloud Storage feature keeping noncurrent versions of overwritten or deleted objects.",
+      "exam_context": "Quick recovery from accidental deletion, together with Bucket Lock.",
+      "lesson": 11
+    },
+    {
+      "term": "Organization Policy Service",
+      "definition": "Central constraints on resource configuration that inherit down the hierarchy, independent of IAM.",
+      "exam_context": "External IP limits, resource locations, domain restrictions.",
+      "lesson": 4
+    },
+    {
+      "term": "Private Google Access for on-premises hosts",
+      "definition": "Lets on-prem hosts reach Google APIs over VPN or Interconnect through private or restricted VIPs.",
+      "exam_context": "Paired with VPC-SC so on-prem BigQuery access stays inside the perimeter.",
+      "lesson": 5
+    },
+    {
+      "term": "Resource Location Restriction",
+      "definition": "Organization policy constraint gcp.resourceLocations limiting the regions where resources can be created.",
+      "exam_context": "Keep resources in the Interconnect regions or approved Finance regions.",
+      "lesson": 4
+    },
+    {
+      "term": "Retention policy",
+      "definition": "A Cloud Storage bucket setting that blocks deleting or overwriting objects until they reach a minimum age.",
+      "exam_context": "Lock it to make records undeletable for N years.",
+      "lesson": 11
+    },
+    {
+      "term": "Secret Manager",
+      "definition": "Managed store for credentials and other secrets with IAM, versioning, rotation and audit logs.",
+      "exam_context": "Database credentials for many microservices.",
+      "lesson": 7
+    },
+    {
+      "term": "Sensitive Data Protection",
+      "definition": "Google's service (formerly Cloud DLP) for discovering, classifying and de-identifying sensitive data through the DLP API.",
+      "exam_context": "Strip PII in a Dataflow pipeline before BigQuery.",
+      "lesson": 8
+    },
+    {
+      "term": "Separation of duties",
+      "definition": "Splitting responsibilities so no single team or person controls a whole sensitive process.",
+      "exam_context": "Network team in the Shared VPC host project, developers in service projects.",
+      "lesson": 3
+    },
+    {
+      "term": "Service account impersonation",
+      "definition": "Getting short-lived credentials for a service account through the Token Creator role instead of using keys.",
+      "exam_context": "Secure remote and admin access without downloaded keys.",
+      "lesson": 3
+    },
+    {
+      "term": "Service perimeter",
+      "definition": "The VPC Service Controls boundary around projects that limits data movement through Google APIs.",
+      "exam_context": "Prevent BigQuery or Cloud Storage data exfiltration.",
+      "lesson": 5
+    },
+    {
+      "term": "Signed URL",
+      "definition": "A time-limited URL granting access to one Cloud Storage object to anyone holding it.",
+      "exam_context": "Uploads from users without Google accounts for 24 hours.",
+      "lesson": 3
+    },
+    {
+      "term": "Software bill of materials (SBOM)",
+      "definition": "An inventory of the packages and dependencies inside a software artifact.",
+      "exam_context": "Maintain a complete dependency inventory for compliance.",
+      "lesson": 9
+    },
+    {
+      "term": "Tokenization",
+      "definition": "Replacing sensitive values like card numbers with non-sensitive tokens, keeping the mapping in a secured vault.",
+      "exam_context": "Shrink PCI DSS scope while allowing analytics.",
+      "lesson": 8
+    },
+    {
+      "term": "VPC Service Controls",
+      "definition": "Google Cloud feature that builds service perimeters around projects to stop data exfiltration through Google APIs.",
+      "exam_context": "The answer whenever the stem says exfiltration.",
+      "lesson": 5
+    },
+    {
+      "term": "Workforce Identity Federation",
+      "definition": "Lets users from an external IdP access Google Cloud without syncing them into Cloud Identity.",
+      "exam_context": "Not a way to time-box access; session length isn't an access window.",
+      "lesson": 1
+    },
+    {
+      "term": "Workload Identity",
+      "definition": "GKE feature mapping Kubernetes service accounts to IAM service accounts so pods get credentials without keys.",
+      "exam_context": "Secure a game platform on GKE calling Google APIs.",
+      "lesson": 3
+    },
+    {
+      "term": "Workload Identity Federation",
+      "definition": "Lets workloads outside Google Cloud exchange their own credentials for short-lived Google tokens.",
+      "exam_context": "Avoid service account keys for AWS, Azure or CI workloads.",
+      "lesson": 3
+    },
+    {
+      "term": "Zero trust",
+      "definition": "Security model with no implicit trust from network location; every request is verified.",
+      "exam_context": "KnightMotives' framework after data breaches.",
+      "lesson": 6
+    }
+  ]
+}

@@ -7,6 +7,7 @@ Study materials and a static study site for Google Cloud certifications, built f
 | GPCDOE | Professional Cloud DevOps Engineer | 305 from 5 practice exams |
 | GPCDE | Professional Cloud Developer | 315 from 6 practice exams |
 | GCDL | Cloud Digital Leader | 300 from 6 practice exams |
+| GPCA | Professional Cloud Architect | 338 from 5 practice exams |
 
 ## The site (`docs/`)
 
@@ -27,7 +28,7 @@ Contributing? Read [AGENTS.md](AGENTS.md) for conventions, the workflow and what
 ## Repository layout
 
 ```
-GPCDOE/, GPCDE/, GCDL/    one folder per certification
+GPCDOE/, GPCDE/, GCDL/, GPCA/    one folder per certification
   questions.json          canonical question bank (question, options with correct flags, explanation, domain label)
   domain-map.json         question → domain overrides ("<exam>-<n>": domain) for questions without a usable label
   fixes.json              corrections to the bank (wrong keys, bad explanations, outdated wording, ⚠️ notes),

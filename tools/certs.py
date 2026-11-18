@@ -76,6 +76,31 @@ CERTS = {
         },
         'prefix_rules': [],
     },
+    'gpca': {
+        'code': 'GPCA',
+        'name': 'Professional Cloud Architect',
+        'domains': {
+            1: {'slug': '01-designing-solution-architecture', 'title': 'Designing and Planning a Cloud Solution Architecture',
+                'short': 'Solution Design', 'weight': '~25%',
+                'desc': 'Business and technical requirements, high availability and DR, choosing compute, storage, networking and data services, migration planning.'},
+            2: {'slug': '02-provisioning-infrastructure', 'title': 'Managing and Provisioning a Solution Infrastructure',
+                'short': 'Provisioning', 'weight': '~18%',
+                'desc': 'VPC design, hybrid and multicloud connectivity, load balancing, storage and compute configuration, GKE and serverless, Vertex AI.'},
+            3: {'slug': '03-security-and-compliance', 'title': 'Designing for Security and Compliance',
+                'short': 'Security & Compliance', 'weight': '~19%',
+                'desc': 'IAM and the resource hierarchy, org policies, encryption and Cloud KMS, VPC Service Controls, IAP, data protection and regulatory compliance.'},
+            4: {'slug': '04-technical-and-business-processes', 'title': 'Analyzing and Optimizing Technical and Business Processes',
+                'short': 'Processes & Cost', 'weight': '~15%',
+                'desc': 'SDLC and CI/CD, testing, disaster recovery, cost optimization, stakeholder and change management, business continuity.'},
+            5: {'slug': '05-managing-implementation', 'title': 'Managing Implementation',
+                'short': 'Implementation', 'weight': '~11%',
+                'desc': 'Deployment advice, API management with Apigee, data and system migration tooling, gcloud/bq/gsutil, emulators and Terraform.'},
+            6: {'slug': '06-operations-excellence', 'title': 'Ensuring Solution and Operations Excellence',
+                'short': 'Operations', 'weight': '~12%',
+                'desc': 'Cloud Monitoring and Logging, alerting, profiling, release management, supporting production and reliability testing.'},
+        },
+        'prefix_rules': [],
+    },
 }
 
 

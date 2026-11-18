@@ -1,0 +1,387 @@
+{
+  "1-3": {
+    "note": "Stackdriver Debugger (later Cloud Debugger) was shut down in 2023, so option C can't be right today. App Engine stands for 'move to a managed platform'; newer versions may offer Cloud Run or GKE instead.",
+    "why": "Option names a retired product; flag it so the guide's 'managed platform + IaC + CI' reading is clear."
+  },
+  "1-9": {
+    "note": "Two things can block a VM from calling BigQuery: the attached service account lacks a BigQuery IAM role, or the VM's access scopes don't include BigQuery (the default scopes don't). Option B fixes the scope; the key fixes the identity. Current best practice is a dedicated service account with least-privilege BigQuery roles, attached to the VM with the cloud-platform scope, not a downloaded JSON key. Learn the key, but expect the scope option to be argued.",
+    "why": "The key is defensible but option B is a common alternative answer; the explanation also recommends JSON key files, which Google now discourages."
+  },
+  "1-16": {
+    "explanation": [
+      [
+        "Google Cloud Storage **only supports JSON for lifecycle rules**, not XML.",
+        "`gsutil lifecycle set` (and today `gcloud storage buckets update --lifecycle-file`) takes a **JSON** file. XML lifecycle documents exist only for the Cloud Storage XML API, not for these tools."
+      ]
+    ],
+    "note": "`gsutil` is now legacy; the current command is `gcloud storage buckets update gs://BUCKET --lifecycle-file=FILE.json`. The answer (a JSON lifecycle rule with `age: 90` and a Delete action) is unchanged.",
+    "why": "The explanation claimed Cloud Storage has no XML lifecycle format; the XML API does accept XML lifecycle configs. Also flags gsutil as legacy."
+  },
+  "1-18": {
+    "explanation": [
+      [
+        "An **80 GB SSD persistent disk provides ~15,000 IOPS**, while a **500 GB SSD provides up to 30,000 IOPS**",
+        "SSD persistent disk IOPS are a 6,000 baseline plus 30 per GB: an **80 GB disk gets about 8,400 IOPS**, a **500 GB disk about 21,000 IOPS** (both capped by the VM's own limit)"
+      ]
+    ],
+    "why": "The IOPS figures were wrong. Current Compute Engine docs give pd-ssd as 6,000 + 30 IOPS per GiB (80 GB ≈ 8,400; 500 GB = 21,000)."
+  },
+  "1-24": {
+    "note": "Stackdriver Monitoring is now Cloud Monitoring, which keeps most metric data for 24 months. Anything longer has to be exported.",
+    "why": "Product renamed."
+  },
+  "1-28": {
+    "note": "Deployment Manager reached end of support in March 2026, so the deprecation risk in option B has come true. Google now points to Terraform and Infrastructure Manager.",
+    "why": "Product retired since the question was written; key unchanged."
+  },
+  "1-30": {
+    "note": "Preemptible VMs have been superseded by **Spot VMs**. The answer still holds: put the script in the `shutdown-script` metadata key. It gets about 30 seconds, best effort, before the VM stops.",
+    "why": "Product rename (preemptible → Spot VMs)."
+  },
+  "1-45": {
+    "note": "Cloud Datalab is retired (replaced by Vertex AI Workbench notebooks). Dataprep is a partner service run by Trifacta (now Alteryx). The pattern to remember: land the files in Cloud Storage, then clean them with a visual data-prep tool.",
+    "why": "Options name a retired product; key unchanged."
+  },
+  "1-46": {
+    "explanation": [
+      [
+        "unless explicitly denied (which is not possible in GCP IAM)",
+        "unless an IAM deny policy blocks it"
+      ],
+      [
+        "- **IAM does not support explicit deny policies, only additive role grants.**",
+        "- **Allow policies are additive.** Separate IAM deny policies (available since 2022) can block specific permissions, and they are evaluated before allow policies."
+      ]
+    ],
+    "note": "IAM deny policies now exist and override allow policies. The answer is still C: the effective *allow* policy is the union of the node's allow policy and its ancestors'.",
+    "why": "The explanation said IAM has no deny policies, which has been false since IAM deny policies became generally available."
+  },
+  "1-48": {
+    "note": "`gcloud datastore create-indexes` is the older, deprecated form of the command; the current one is `gcloud datastore indexes create index.yaml`. Cloud Datastore is now Firestore in Datastore mode.",
+    "why": "The keyed option and the explanation name two different command spellings; explain that both refer to the same action and give the current form."
+  },
+  "1-50": {
+    "note": "App Engine standard can now reach a VPC (and on-premises over Cloud VPN) through a **Serverless VPC Access connector** (Exam 3 · Q25). Option B mentions only Cloud VPN, with no connector, so flexible + Cloud VPN is still the best of these options.",
+    "why": "The explanation says App Engine standard cannot use a VPN; that was true before Serverless VPC Access, so add context without changing the key."
+  },
+  "1-51": {
+    "note": "Use `gcloud storage cp` instead of the legacy `gsutil`. Cloud Source Repositories is closed to new customers, which is one more reason the Cloud Storage options win.",
+    "why": "Outdated tool and product names."
+  },
+  "1-52": {
+    "note": "The \"Transfer Appliance Rehydrator\" belonged to the first-generation appliance. Today you copy data to the appliance and ship it back, and Google uploads it to your Cloud Storage bucket, encrypted with your Cloud KMS key. The rest of the answer (Transfer Appliance for tens of TB+) still holds.",
+    "why": "Outdated product detail in the keyed option; the key itself is still the best choice."
+  },
+  "1-55": {
+    "note": "Cloud ML Engine is now Vertex AI. The answer doesn't depend on it.",
+    "why": "Product renamed."
+  },
+  "1-58": {
+    "note": "Cloud Deployment Manager reached end of support on March 31, 2026. Google recommends Infrastructure Manager (managed Terraform) instead. It was never the tool for Kubernetes manifests; that is `kubectl`.",
+    "why": "Distractors name a retired product."
+  },
+  "1-60": {
+    "note": "Cloud Functions is now **Cloud Run functions**. Cloud Run itself would also scale to zero, so expect either name on newer versions of this question.",
+    "why": "Product rename."
+  },
+  "2-2": {
+    "note": "gsutil is now legacy. With the current `gcloud storage cp`, you pass a customer-supplied key with the `--encryption-key` flag. For gsutil, the `.boto` file is still the way.",
+    "why": "Options refer to gsutil only; the current CLI does take an --encryption-key flag, which could confuse readers of option C."
+  },
+  "2-3": {
+    "note": "Google Data Studio is the current name again (it was Looker Studio from 2022 to 2026). Cloud Datastore is now Firestore in Datastore mode, and Cloud Datalab was retired in favor of Vertex AI Workbench.",
+    "why": "Products renamed or retired."
+  },
+  "2-7": {
+    "note": "\"Failover replica\" is legacy Cloud SQL wording. Today you enable high availability (availability type `REGIONAL`), which creates a standby in another zone of the same region with automatic failover.",
+    "why": "Outdated Cloud SQL terminology; key unchanged."
+  },
+  "2-10": {
+    "note": "Sharding is a heavy fix for replication lag; Cloud SQL guidance usually tries a larger replica, parallel replication or reduced write load first. A remains the best option because it is the only one using automatic storage increase.",
+    "why": "Questionable remedy in the keyed answer; evidence is not strong enough to change the key."
+  },
+  "2-18": {
+    "note": "Preemptible VMs are now Spot VMs. Options A and B differ only in the wording 'disable and then discontinue', which isn't a meaningful technical difference. Learn the real point: interruptible VMs for non-urgent batch, and use only HIPAA-covered services under a BAA.",
+    "why": "Product renamed; the distinction between the keyed answer and option B is wording only."
+  },
+  "2-21": {
+    "note": "Deployment Manager reached end of support in 2026; Google points users to **Infrastructure Manager** (managed Terraform) or Terraform itself. The tested idea is unchanged: bake OS dependencies into a **custom image** so new MIG instances boot fast.",
+    "why": "Deployment Manager is retired."
+  },
+  "2-23": {
+    "note": "VMs boot from Persistent Disk, not Cloud Storage; Cloud Storage can hold the VM images and templates. App Engine memcache is a legacy bundled service (Memorystore is the general cache today). B is still the least-wrong option.",
+    "why": "Keyed option stores 'VM boot/data volumes' in Cloud Storage, which isn't literally possible; no better option exists, so keep the key and flag it."
+  },
+  "2-26": {
+    "note": "The legacy Logging agent has been replaced by the Ops Agent, which collects both logs and metrics. It still has to run on every VM.",
+    "why": "Product renamed/replaced."
+  },
+  "2-28": {
+    "explanation": [
+      [
+        " ![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)",
+        "![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-d4206bf78011a5b4d45318b8dcfc08d6.JPG)"
+      ],
+      [
+        "\n\n [![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)](https://cloud.google.com/firewall/docs/firewalls)",
+        "\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2025-05-14_14-43-40-1cff14f5558d076e8e08d6e3df22d8e5.JPG)"
+      ]
+    ],
+    "why": "The dump repeats each explanation image (one copy wrapped in a link); keep one plain copy of each."
+  },
+  "2-32": {
+    "note": "Deployment Manager reached end of support in March 2026 (use Terraform or Infrastructure Manager), and Stackdriver is now Cloud Monitoring and Cloud Logging. The principle still holds: automate provisioning and monitor DR tests with Cloud Monitoring.",
+    "why": "Both products in the key are renamed or retired; key unchanged."
+  },
+  "2-35": {
+    "note": "App Engine memcache is a legacy bundled service. Outside legacy App Engine runtimes, use the same read-through pattern with Memorystore.",
+    "why": "Legacy product; key unchanged."
+  },
+  "2-36": {
+    "note": "Google's managed cron today is **Cloud Scheduler**, which can publish straight to a Pub/Sub topic. The pattern (scheduler → Pub/Sub → workers) is the same.",
+    "why": "Newer recommended product; key unchanged."
+  },
+  "2-38": {
+    "note": "Pub/Sub alone now supports message ordering (ordering keys) and exactly-once delivery (pull subscriptions, within one region). The keyed Pub/Sub + Dataflow remains a safe answer when deduplication and global scale are needed.",
+    "why": "Option A has become more defensible since the question was written; evidence isn't strong enough to change the key."
+  },
+  "2-39": {
+    "note": "Migrate for Compute Engine is now **Migrate to Virtual Machines**, part of Migration Center.",
+    "why": "Product rename."
+  },
+  "2-42": {
+    "note": "Cloud Run for Anthos is now Knative serving on GKE Enterprise, and Traffic Director is now Cloud Service Mesh. The rule is unchanged: deploy a new revision and split traffic between revisions.",
+    "why": "Renamed products in the stem and options."
+  },
+  "2-43": {
+    "note": "Cloud Monitoring \"workspaces\" have been replaced by metrics scopes.",
+    "why": "Terminology changed."
+  },
+  "2-46": {
+    "note": "Compute Engine instance schedules can now start and stop VMs on a schedule without any code, and Cloud Functions is now Cloud Run functions. Either approach is correct if offered.",
+    "why": "A simpler built-in option now exists; key unchanged."
+  },
+  "2-51": {
+    "explanation": [
+      [
+        "deploy a Cloud NAT instance to perform Network Address Translation (NAT) on the overlapping IP space",
+        "configure Cloud NAT Private NAT / Hybrid NAT to translate the overlapping IP ranges to non-overlapping address ranges"
+      ]
+    ],
+    "note": "**Hybrid NAT** is Private NAT for traffic from a VPC to on-premises or other-cloud networks over Cloud VPN or Cloud Interconnect. It translates VPC source addresses into a non-overlapping `PRIVATE_NAT` subnet range and needs dynamic (Cloud Router) routing. It only translates traffic that starts in the VPC.",
+    "why": "The explanation's answer line didn't match the reworded option B; added the Hybrid NAT facts from the Cloud NAT docs."
+  },
+  "2-55": {
+    "note": "\"Cloud Operations for GKE\" is now simply the Cloud Logging and Cloud Monitoring integration for GKE, enabled by default on new clusters.",
+    "why": "Product renamed."
+  },
+  "2-57": {
+    "note": "Anthos clusters are now GKE Enterprise, Anthos Service Mesh is now Cloud Service Mesh, and Anthos Config Management is now Config Sync + Policy Controller.",
+    "why": "Products renamed."
+  },
+  "2-59": {
+    "note": "Container Registry was shut down in 2025; today the images go to Artifact Registry.",
+    "why": "Product retired; key unchanged."
+  },
+  "2-61": {
+    "explanation": [
+      [
+        "**80 GB SSD Disk:** ~15,000 IOPS",
+        "**80 GB SSD Disk:** ~8,400 IOPS (6,000 baseline + 30 per GB)"
+      ],
+      [
+        "**500 GB SSD Disk:** ~30,000 IOPS",
+        "**500 GB SSD Disk:** ~21,000 IOPS"
+      ]
+    ],
+    "why": "Wrong IOPS figures; current pd-ssd performance is 6,000 + 30 IOPS per GiB, capped by the VM limit."
+  },
+  "3-9": {
+    "note": "Google's managed Istio offering is now Cloud Service Mesh, which supports the same fault injection.",
+    "why": "Product renamed; key unchanged."
+  },
+  "3-13": {
+    "note": "Cloud Debugger was shut down in 2023.",
+    "why": "Distractor names a retired product."
+  },
+  "3-22": {
+    "explanation": [
+      [
+        "- However, **BigQuery does not support externally generated keys (imported keys)** as CMEKs. Therefore, to meet the requirement:",
+        "- BigQuery does **not** support customer-supplied keys (CSEK), so option D is impossible. Among the options given, C is the only one that uses an externally generated key:"
+      ],
+      [
+        "- Also, **BigQuery CMEK support does not currently support externally imported keys**.",
+        "- BigQuery has no CSEK option at all."
+      ],
+      [
+        "- BigQuery only supports CMEK, and **imported keys are not supported for BigQuery CMEK either**.",
+        "- BigQuery only supports Google-managed keys or CMEK."
+      ]
+    ],
+    "note": "An imported key is an ordinary Cloud KMS key, and BigQuery CMEK accepts any Cloud KMS key, so in practice you would import the key and set it as the dataset's CMEK directly. That option isn't offered here, so C remains the best of the four.",
+    "why": "The explanation wrongly claimed BigQuery CMEK cannot use imported Cloud KMS keys; the key itself stays because no option offers BigQuery CMEK with the imported key."
+  },
+  "3-27": {
+    "note": "Anthos clusters are now GKE Enterprise, Anthos Service Mesh is now Cloud Service Mesh, and Anthos Config Management is now Config Sync + Policy Controller.",
+    "why": "Products renamed."
+  },
+  "3-28": {
+    "note": "kubemci is deprecated. The current way to put one global load balancer in front of clusters in several regions is **Multi Cluster Ingress** or the multi-cluster **Gateway** API.",
+    "why": "Deprecated tool named in the key; key unchanged."
+  },
+  "3-42": {
+    "note": "The audit-log method for creating a network is `compute.networks.insert` (resource type `gce_network`); `compute.instances.insert` is VM creation. The approach in C (Admin Activity audit logs in Logs Explorer) is still the right one.",
+    "why": "Option C names the VM-creation method while the stem asks who created the network."
+  },
+  "3-43": {
+    "explanation": [
+      [
+        "- **Snapshots are regional** and **cannot be directly used** to create a VM in a **different region or project**.",
+        "- Snapshots are global resources and can, with the right IAM permission, boot a disk in another region or project, so B is workable. But a snapshot is a backup of one disk, not a reusable boot artifact. An **image** is the artifact meant for creating and refreshing VM copies."
+      ]
+    ],
+    "note": "Exporting to a Cloud Storage file isn't strictly required: a custom image is global and can be shared with another project through IAM (`roles/compute.imageUser`), and image families make it easy to roll out a refreshed copy. Keep the key (image-based copy), but know that the export step is optional.",
+    "why": "The explanation wrongly said snapshots can't be used across regions or projects. The key is kept because an image is the better artifact to maintain a copy, but the question is listed as questionable."
+  },
+  "3-44": {
+    "note": "This key is debated. LVM snapshots are copy-on-write, so they add write overhead while they exist, and they capture a whole volume, not one database. Many candidates prefer B (dump the one database to Local SSD, which doesn't share Persistent Disk performance, then copy it to Cloud Storage). Answer D if you see this exact wording.",
+    "why": "Doubtful key with no clear doc-backed alternative; keep it and flag it."
+  },
+  "3-48": {
+    "note": "Cluster autoscaling is GA; you no longer need the `alpha` track. Today's form is `gcloud container clusters update CLUSTER --enable-autoscaling --node-pool=POOL --min-nodes=1 --max-nodes=10`. The point still holds: update the existing cluster instead of recreating it.",
+    "why": "Outdated gcloud track."
+  },
+  "3-49": {
+    "note": "Bigtable is oversized and has a fixed node cost for 'basic user details'. Option C is keyed because GKE with persistent disks and a single VM are worse, not because Bigtable is a natural fit.",
+    "why": "Second keyed answer is weak; no better option exists, so keep the key and flag it."
+  },
+  "3-57": {
+    "note": "The legacy Cloud Logging agent is replaced by the Ops Agent; the design (sink to Cloud Storage, lifecycle to Coldline, locked retention) is unchanged.",
+    "why": "Product replaced."
+  },
+  "3-62": {
+    "note": "Strictly, the trigger is a Cloud Logging sink that routes the instance-removal audit log entry to Pub/Sub (or an Eventarc trigger on that audit log), which invokes the function. Cloud Functions is now Cloud Run functions.",
+    "why": "Option wording says \"Cloud Monitoring ... sink\"; clarify the real mechanism and the product rename without changing the key."
+  },
+  "4-4": {
+    "note": "Doubtful key. Google's documented setup for memory-based MIG autoscaling is exactly the one in the stem: `agent.googleapis.com/memory/percent_used`, filter `metric.label.state = 'used'`, GAUGE. The autoscaler adds VMs when the metric is **above** the target, and free memory falls as load rises, so option D would scale the wrong way. None of the other options fixes it either (C's AND filter matches nothing). (Exam 5 · Q51) keys the 'used' filter as the fix. Learn: memory autoscaling = Ops Agent + percent_used + state='used'.",
+    "why": "The key conflicts with Google's autoscaler docs and with Exam 5 Q51, but no option is clearly right, so keep it and flag it."
+  },
+  "4-8": {
+    "answers": {
+      "D": "D. Create an image of the on-premises virtual machine. Import the image into Compute Engine using the flag `--os=windows-2022-byol`. Launch a **sole-tenant VM** in Compute Engine using the imported disk as the boot disk."
+    },
+    "explanation": [
+      [
+        "windows-2022-dc-v",
+        "windows-2022-byol"
+      ]
+    ],
+    "note": "`gcloud compute images import` is deprecated; Google now points to image imports in Migrate to Virtual Machines. The BYOL rule is unchanged: import as a BYOL image and run it on sole-tenant nodes.",
+    "why": "`--os=windows-2022-dc-v` is not a valid value; the gcloud reference lists `windows-2022` and `windows-2022-byol`, and BYOL needs the latter. Key unchanged."
+  },
+  "4-11": {
+    "note": "This is a legacy case-study item. Deterministic encryption is what lets duplicate cards be detected (same card, same token); the storage choice is less clear-cut than the explanation suggests. Google's reference tokenizer design uses Sensitive Data Protection with Cloud KMS-wrapped keys.",
+    "why": "Key kept; the reasoning for Datastore over Cloud SQL is weak."
+  },
+  "4-13": {
+    "note": "Cloud Scheduler could also run the test weekly, but triggering it from the Tuesday deployment job guarantees it runs against the new release. Cloud Functions is now Cloud Run functions. HRL is a legacy case study.",
+    "why": "Plausible alternative and renamed product; key kept."
+  },
+  "4-18": {
+    "note": "Container Registry has been shut down; its replacement is Artifact Registry with Artifact Analysis for vulnerability scanning.",
+    "why": "Product retired."
+  },
+  "4-26": {
+    "note": "\"Google Kubernetes Registry\" means Container Registry, which has been replaced by **Artifact Registry**.",
+    "why": "Product rename."
+  },
+  "4-27": {
+    "note": "Quota is the bank's answer because the stem stresses autoscaling failures after sudden growth, and an exhausted quota stops the autoscaler from adding instances. A performance bug in the new feature (C) is also plausible.",
+    "why": "Debatable first step; no strong evidence to change the key."
+  },
+  "4-33": {
+    "note": "Option B also simulates real latency, but failure injection gives precise, repeatable control over the latency added, which is why it is keyed.",
+    "why": "Distractor B is defensible; key kept and listed under Questionable answers."
+  },
+  "4-38": {
+    "note": "Firebase Admin is broader than this need strictly requires (a Firestore/Datastore user role on the legacy project would be narrower), but it is the most restrictive option offered.",
+    "why": "Key kept; 'highest level of restriction' is relative to the options."
+  },
+  "4-47": {
+    "note": "Cloud Functions is now Cloud Run functions. The uptime check's alerting policy can use a Pub/Sub notification channel directly.",
+    "why": "Product renamed."
+  },
+  "4-48": {
+    "note": "Container Registry was shut down in 2025; today the images go to Artifact Registry.",
+    "why": "Product retired; key unchanged."
+  },
+  "4-50": {
+    "question": [
+      [
+        "import news\n\nfrom flask import Flask, redirect, request\n\nfrom flask.ext.api import status\n\nfrom google.appengine.api import users\n\napp = Flask(__name__)\n\nsessions = {}\n\n@app.route(\"/\")\n\ndef homepage():\n\nuser = users.get_current_user()\n\nif not user:\n\nreturn \"Invalid login\", status.HTTP_401_UNAUTHORIZED\n\nif user not in sessions:\n\nsessions[user] = {\"viewed\": []}\n\nnews_articles = news.get_new_news(user, sessions[user][\"viewed\"])\n\nsessions[user][\"viewed\"] += [n[\"id\"] for n in news_articles]\n\nreturn news.render(news_articles)\n\nif __name__ == \"__main__\":\n\napp.run()",
+        "```python\nimport news\nfrom flask import Flask, redirect, request\nfrom flask.ext.api import status\nfrom google.appengine.api import users\n\napp = Flask(__name__)\nsessions = {}\n\n@app.route(\"/\")\ndef homepage():\n    user = users.get_current_user()\n    if not user:\n        return \"Invalid login\", status.HTTP_401_UNAUTHORIZED\n    if user not in sessions:\n        sessions[user] = {\"viewed\": []}\n    news_articles = news.get_new_news(user, sessions[user][\"viewed\"])\n    sessions[user][\"viewed\"] += [n[\"id\"] for n in news_articles]\n    return news.render(news_articles)\n\nif __name__ == \"__main__\":\n    app.run()\n```"
+      ]
+    ],
+    "explanation": [
+      [
+        "**Python**\n\n```\n# ... imports ...from google.cloud import datastore  # ... other code ... datastore_client = datastore.Client() @app.route(\"/\")def homepage():  # ... login logic ...  session_key = datastore_client.key('Session', user.user_id()) # Or similar  try:     session = datastore_client.get(session_key)    if not session:      session = datastore.Entity(key=session_key)      session['viewed'] = []  except: # Handle potential datastore errors gracefully    return \"Error accessing session data\", status.HTTP_500_INTERNAL_SERVER_ERROR   news_articles = news.get_new_news(user, session[\"viewed\"])  session[\"viewed\"] += [n[\"id\"] for n in news_articles]  datastore_client.put(session) # Update session data  return news.render(news_articles) # ... rest of the code ...\n```",
+        "```python\nfrom google.cloud import datastore\n\ndatastore_client = datastore.Client()\n\n@app.route(\"/\")\ndef homepage():\n    # ... login logic ...\n    session_key = datastore_client.key('Session', user.user_id())\n    session = datastore_client.get(session_key)\n    if not session:\n        session = datastore.Entity(key=session_key)\n        session['viewed'] = []\n    news_articles = news.get_new_news(user, session[\"viewed\"])\n    session[\"viewed\"] += [n[\"id\"] for n in news_articles]\n    datastore_client.put(session)  # shared by every instance\n    return news.render(news_articles)\n```"
+      ]
+    ],
+    "why": "The dump lost the code's line breaks and indentation; restore both as fenced Python blocks."
+  },
+  "4-51": {
+    "note": "Google Container Engine is the old name of Google Kubernetes Engine (GKE). Also note that `ubuntu:16.03` and `pip installl` are typos in the original question.",
+    "why": "Renamed product and typos in the stem."
+  },
+  "4-52": {
+    "note": "A \"SHA1 digest error\" means the digest recorded in a JAR's manifest no longer matches the class inside it, usually because a signed JAR was modified or corrupted after signing. The real fix is to rebuild and correctly re-sign (or strip stale signatures from) the JARs. Option B is the closest match and is the commonly accepted key, but it is worded loosely.",
+    "why": "Keyed answer is the accepted one but its reasoning is thin; flag it as questionable rather than change it."
+  },
+  "4-53": {
+    "question": [
+      [
+        "![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)\n\n![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)",
+        "![](https://img-c.udemycdn.com/redactor/raw/practice_test_question/2024-03-12_09-16-28-70e965d00dc270a8a9c983257f8d4cea.jpg)"
+      ]
+    ],
+    "why": "The dump repeats the diagram image; keep one copy."
+  },
+  "4-58": {
+    "note": "The options don't really address PII deletion. C works because BigQuery can hold the logs cheaply, drop old partitions on a schedule (partition expiration) and feed Data Studio (called Looker Studio from 2022 to 2026) reports.",
+    "why": "Key kept; weak option set."
+  },
+  "5-1": {
+    "note": "Explanations come from **Vertex Explainable AI**; Vertex AI Model Monitoring tracks skew and drift, not individual decisions. B is still the only option that covers scale, audit and explainability.",
+    "why": "Keyed option misattributes explanations to Model Monitoring; flag it rather than change the key."
+  },
+  "5-13": {
+    "note": "Discovery AI for Retail was renamed Vertex AI Search for retail and then **Vertex AI Search for commerce**.",
+    "why": "Product rename."
+  },
+  "5-26": {
+    "correct": "C",
+    "explanation": "**Correct answer: C**\n\n**Move the HQ self-managed MySQL database to Cloud SQL. Standardize the database schema across all plants, and configure each plant's database as an external read replica for Cloud SQL.**\n\n**Why C is correct**\n\n- Only HQ writes the data, and every plant needs an exact, read-only copy. That is primary/replica replication.\n- Cloud SQL for MySQL supports **external replicas**: MySQL servers outside Google Cloud (here, at each plant) that replicate from a Cloud SQL primary. See https://cloud.google.com/sql/docs/mysql/replication/configure-external-replica.\n- MySQL replication applies every committed change in order, and replica status (lag, errors) shows whether a plant is in sync. That is the \"simple way to confirm\" HQ wants, and it removes the XML export, FTP and parsing steps that caused the drift.\n- Replication needs compatible schemas and versions, which is why the option standardizes the plant schemas first. The case study's schema drift is the problem to fix, not a constraint to keep.\n\n**Why the other options are wrong**\n\n- **A / B. Pub/Sub topics per supplier.** You would have to build your own change capture, ordering, retries and reconciliation at each plant. It replaces one custom sync process with another and gives no built-in way to prove a plant matches HQ.\n- **D. Database Migration Service continuous migration to the plants.** Database Migration Service migrates *into* Google Cloud: its destinations are Cloud SQL and AlloyDB, not on-premises MySQL servers (https://cloud.google.com/database-migration/docs/overview). It cannot replicate from Cloud SQL out to the plant databases, and it is a migration tool, not a permanent multi-site distribution mechanism.",
+    "why": "Database Migration Service only supports Cloud SQL and AlloyDB as destinations, so D (replicating from Cloud SQL to on-premises plant databases) is not possible. Cloud SQL for MySQL documents external replicas for exactly this one-writer, many-readers pattern, and option C standardizes the schema that replication requires."
+  },
+  "5-31": {
+    "explanation": [
+      [
+        "The distribution of live production data slowly shifts away from the data used to train the model.\n\nPrediction drift monitoring compares:\n\n- training data distributions\n  vs\n- live prediction feature distributions",
+        "The distribution of live production inputs changes significantly over time.\n\nPrediction drift monitoring compares:\n\n- the feature distribution of recent prediction requests\n  vs\n- the feature distribution of earlier prediction requests\n\n(Comparing production inputs against the training data is training–serving skew.)"
+      ]
+    ],
+    "note": "Dataplex Universal Catalog is now Knowledge Catalog (April 2026); its data quality scans still validate data, not model drift.",
+    "why": "The explanation described prediction drift as a comparison with the training data, which is Vertex AI's definition of training-serving skew. Drift compares production inputs over time."
+  },
+  "5-41": {
+    "note": "Looker Studio was renamed back to Data Studio in April 2026.",
+    "why": "Product renamed."
+  },
+  "5-85": {
+    "note": "Cloud Monitoring \"workspaces\" have been replaced by metrics scopes.",
+    "why": "Terminology changed."
+  }
+}

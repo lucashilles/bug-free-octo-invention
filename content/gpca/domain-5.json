@@ -1,0 +1,355 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how each compute platform releases a new version gradually: rolling updates on GKE, versions and traffic splitting on App Engine, revisions and traffic splitting on Cloud Run, and template updates on managed instance groups. It also covers keeping rollback safe when the database schema changes.",
+      "objectives": [
+        "Update a GKE Deployment with minimal downtime and roll it back.",
+        "Run a canary release on App Engine and Cloud Run with traffic splitting.",
+        "Choose between proactive and opportunistic MIG updates, and rolling restart versus replace.",
+        "Separate schema migrations from application releases so rollbacks stay safe."
+      ],
+      "takeaways": [
+        "GKE minimal downtime → kubectl set image (rolling update); never delete and recreate.",
+        "App Engine → new version + traffic split; Cloud Run → new revision + traffic split.",
+        "Only new MIG instances should get the new template → opportunistic rolling update.",
+        "Schema changes go in their own pipeline and stay backward compatible; roll the app out with a gradual traffic split."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers getting workloads onto Google Cloud: creating a GKE cluster with gcloud and deploying with kubectl, packing small apps densely on GKE with versioned images and staged promotion, and writing Dockerfiles that build and pull fast.",
+      "objectives": [
+        "Deploy a Kubernetes manifest when no infrastructure exists yet.",
+        "Design a release flow with immutable image tags and a staging namespace.",
+        "Speed up container builds with small base images and layer ordering.",
+        "Recognize a JAR signature mismatch at deployment."
+      ],
+      "takeaways": [
+        "gcloud creates the cluster, kubectl creates the Deployment.",
+        "Deployment Manager is past end of support; Infrastructure Manager (Terraform) replaces it.",
+        "Versioned tags + staging namespace, not :latest with imagePullPolicy Always.",
+        "Small base image + COPY source after installing dependencies = faster builds.",
+        "SHA1 digest error in a JAR → sign the JARs correctly and redeploy."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers delivery pipelines and infrastructure as code: Cloud Deploy to private GKE clusters, keyless and governed Terraform in Cloud Build, Config Connector and Config Controller for declarative Google Cloud resources, and Config Sync with Policy Controller for consistent configuration across clusters and clouds.",
+      "objectives": [
+        "Fix Cloud Deploy deployments to a GKE cluster with a private endpoint.",
+        "Design a Terraform pipeline with impersonation, plan review and an approval gate.",
+        "Choose Config Controller for low-ops, YAML-based infrastructure as code.",
+        "Apply Config Sync and Policy Controller across GKE and other Kubernetes clusters."
+      ],
+      "takeaways": [
+        "Private GKE endpoint → Cloud Build private pool peered with the cluster's VPC as the Cloud Deploy execution environment.",
+        "No long-lived keys → impersonation; plan on PR, manual approval before apply.",
+        "Config Controller = hosted Config Connector + Config Sync + Policy Controller.",
+        "Multi-cloud Kubernetes config and policy → Config Sync + Policy Controller (OPA Gatekeeper)."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers API management with Apigee (facades, quotas, versioning) and the client-side practices for calling Google APIs well: exponential backoff, Pub/Sub batching, batch gets in Datastore mode, and direct browser uploads with signed URLs and CORS.",
+      "objectives": [
+        "Pick the Apigee policy that limits total API usage.",
+        "Use an Apigee facade to shield consumers from a backend that will change.",
+        "Version an API so breaking changes don't hurt existing clients.",
+        "Handle transient errors and latency in Cloud Storage, Pub/Sub and Datastore clients.",
+        "Let browsers upload directly to Cloud Storage securely."
+      ],
+      "takeaways": [
+        "Limit total calls → Quota policy; smooth bursts → Spike Arrest.",
+        "Changing backend, many consumers → Apigee API facade.",
+        "Every backward-incompatible change → new major version.",
+        "5xx/429 → truncated exponential backoff with jitter.",
+        "Pub/Sub publish latency → disable batching.",
+        "Many entities by ID → keys + batch get; browser uploads → CORS + signed URL."
+      ]
+    },
+    "5": {
+      "summary": "This lesson maps data size, source and bandwidth to the right transfer tool: parallel gcloud storage or gsutil copies, Storage Transfer Service, and Transfer Appliance. It also covers verifying uploads with CRC32C hashes and moving or distributing databases with Database Migration Service and Cloud SQL external replicas.",
+      "objectives": [
+        "Estimate transfer time from size and bandwidth and pick online or offline transfer.",
+        "Use Storage Transfer Service for data in other clouds.",
+        "Verify uploaded objects without downloading them.",
+        "Know what Database Migration Service can and can't do, and when external replicas fit."
+      ],
+      "takeaways": [
+        "1 Gbps ≈ 10 TB per day at best; 1 PB ≈ three months.",
+        "~10 TB with 1 Gbps → compress + parallel copy.",
+        "Another cloud's object storage → Storage Transfer Service.",
+        "Hundreds of TB or more, or a shared link → Transfer Appliance.",
+        "Verify with CRC32C: gsutil hash -c vs gsutil ls -L.",
+        "Database Migration Service only migrates into Cloud SQL and AlloyDB; external replicas push Cloud SQL data to on-prem readers."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers the tools for working with Google Cloud by hand and in code: Cloud Shell and its persistent home directory, Cloud Shell Editor and Cloud Code, the gcloud, gsutil, bq and kubectl CLIs, local emulators, and the Cloud Client Libraries.",
+      "objectives": [
+        "Use Cloud Shell to avoid managing local SDK installs.",
+        "Know what persists in Cloud Shell and where to keep custom tools.",
+        "Deploy Datastore-mode indexes from index.yaml.",
+        "Test against emulators for Pub/Sub, Spanner, Bigtable, Datastore and Firestore."
+      ],
+      "takeaways": [
+        "Many workstations, no installs → Cloud Shell.",
+        "Only $HOME (5 GB) persists; custom tools go in ~/bin.",
+        "gcloud datastore indexes create index.yaml deploys indexes.",
+        "gcloud storage replaces gsutil and runs in parallel by default.",
+        "Emulators + env-init for local tests; client libraries handle auth, retries and batching."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "API facade",
+      "definition": "A stable API layer that hides the backend implementation, so the backend can change without breaking consumers.",
+      "exam_context": "A monolith being refactored later → put an Apigee facade in front of it now.",
+      "lesson": 4
+    },
+    {
+      "term": "API versioning",
+      "definition": "Exposing the major version in the API (for example /v1/) and incrementing it for each backward-incompatible change.",
+      "exam_context": "Keyed over mailing-list notices or 'DEPRECATED' suffixes to protect clients from breaking changes.",
+      "lesson": 4
+    },
+    {
+      "term": "Apigee",
+      "definition": "Google Cloud's API management platform for API proxies, security, quotas, analytics and developer portals.",
+      "exam_context": "Keyed as the facade in front of a monolith whose API will change, and for limiting API usage.",
+      "lesson": 4
+    },
+    {
+      "term": "Application Default Credentials (ADC)",
+      "definition": "The strategy client libraries use to find credentials automatically from the environment, such as an attached service account.",
+      "exam_context": "Background for calling Google APIs from code without handling keys.",
+      "lesson": 6
+    },
+    {
+      "term": "Batch get",
+      "definition": "A single Datastore-mode request that looks up many entities by key.",
+      "exam_context": "Retrieving many root entities by ID with the least overhead.",
+      "lesson": 4
+    },
+    {
+      "term": "Cloud Build private pool",
+      "definition": "Cloud Build workers in a Google-managed network that you peer with your VPC, so builds can reach private resources.",
+      "exam_context": "Required for Cloud Deploy to reach a GKE cluster with a private endpoint.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Client Libraries",
+      "definition": "Google's idiomatic per-language libraries for Google Cloud APIs, with built-in authentication, retries and batching.",
+      "exam_context": "Recommended way to call Google APIs; their retry and batching settings show up in questions.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Code",
+      "definition": "IDE plugins for VS Code and JetBrains for developing, running and debugging Kubernetes and Cloud Run apps.",
+      "exam_context": "Exam guide topic for interacting with Google Cloud programmatically.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Deploy",
+      "definition": "A managed continuous delivery service that promotes releases through a sequence of targets with approvals, canary and rollback.",
+      "exam_context": "Failing deploys to a private GKE cluster are fixed with a private pool execution environment.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Shell",
+      "definition": "A browser-based, pre-authenticated shell on a temporary VM with gcloud, kubectl, bq and other tools installed, plus a 5 GB persistent home directory.",
+      "exam_context": "Keyed for working from many workstations without managing gcloud installs; custom tools go in ~/bin.",
+      "lesson": 6
+    },
+    {
+      "term": "Config Connector",
+      "definition": "A Kubernetes add-on that manages Google Cloud resources as Kubernetes objects declared in YAML.",
+      "exam_context": "Declarative YAML, not Python scripts; Config Controller hosts it for you.",
+      "lesson": 3
+    },
+    {
+      "term": "Config Controller",
+      "definition": "A hosted service bundling Config Connector, Config Sync and Policy Controller for declarative management of Google Cloud resources.",
+      "exam_context": "Keyed for low-ops, YAML-based infrastructure as code in a GKE-centric organization.",
+      "lesson": 3
+    },
+    {
+      "term": "Config Sync",
+      "definition": "A GitOps service that keeps Kubernetes clusters in sync with configuration in Git or OCI repositories.",
+      "exam_context": "Paired with Policy Controller for consistent config across GKE and EKS; on its own it doesn't provision cloud resources.",
+      "lesson": 3
+    },
+    {
+      "term": "CORS",
+      "definition": "Cross-Origin Resource Sharing: bucket settings that let browser code from allowed origins call Cloud Storage.",
+      "exam_context": "Needed alongside signed URLs for direct browser uploads.",
+      "lesson": 4
+    },
+    {
+      "term": "CRC32C",
+      "definition": "The checksum Cloud Storage stores for every object, used to verify data integrity.",
+      "exam_context": "Compare a local gsutil hash -c with gsutil ls -L instead of downloading files again.",
+      "lesson": 5
+    },
+    {
+      "term": "Database Migration Service",
+      "definition": "A managed service that migrates databases into Cloud SQL or AlloyDB, as a one-time or continuous migration.",
+      "exam_context": "Its destinations are Google Cloud only, so it can't replicate from Cloud SQL to on-prem databases.",
+      "lesson": 5
+    },
+    {
+      "term": "Deployment Manager",
+      "definition": "Google Cloud's former YAML/Jinja infrastructure-as-code service; support ended on March 31, 2026.",
+      "exam_context": "A distractor for deploying Kubernetes manifests; Infrastructure Manager replaces it.",
+      "lesson": 2
+    },
+    {
+      "term": "Emulators",
+      "definition": "Local versions of Bigtable, Datastore, Firestore, Pub/Sub and Spanner started with gcloud emulators for development and testing.",
+      "exam_context": "Exam guide topic: test locally without cost or touching production data.",
+      "lesson": 6
+    },
+    {
+      "term": "External replica",
+      "definition": "A MySQL server outside Google Cloud that replicates from a Cloud SQL primary.",
+      "exam_context": "Keyed (after a fix) for distributing HQ data to read-only plant databases.",
+      "lesson": 5
+    },
+    {
+      "term": "gcloud storage",
+      "definition": "The current Cloud Storage command group in the gcloud CLI, parallel by default; it replaces gsutil.",
+      "exam_context": "Keyed for a 10 TB upload over a 1 Gbps link.",
+      "lesson": 5
+    },
+    {
+      "term": "Gemini Cloud Assist",
+      "definition": "The AI assistant in the Google Cloud console that helps design, operate, troubleshoot and optimize resources.",
+      "exam_context": "Listed in the exam guide under advising teams on deployment.",
+      "lesson": 6
+    },
+    {
+      "term": "gsutil",
+      "definition": "The legacy Cloud Storage CLI. Use -m for parallel operations; Google now recommends gcloud storage.",
+      "exam_context": "gsutil -m for parallel uploads and gsutil hash / ls -L for integrity checks.",
+      "lesson": 5
+    },
+    {
+      "term": "Image tag",
+      "definition": "A label on a container image version; immutable version tags make releases repeatable.",
+      "exam_context": "Versioned tags with staged promotion beat :latest with imagePullPolicy Always.",
+      "lesson": 2
+    },
+    {
+      "term": "imagePullPolicy",
+      "definition": "The Kubernetes setting that decides when a node pulls an image: Always, IfNotPresent or Never.",
+      "exam_context": "IfNotPresent is safe with immutable version tags.",
+      "lesson": 2
+    },
+    {
+      "term": "index.yaml",
+      "definition": "The file that defines composite indexes for Firestore in Datastore mode.",
+      "exam_context": "Deploy it with gcloud datastore indexes create.",
+      "lesson": 6
+    },
+    {
+      "term": "Infrastructure Manager",
+      "definition": "Google Cloud's managed service for deploying infrastructure with Terraform.",
+      "exam_context": "The replacement for Deployment Manager.",
+      "lesson": 3
+    },
+    {
+      "term": "kubectl set image",
+      "definition": "A kubectl command that changes a Deployment's container image, triggering a rolling update.",
+      "exam_context": "Keyed for updating a GKE app with minimal downtime.",
+      "lesson": 1
+    },
+    {
+      "term": "Layer caching",
+      "definition": "Docker reuses unchanged image layers; ordering stable steps first keeps cache hits.",
+      "exam_context": "Copy source code after installing dependencies to speed up builds.",
+      "lesson": 2
+    },
+    {
+      "term": "Opportunistic update",
+      "definition": "A MIG update mode that applies the new template only when instances are created or recreated for other reasons.",
+      "exam_context": "Keyed when existing instances must not be disturbed.",
+      "lesson": 1
+    },
+    {
+      "term": "Policy Controller",
+      "definition": "An admission controller built on OPA Gatekeeper that enforces policies on Kubernetes clusters.",
+      "exam_context": "Paired with Config Sync for multi-cluster security controls.",
+      "lesson": 3
+    },
+    {
+      "term": "Proactive update",
+      "definition": "A MIG update mode that actively replaces or restarts existing instances to apply a new template.",
+      "exam_context": "Wrong when existing instances must stay untouched.",
+      "lesson": 1
+    },
+    {
+      "term": "Pub/Sub batching",
+      "definition": "Publisher client libraries group messages into batches, waiting for size or delay thresholds before sending.",
+      "exam_context": "Disable batching to cut publish latency when timeouts appear without publish errors.",
+      "lesson": 4
+    },
+    {
+      "term": "Quota policy",
+      "definition": "An Apigee policy that limits how many calls an app or developer can make in a time period.",
+      "exam_context": "Keyed to cap total API calls and prevent abuse and unexpected costs.",
+      "lesson": 4
+    },
+    {
+      "term": "Rolling update",
+      "definition": "Replacing instances or Pods gradually so the service stays available during a release.",
+      "exam_context": "Default for GKE Deployments and MIG template changes.",
+      "lesson": 1
+    },
+    {
+      "term": "Service account impersonation",
+      "definition": "Acting as a service account with short-lived credentials, granted through roles/iam.serviceAccountTokenCreator, instead of using a key.",
+      "exam_context": "Keyless Terraform in Cloud Build.",
+      "lesson": 3
+    },
+    {
+      "term": "Signed URL",
+      "definition": "A time-limited URL that grants access to a specific Cloud Storage object without a Google account.",
+      "exam_context": "Paired with CORS for direct browser uploads.",
+      "lesson": 4
+    },
+    {
+      "term": "Spike Arrest",
+      "definition": "An Apigee policy that smooths traffic bursts by limiting the request rate.",
+      "exam_context": "Protects backends from bursts; Quota, not Spike Arrest, caps total calls.",
+      "lesson": 4
+    },
+    {
+      "term": "Storage Transfer Service",
+      "definition": "A managed service for large or recurring transfers into Cloud Storage from other clouds, URL lists or on-premises file systems via agents.",
+      "exam_context": "Keyed for 10 TB in another provider's object storage; too slow for 1 PB over 1 Gbps.",
+      "lesson": 5
+    },
+    {
+      "term": "Terraform plan / apply",
+      "definition": "plan previews infrastructure changes; apply makes them.",
+      "exam_context": "Plan on pull requests, manual approval before apply in production.",
+      "lesson": 3
+    },
+    {
+      "term": "Traffic splitting",
+      "definition": "Sending a percentage of requests to different App Engine versions or Cloud Run revisions.",
+      "exam_context": "Keyed for canary releases on App Engine and Cloud Run, and for safe rollback.",
+      "lesson": 1
+    },
+    {
+      "term": "Transfer Appliance",
+      "definition": "A Google-owned storage device you fill locally and ship back; Google uploads the data to Cloud Storage, encrypted with your Cloud KMS key.",
+      "exam_context": "Keyed for 75 TB to 2 PB transfers with slow or shared links and tight deadlines.",
+      "lesson": 5
+    },
+    {
+      "term": "Truncated exponential backoff",
+      "definition": "Retrying with exponentially growing waits plus random jitter, up to a maximum delay.",
+      "exam_context": "Keyed for intermittent 5xx and 429 errors from Cloud Storage.",
+      "lesson": 4
+    }
+  ]
+}

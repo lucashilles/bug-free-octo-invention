@@ -1,0 +1,465 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how an architect starts a design or migration: define requirements, assess the current estate, estimate cost and plan the move. Questions reward Migration Center for assessment and costing, Migrate to Virtual Machines for VM moves, and sole-tenant nodes for Windows BYOL.",
+      "objectives": [
+        "Explain why defining requirements comes before recommending any tool.",
+        "Use Migration Center to discover workloads and produce a cost estimate.",
+        "Order the steps of a VMware lift and shift: assess, plan, runbook, migrate.",
+        "Bring Windows Server licenses to Compute Engine with BYOL images and sole-tenant nodes.",
+        "Choose GKE Autopilot for a team new to Kubernetes."
+      ],
+      "takeaways": [
+        "First step for a tooling question → define requirements and evaluate options.",
+        "Quick migration cost estimate → Migration Center, not the Pricing Calculator.",
+        "VMware VMs → assess, plan, runbook, Migrate to Virtual Machines.",
+        "Windows BYOL → import as BYOL image and run on a sole-tenant node.",
+        "J2EE migration best practices → managed platform, infrastructure as code, CI with tests in staging.",
+        "New to Kubernetes + low ops → assess for containers, then GKE Autopilot."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers what happens after the first move: choosing a disposition for each workload, breaking up monoliths, integrating with legacy systems during long transitions and designing so the platform can use future AI and cloud improvements.",
+      "objectives": [
+        "Name the workload dispositions: rehost, replatform, refactor, replace, retire.",
+        "Plan a phased move from a monolith to event-driven microservices.",
+        "Decouple a new platform from legacy ERP with APIs and asynchronous messaging.",
+        "Describe how to improve an ML model over time with outcome data.",
+        "Match portability and templating requirements to GKE, Jenkins and Helm."
+      ],
+      "takeaways": [
+        "Monolith blocking agility → phased event-driven microservices with Pub/Sub.",
+        "Multi-year transition with legacy systems → APIs plus async messaging, never a big bang.",
+        "Future-proof → keep as much data as affordable for ML, and containerize backends.",
+        "Better model results → store predictions and outcomes in BigQuery as training data.",
+        "Staged versions promoted by another team with low ops → App Engine versions and traffic migration.",
+        "Open-source, templated, URL-routed, CD → GKE + Jenkins + Helm."
+      ]
+    },
+    "3": {
+      "summary": "This lesson maps workloads to Cloud Run, Cloud Run functions, App Engine, GKE and Compute Engine. The exam picks serverless when traffic is spiky and ops must be minimal, and Compute Engine when a custom OS or VM-level control is required.",
+      "objectives": [
+        "Pick a scale-to-zero platform for idle or spiky workloads.",
+        "Recognize when Compute Engine MIGs are required (custom OS, parallel VM jobs).",
+        "Pair HTTP APIs with L7 load balancing and multi-zone MIGs.",
+        "Design a multi-region container platform with a single global IP and immutable artifacts.",
+        "Explain why Spot VMs don't suit uptime-critical serving."
+      ],
+      "takeaways": [
+        "Scale to zero + fully managed → Cloud Run, Cloud Run functions or App Engine standard.",
+        "Very high request rate with idle periods + key lookups → Cloud Run + Bigtable.",
+        "Custom Linux distro → Compute Engine MIGs on standard VMs.",
+        "REST API → instance template, multi-zone MIG per region, L7 load balancer.",
+        "Single global IP + immutable artifacts → Artifact Registry + GKE + global HTTP(S) LB.",
+        "Parallel test suites without code changes → autoscaled MIG."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers surviving a zone failure: regional MIGs, regional persistent disks, active/standby designs, Cloud SQL high availability and SQL Server Always On availability groups.",
+      "objectives": [
+        "Distinguish zonal HA from regional DR.",
+        "Use regional persistent disks and force-attach for zero-data-loss zone failover.",
+        "Design an active/standby pair for software that can't scale horizontally.",
+        "Configure Cloud SQL HA and explain why read replicas aren't HA.",
+        "Choose Always On AGs for zero-downtime SQL Server."
+      ],
+      "takeaways": [
+        "Zone failure at lowest cost → regional MIG.",
+        "Disk data available in another zone → regional PD, force-attach to the standby.",
+        "Non-scalable app with exclusive disk access → unmanaged group, active/standby, regional PD, network LB.",
+        "Cloud SQL HA → standby in a different zone of the same region.",
+        "SQL Server zero downtime → Always On AGs with nodes in different zones.",
+        "Spot-only MIGs are not high availability."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers regional disaster recovery and backups: RTO and RPO, cross-region instance groups, Cloud SQL cross-region replicas, point-in-time recovery, Backup and DR vaults and Spanner for globally consistent data.",
+      "objectives": [
+        "Define RTO and RPO and map them to cold, warm and hot DR patterns.",
+        "Design cross-region failover for Compute Engine and Cloud SQL.",
+        "Enable point-in-time recovery for Cloud SQL.",
+        "Use Backup and DR Service for retained, isolated backups.",
+        "Choose Spanner with strong reads for multi-region consistency."
+      ],
+      "takeaways": [
+        "Regional outage → second region, pre-provisioned when the RTO is short.",
+        "Cloud SQL regional DR with RPO in minutes → cross-region read replica, promote it.",
+        "Point-in-time recovery → automated backups + binary logging.",
+        "Backups kept N days in a separate restricted project → Backup and DR backup vault.",
+        "Write-heavy relational multi-region app → Cloud Run in several regions + Spanner.",
+        "Stale cross-region reads → Spanner strong reads with the leader near most users."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers cutting latency for global users: the global external Application Load Balancer, Cloud CDN and Media CDN, Cloud Armor, multi-region buckets and caching with Memorystore or memcache.",
+      "objectives": [
+        "Explain how the global external Application Load Balancer routes users to the nearest region.",
+        "Choose between Cloud CDN and Media CDN.",
+        "Put a CDN in front of a backend bucket or an external origin.",
+        "Protect a public site from DDoS and bad IP ranges with Cloud Armor.",
+        "Design a read-through cache keyed by query hash."
+      ],
+      "takeaways": [
+        "Global API latency → global external Application Load Balancer with backends in several regions.",
+        "Slow static assets far away → Cloud CDN on the global LB.",
+        "Video streaming at scale → Media CDN.",
+        "Content still at another cloud → Cloud CDN with an external origin.",
+        "DDoS + known IP ranges → Cloud Armor on the external LB.",
+        "Fewer database queries → cache keyed by a hash of the query, Memorystore outside legacy App Engine."
+      ]
+    },
+    "7": {
+      "summary": "This lesson compares object, file and block storage. Questions test Filestore for shared POSIX access, Cloud Storage for archives and raw data lakes, and object naming that avoids hotspots.",
+      "objectives": [
+        "Compare Cloud Storage, Persistent Disk, Local SSD and Filestore.",
+        "Choose a cost-effective mix of storage for a varied SAN workload.",
+        "Design a data lake that keeps raw data for reprocessing.",
+        "Name objects to sustain high upload rates."
+      ],
+      "takeaways": [
+        "Shared POSIX filesystem across instances → Filestore.",
+        "Archives, images and thumbnails → lifecycle-managed Cloud Storage.",
+        "Store data exactly as received → raw files in Cloud Storage, pipelines read from there.",
+        "Archive + try analytics → Cloud Storage + BigQuery.",
+        "High object write rate → one bucket, random name prefixes."
+      ]
+    },
+    "8": {
+      "summary": "This lesson maps data to BigQuery, Bigtable, Spanner, Cloud SQL and Firestore, and covers Bigtable row-key design. Keywords such as analysts, OLAP, time series and global transactions decide the answer.",
+      "objectives": [
+        "Choose BigQuery for SQL analytics at terabyte to petabyte scale.",
+        "Choose Bigtable for time series, IoT and clickstream data.",
+        "Split a workload across Bigtable, Spanner and BigQuery.",
+        "Design Bigtable row keys for range scans and to avoid hotspots.",
+        "Partition BigQuery tables to cut cost."
+      ],
+      "takeaways": [
+        "Analysts + SQL + huge data or OLAP → BigQuery.",
+        "Sensors, time series, clickstream → Bigtable.",
+        "Transactions with global consistency → Spanner.",
+        "Bigtable hotspot → redesign the row key, don't just add nodes.",
+        "Bigtable key → most-filtered fields first, timestamp last.",
+        "Keep everything, train on last season → BigQuery partitioned by season."
+      ]
+    },
+    "9": {
+      "summary": "This lesson covers choosing data processing services: Dataflow for unified batch and streaming, Dataproc for existing Spark and Hadoop, the Pub/Sub → Dataflow → BigQuery pattern, Dataprep for cleaning, and BigQuery as a governed analytics platform.",
+      "objectives": [
+        "Choose between Dataflow and Dataproc.",
+        "Cut Dataproc cost with Spot or preemptible secondary workers.",
+        "Assemble a fully managed streaming analytics stack.",
+        "Clean and profile degraded data without code.",
+        "Design a compliant central analytics platform."
+      ],
+      "takeaways": [
+        "Batch + streaming, new code → Dataflow.",
+        "Existing Spark/Hadoop, minimal changes → Dataproc; cheaper with Spot secondary workers.",
+        "Managed streaming analytics → Pub/Sub, Dataflow, Cloud Storage, BigQuery.",
+        "Ordered, deduplicated stream → Pub/Sub + Dataflow.",
+        "Clean degraded data → upload to Cloud Storage, use Dataprep.",
+        "Siloed data + EU compliance → BigQuery with regional residency, IAM and CMEK."
+      ]
+    },
+    "10": {
+      "summary": "This lesson covers moving data and connecting systems: Transfer Appliance and Interconnect for bulk and ongoing transfers, Pub/Sub for decoupling and unreliable producers, scheduled work through Pub/Sub, and Application Integration for SaaS apps.",
+      "objectives": [
+        "Pick an offline or online transfer method from data size and bandwidth.",
+        "Use Pub/Sub to decouple producers, consumers and schedulers.",
+        "Modernize SFTP and cron ETL into event-driven pipelines.",
+        "Integrate SaaS applications with Application Integration."
+      ],
+      "takeaways": [
+        "Hundreds of TB over a slow link → Transfer Appliance.",
+        "Many TB every day → Dedicated Interconnect.",
+        "Devices with unreliable connectivity → publish to a shared Pub/Sub topic.",
+        "Scheduled jobs → scheduler publishes to Pub/Sub, workers subscribe (Cloud Scheduler today).",
+        "Salesforce + ServiceNow + Cloud SQL with mapping → Application Integration.",
+        "SFTP + batch ETL modernization → Interconnect, Pub/Sub, Dataflow."
+      ]
+    },
+    "11": {
+      "summary": "This lesson covers Google Cloud AI solutions for case-study scenarios: Vertex AI Pipelines and generative models, Explainable AI, Dialogflow CX with Gemini, Vertex AI Search for commerce, human-in-the-loop review apps and edge inference.",
+      "objectives": [
+        "Use Explainable AI to make predictions interpretable.",
+        "Design a scalable, auditable generative AI pipeline with human review.",
+        "Build virtual agents with Dialogflow CX and Gemini grounded in enterprise data.",
+        "Choose edge inference when connectivity is unreliable.",
+        "Explain why BigQuery ML and self-hosted LLMs are usually wrong in these scenarios."
+      ],
+      "takeaways": [
+        "Explain predictions → Vertex Explainable AI; Model Monitoring only tracks skew and drift.",
+        "Generated catalog content at scale → Vertex AI Pipelines, outputs in BigQuery, review UI on Cloud Run.",
+        "Human-in-the-loop review → Cloud Run app behind IAP with IAM, states in a managed database.",
+        "Chatbot or IVR replacement → Dialogflow CX with Gemini and secure backend APIs.",
+        "Natural-language product discovery → Dialogflow CX + Vertex AI Search for commerce.",
+        "Intermittent connectivity → edge inference, cloud training and updates."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Application Integration",
+      "definition": "Google Cloud's integration platform (iPaaS) with prebuilt connectors to SaaS apps and databases, a visual designer and a data mapper.",
+      "exam_context": "Keyed for connecting Salesforce, ServiceNow and Cloud SQL with transformations; Workflows and Pub/Sub lack connectors and mapping.",
+      "lesson": 10
+    },
+    {
+      "term": "Artifact Registry",
+      "definition": "Managed registry for container images and language packages; the successor to Container Registry.",
+      "exam_context": "The 'Google Kubernetes Registry' in an older Mountkirk question; image digests give immutable deployment artifacts.",
+      "lesson": 3
+    },
+    {
+      "term": "Backup and DR Service",
+      "definition": "Managed backup service that runs backup plans and stores backups in backup vaults with enforced retention.",
+      "exam_context": "Keyed for automated daily disk backups kept 90 days in a separate, restricted project.",
+      "lesson": 5
+    },
+    {
+      "term": "Backup vault",
+      "definition": "Backup and DR storage that enforces a minimum retention period so backups can't be deleted early.",
+      "exam_context": "Satisfies 'retain 90 days, separate project, restricted access' without scripts.",
+      "lesson": 5
+    },
+    {
+      "term": "BigQuery",
+      "definition": "Serverless, columnar data warehouse that runs SQL over terabytes to petabytes.",
+      "exam_context": "Answer for analysts using SQL, OLAP reporting and historical queries; not a high-rate serving store.",
+      "lesson": 8
+    },
+    {
+      "term": "Bigtable",
+      "definition": "Wide-column NoSQL database for high-throughput, low-latency reads and writes on large datasets.",
+      "exam_context": "Answer for time series, IoT sensor data and clickstream; hotspots are fixed by redesigning the row key.",
+      "lesson": 8
+    },
+    {
+      "term": "Binary logging",
+      "definition": "Cloud SQL for MySQL feature that records every change so the database can be replayed to a point in time.",
+      "exam_context": "Paired with automated backups to minimize data loss for a single Cloud SQL instance.",
+      "lesson": 5
+    },
+    {
+      "term": "Cloud Armor",
+      "definition": "Edge security service for external load balancers: DDoS protection, IP allow/deny lists and WAF rules.",
+      "exam_context": "Keyed with an external HTTP(S) load balancer to block DDoS traffic from specific IP ranges.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud CDN",
+      "definition": "Content delivery network that caches content from load balancer backends or external origins at Google's edge.",
+      "exam_context": "Answer for slow static assets for distant users, and for caching video still hosted at another cloud.",
+      "lesson": 6
+    },
+    {
+      "term": "Cloud Run functions",
+      "definition": "Event-driven, scale-to-zero functions service, formerly Cloud Functions.",
+      "exam_context": "Keyed for a business-hours MVP and for low-traffic public APIs with Firestore.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Scheduler",
+      "definition": "Managed cron service that can publish to Pub/Sub or call HTTP targets on a schedule.",
+      "exam_context": "The modern replacement for the App Engine cron in a reliable task-scheduling question.",
+      "lesson": 10
+    },
+    {
+      "term": "Cloud SQL high availability",
+      "definition": "Cloud SQL configuration with a primary and a standby in another zone of the same region, replicated synchronously, with automatic failover.",
+      "exam_context": "Older questions call the standby a 'failover replica'; it protects against zone failures, not regional ones.",
+      "lesson": 4
+    },
+    {
+      "term": "Cross-region read replica",
+      "definition": "Asynchronous Cloud SQL replica in another region that can be promoted to a standalone primary.",
+      "exam_context": "Keyed for regional DR with RPO of minutes.",
+      "lesson": 5
+    },
+    {
+      "term": "Dataflow",
+      "definition": "Serverless Apache Beam service for unified batch and stream processing.",
+      "exam_context": "Answer for 'batch and streaming, no existing code', ordered deduplicated streams, and Mountkirk's analytics.",
+      "lesson": 9
+    },
+    {
+      "term": "Dataprep",
+      "definition": "Visual, no-code data preparation partner service (by Trifacta) for profiling and cleaning data.",
+      "exam_context": "Keyed for cleaning degraded data after uploading it to Cloud Storage.",
+      "lesson": 9
+    },
+    {
+      "term": "Dataproc",
+      "definition": "Managed Spark and Hadoop service.",
+      "exam_context": "Answer for moving existing Spark/Hadoop jobs with minimal code changes; cheaper with preemptible or Spot secondary workers.",
+      "lesson": 9
+    },
+    {
+      "term": "Dedicated Interconnect",
+      "definition": "Private physical connection between an on-premises network and Google, in 10 or 100 Gbps circuits.",
+      "exam_context": "Carries 10 TB/day ongoing uploads and modern hybrid data flows with Cloud Router.",
+      "lesson": 10
+    },
+    {
+      "term": "Dialogflow CX",
+      "definition": "Google's platform for building conversational virtual agents, now part of Conversational Agents, with Gemini-powered generative features.",
+      "exam_context": "Keyed for 24/7 LLM self-service, IVR replacement and conversational commerce.",
+      "lesson": 11
+    },
+    {
+      "term": "Explainable AI",
+      "definition": "Vertex AI feature that returns feature attributions explaining why a model made a prediction.",
+      "exam_context": "Answer when a case study wants to understand and interpret predictions.",
+      "lesson": 11
+    },
+    {
+      "term": "Filestore",
+      "definition": "Managed NFS file storage for Compute Engine and GKE.",
+      "exam_context": "Answer when many instances must read and write the same POSIX filesystem.",
+      "lesson": 7
+    },
+    {
+      "term": "GKE Autopilot",
+      "definition": "GKE mode in which Google manages nodes, scaling and security settings, billed per pod resource request.",
+      "exam_context": "Keyed for teams new to Kubernetes that want minimal operational overhead.",
+      "lesson": 1
+    },
+    {
+      "term": "Global external Application Load Balancer",
+      "definition": "Layer 7 load balancer with one anycast IP that routes users to the nearest healthy backend region.",
+      "exam_context": "Front door for global APIs, multi-region MIGs and Cloud CDN.",
+      "lesson": 6
+    },
+    {
+      "term": "Helm",
+      "definition": "Package manager for Kubernetes that deploys applications from templated charts.",
+      "exam_context": "The 'dynamic templates' in the GKE + Jenkins + Helm requirements question.",
+      "lesson": 2
+    },
+    {
+      "term": "Human-in-the-loop (HITL)",
+      "definition": "A workflow where people review, approve or edit AI output before it is used.",
+      "exam_context": "Built as a Cloud Run review app behind IAP with approval states in a managed database.",
+      "lesson": 11
+    },
+    {
+      "term": "Media CDN",
+      "definition": "Google's CDN for large media files and video streaming.",
+      "exam_context": "Used for video; Cloud CDN is the answer for web static assets.",
+      "lesson": 6
+    },
+    {
+      "term": "Memorystore",
+      "definition": "Managed Redis, Valkey and Memcached service.",
+      "exam_context": "Caches database results and sessions to speed up page loads.",
+      "lesson": 6
+    },
+    {
+      "term": "Migrate to Virtual Machines",
+      "definition": "Google's service for migrating VMs from VMware, AWS, Azure or physical servers to Compute Engine; formerly Migrate for Compute Engine.",
+      "exam_context": "Used after assessment and with a runbook in the VMware lift-and-shift question.",
+      "lesson": 1
+    },
+    {
+      "term": "Migration Center",
+      "definition": "Google Cloud's hub for assessing an existing estate, mapping dependencies and estimating cost and TCO on Google Cloud.",
+      "exam_context": "Keyed for a quick, best-practice cost estimate for on-prem compute and SAP workloads.",
+      "lesson": 1
+    },
+    {
+      "term": "Multi Cluster Ingress",
+      "definition": "GKE feature that configures one global external load balancer across clusters in several regions; successor to kubemci.",
+      "exam_context": "The modern form of the kubemci answer for cutting latency to a new continent.",
+      "lesson": 6
+    },
+    {
+      "term": "Pub/Sub",
+      "definition": "Global asynchronous messaging service that decouples producers from consumers.",
+      "exam_context": "Answer for devices with unreliable connectivity, reliable scheduled work and event-driven integration.",
+      "lesson": 10
+    },
+    {
+      "term": "Recovery point objective (RPO)",
+      "definition": "The maximum amount of recent data a business can afford to lose, measured in time.",
+      "exam_context": "Daily snapshots fail a 15-minute RPO; cross-region replication meets it.",
+      "lesson": 5
+    },
+    {
+      "term": "Recovery time objective (RTO)",
+      "definition": "The maximum time allowed to restore service after a disaster.",
+      "exam_context": "Short RTOs need infrastructure already running in the recovery region.",
+      "lesson": 5
+    },
+    {
+      "term": "Regional managed instance group",
+      "definition": "A MIG that spreads identical VMs across zones of a region and recreates failed ones.",
+      "exam_context": "Cheapest way to survive a zone outage for a critical app.",
+      "lesson": 4
+    },
+    {
+      "term": "Regional persistent disk",
+      "definition": "Block disk synchronously replicated across two zones of a region that can be force-attached to a VM in the other zone.",
+      "exam_context": "Keyed for active/passive failover with no data loss after a zone failure.",
+      "lesson": 4
+    },
+    {
+      "term": "Row key (Bigtable)",
+      "definition": "The single indexed key of a Bigtable row; rows are sorted by it and read by prefix or range.",
+      "exam_context": "Put filtered fields first and the timestamp last; poorly distributed keys cause hotspots.",
+      "lesson": 8
+    },
+    {
+      "term": "Sole-tenant node",
+      "definition": "A Compute Engine host dedicated to one project's VMs.",
+      "exam_context": "Required to bring your own Windows Server licenses.",
+      "lesson": 1
+    },
+    {
+      "term": "Spanner",
+      "definition": "Horizontally scalable relational database with strong consistency, available in regional and multi-region configurations.",
+      "exam_context": "Answer for write-heavy relational apps that must be available across regions.",
+      "lesson": 5
+    },
+    {
+      "term": "Spot VMs",
+      "definition": "Discounted Compute Engine VMs that Google can reclaim at any time; successor to preemptible VMs.",
+      "exam_context": "Fine for Dataproc secondary workers and batch; wrong for uptime-critical serving.",
+      "lesson": 3
+    },
+    {
+      "term": "SQL Server Always On availability groups",
+      "definition": "SQL Server replication with Windows Server Failover Clustering that fails over between replicas automatically.",
+      "exam_context": "Nodes in different zones give zero-downtime SQL Server through a zone outage.",
+      "lesson": 4
+    },
+    {
+      "term": "Strangler pattern",
+      "definition": "Replacing a legacy system piece by piece behind stable interfaces until the old system can be retired.",
+      "exam_context": "Behind the phased-microservices and API + async messaging answers.",
+      "lesson": 2
+    },
+    {
+      "term": "Transfer Appliance",
+      "definition": "Rackable storage device that Google ships to you for offline transfer of large datasets.",
+      "exam_context": "Answer for 900 TB of archives over a 100 Mbps connection.",
+      "lesson": 10
+    },
+    {
+      "term": "Vertex AI Pipelines",
+      "definition": "Managed service for orchestrating repeatable ML workflows on Vertex AI.",
+      "exam_context": "Orchestrates content moderation and catalog enrichment at scale.",
+      "lesson": 11
+    },
+    {
+      "term": "Vertex AI Search for commerce",
+      "definition": "Google's retail search, browse and recommendation product, formerly Discovery AI and Vertex AI Search for retail.",
+      "exam_context": "Paired with Dialogflow CX for natural-language product discovery.",
+      "lesson": 11
+    },
+    {
+      "term": "Workload disposition",
+      "definition": "The decision made for each workload in a migration: rehost, replatform, refactor, replace (buy) or retire.",
+      "exam_context": "Frames build-versus-buy and modernization questions.",
+      "lesson": 2
+    }
+  ]
+}

@@ -11,6 +11,7 @@ A static study site for Google Cloud certifications, served by GitHub Pages from
 | GPCDOE | `gpcdoe` | Professional Cloud DevOps Engineer |
 | GPCDE | `gpcde` | Professional Cloud Developer |
 | GCDL | `gcdl` | Cloud Digital Leader |
+| GPCA | `gpca` | Professional Cloud Architect |
 
 Certifications and their domains are defined in `tools/certs.py`. The code (`GPCDE`) names the folders. The id (`gpcde`) is used by the tools and in site URLs (`#/gpcde/...`).
 

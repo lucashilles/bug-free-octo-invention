@@ -12,6 +12,9 @@ Expected dump format:
     ### Explanation        (optional)
     ...
 
+A one-line stem is stored bolded, as before. A multi-line stem (requirement lists, case studies,
+code) keeps its Markdown structure; see stem().
+
 Corrections to the dumps (wrong keys, broken stems or options) go in <CODE>/fixes.json and
 are applied on every run.
 Dumps carry no domain label, so domains go in domain-map.json. Questions from the given exams
@@ -32,6 +35,44 @@ def clean(text):
     return text.lstrip('-*').strip()
 
 
+LIST_RE = re.compile(r'^\s*(?:[-*●•]|\d+[.)])\s+')
+
+
+def stem(lines):
+    """Question stem as Markdown. A one-line stem is bolded as before; a longer one (requirement
+    lists, case studies, code) keeps its structure: each line is its own paragraph, consecutive
+    list items stay one list, '●' bullets become '-', and fenced code is kept verbatim."""
+    lines = [l.rstrip() for l in lines]
+    text = [l for l in lines if l.strip()]
+    if len(text) == 1:
+        return f'**{clean(text[0])}**'
+    out, fence, prev_item = [], False, False
+    for l in lines:
+        if l.lstrip().startswith('```'):
+            if not fence:
+                out.append('')
+            out.append(l.strip())
+            fence = not fence
+            prev_item = False
+            continue
+        if fence:
+            out.append(l)
+            continue
+        if not l.strip():
+            continue
+        item = bool(LIST_RE.match(l))
+        if item:
+            l = re.sub(r'^\s*[●•]\s*', '- ', l).strip()
+            l = re.sub(r'^\s*[-*]\s+', '- ', l)
+        else:
+            l = l.strip()
+        if not (item and prev_item):
+            out.append('')
+        out.append(l)
+        prev_item = item
+    return '\n'.join(out).strip()
+
+
 def parse_file(path):
     exam = str(int(re.match(r'\d+', os.path.basename(path)).group()))
     src = open(path, encoding='utf-8').read()
@@ -44,13 +85,13 @@ def parse_file(path):
             m = OPT_RE.match(line)
             if m:
                 answers.append({'text': clean(m.group(2)), 'correct': m.group(1) == 'x'})
-            elif line.strip() and not answers:
-                qlines.append(line.strip())
-        question = clean(' '.join(qlines))
+            elif not answers:
+                qlines.append(line)
+        question = stem(qlines)
         n = int(num)
-        if not question or len(answers) < 2 or not any(a['correct'] for a in answers):
+        if question.strip('*') == '' or len(answers) < 2 or not any(a['correct'] for a in answers):
             raise ValueError(f'{path}: question {n} is malformed')
-        out.append({'exam': exam, 'n': n, 'question': f'**{question}**', 'answers': answers,
+        out.append({'exam': exam, 'n': n, 'question': question, 'answers': answers,
                     'explanation': explanation.strip(), 'domain': 'Unknown'})
     return exam, out
 

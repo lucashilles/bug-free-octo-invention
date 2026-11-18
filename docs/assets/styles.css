@@ -115,6 +115,9 @@ main { padding: 28px 40px 80px; max-width: 920px; width: 100%; outline: none; }
 h1 { font-size: 30px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -.01em; }
 h2 { font-size: 21px; margin: 32px 0 10px; }
 .lead { font-size: 17px; color: var(--muted); margin: 0 0 24px; }
+.prose { overflow-wrap: anywhere; } /* long URLs and identifiers wrap instead of widening the page on phones */
+.prose td, .prose th { overflow-wrap: normal; }
+.prose img { max-width: 100%; height: auto; }
 .prose h3 { font-size: 17px; margin: 26px 0 8px; }
 .prose ul, .prose ol { padding-left: 1.3em; }
 .prose li { margin: 4px 0; }

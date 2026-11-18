@@ -1,0 +1,366 @@
+{
+  "lessons": {
+    "1": {
+      "summary": "This lesson covers how code gets from a Git push to production on Google Cloud: Cloud Build triggers, Artifact Registry, Binary Authorization and a test sequence inside the pipeline. Exam questions reward automation that can't be skipped and images that trace back to a commit.",
+      "objectives": [
+        "Design a Cloud Build pipeline triggered by source changes that builds, tests and pushes images to Artifact Registry.",
+        "Explain why tagging images with the commit hash gives deployment traceability.",
+        "Enforce a deployment process by limiting deploy permissions to the pipeline.",
+        "Order unit, integration, acceptance and smoke tests correctly in a pipeline.",
+        "Connect a GitHub repository to Cloud Build without storing keys."
+      ],
+      "takeaways": [
+        "Image tag = commit hash for auditability; never 'latest' or timestamps.",
+        "Cloud Build triggers react to pushes; don't poll the repo on a schedule.",
+        "Container Registry is gone; the answer means Artifact Registry.",
+        "Only the deployment tool should be able to deploy, or the process isn't enforced.",
+        "Secure CI/CD = Cloud Build + Artifact Registry scanning + Binary Authorization.",
+        "Test order: unit, build, integration/acceptance in a test env, production, smoke tests."
+      ]
+    },
+    "2": {
+      "summary": "This lesson covers release strategies that reduce rollbacks and catch production-only problems, and picks the right test type for each goal. Blue-green, canary, microservices, unit tests, scalable load-test environments and Firebase Test Lab are the recurring answers.",
+      "objectives": [
+        "Choose blue-green or canary releases for a given release risk.",
+        "Explain how microservices reduce rollbacks.",
+        "Match unit, integration, end-to-end and load tests to what they verify.",
+        "Design a cost-effective, production-like load-test environment.",
+        "Pick Firebase Test Lab for multi-device mobile testing."
+      ],
+      "takeaways": [
+        "Fewer rollbacks → blue-green deployments plus microservices.",
+        "Issues seen only in production → canary to a small group of real users.",
+        "A microservice tested on its own → unit tests.",
+        "Cloud tests must scale beyond the old ones; build ephemeral prod-like environments for them.",
+        "Canaries add to QA; they never replace it."
+      ]
+    },
+    "3": {
+      "summary": "This lesson covers how to prove a system survives failure: chaos engineering, zone shutdown drills, scheduled failovers, fault injection and DR test procedures, plus automated penetration tests in the release flow. The exam wants you to break things on purpose under controlled conditions.",
+      "objectives": [
+        "Design a resilience test that combines real load with deliberate failures.",
+        "Explain why failovers must be exercised on a schedule.",
+        "Use service mesh fault injection to simulate a failing microservice.",
+        "Design repeatable DR tests with automated provisioning and Cloud Monitoring.",
+        "Choose Cloud VPN as the secure backup for Dedicated Interconnect.",
+        "Trigger an automated penetration test from the release pipeline."
+      ],
+      "takeaways": [
+        "Resilience test = cause failure on purpose: zone shutdown, random termination, injected faults or latency.",
+        "A failover you never test is a failover you don't have; schedule drills.",
+        "Simulate one GKE microservice failing with Istio / Cloud Service Mesh fault injection.",
+        "DR drills: IaC provisioning plus Cloud Monitoring and Logging (formerly Stackdriver).",
+        "Interconnect backup = Cloud VPN, not Direct Peering or Transfer Appliance.",
+        "Intrusion detection is security, not resilience testing."
+      ]
+    },
+    "4": {
+      "summary": "This lesson covers the main ways to cut compute spend: stopping idle VMs on a schedule, rightsizing with recommendations, finding idle VMs, autoscaling GKE, and picking the right discount model. Questions reward removing idle time over buying discounts for waste.",
+      "objectives": [
+        "Schedule start and stop of non-production VMs outside working hours.",
+        "Keep VM state across stop/start cycles with persistent disks.",
+        "Rightsize a migrated workload using the Ops Agent and recommendations.",
+        "Find idle VMs with the Recommender.",
+        "Reduce GKE cost with HPA and the cluster autoscaler.",
+        "Choose sustained use or committed use discounts based on demand certainty."
+      ],
+      "takeaways": [
+        "Idle outside office hours → instance schedules (or Cloud Scheduler + a function) to stop and start VMs.",
+        "Stopped VMs don't bill for vCPU and memory, but disks still bill.",
+        "Rightsize from normal traffic and the console's recommendations, not from peak load tests.",
+        "Zombie VMs → gcloud recommender with the idle VM recommender.",
+        "GKE cost without losing availability → HPA + cluster autoscaler, not Spot nodes for stateful work.",
+        "Uncertain demand → sustained use discounts; steady demand → committed use discounts."
+      ]
+    },
+    "5": {
+      "summary": "This lesson covers how to see and explain cloud cost: labels, billing export to BigQuery, IaC for consistent provisioning, per-user BigQuery cost from audit logs, and TCO analysis to settle cost disagreements. It also frames the CapEx-to-OpEx shift.",
+      "objectives": [
+        "Attribute cost to teams and environments with labels and billing export to BigQuery.",
+        "Plan cost governance for a migration with labels, tags and IaC.",
+        "Find the most expensive BigQuery users and queries.",
+        "Run a TCO analysis and facilitate a decision between competing options.",
+        "Explain CapEx versus OpEx in cloud terms."
+      ],
+      "takeaways": [
+        "Cost by group → labels + Cloud Billing export to BigQuery.",
+        "Track and control cost after migration → consistent labels/tags + infrastructure as code.",
+        "BigQuery cost per user → Data Access logs sink to BigQuery (billing export has no user detail).",
+        "Teams disagree on cost → TCO including operational effort, reviewed in a workshop.",
+        "Labels are static key/values; there is no 'CPU utilization label'."
+      ]
+    },
+    "6": {
+      "summary": "This lesson covers the people side of architecture: business risks of new tools, skills gaps, safe sandboxes for learning, pitching change to leadership, facilitating conversations between teams, and finding root causes that come from design choices such as per-instance session state.",
+      "objectives": [
+        "Identify business risks, as opposed to technical facts, of adopting a tool.",
+        "Build a skills plan with training and role-based certification.",
+        "Design guarded, time-limited sandbox projects for experimentation.",
+        "Justify a re-architecture in terms of business outcomes.",
+        "Diagnose bugs caused by in-memory state on autoscaled instances."
+      ],
+      "takeaways": [
+        "Business risks of a tool: staff unfamiliarity and vendor deprecation (Deployment Manager did reach end of support).",
+        "Skills gap with a cost goal → training budget + certification roadmap, not consultants.",
+        "Sandboxes: request process, only needed APIs, low quotas, narrow IAM, auto-delete.",
+        "Pitch to leadership with outcomes: faster releases, A/B testing, scale on demand.",
+        "WebSockets and local sessions are fine on Google Cloud load balancers; bring in the ops team.",
+        "Correct alone, wrong under load → state held in one instance's memory."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "A/B testing",
+      "definition": "Serving two versions of a feature to different users and comparing results.",
+      "exam_context": "A benefit of microservices on managed services that leadership cares about.",
+      "lesson": 6
+    },
+    {
+      "term": "Acceptance test",
+      "definition": "A test that checks the system meets the business requirements.",
+      "exam_context": "Runs in a test environment before production, not in production.",
+      "lesson": 1
+    },
+    {
+      "term": "Artifact Registry",
+      "definition": "Google Cloud's registry for container images and language packages, with vulnerability scanning.",
+      "exam_context": "The current answer wherever a question says Container Registry.",
+      "lesson": 1
+    },
+    {
+      "term": "Billing export to BigQuery",
+      "definition": "A Cloud Billing feature that writes detailed cost data to a BigQuery dataset.",
+      "exam_context": "Combine with labels to report cost by team or environment.",
+      "lesson": 5
+    },
+    {
+      "term": "Binary Authorization",
+      "definition": "A deploy-time control that only lets signed or policy-compliant images run on GKE or Cloud Run.",
+      "exam_context": "Part of the 'centralized, secure CI/CD' answer.",
+      "lesson": 1
+    },
+    {
+      "term": "Blue-green deployment",
+      "definition": "Running old (blue) and new (green) versions side by side and switching traffic once green is validated.",
+      "exam_context": "Reduces rollbacks; rollback is just switching back.",
+      "lesson": 2
+    },
+    {
+      "term": "Business continuity",
+      "definition": "Keeping critical business functions running during and after a disruption.",
+      "exam_context": "Covered by tested DR plans and redundant connectivity.",
+      "lesson": 3
+    },
+    {
+      "term": "Canary release",
+      "definition": "Sending a small share of real users to a new version before rolling it out fully.",
+      "exam_context": "The fix for problems that show up in production but not in staging.",
+      "lesson": 2
+    },
+    {
+      "term": "CapEx / OpEx",
+      "definition": "Capital spend on owned assets up front versus operating spend that follows use.",
+      "exam_context": "Cloud moves cost to OpEx, so idle resources should be stopped.",
+      "lesson": 5
+    },
+    {
+      "term": "Chaos engineering",
+      "definition": "Deliberately injecting failures into a system to verify it stays available.",
+      "exam_context": "Random resource termination and zone shutdowns are the exam's examples.",
+      "lesson": 3
+    },
+    {
+      "term": "Cloud Build GitHub app",
+      "definition": "The integration that connects GitHub.com repositories to Cloud Build triggers.",
+      "exam_context": "The keyless way to build and deploy to Cloud Run on every merge.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Build trigger",
+      "definition": "A rule that starts a Cloud Build run when code is pushed or a pull request is merged.",
+      "exam_context": "Use instead of polling the repository on a schedule.",
+      "lesson": 1
+    },
+    {
+      "term": "Cloud Service Mesh",
+      "definition": "Google's managed Istio-based service mesh, which absorbed Anthos Service Mesh and Traffic Director.",
+      "exam_context": "Provides fault injection to simulate a failing microservice.",
+      "lesson": 3
+    },
+    {
+      "term": "Cluster autoscaler",
+      "definition": "A GKE feature that adds and removes nodes based on pending and underused pods.",
+      "exam_context": "Pair with HPA to cut GKE cost without losing availability.",
+      "lesson": 4
+    },
+    {
+      "term": "Commit hash tag",
+      "definition": "Tagging a container image with the Git commit SHA it was built from.",
+      "exam_context": "Gives full traceability from deployment back to source.",
+      "lesson": 1
+    },
+    {
+      "term": "Committed use discount (CUD)",
+      "definition": "A discount for committing to a level of usage or spend for 1 or 3 years.",
+      "exam_context": "Wrong for uncertain demand or resources that sit idle.",
+      "lesson": 4
+    },
+    {
+      "term": "Container Registry",
+      "definition": "Google's older image registry, shut down in 2025 and replaced by Artifact Registry.",
+      "exam_context": "Appears in older questions; read it as Artifact Registry.",
+      "lesson": 1
+    },
+    {
+      "term": "Data Access audit logs",
+      "definition": "Cloud Audit Logs entries that record who read or queried data, including BigQuery jobs.",
+      "exam_context": "Export them to BigQuery to find cost per user and per query.",
+      "lesson": 5
+    },
+    {
+      "term": "Dedicated Interconnect",
+      "definition": "A private physical connection between an on-prem network and Google's network.",
+      "exam_context": "Carries DR replication; Cloud VPN is its secure backup.",
+      "lesson": 3
+    },
+    {
+      "term": "Deployment Manager",
+      "definition": "Google's older infrastructure-as-code service, which reached end of support in March 2026.",
+      "exam_context": "Its possible deprecation was the business risk; use Terraform or Infrastructure Manager now.",
+      "lesson": 6
+    },
+    {
+      "term": "Disaster recovery (DR) test",
+      "definition": "A planned exercise that proves systems can be restored or failed over.",
+      "exam_context": "Automate provisioning and watch it with Cloud Monitoring and Logging.",
+      "lesson": 3
+    },
+    {
+      "term": "Failover drill",
+      "definition": "A scheduled exercise that promotes a replica or standby to primary on purpose.",
+      "exam_context": "Prevents a replica that never promotes during a real crash.",
+      "lesson": 3
+    },
+    {
+      "term": "Fault injection",
+      "definition": "Introducing delays or errors into requests to test how a system copes.",
+      "exam_context": "Istio / Cloud Service Mesh fault injection simulates a failing microservice.",
+      "lesson": 3
+    },
+    {
+      "term": "Firebase Test Lab",
+      "definition": "A service that runs Android and iOS app tests on Google-hosted devices.",
+      "exam_context": "The answer for testing a mobile app across many devices and configurations.",
+      "lesson": 2
+    },
+    {
+      "term": "HorizontalPodAutoscaler (HPA)",
+      "definition": "A Kubernetes controller that changes the number of pod replicas based on metrics.",
+      "exam_context": "With the cluster autoscaler, reduces GKE cost while keeping availability.",
+      "lesson": 4
+    },
+    {
+      "term": "Idle VM recommender",
+      "definition": "A Recommender that flags Compute Engine VMs with very low usage.",
+      "exam_context": "Use gcloud recommender to list zombie VMs quickly.",
+      "lesson": 4
+    },
+    {
+      "term": "Infrastructure as code (IaC)",
+      "definition": "Defining infrastructure in version-controlled files that tools apply automatically.",
+      "exam_context": "Makes DR tests repeatable and provisioning consistent and labeled.",
+      "lesson": 5
+    },
+    {
+      "term": "Infrastructure Manager",
+      "definition": "A Google Cloud service that deploys infrastructure with Terraform; Deployment Manager's successor.",
+      "exam_context": "The current answer where an older question names Deployment Manager.",
+      "lesson": 6
+    },
+    {
+      "term": "Instance schedule",
+      "definition": "A Compute Engine resource policy that starts and stops VMs at set times.",
+      "exam_context": "Cuts cost for dev and test VMs that are idle outside office hours.",
+      "lesson": 4
+    },
+    {
+      "term": "Integration test",
+      "definition": "A test that checks several components work correctly together.",
+      "exam_context": "Runs after deploying to a test environment, after unit tests pass.",
+      "lesson": 1
+    },
+    {
+      "term": "Labels",
+      "definition": "Key/value pairs attached to resources and carried into billing data.",
+      "exam_context": "With billing export, attribute cost by team, app or environment.",
+      "lesson": 5
+    },
+    {
+      "term": "Ops Agent",
+      "definition": "Google's agent for collecting VM logs and metrics, including memory.",
+      "exam_context": "Needed for accurate rightsizing recommendations (older questions say 'Cloud Monitoring agent').",
+      "lesson": 4
+    },
+    {
+      "term": "Penetration test",
+      "definition": "An authorized simulated attack to find security weaknesses.",
+      "exam_context": "Can run automatically after each release, triggered through Pub/Sub.",
+      "lesson": 3
+    },
+    {
+      "term": "Resilience testing",
+      "definition": "Testing whether a system keeps working when some of its parts fail.",
+      "exam_context": "Shut down a zone or kill resources; security tools are not resilience tests.",
+      "lesson": 3
+    },
+    {
+      "term": "Rightsizing recommendations",
+      "definition": "Machine type recommendations based on a VM's observed CPU and memory use.",
+      "exam_context": "Run normal traffic first; don't size from peak load tests.",
+      "lesson": 4
+    },
+    {
+      "term": "Sandbox project",
+      "definition": "An isolated project for experiments, with limited APIs, quotas, roles and lifetime.",
+      "exam_context": "Guardrails stop experiments from becoming shadow production.",
+      "lesson": 6
+    },
+    {
+      "term": "Session affinity",
+      "definition": "A load balancer setting that sends a client's requests to the same backend.",
+      "exam_context": "Lets apps with server-local sessions run without a redesign.",
+      "lesson": 6
+    },
+    {
+      "term": "Smoke test",
+      "definition": "A quick check right after deployment that core functions work.",
+      "exam_context": "The last test step, run in production.",
+      "lesson": 1
+    },
+    {
+      "term": "Sustained use discount (SUD)",
+      "definition": "An automatic discount for VMs that run a large part of the month, with no commitment.",
+      "exam_context": "Suits uncertain demand; covers only some machine families.",
+      "lesson": 4
+    },
+    {
+      "term": "Total cost of ownership (TCO)",
+      "definition": "The full cost of a solution, including operations, staff time and licenses, not just the bill.",
+      "exam_context": "Use it in a workshop to settle a managed-versus-self-managed cost dispute.",
+      "lesson": 5
+    },
+    {
+      "term": "Unit test",
+      "definition": "A test of one small piece of code in isolation.",
+      "exam_context": "Verifies each microservice on its own; runs first in the pipeline.",
+      "lesson": 2
+    },
+    {
+      "term": "Zone shutdown drill",
+      "definition": "A disaster simulation that turns off every VM in one zone.",
+      "exam_context": "The keyed way to test a regional MIG's resilience.",
+      "lesson": 3
+    }
+  ]
+}
