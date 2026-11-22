@@ -141,8 +141,14 @@
     "explanation": "The correct answer is\n\n**D. Set up separate Cloud Run services for public and restricted microservices. Enable IAP only for restricted services, and set the Cloud Run ingress settings to 'Internal and Cloud Load Balancing' for these services.**\n\nExplanation:\n\n  1. **Public services** : Deployed as their own Cloud Run services with the `roles/run.invoker` role granted to `allUsers`, so anyone can call them with no sign-in.\n\n  2. **Restricted services** : Put behind an external Application Load Balancer with **Identity-Aware Proxy (IAP)** enabled, and grant the IAP-secured Web App User role only to the Google identities that need access.\n\n  3. **Ingress 'Internal and Cloud Load Balancing'** : This setting still allows traffic that arrives through the external Application Load Balancer, but it blocks requests sent straight to the service's `run.app` URL. Users therefore can't bypass IAP.\n\n\n\n\nThis keeps each service's access rule simple and uses managed Google features only, with no custom code.\n\nJustifications for Incorrect Options:\n\n  * **Option A: Develop a new microservice to manage access**  \nWriting your own access-checking service adds code to build, secure and operate, when IAP already does identity-based access natively.\n\n  * **Option B: IAP for all services with allAuthenticatedUsers for public ones**  \n`allAuthenticatedUsers` still requires every caller to sign in with a Google account, so the public services would not be unrestricted as the requirement asks. Putting IAP in front of services that should be open also adds configuration for no benefit.\n\n  * **Option C: Use Cloud Endpoints with Firebase Authentication**  \nCloud Endpoints and Firebase Authentication can control access, but they need more setup than IAP, and Firebase Security Rules protect Firebase data, not Cloud Run services.\n\n\n\n\n**Relevant Documentation:**\n\nFor more details, refer to:\n\n  * [Identity-Aware Proxy (IAP) Overview](https://cloud.google.com/iap/docs/concepts-overview)\n\n  * [Cloud Run ingress settings](https://cloud.google.com/run/docs/securing/ingress)\n\n  * [Allowing public (unauthenticated) access to Cloud Run](https://cloud.google.com/run/docs/authenticating/public)"
   },
   "5-3": {
-    "why": "Diagram missing; explanations muddled; can't fix without the diagram.",
-    "note": "The diagram this question refers to is missing, so the meaning of steps 1 to 4 is inferred. The key is plausible, but some of the explanations are muddled (option C is rejected because \"Dataflow is better than BigQuery\", and B and C are said to fail because Firestore isn't for streaming data, although the key stores data in Firestore too). The pattern to remember is Pub/Sub → Dataflow → BigQuery."
+    "question": [
+      [
+        "\n\n**\n\n**",
+        "\n\n![Diagram: devices send data to 1 (Ingest, next to Cloud Monitoring and Cloud Logging), then to 2 (pipeline). The pipeline feeds 3 (Transaction Databases) and 4 (Analytics), which serve GKE, App Engine and Compute Engine (Application and Presentation)](assets/img/gpcde/e5q3-streaming-pipeline.jpg)"
+      ]
+    ],
+    "explanation": "**D. 1. Pub/Sub, 2. Dataflow, 3. Firestore, 4. BigQuery**\n\nThe diagram labels the steps: **1 = Ingest**, **2 = pipeline**, **3 = Transaction Databases**, **4 = Analytics**. Match each step to the service built for it:\n\n  1. **Ingest → Pub/Sub.** Serverless messaging that absorbs streams from thousands of devices and decouples them from the processing.\n\n  2. **Pipeline → Dataflow.** Managed Apache Beam that reads from Pub/Sub, transforms and enriches the stream, and writes to both stores.\n\n  3. **Transaction Databases → Firestore.** An operational document database that the applications (GKE, App Engine, Compute Engine) read and write.\n\n  4. **Analytics → BigQuery.** The data warehouse for SQL analysis. Dataflow streams into it directly.\n\n**Why the others are wrong:**\n\n  * **A** puts App Engine at the ingest step. App Engine hosts web apps; it isn't an ingestion service, and Pub/Sub at step 2 isn't a pipeline.\n\n  * **B** reverses the first two steps: Dataflow processes a stream, it doesn't receive device traffic. Pub/Sub ingests, then Dataflow processes.\n\n  * **C** swaps the stores: BigQuery is an analytical warehouse, not a transactional database, and Firestore can't run the SQL analysis.",
+    "why": "The diagram (now restored) labels the steps, which confirms key D. The original explanation was muddled (it rejected C because \"Dataflow is better than BigQuery\")."
   },
   "5-19": {
     "answers": {
@@ -1005,8 +1011,8 @@
     "why": "Old explanation said Cloud Run 'subscribes' to Pub/Sub and called run.developer an external account role; corrected to push subscription + run.invoker."
   },
   "4-16": {
-    "explanation": "The **recommended approach is:**\n\n✅ **II. Establish an Eventarc trigger to monitor your Cloud Storage bucket for a designated filename, with the target set as Cloud Run.**\n\n✅ **Explanation for Correct Option:**\n\n  * **Eventarc** routes many kinds of events (direct Cloud Storage events such as `google.cloud.storage.object.v1.finalized`, Cloud Audit Logs events, Pub/Sub messages and more) to targets like **Cloud Run**, so different trigger types use the same mechanism.\n\n  * Direct Cloud Storage triggers filter by **bucket** and event type. To react to one specific file, the Cloud Run service checks the object name in the event (or you can use a Cloud Audit Logs trigger, which supports a **path pattern** on the resource name).\n\n  * Triggers are simple, declarative resources (`gcloud eventarc triggers create/update`), so several team members can update them easily.\n\n**Official Documentation:**\n\n  * <https://cloud.google.com/eventarc/docs>\n\n  * <https://cloud.google.com/run/docs/tutorials/eventarc>\n\n❌ **Explanation for Incorrect Options:**\n\n**I. Cloud Storage → Pub/Sub → Cloud Build**\n\n  * Cloud Build is a **CI/CD** service, not a runtime for your application, and chaining three services is harder to maintain.\n\n**III. Cloud Function triggered by Cloud Storage**\n\n  * This works for a single fixed event source, but Eventarc routing to Cloud Run is the more flexible option when trigger types vary. (Event-driven Cloud Run functions, formerly Cloud Functions 2nd gen, use Eventarc triggers under the hood.)\n\n**IV. Firebase Functions with Cloud Storage**\n\n  * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.",
-    "why": "Old explanation claimed direct Cloud Storage Eventarc triggers filter by object name and that Cloud Functions can't; direct storage triggers filter by bucket, and Cloud Functions 2nd gen uses Eventarc."
+    "explanation": "The **recommended approach is:**\n\n✅ **II. Establish an Eventarc trigger to monitor your Cloud Storage bucket for a designated filename, with the target set as Cloud Run.**\n\n✅ **Explanation for Correct Option:**\n\n  * **Eventarc** routes many kinds of events (direct Cloud Storage events such as `google.cloud.storage.object.v1.finalized`, Cloud Audit Logs events, Pub/Sub messages and more) to targets like **Cloud Run**, so different trigger types use the same mechanism.\n\n  * Direct Cloud Storage triggers filter by **bucket** and event type. To react to one specific file, the Cloud Run service checks the object name in the event (or you can use a Cloud Audit Logs trigger, which supports a **path pattern** on the resource name).\n\n  * Triggers are simple, declarative resources (`gcloud eventarc triggers create/update`), so several team members can update them easily.\n\n**Official Documentation:**\n\n  * <https://cloud.google.com/eventarc/docs>\n\n  * <https://cloud.google.com/run/docs/tutorials/eventarc>\n\n❌ **Explanation for Incorrect Options:**\n\n**I. Cloud Storage → Pub/Sub → Cloud Build**\n\n  * Cloud Build is a **CI/CD** service, not a runtime for your application, and chaining three services is harder to maintain.\n\n**III. Cloud Function triggered by Cloud Storage**\n\n  * This works for a single fixed event source, but Eventarc routing to Cloud Run is the more flexible option when trigger types vary. (Event-driven Cloud Run functions, formerly Cloud Functions 2nd gen, use Eventarc triggers under the hood.)\n\n**IV. Firebase Functions with Cloud Storage**\n\n  * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.\n\n**Summary:**\n\n| Option | Verdict | Reason |\n|---|---|---|\n| I | ❌ | Cloud Build is CI/CD, not a runtime; chaining three services is harder to maintain |\n| II | ✅ | One trigger mechanism for many event types; simple, declarative configuration |\n| III | ❌ | Fine for one fixed event source, less flexible when trigger types vary |\n| IV | ❌ | Firebase-specific, not meant for general Cloud Storage triggers |",
+    "why": "Old explanation claimed direct Cloud Storage Eventarc triggers filter by object name and that Cloud Functions can't; direct storage triggers filter by bucket, and Cloud Functions 2nd gen uses Eventarc. The summary table was a screenshot; it is now a Markdown table."
   },
   "4-35": {
     "answers": {
@@ -1060,7 +1066,13 @@
         "<https://cloud.google.com/endpoints/docs/openapi/authentication-method>\n\n<https://cloud.google.com/endpoints/docs/openapi/quotas-overview>"
       ]
     ],
-    "why": "Endpoints authenticates with API keys/JWTs, not IAM user auth; reference pointed to GKE Ingress."
+    "why": "Endpoints authenticates with API keys/JWTs, not IAM user auth; reference pointed to GKE Ingress. Restore the missing diagram.",
+    "question": [
+      [
+        "\n\n**\n\n**",
+        "\n\n![Diagram: a computer sends requests to Cloud Load Balancing, then to an empty box, then to a PHP app](assets/img/gpcde/e5q17-api-architecture.jpg)"
+      ]
+    ]
   },
   "5-21": {
     "explanation": [
@@ -1131,6 +1143,39 @@
   },
   "1-55": {
     "note": "Cloud Endpoints still works, but Google's current API-management products are API Gateway (for serverless backends such as Cloud Run functions) and Apigee. If they appear as options, treat them the same way: an API gateway in front of the backend.",
-    "why": "Older product framing: API Gateway and Apigee are the current API-management options."
+    "why": "Older product framing: API Gateway and Apigee are the current API-management options. Restore the missing diagram.",
+    "question": [
+      [
+        "\n\n**\n\n**\n\n**Diagram showing a Google Cloud architecture. An arrow from a “computer” to “Cloud Load Balancing”. An arrow from “Cloud Load Balancing” to an empty box. An arrow from the empty box to “PHP application”.**",
+        "\n\n![Diagram: a computer sends requests to Cloud Load Balancing, then to an empty box, then to a PHP application](assets/img/gpcde/e1q55-api-architecture.jpg)"
+      ]
+    ]
+  },
+  "5-51": {
+    "question": [
+      [
+        "\n\n**\n\n**",
+        "\n\n![Diagram: a computer sends requests to Cloud Load Balancing, then to an app on GKE, which calls three external APIs: Inventory, Shipping and Credit Card Processing](assets/img/gpcde/e5q51-ecommerce-apis.jpg)"
+      ]
+    ],
+    "why": "Restore the diagram the stem refers to (dropped by the HTML parser)."
+  },
+  "5-53": {
+    "question": [
+      [
+        "\n\n**\n\n**",
+        "\n\n![Diagram: one app publishes to a Pub/Sub topic; the queued messages reach a second app through a subscription; an arrow labelled \"User Identity\" links the two apps](assets/img/gpcde/e5q53-pubsub-per-user.jpg)"
+      ]
+    ],
+    "why": "Restore the diagram the stem refers to (dropped by the HTML parser)."
+  },
+  "4-52": {
+    "explanation": [
+      [
+        "📌 **Best Practice:**",
+        "**Summary:**\n\n| Option | Verdict | Reason |\n|---|---|---|\n| I | ❌ | Slow and costly; creating projects needs organization-level permissions |\n| II | ✅ | Isolated per build, runs builds in parallel, realistic performance |\n| III | ❌ | Concurrent builds share state; hard to scale |\n| IV | ❌ | The emulator doesn't reproduce real Spanner performance |\n\n📌 **Best Practice:**"
+      ]
+    ],
+    "why": "The summary table was a screenshot; it is now a Markdown table."
   }
 }

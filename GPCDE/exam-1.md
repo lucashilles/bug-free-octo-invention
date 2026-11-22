@@ -2065,11 +2065,7 @@ Ref:
 
 **Which tool should you employ to construct an architecture that authenticates, enforces quotas, and tracks metrics for API callers?**
 
-**
-
-**
-
-**Diagram showing a Google Cloud architecture. An arrow from a “computer” to “Cloud Load Balancing”. An arrow from “Cloud Load Balancing” to an empty box. An arrow from the empty box to “PHP application”.**
+![Diagram: a computer sends requests to Cloud Load Balancing, then to an empty box, then to a PHP application](assets/img/gpcde/e1q55-api-architecture.jpg)
 
 - [ ] C. Consider Identity-Aware Proxy (IAP) for securing your APIs by verifying user identities and controlling access based on their permissions, while also offering features for monitoring and reporting API usage metrics.
 - [ ] D. Leverage GKE Ingress for HTTP(S) Load Balancing to configure routing rules and manage traffic efficiently to your PHP application, while incorporating additional layers of security and metrics reporting as per your requirements.

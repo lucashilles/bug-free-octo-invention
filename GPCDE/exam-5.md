@@ -80,9 +80,7 @@ Option IV is also a valid setup: `env-init` simply prints `export PUBSUB_EMULATO
 
 **You're designing an architecture for a system that needs to handle streaming data from thousands of devices. The workflow involves ingesting data into a pipeline, storing it, and analyzing it using SQL statements. Which combination of Google Cloud services should you use for steps 1, 2, 3, and 4?**
 
-**
-
-**
+![Diagram: devices send data to 1 (Ingest, next to Cloud Monitoring and Cloud Logging), then to 2 (pipeline). The pipeline feeds 3 (Transaction Databases) and 4 (Analytics), which serve GKE, App Engine and Compute Engine (Application and Presentation)](assets/img/gpcde/e5q3-streaming-pipeline.jpg)
 
 - [ ] A. 1. App Engine
     2\. Pub/Sub
@@ -103,35 +101,25 @@ Option IV is also a valid setup: `env-init` simply prints `export PUBSUB_EMULATO
 
 ### Explanation
 
-**The correct combination of Google Cloud services for handling streaming data from thousands of devices and performing SQL analysis on it would be:**
+**D. 1. Pub/Sub, 2. Dataflow, 3. Firestore, 4. BigQuery**
 
-**D.**
+The diagram labels the steps: **1 = Ingest**, **2 = pipeline**, **3 = Transaction Databases**, **4 = Analytics**. Match each step to the service built for it:
 
-  1. **Pub/Sub: Used for ingesting and processing real-time streaming data from thousands of devices. Pub/Sub can handle large volumes of data and distribute it to downstream services efficiently.**
+  1. **Ingest → Pub/Sub.** Serverless messaging that absorbs streams from thousands of devices and decouples them from the processing.
 
-  2. **Dataflow: Provides a fully managed, serverless stream processing service for transforming and enriching data in real time. Dataflow can process data from Pub/Sub and perform complex transformations before storing it or analyzing it further.**
+  2. **Pipeline → Dataflow.** Managed Apache Beam that reads from Pub/Sub, transforms and enriches the stream, and writes to both stores.
 
-  3. **Firestore: A flexible, scalable database for storing and querying semi-structured data. Firestore is suitable for storing metadata, configurations, or other relevant information related to the streaming data.**
+  3. **Transaction Databases → Firestore.** An operational document database that the applications (GKE, App Engine, Compute Engine) read and write.
 
-  4. **BigQuery: A fully managed, serverless data warehouse for performing fast SQL queries on large datasets. BigQuery can be used to analyze the streaming data stored in Firestore or directly ingest data from Dataflow for analysis.**
+  4. **Analytics → BigQuery.** The data warehouse for SQL analysis. Dataflow streams into it directly.
 
-Justification:
+**Why the others are wrong:**
 
-  * Pub/Sub is ideal for ingesting streaming data from devices due to its scalability and real-time capabilities.
+  * **A** puts App Engine at the ingest step. App Engine hosts web apps; it isn't an ingestion service, and Pub/Sub at step 2 isn't a pipeline.
 
-  * Dataflow is suitable for processing and transforming streaming data before storing it or performing further analysis.
+  * **B** reverses the first two steps: Dataflow processes a stream, it doesn't receive device traffic. Pub/Sub ingests, then Dataflow processes.
 
-  * Firestore provides a flexible and scalable database for storing semi-structured data, which can complement the structured data stored in BigQuery.
-
-  * BigQuery is a powerful tool for performing SQL analysis on large datasets, making it suitable for analyzing streaming data.
-
-Option A is incorrect because App Engine is a platform for building and deploying web applications and does not provide stream processing capabilities like Dataflow or Pub/Sub.
-
-Option B is incorrect because Firestore is not typically used for storing streaming data, as it is designed more for document-oriented databases rather than real-time streaming data.
-
-Option C is incorrect because Dataflow is better suited for stream processing before analysis, rather than BigQuery, which is optimized for performing SQL queries on stored data. Additionally, Firestore is not typically used for storing streaming data.
-
-**⚠️ Note:** The diagram this question refers to is missing, so the meaning of steps 1 to 4 is inferred. The key is plausible, but some of the explanations are muddled (option C is rejected because "Dataflow is better than BigQuery", and B and C are said to fail because Firestore isn't for streaming data, although the key stores data in Firestore too). The pattern to remember is Pub/Sub → Dataflow → BigQuery.
+  * **C** swaps the stores: BigQuery is an analytical warehouse, not a transactional database, and Firestore can't run the SQL analysis.
 
 ---
 
@@ -689,9 +677,7 @@ For more information, refer to:
 
 **You're tasked with constructing a public API that manages authentication, enforces usage quotas, and tracks metrics for API consumers. Which tool is the most suitable for implementing this architecture?**
 
-**
-
-**
+![Diagram: a computer sends requests to Cloud Load Balancing, then to an empty box, then to a PHP app](assets/img/gpcde/e5q17-api-architecture.jpg)
 
 - [ ] A. App Engine
 - [ ] C. Identity-Aware Proxy
@@ -2237,9 +2223,7 @@ D. Parallelizing the process by directing each row to a Cloud Storage object and
 
 **Your ecommerce application, which forwards requests to third-party API services for credit card processing, shipping, and inventory management, is experiencing intermittent performance issues reported by customers. However, the application lacks metrics for diagnosis. What action should you take to identify the cause of these performance inconsistencies?**
 
-**
-
-**
+![Diagram: a computer sends requests to Cloud Load Balancing, then to an app on GKE, which calls three external APIs: Inventory, Shipping and Credit Card Processing](assets/img/gpcde/e5q51-ecommerce-apis.jpg)
 
 - [ ] D. Activate Managed Service for Prometheus on your Google Kubernetes Engine cluster to collect application metrics.
 - [ ] C. Adjust your application to include and propagate the X-Cloud-Trace-Context header when communicating with downstream services.
@@ -2319,9 +2303,7 @@ D. Activating Managed Service for Prometheus on your Google Kubernetes Engine cl
 
 **Your team is developing a Google Cloud application where user identities are managed by Cloud Identity. Each user of the application will have their own Pub/Sub topic for publishing messages and a corresponding Pub/Sub subscription for retrieving messages. You need to ensure that only authorized users can publish and subscribe to their respective Pub/Sub topic and subscription. What should you do?**
 
-**
-
-**
+![Diagram: one app publishes to a Pub/Sub topic; the queued messages reach a second app through a subscription; an arrow labelled "User Identity" links the two apps](assets/img/gpcde/e5q53-pubsub-per-user.jpg)
 
 - [ ] B. Assign the pubsub.publisher and pubsub.subscriber roles to the user identity at the project level.
 - [ ] D. Configure the application to operate as a service account with the pubsub.publisher and pubsub.subscriber roles.

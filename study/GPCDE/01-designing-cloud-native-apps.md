@@ -2415,9 +2415,7 @@ The best choice for your scenario is
 
 **You're designing an architecture for a system that needs to handle streaming data from thousands of devices. The workflow involves ingesting data into a pipeline, storing it, and analyzing it using SQL statements. Which combination of Google Cloud services should you use for steps 1, 2, 3, and 4?**
 
-**
-
-**
+![Diagram: devices send data to 1 (Ingest, next to Cloud Monitoring and Cloud Logging), then to 2 (pipeline). The pipeline feeds 3 (Transaction Databases) and 4 (Analytics), which serve GKE, App Engine and Compute Engine (Application and Presentation)](assets/img/gpcde/e5q3-streaming-pipeline.jpg)
 
 - A. 1. App Engine
     2\. Pub/Sub
@@ -2440,35 +2438,25 @@ The best choice for your scenario is
 
 **Correct:** D. 1. Pub/Sub
 
-**The correct combination of Google Cloud services for handling streaming data from thousands of devices and performing SQL analysis on it would be:**
+**D. 1. Pub/Sub, 2. Dataflow, 3. Firestore, 4. BigQuery**
 
-**D.**
+The diagram labels the steps: **1 = Ingest**, **2 = pipeline**, **3 = Transaction Databases**, **4 = Analytics**. Match each step to the service built for it:
 
-  1. **Pub/Sub: Used for ingesting and processing real-time streaming data from thousands of devices. Pub/Sub can handle large volumes of data and distribute it to downstream services efficiently.**
+  1. **Ingest → Pub/Sub.** Serverless messaging that absorbs streams from thousands of devices and decouples them from the processing.
 
-  2. **Dataflow: Provides a fully managed, serverless stream processing service for transforming and enriching data in real time. Dataflow can process data from Pub/Sub and perform complex transformations before storing it or analyzing it further.**
+  2. **Pipeline → Dataflow.** Managed Apache Beam that reads from Pub/Sub, transforms and enriches the stream, and writes to both stores.
 
-  3. **Firestore: A flexible, scalable database for storing and querying semi-structured data. Firestore is suitable for storing metadata, configurations, or other relevant information related to the streaming data.**
+  3. **Transaction Databases → Firestore.** An operational document database that the applications (GKE, App Engine, Compute Engine) read and write.
 
-  4. **BigQuery: A fully managed, serverless data warehouse for performing fast SQL queries on large datasets. BigQuery can be used to analyze the streaming data stored in Firestore or directly ingest data from Dataflow for analysis.**
+  4. **Analytics → BigQuery.** The data warehouse for SQL analysis. Dataflow streams into it directly.
 
-Justification:
+**Why the others are wrong:**
 
-  * Pub/Sub is ideal for ingesting streaming data from devices due to its scalability and real-time capabilities.
+  * **A** puts App Engine at the ingest step. App Engine hosts web apps; it isn't an ingestion service, and Pub/Sub at step 2 isn't a pipeline.
 
-  * Dataflow is suitable for processing and transforming streaming data before storing it or performing further analysis.
+  * **B** reverses the first two steps: Dataflow processes a stream, it doesn't receive device traffic. Pub/Sub ingests, then Dataflow processes.
 
-  * Firestore provides a flexible and scalable database for storing semi-structured data, which can complement the structured data stored in BigQuery.
-
-  * BigQuery is a powerful tool for performing SQL analysis on large datasets, making it suitable for analyzing streaming data.
-
-Option A is incorrect because App Engine is a platform for building and deploying web applications and does not provide stream processing capabilities like Dataflow or Pub/Sub.
-
-Option B is incorrect because Firestore is not typically used for storing streaming data, as it is designed more for document-oriented databases rather than real-time streaming data.
-
-Option C is incorrect because Dataflow is better suited for stream processing before analysis, rather than BigQuery, which is optimized for performing SQL queries on stored data. Additionally, Firestore is not typically used for storing streaming data.
-
-**⚠️ Note:** The diagram this question refers to is missing, so the meaning of steps 1 to 4 is inferred. The key is plausible, but some of the explanations are muddled (option C is rejected because "Dataflow is better than BigQuery", and B and C are said to fail because Firestore isn't for streaming data, although the key stores data in Firestore too). The pattern to remember is Pub/Sub → Dataflow → BigQuery.
+  * **C** swaps the stores: BigQuery is an analytical warehouse, not a transactional database, and Firestore can't run the SQL analysis.
 
 </details>
 

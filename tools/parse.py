@@ -33,6 +33,10 @@ def parse_file(path):
             answers.append({'text': h2md(txt), 'correct': bool(correct)})
         ov = pane.select_one('#overall-explanation')
         dom = pane.select_one('[data-purpose="domain-pane"] .ud-text-md')
+        if pane.find('img'):
+            # Images are dropped (never hotlinked): store them under docs/assets/img/<id>/ and
+            # reference them from fixes.json, or rewrite a table screenshot as a Markdown table.
+            print(f'warning: {path}: question {i} has an image; add it via fixes.json')
         out.append({'exam': exam, 'n': i,
                     'question': h2md(q) if q else '', 'answers': answers,
                     'explanation': h2md(ov) if ov else '',

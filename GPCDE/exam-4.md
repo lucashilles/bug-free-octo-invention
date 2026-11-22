@@ -649,6 +649,15 @@ The **recommended approach is:**
 
   * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.
 
+**Summary:**
+
+| Option | Verdict | Reason |
+|---|---|---|
+| I | ❌ | Cloud Build is CI/CD, not a runtime; chaining three services is harder to maintain |
+| II | ✅ | One trigger mechanism for many event types; simple, declarative configuration |
+| III | ❌ | Fine for one fixed event source, less flexible when trigger types vary |
+| IV | ❌ | Firebase-specific, not meant for general Cloud Storage triggers |
+
 ---
 
 ## Question 17
@@ -2214,6 +2223,15 @@ The **correct answer is:**
 
 **Reference:**  
 https://cloud.google.com/spanner/docs/emulator
+
+**Summary:**
+
+| Option | Verdict | Reason |
+|---|---|---|
+| I | ❌ | Slow and costly; creating projects needs organization-level permissions |
+| II | ✅ | Isolated per build, runs builds in parallel, realistic performance |
+| III | ❌ | Concurrent builds share state; hard to scale |
+| IV | ❌ | The emulator doesn't reproduce real Spanner performance |
 
 📌 **Best Practice:**  
 Use **Cloud Build** to:

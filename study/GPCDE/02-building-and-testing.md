@@ -2025,6 +2025,15 @@ The **correct answer is:**
 **Reference:**  
 https://cloud.google.com/spanner/docs/emulator
 
+**Summary:**
+
+| Option | Verdict | Reason |
+|---|---|---|
+| I | ❌ | Slow and costly; creating projects needs organization-level permissions |
+| II | ✅ | Isolated per build, runs builds in parallel, realistic performance |
+| III | ❌ | Concurrent builds share state; hard to scale |
+| IV | ❌ | The emulator doesn't reproduce real Spanner performance |
+
 📌 **Best Practice:**  
 Use **Cloud Build** to:
 
@@ -2403,9 +2412,7 @@ YAML
 
 **Your ecommerce application, which forwards requests to third-party API services for credit card processing, shipping, and inventory management, is experiencing intermittent performance issues reported by customers. However, the application lacks metrics for diagnosis. What action should you take to identify the cause of these performance inconsistencies?**
 
-**
-
-**
+![Diagram: a computer sends requests to Cloud Load Balancing, then to an app on GKE, which calls three external APIs: Inventory, Shipping and Credit Card Processing](assets/img/gpcde/e5q51-ecommerce-apis.jpg)
 
 - D. Activate Managed Service for Prometheus on your Google Kubernetes Engine cluster to collect application metrics.
 - C. Adjust your application to include and propagate the X-Cloud-Trace-Context header when communicating with downstream services.

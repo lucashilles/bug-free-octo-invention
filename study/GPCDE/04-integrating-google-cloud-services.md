@@ -520,11 +520,7 @@ References:
 
 **Which tool should you employ to construct an architecture that authenticates, enforces quotas, and tracks metrics for API callers?**
 
-**
-
-**
-
-**Diagram showing a Google Cloud architecture. An arrow from a “computer” to “Cloud Load Balancing”. An arrow from “Cloud Load Balancing” to an empty box. An arrow from the empty box to “PHP application”.**
+![Diagram: a computer sends requests to Cloud Load Balancing, then to an empty box, then to a PHP application](assets/img/gpcde/e1q55-api-architecture.jpg)
 
 - C. Consider Identity-Aware Proxy (IAP) for securing your APIs by verifying user identities and controlling access based on their permissions, while also offering features for monitoring and reporting API usage metrics.
 - D. Leverage GKE Ingress for HTTP(S) Load Balancing to configure routing rules and manage traffic efficiently to your PHP application, while incorporating additional layers of security and metrics reporting as per your requirements.
@@ -1863,6 +1859,15 @@ The **recommended approach is:**
 
   * Firebase functions are aimed at Firebase-based apps and add a separate toolchain. This option is not recommended unless the application is built on Firebase.
 
+**Summary:**
+
+| Option | Verdict | Reason |
+|---|---|---|
+| I | ❌ | Cloud Build is CI/CD, not a runtime; chaining three services is harder to maintain |
+| II | ✅ | One trigger mechanism for many event types; simple, declarative configuration |
+| III | ❌ | Fine for one fixed event source, less flexible when trigger types vary |
+| IV | ❌ | Firebase-specific, not meant for general Cloud Storage triggers |
+
 </details>
 
 ---
@@ -2693,9 +2698,7 @@ For more information, refer to:
 
 **You're tasked with constructing a public API that manages authentication, enforces usage quotas, and tracks metrics for API consumers. Which tool is the most suitable for implementing this architecture?**
 
-**
-
-**
+![Diagram: a computer sends requests to Cloud Load Balancing, then to an empty box, then to a PHP app](assets/img/gpcde/e5q17-api-architecture.jpg)
 
 - A. App Engine
 - C. Identity-Aware Proxy
@@ -3072,9 +3075,7 @@ D. Parallelizing the process by directing each row to a Cloud Storage object and
 
 **Your team is developing a Google Cloud application where user identities are managed by Cloud Identity. Each user of the application will have their own Pub/Sub topic for publishing messages and a corresponding Pub/Sub subscription for retrieving messages. You need to ensure that only authorized users can publish and subscribe to their respective Pub/Sub topic and subscription. What should you do?**
 
-**
-
-**
+![Diagram: one app publishes to a Pub/Sub topic; the queued messages reach a second app through a subscription; an arrow labelled "User Identity" links the two apps](assets/img/gpcde/e5q53-pubsub-per-user.jpg)
 
 - B. Assign the pubsub.publisher and pubsub.subscriber roles to the user identity at the project level.
 - D. Configure the application to operate as a service account with the pubsub.publisher and pubsub.subscriber roles.

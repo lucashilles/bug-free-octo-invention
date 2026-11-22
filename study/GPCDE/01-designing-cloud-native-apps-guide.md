@@ -317,7 +317,7 @@
 ## 10. Data pipelines, analytics offload and Hadoop migration
 
 ### Key facts
-- **Streaming device data + SQL analysis** follows the reference pipeline: **Pub/Sub** ingests, **Dataflow** transforms, a store keeps the data, and **BigQuery** runs the SQL analysis (Exam 5 · Q3). The keyed answer uses Firestore as the storage step; see questionable answers.
+- **Streaming device data + SQL analysis** follows the reference pipeline: **Pub/Sub** ingests, **Dataflow** transforms, **Firestore** is the transactional database the apps use, and **BigQuery** runs the SQL analysis (Exam 5 · Q3).
 - **Datastream** is serverless change data capture: it replicates Cloud SQL (MySQL/PostgreSQL) tables into **BigQuery** in near real time, so analysts get current data without querying the production database (Exam 5 · Q39).
 - **Hadoop migration with minimal changes** → **Dataproc** (managed Hadoop/Spark) runs the existing jobs, and the data moves from HDFS to **Cloud Storage**, read through the **Cloud Storage connector** (`gs://` paths). This decouples storage from compute so clusters can be ephemeral (Exam 5 · Q41).
 
@@ -327,7 +327,7 @@
 - "On-prem Hadoop", "HDFS cost", "minimize changes to analytics" → **Dataproc + Cloud Storage** (Exam 5 · Q41).
 
 ### Traps
-- App Engine is not an ingestion or stream-processing service; Dataflow before Pub/Sub reverses the pipeline (Exam 5 · Q3).
+- App Engine is not an ingestion or stream-processing service; Dataflow before Pub/Sub reverses the pipeline; BigQuery is an analytics warehouse, not the transactional database (Exam 5 · Q3).
 - Dual writes from the app to Cloud SQL and Bigtable add complexity and consistency risk; hourly CSV exports and a clone refreshed every 15 minutes are stale and add overhead (Exam 5 · Q39).
 - Moving Hadoop to BigQuery means rewriting the analytics; Compute Engine VMs with HDD or Dataproc with HDFS on bigger disks keeps storage tied to compute (Exam 5 · Q41).
 
@@ -341,7 +341,6 @@
 | **(Exam 4 · Q42)** | The stem has no scenario (no current database, no workload) and the key ("migrate to Cloud SQL, then import into Firestore Native") isn't justified. Don't build rules from it. |
 | **(Exam 2 · Q25)** | Traffic Director and Anthos Service Mesh (options I and III) are now both **Cloud Service Mesh**, and cross-region internal Application LBs can route on headers too, so option IV is less clearly wrong than it used to be. Answer Traffic Director. |
 | **(Exam 6 · Q15)** | Shared VPC is keyed, but it puts both projects on one network, which weakens the "keep projects isolated" requirement. Private Service Connect is the newer cross-project option for AlloyDB. Answer the key if PSC isn't offered. |
-| **(Exam 5 · Q3)** | The diagram is missing from the bank, so the step labels are inferred. The key (Pub/Sub → Dataflow → Firestore → BigQuery) is plausible, but some explanations are muddled (e.g. Firestore "isn't for streaming data", although the key itself stores the data in Firestore). Learn the Pub/Sub → Dataflow → BigQuery pattern. |
 
 ---
 
