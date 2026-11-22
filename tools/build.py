@@ -9,7 +9,7 @@ Usage: python3 build.py [cert-id ...]   (default: all certifications)
 """
 import json, os, re, sys
 import markdown
-from certs import CERTS, REPO, study_dir, content_dir, load_questions, domain_resolver
+from certs import CERTS, REPO, study_dir, content_dir, load_questions, domain_resolver, load_duplicates
 
 ASSETS = os.path.join(REPO, 'docs', 'assets')
 CID = None  # certification currently being built; used for citation links
@@ -123,6 +123,24 @@ def build_cert(cid):
             l['questions'] = [q for q in l['questions'] if q in questions]
             for q in l['questions']:
                 questions[q].setdefault('lessons', []).append(l['id'])
+    # Duplicates (the same question in several practice exams): each copy links to the others, and
+    # a lesson shows one copy per group, the earliest in duplicates.json order among those it cites.
+    group = {}
+    for g in load_duplicates(cid):
+        ids = [f"e{k.replace('-', 'q')}" for k in g]
+        for rank, q in enumerate(ids):
+            group[q] = (ids, rank)
+            questions[q]['same'] = [o for o in ids if o != q]
+    root = lambda q: group[q][0][0] if q in group else q
+    for d in domains:
+        for l in d['lessons']:
+            best = {}  # group root -> the cited copy with the lowest rank
+            for q in l['questions']:
+                r = root(q)
+                if r not in best or group[q][1] < group[best[r]][1]:
+                    best[r] = q
+            # One copy per group, placed where the group is first cited.
+            l['questions'] = list(dict.fromkeys(best[root(q)] for q in l['questions']))
     write_js(f'data-{cid}.js', f'window.CERT_DATA = window.CERT_DATA || {{}}; window.CERT_DATA[{json.dumps(cid)}]',
              {'domains': domains, 'questions': questions})
     n_lessons = sum(len(d['lessons']) for d in domains)

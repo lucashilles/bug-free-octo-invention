@@ -9,11 +9,12 @@ Checks:
   - fixes.json: applies cleanly, and questions.json already contains the result (run fix.py if not)
   - guides: every (Exam N · QM) citation points to a real question; every question is cited
     somewhere; citations outside the guide's own domain are reported as WARN
+  - duplicates.json: ids exist, each in at most one group
   - content/<id>/domain-N.json: valid JSON; lesson keys and glossary 'lesson' numbers match
     the guide's "## N. Title" lessons
 """
 import copy, json, os, re, sys
-from certs import CERTS, cert_dir, study_dir, content_dir, load_questions, domain_resolver, apply_fixes
+from certs import CERTS, cert_dir, study_dir, content_dir, load_questions, domain_resolver, apply_fixes, load_duplicates
 
 CITE = re.compile(r'\b(?:Exam\s*|E)(\d+)\s*·\s*Q(\d+)')
 errors = 0
@@ -87,6 +88,17 @@ def check(cid):
         for g in extra.get('glossary', []):
             if g.get('lesson') not in lessons:
                 report('ERROR', cid, f"{os.path.relpath(path)}: glossary term {g.get('term')!r} points to lesson {g.get('lesson')}")
+    grouped = set()
+    for g in load_duplicates(cid):
+        if not isinstance(g, list) or len(g) < 2:
+            report('ERROR', cid, f'duplicates.json: {g!r} is not a group of two or more ids'); continue
+        for k in g:
+            if k not in ids:
+                report('ERROR', cid, f'duplicates.json: {k} does not exist')
+            elif k in grouped:
+                report('ERROR', cid, f'duplicates.json: {k} is in more than one group')
+            grouped.add(k)
+
     uncited = sorted(ids - cited, key=lambda k: tuple(map(int, k.split('-'))))
     if uncited:
         report('WARN', cid, f'{len(uncited)} questions not cited by any guide: {uncited[:10]}')

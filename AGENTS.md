@@ -22,6 +22,7 @@ Certifications and their domains are defined in `tools/certs.py`. The code (`GPC
 | `<CODE>/questions.json` | The question bank, and the source of truth. The raw sources are deleted after parsing. | Parsers, `fix.py` |
 | `<CODE>/fixes.json` | Corrections to the bank: keys, stems, options, explanations, ⚠️ notes | **Hand** |
 | `<CODE>/domain-map.json` | `"<exam>-<n>": domain` for questions without a usable domain label | **Hand** |
+| `<CODE>/duplicates.json` | Groups of question ids that are the same question reused across practice exams, e.g. `[["2-12", "2-34"]]` | **Hand** |
 | `<CODE>/exam-N.md` | Readable copy of each practice exam | `export_md.py` (generated) |
 | `study/<CODE>/NN-*-guide.md` | Study guides: one per domain, with lessons, rules, traps and cheat sheet | **Hand** |
 | `study/<CODE>/NN-*.md`, `study/<CODE>/README.md` | Per-domain question banks and index | `gen.py` (generated) |
@@ -97,6 +98,11 @@ Keys are `"<exam>-<n>"`. Every field is optional except `why`:
 - Fixes must be idempotent. `fix.py` and the parsers re-apply all of them on every run.
 - Preview a set of fixes without saving: `python3 fix.py <id> --check my-fixes.json`.
 
+### Duplicates (`<CODE>/duplicates.json`)
+- The practice exams reuse questions, often reworded. List each set of copies as one group. A lesson shows only one copy per group: the first id in the group, or the earliest-listed one the lesson cites. Each copy links to the others ("Also asked as"). Drills and mock exams keep every copy.
+- Group questions only when they have the same scenario, requirement and correct answer, so that answering one gives away the other. Questions that test the same concept with different numbers, cues or answers are not duplicates.
+- Put the clearest copy first. When you add an exam, check its questions against the bank.
+
 ### When a key is wrong
 - Change a key only when you can say concretely why another option is right. Back it with current Google Cloud documentation, or the same scenario keyed differently elsewhere in the bank.
 - When the evidence isn't that strong, keep the key and add a `note`, and list the question under the guide's `## ⚠️ Questionable answers`.
@@ -129,7 +135,7 @@ Google renames products often. Prefer current names, and mention the old one whe
 2. Parse the raw sources into the bank:
    - Udemy result pages: `python3 parse.py <id> ../<CODE>/N.html`.
    - Markdown dumps: `python3 parse_md.py <id> <files>`.
-3. Map untagged questions in `<CODE>/domain-map.json`.
+3. Map untagged questions in `<CODE>/domain-map.json`, and list repeated questions in `<CODE>/duplicates.json`.
 4. Write the guides and `content/<id>/domain-N.json`, then run the workflow above.
 5. **Delete the raw sources** (`.html` pages, `.md` dumps, `.zip` archives). Udemy pages contain the test-taker's own answers. `.gitignore` covers `*/*.html` and `*.zip`, but not loose `.md` dumps, so check `git status` before committing.
 

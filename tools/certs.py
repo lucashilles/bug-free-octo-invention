@@ -137,6 +137,13 @@ def domain_resolver(cid):
     return dom
 
 
+def load_duplicates(cid):
+    """<CODE>/duplicates.json: groups of "<exam>-<n>" ids that ask the same question (the same one
+    reused across practice exams, often reworded). The first id of a group is the one lessons show."""
+    path = os.path.join(cert_dir(cid), 'duplicates.json')
+    return json.load(open(path, encoding='utf-8')) if os.path.exists(path) else []
+
+
 LABEL_RE = re.compile(r'^\**\s*([A-Z]{1,4})[.:)]')
 
 
